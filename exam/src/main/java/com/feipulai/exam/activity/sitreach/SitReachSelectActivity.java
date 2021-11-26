@@ -56,5 +56,6 @@ public class SitReachSelectActivity extends SubItemsSelectActivity {
             }
         });
     }
-
+    protected void toastSpeak(String paramString) {
+    }
 }

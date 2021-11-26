@@ -42,45 +42,45 @@ public class RunTimerManager {
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x05, (byte) (interceptWay + 1))));//触发方式
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc1, (byte) 0x08, (byte) settingSensor)));//传感器信道
         byte[] cmd = cmd((byte) 0xc1,(byte) 0x01,(byte) runNum);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置跑道数指令");
+        LogUtils.serial("红外计时设置跑道数指令:" + StringUtility.bytesToHexString(cmd));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//跑道数
         cmd = cmd((byte) 0xc1,(byte) 0x02,(byte) hostId);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置主机号指令");
+        LogUtils.serial("红外计时设置主机号指令:" + StringUtility.bytesToHexString(cmd));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//主机号
         if (interceptPoint != -1){
             cmd = cmd((byte) 0xc1,(byte) 0x04,(byte) interceptPoint);
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置拦截点指令");
+            LogUtils.serial("红外计时设置拦截点指令:" + StringUtility.bytesToHexString(cmd));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//拦截点
         }
 
         if (interceptWay != -1){
             cmd = cmd((byte) 0xc1,(byte) 0x05,(byte) (interceptWay+1));
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置触发方式指令");
+            LogUtils.serial("红外计时设置触发方式指令:" + StringUtility.bytesToHexString(cmd));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//触发方式
         }
 
         if (settingSensor != -1){
             cmd = cmd((byte) 0xc1,(byte) 0x08,(byte) settingSensor);
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置传感器信道指令");
+            LogUtils.serial("红外计时设置传感器信道指令:" + StringUtility.bytesToHexString(cmd));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//传感器信道
         }
 
         if (senNum != -1){
             cmd = cmd((byte) 0xc1,(byte) 0x03,(byte) settingSensor);
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置灵敏度指令");
+            LogUtils.serial("红外计时设置灵敏度指令:" + StringUtility.bytesToHexString(cmd));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//灵敏度
         }
 
     }
     public static void cmdInterceptTime(int time){
         byte [] cmd = cmd((byte) 0xc1,(byte) 0x07,(byte) time);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时设置拦截间隔指令");
+        LogUtils.serial("红外计时设置拦截间隔指令:" + StringUtility.bytesToHexString(cmd));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));//拦截间隔
     }
 
     public static void forceStart(){
         byte[] cmd = cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时强制启动指令");
+        LogUtils.serial("红外计时强制启动指令:" + StringUtility.bytesToHexString(cmd));
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc4, (byte) 0x00, (byte) 0x00)));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
@@ -90,7 +90,7 @@ public class RunTimerManager {
 
     public static void waitStart(){
         byte[] cmd = cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时等待发令指令");
+        LogUtils.serial("红外计时等待发令指令:" + StringUtility.bytesToHexString(cmd));
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc2, (byte) 0x00, (byte) 0x00)));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
@@ -98,7 +98,7 @@ public class RunTimerManager {
 
     public static void stopRun(){
         byte[] cmd = cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时结束测试指令");
+        LogUtils.serial("红外计时结束测试指令:" + StringUtility.bytesToHexString(cmd));
 //        deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.cmd((byte) 0xc5, (byte) 0x00, (byte) 0x00)));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
@@ -106,14 +106,14 @@ public class RunTimerManager {
 
     public static void illegalBack(){
         byte[] cmd = cmd((byte) 0xc8, (byte) 0x00, (byte) 0x00);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时违规反返回指令");
+        LogUtils.serial("红外计时违规反返回指令:" + StringUtility.bytesToHexString(cmd));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }
 
     public static void getTime(){
         byte[] cmd = cmd((byte) 0xc7, (byte) 0x00, (byte) 0x00);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---红外计时获取时间指令");
+        LogUtils.serial("红外计时获取时间指令:" + StringUtility.bytesToHexString(cmd));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
                 cmd));
     }

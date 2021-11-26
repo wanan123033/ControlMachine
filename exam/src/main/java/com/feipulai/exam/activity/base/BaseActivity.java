@@ -1,27 +1,22 @@
 package com.feipulai.exam.activity.base;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
+import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.SharedPrefsConfigs;
-import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.receiver.WifiReceiver;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -46,11 +41,11 @@ public class BaseActivity extends FragmentActivity {
      * 广播接收器
      */
 //    public BroadcastReceiver receiver;
+
     /**
      * 广播过滤器
      */
 //    public IntentFilter filter = new IntentFilter();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,6 +58,7 @@ public class BaseActivity extends FragmentActivity {
         EventBus.getDefault().register(this);
         //知晓当前是在哪一个Activity
         mActivityName = getClass().getSimpleName();
+        LogUtils.life(mActivityName + "onCreate");
         //未捕获异常处理,重启防止崩溃
         //Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler(this));
         ActivityCollector.getInstance().onCreate(this);
@@ -87,17 +83,19 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        LogUtils.life(mActivityName + "onRestart");
     }
 
     @Override
     protected void onStart() {
+        LogUtils.life(mActivityName + "onStart");
         super.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        LogUtils.life(mActivityName + "onResume");
         // 机器信息为依据,显示title 在onResume方法设置标题避免设置中进行设置名称后未更新标题
 //        if (TextUtils.isEmpty(SettingHelper.getSystemSetting().getTestName())) {
 //            setTitle("智能主机[考试版]-" + TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机");
@@ -109,22 +107,37 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        LogUtils.life(mActivityName + "onPause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtils.life(mActivityName + "onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtils.life(mActivityName + "onDestroy");
 //        if (null != receiver) {
 //            unregisterReceiver(receiver);
 //        }
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // 判断连续点击事件时间差
+            if (ActivityUtils.isFastClick()) {
+                return true;
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
 
     protected void toastSpeak(final String msg) {
         LogUtils.operation("页面提示:" + msg);
@@ -137,7 +150,6 @@ public class BaseActivity extends FragmentActivity {
                     lastBroadcastTime = tmp;
                     ToastUtils.showShort(msg);
                     TtsManager.getInstance().speak(msg);
-                    Logger.i(msg);
                 }
             }
         });
@@ -160,6 +172,7 @@ public class BaseActivity extends FragmentActivity {
 //    }
 
     public void toastSpeak(final String speakMsg, final String toastMsg) {
+        LogUtils.operation("页面提示:" + toastMsg);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -169,7 +182,6 @@ public class BaseActivity extends FragmentActivity {
                     lastBroadcastTime = tmp;
                     ToastUtils.showShort(toastMsg);
                     TtsManager.getInstance().speak(speakMsg);
-                    Logger.i(toastMsg.toString());
                 }
             }
         });
@@ -180,6 +192,16 @@ public class BaseActivity extends FragmentActivity {
 //        if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
 //            startActivity(new Intent(this, LoginActivity.class));
 //        }
+    }
+
+    @Subscribe
+    public void onEvent(BaseEvent event) {
+
+    }
+
+    @Subscribe
+    public void onEventAsync(BaseEvent event) {
+
     }
 
     protected static class MyHandler extends Handler {

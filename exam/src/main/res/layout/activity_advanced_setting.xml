@@ -304,7 +304,113 @@
             <!--android:drawablePadding="20dp"-->
             <!--android:drawableRight="@drawable/checkbox_switch_selected"-->
             <!--android:text="重测功能（全部项目）" />-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="重测补考"
+                android:visibility="visible"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:visibility="visible"
+                android:padding="1dp">
 
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="现场补考：" />
+
+                <CheckBox
+                    android:id="@+id/cb_resit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+                <TextView
+                    android:id="@+id/tv_pass1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cb_resit"
+                    android:layout_marginTop="8dp"
+                    android:text="是否启用验证密码：" />
+                <EditText
+                    android:id="@+id/et_resit_pass"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/black_border"
+                    android:layout_toRightOf="@id/tv_pass1"
+                    android:layout_alignTop="@id/tv_pass1"/>
+                <CheckBox
+                    android:id="@+id/cb_resit_pass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/tv_pass1"
+                    android:background="@drawable/black_border"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:visibility="visible"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="现场重测：" />
+
+                <CheckBox
+                    android:id="@+id/cb_again"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+                <TextView
+                    android:id="@+id/tv_pass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cb_again"
+                    android:layout_marginTop="8dp"
+                    android:text="是否启用验证密码：" />
+                <EditText
+                    android:id="@+id/et_again_pass"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/black_border"
+                    android:layout_toRightOf="@id/tv_pass"
+                    android:layout_alignTop="@id/tv_pass"/>
+                <CheckBox
+                    android:id="@+id/cb_again_pass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/tv_pass"
+                    android:background="@drawable/black_border"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="每个成绩人工确认：" />
+
+                <CheckBox
+                    android:id="@+id/sw_person_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

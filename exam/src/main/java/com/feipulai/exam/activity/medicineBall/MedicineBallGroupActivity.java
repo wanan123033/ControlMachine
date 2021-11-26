@@ -19,9 +19,13 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.lang.ref.WeakReference;
@@ -42,7 +46,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     private Handler mHandler = new MedicineBallHandler(this);
     private boolean checkFlag = false;
     private ScheduledExecutorService executorService;
-    private ScheduledExecutorService checkService;
+//    private ScheduledExecutorService checkService;
     private static final int DELAY = 0X1000;
     private static final int UPDATEDEVICE = 0X1001;
     //保存当前测试考生
@@ -56,7 +60,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public void initData() {
-        checkService = Executors.newSingleThreadScheduledExecutor();
+//        checkService = Executors.newSingleThreadScheduledExecutor();
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == medicineBallSetting) {
             medicineBallSetting = new MedicineBallSetting();
@@ -76,7 +80,6 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("MedicineBallGroupActivity onResume");
         //设置基点
 //        mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232,
 //                SerialConfigs.CMD_MEDICINE_BALL_SET_BASE_POINT));
@@ -87,6 +90,11 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public int setTestCount() {
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return baseStuPair.getTestNo();
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
@@ -101,7 +109,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair baseStuPair) {
-        LogUtils.operation("实心球开始测试:" + baseStuPair.toString());
+        LogUtils.operation("实心球开始测试:" + baseStuPair.getStudent().toString());
         startFlag = true;
         this.baseStuPair = baseStuPair;
         this.baseStuPair.setTestTime(System.currentTimeMillis() + "");
@@ -187,7 +195,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     }
 
     private void sendFree() {
-        LogUtils.normal("实心球设备空闲指令:" + SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+        LogUtils.serial("实心球设备空闲指令:"    + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
         mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
     }
 
@@ -213,7 +221,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             checkFlag = false;
             PROMPT_TIMES++;
             //只做两次提醒
-            LogUtils.normal("实心球设备空闲指令:" + SerialConfigs.CMD_MEDICINE_BALL_EMPTY.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
+            LogUtils.serial("实心球设备空闲指令:" +  StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_EMPTY));
 
             if (PROMPT_TIMES >= 2 && PROMPT_TIMES < 4) {
@@ -266,7 +274,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             updateTestResult(stuPair);
             updateDevice(stuPair.getBaseDevice());
             // 发送结束命令
-            LogUtils.normal("实心球结束指令:" + SerialConfigs.CMD_MEDICINE_BALL_STOP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
+            LogUtils.serial("实心球结束指令:"  + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
             mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
 
             testState = TestState.UN_STARTED;
@@ -280,7 +288,7 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 发送结束命令
-                LogUtils.normal("实心球结束指令:" + SerialConfigs.CMD_MEDICINE_BALL_STOP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
+                LogUtils.serial("实心球结束指令:"  + StringUtility.bytesToHexString(SerialConfigs.CMD_MEDICINE_BALL_STOP));
                 mSerialManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_MEDICINE_BALL_STOP));
                 testState = TestState.UN_STARTED;
                 dialog.dismiss();
@@ -299,12 +307,11 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.life("MedicineBallGroupActivity onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();
-        mSerialManager.close();
-        checkService.shutdown();
+        mSerialManager.setRS232ResiltListener(null);
+//        checkService.shutdown();
 
     }
 

@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -11,66 +12,69 @@ import com.orhanobut.logger.utils.LogUtils;
 
 public class VitalCapacityNewResult {
 
-	public VitalCapacityNewResult(byte [] data){
-		power = (data[15]&0xff);
-		deviceId = (data[6]&0xff);
-		capacity = ((data[13] & 0xff) << 8) + (data[14] & 0xff);
-		state = (data[12]&0xff);
-		index = (data[7]&0xff);
-		if (index == 1 || index == 2)
-		    frequency = (data[12]&0xff);
-		    hostId = data[5];
-		velocity = (data[13]&0xff);
-		LogUtils.normal("肺活量返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+    public VitalCapacityNewResult(byte[] data) {
+        power = (data[15] & 0xff);
+        deviceId = (data[6] & 0xff);
+        capacity = ((data[13] & 0xff) << 8) + (data[14] & 0xff);
+        state = (data[12] & 0xff);
+        index = (data[7] & 0xff);
+        if (index == 1 || index == 2)
+            frequency = (data[12] & 0xff);
+        hostId = data[5];
+        velocity = (data[13] & 0xff);
 
-	}
-	private int deviceId ;
-	private int power ;
-	private int state ;
-	private int capacity ;
-	private int frequency ;
+        LogUtils.serial("肺活量返回状态(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("肺活量返回状态(解析后):" + toString());
+    }
+
+    private int deviceId;
+    private int power;
+    private int state;
+    private int capacity;
+    private int frequency;
     private int index;
     private int velocity;
     private int hostId;
-	public int getDeviceId() {
-		return deviceId;
-	}
 
-	public void setDeviceId(int deviceId) {
-		this.deviceId = deviceId;
-	}
+    public int getDeviceId() {
+        return deviceId;
+    }
 
-	public int getPower() {
-		return power;
-	}
+    public void setDeviceId(int deviceId) {
+        this.deviceId = deviceId;
+    }
 
-	public void setPower(int power) {
-		this.power = power;
-	}
+    public int getPower() {
+        return power;
+    }
 
-	public int getState() {
-		return state;
-	}
+    public void setPower(int power) {
+        this.power = power;
+    }
 
-	public void setState(int state) {
-		this.state = state;
-	}
+    public int getState() {
+        return state;
+    }
 
-	public int getCapacity() {
-		return capacity;
-	}
+    public void setState(int state) {
+        this.state = state;
+    }
 
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
-	}
+    public int getCapacity() {
+        return capacity;
+    }
 
-	public int getFrequency() {
-		return frequency;
-	}
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
 
-	public void setFrequency(int frequency) {
-		this.frequency = frequency;
-	}
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
 
 
     public int getIndex() {
@@ -97,17 +101,17 @@ public class VitalCapacityNewResult {
         this.hostId = hostId;
     }
 
-	@Override
-	public String toString() {
-		return "VitalCapacityNewResult{" +
-				"deviceId=" + deviceId +
-				", power=" + power +
-				", state=" + state +
-				", capacity=" + capacity +
-				", frequency=" + frequency +
-				", index=" + index +
-				", velocity=" + velocity +
-				", hostId=" + hostId +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "VitalCapacityNewResult{" +
+                "deviceId=" + deviceId +
+                ", power=" + power +
+                ", state=" + state +
+                ", capacity=" + capacity +
+                ", frequency=" + frequency +
+                ", index=" + index +
+                ", velocity=" + velocity +
+                ", hostId=" + hostId +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.situp.setting;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.jump_rope.base.setting.RadioSettingContract;
@@ -21,6 +22,7 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
         super(context, view);
         this.context = context;
         setting = SharedPrefsUtil.loadFormSource(context, SitUpSetting.class);
+
     }
 
     @Override
@@ -67,6 +69,10 @@ public class SitUpSettingPresenter extends AbstractRadioSettingPresenter {
     protected void saveSettings() {
         SharedPrefsUtil.save(context, setting);
         Logger.i("situp setting changed:" + setting.toString());
+    }
+
+    public void setLedShow(boolean show){
+        setting.setShowLed(show);
     }
 
 }

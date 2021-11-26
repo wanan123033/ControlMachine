@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -40,9 +41,10 @@ public class SargentJumpResult{
 		if (data[7] == 0x01){
 		    hostId = data[11];
         }
-//		Log.i("sargent",StringUtility.bytesToHexString(data));
-        LogUtils.normal("跳远返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
+
+        LogUtils.serial("跳远返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("跳远返回数据(解析后):" + toString());
     }
 	
 	public int getScore(){

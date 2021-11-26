@@ -41,6 +41,7 @@ import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -79,8 +80,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
-    //    @BindView(R.id.txt_start_test)
-//    TextView txtStartTest;
+    @BindView(R.id.txt_start_test)
+    public TextView txtStartTest;
     @BindView(R.id.tv_base_height)
     TextView tvBaseHeight;
     @BindView(R.id.txt_stu_skip)
@@ -92,7 +93,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     @BindView(R.id.tv_device_pair)
     public TextView tvDevicePair;
     @BindView(R.id.tv_start_test)
-    public TextView txtStartTest;
+    public TextView tvStartTest;
     @BindView(R.id.tv_exit_test)
     TextView tvExitTest;
     @BindView(R.id.tv_stop_test)
@@ -235,43 +236,50 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         addStudent(student);
     }
 
-    @OnClick({R.id.txt_stu_skip,  R.id.txt_led_setting,
+    @OnClick({R.id.txt_stu_skip, R.id.txt_led_setting, R.id.txt_start_test,
             R.id.tv_start_test, R.id.tv_exit_test, R.id.tv_stop_test, R.id.tv_abandon_test, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_AFR:
+                LogUtils.operation("点击人脸识别");
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;
             case R.id.txt_led_setting:
+                LogUtils.operation("点击LED设置：");
                 toLedSetting();
                 break;
             case R.id.tv_exit_test://退出与跳过功能一致
+                LogUtils.operation("点击退出");
                 if (pair.getStudent() != null) {
                     stuSkipDialog(1);
                 }
                 break;
             case R.id.txt_stu_skip:
+                LogUtils.operation("点击跳过");
                 if (pair.getStudent() != null) {
                     stuSkipDialog(0);
                 }
                 break;
-//            case R.id.txt_start_test:
-//
-//                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-//                    sendTestCommand(pair);
-//                }
-//
-//                break;
+            case R.id.txt_start_test:
+                LogUtils.operation("点击开始测试");
+                if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
+                    sendTestCommand(pair);
+                }
+
+                break;
             case R.id.tv_start_test:
+                LogUtils.operation("点击开始测试");
                 setTextViewsVisibility(false, false, false, true, true);
                 pullStart();
                 break;
 
             case R.id.tv_stop_test:
+                LogUtils.operation("点击开始停止");
                 pullStop();
                 break;
             case R.id.tv_abandon_test:
+                LogUtils.operation("点击放弃");
                 pullAbandon();
                 break;
         }
@@ -385,7 +393,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
                 if (pair.getStudent() != null)
-                    Logger.i("stuSkip:" + pair.getStudent().toString());
+                    LogUtils.operation("跳过考生:" + pair.getStudent().toString());
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 clearHandler.sendEmptyMessageDelayed(0, 0);
@@ -493,19 +501,25 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
-            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
+            if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
                 // 这个时候就要同时修改这两个成绩了
                 roundResult.setIsLastResult(1);
                 bestResult.setIsLastResult(0);
                 DBManager.getInstance().updateRoundResult(bestResult);
             } else {
-                roundResult.setIsLastResult(0);
+                if (bestResult.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                    roundResult.setIsLastResult(1);
+                    bestResult.setIsLastResult(0);
+                    DBManager.getInstance().updateRoundResult(bestResult);
+                } else {
+                    roundResult.setIsLastResult(0);
+                }
             }
         } else {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-
+        LogUtils.operation("保存成绩：" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
 
 
@@ -560,7 +574,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     public void updateVision(BaseStuPair baseStuPair) {
         txtStuResult.setText("左眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()) + "\n右眼力:" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()));
         refreshDevice();
-        Log.e("552", mLEDManager + "");
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "左视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getResult()),
                 0, 1, false, true);
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "右视力：" + ResultDisplayUtils.getStrResultForDisplay(baseStuPair.getBaseHeight()),
@@ -685,7 +698,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 activity.resultList.clear();
                 activity.resultList.addAll(Arrays.asList(activity.result));
                 activity.adapter.notifyDataSetChanged();
-                activity.setTextViewsVisibility(false,false,false,false,false);
+                activity.setTextViewsVisibility(false, false, false, false, false);
             }
 
         }
@@ -701,7 +714,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 //    @BindView(R.id.tv_abandon_test)
 //    TextView tvAbandonTest;
     public void setTextViewsVisibility(boolean start, boolean exit, boolean stop, boolean count, boolean abandon) {
-        txtStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
+        tvStartTest.setVisibility(start ? View.VISIBLE : View.GONE);
         tvExitTest.setVisibility(exit ? View.VISIBLE : View.GONE);
         tvStopTest.setVisibility(stop ? View.VISIBLE : View.GONE);
         if (!TextUtils.isEmpty(tvTimeCount.getText().toString())) {

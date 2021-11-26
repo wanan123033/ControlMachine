@@ -13,7 +13,7 @@ public class RunTimerSetting {
     /**
      * 精确度 百分位 /十分位
      */
-    private boolean isSecond = false;
+    private int digital = 2;
     /**
      * 拦截点 起始点1 /终点2 两者都选3
      */
@@ -120,12 +120,12 @@ public class RunTimerSetting {
         isFullReturn = fullReturn;
     }
 
-    public boolean isSecond() {
-        return isSecond;
+    public int getDigital() {
+        return digital;
     }
 
-    public void setSecond(boolean second) {
-        isSecond = second;
+    public void setDigital(int digital) {
+        this.digital = digital;
     }
 
     public int getInterceptPoint() {
@@ -156,7 +156,7 @@ public class RunTimerSetting {
     public String toString() {
         return "SportTimerSetting{" +
                 "isFullReturn=" + isFullReturn +
-                ", isSecond=" + isSecond +
+                ", digital=" + digital +
                 ", interceptPoint=" + interceptPoint +
                 ", testModel=" + testModel +
                 ", testTimes=" + testTimes +

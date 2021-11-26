@@ -40,12 +40,6 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 return;
             }
 
-//            //todo 视力只是按键，做特殊处理解析
-//            if ((readLength[0] & 0xff) == 0xaa) {
-//                byte[] data = new byte[readLength.length + 1];
-//                mInputStream.read(data, 1, 4);
-//                return;
-//            }
             while (mInputStream.available() < 1) {
                 Thread.sleep(10);
             }
@@ -76,8 +70,6 @@ public class RadioReadRunnable extends SerialReadRunnable {
             byte[] checksum = new byte[1];
             mInputStream.read(checksum);
 
-            // TODO: 2017/12/4 14:19 we should check checksum here
-
             //read packet end
             byte[] packetEnd = new byte[2];
             mInputStream.read(packetEnd);
@@ -86,6 +78,9 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 //如果这之前有数据写入,会被丢弃,这里直接返回即可
                 //直接返回的话,就可能存在无法找到正确的协议头,导致连续丢帧
 //				throwData();
+                return;
+            }
+            if (data.length == 0) {
                 return;
             }
             // 工厂模式
@@ -104,18 +99,20 @@ public class RadioReadRunnable extends SerialReadRunnable {
                 case 0xd1://无线868->安卓
                     Radio868Result result = new Radio868Result(data);
                     msg.what = result.getType();
+                    msg.arg1 = 0xd1;
                     msg.obj = result.getResult();
 //					Log.i("radio 868 receive", StringUtility.bytesToHexString(data));
                     break;
                 case 0XD2://232->安卓
                     RS232Result rs232Result = new RS232Result(data);
                     msg.what = rs232Result.getType();
+                    msg.arg1 = 0XD2;
                     msg.obj = rs232Result.getResult();
                     break;
                 case 0xE0://电量
-                    msg.arg1=data[0]& 0xff;//充电状态
-                    msg.arg2=data[1]& 0xff;//电量百分比
-                    msg.what =SerialConfigs.CONVERTER_KWH_RESPONSE;
+                    msg.arg1 = data[0] & 0xff;//充电状态
+                    msg.arg2 = data[1] & 0xff;//电量百分比
+                    msg.what = SerialConfigs.CONVERTER_KWH_RESPONSE;
                     break;
             }
         } catch (IOException e) {

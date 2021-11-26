@@ -41,7 +41,6 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     @Override
     protected void initData() {
         super.initData();
-
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
         state = WAIT_BEGIN;
         tvDevicePair.setVisibility(View.VISIBLE);
@@ -63,7 +62,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
-        return builder.setTitle(title) .addRightText("外接屏幕", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("外接屏幕", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isConfigurableNow()) {
@@ -106,7 +105,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
         state = WAIT_BEGIN;
         pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
         updateDevice(pair.getBaseDevice());
-        setTextViewsVisibility(true,true,false,false,false);
+        setTextViewsVisibility(true, true, false, false, false);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
     @Override
     public void pullStop() {
         state = WAIT_CONFIRM;
-        setTextViewsVisibility(false,false,false,false,false);
+        setTextViewsVisibility(false, false, false, false, false);
         facade.stopTest();
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END));
         pair.setEndTime(DateUtil.getCurrentTime());
@@ -156,7 +155,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
             public void run() {
                 setShowLed(pair);
                 pair.setStartTime(DateUtil.getCurrentTime());
-                setTextViewsVisibility(false,false,true,false,true);
+                setTextViewsVisibility(false, false, true, false, true);
             }
         });
     }
@@ -245,7 +244,7 @@ public class PullUpIndividualActivity extends BasePersonTestActivity
                 break;
 
             case UPDATE_SCORE:
-                if (!isStopped){
+                if (!isStopped) {
                     PullUpStateResult result = (PullUpStateResult) msg.obj;
                     pair.setResult(result.getResult());
                     pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);

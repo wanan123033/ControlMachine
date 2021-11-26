@@ -19,7 +19,7 @@ public class SportDeviceAdapter extends BaseQuickAdapter <DeviceState,BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, DeviceState item) {
         helper.setText(R.id.device_title,item.getDeviceId()+"");
-        helper.setText(R.id.title,item.getDeviceState() == 1?"√" : "X");
-        helper.setTextColor(R.id.title,item.getDeviceState() == 1? Color.YELLOW:Color.RED);
+        helper.setText(R.id.title,item.getDeviceState() == 0?"X" : "√");
+        helper.setTextColor(R.id.title,item.getDeviceState() == 0? Color.RED:Color.YELLOW);
     }
 }

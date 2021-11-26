@@ -29,6 +29,7 @@ import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.VolleyBallGroupStuAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -37,6 +38,7 @@ import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -122,7 +124,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
     private String name;
     private String testDate;
     private boolean saved;
-
+    List<BaseStuPair> stuPairs;
     protected int setLayoutResID() {
         return R.layout.activity_basket_ball_shoot_group;
     }
@@ -145,8 +147,10 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         tvGroupName.setText(String.format(Locale.CHINA, "%s第%d组", type, group.getGroupNo()));
         //获取分组学生数据
         TestCache.getInstance().init();
-        pairs = CheckUtils.newPairs(((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu")).size());
-        LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
+
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        pairs = CheckUtils.newPairs(stuPairs.size(),stuPairs);
+//        LogUtils.operation("篮球获取到分组学生:" + pairs.size() + "---" + pairs.toString());
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
@@ -683,9 +687,20 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setRoundNo(roundNo);
+        if (pairs.get(position()).getCurrentRoundNo() != 0){
+            roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
+            pairs.get(position()).setCurrentRoundNo(0);
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setRoundNo(roundNo);
+            roundResult.setResultTestState(0);
+        }
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(testDate);
@@ -708,10 +723,14 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         }
         LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
+        SystemSetting setting = SettingHelper.getSystemSetting();
+
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-
+        if (studentItem.getExamType() == 2){
+            continuousTestNext();
+        }
     }
 
     /**

@@ -430,6 +430,10 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         } else {
             prepareForFinish();
         }
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+        if (studentItem.getExamType() == 2){
+            prepareForFinish();
+        }
     }
 
     private boolean shouldContinue(int result) {
@@ -554,7 +558,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
             uploadResults.add(new UploadResults(scheduleNo,
                     TestConfigs.getCurrentItemCode(), student.getStudentCode()
                     , testNo, null, RoundResultBean.beanCope(roundResultList)));
-            LogUtils.operation("自动上传成绩:" + uploadResults.toString());
+//            LogUtils.operation("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
         }
     }
@@ -618,7 +622,6 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
     @Override
     public void finish() {
-        LogUtils.life("PushUpIndividualActivity finish");
         if (!isConfigurableNow()) {
             toastSpeak("测试中,不允许退出当前界面");
             return;
@@ -652,6 +655,9 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     @Override
     public void onScoreArrived(SitPushUpStateResult result, int intervalCount) {
         if (isConfigurableNow()) {
+            return;
+        }
+        if (state == WAIT_CONFIRM){
             return;
         }
         Message msg = Message.obtain();
@@ -781,11 +787,19 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                     InteractUtils.toastSpeak(PushUpIndividualActivity.this, "该考生已测试");
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 onIndividualCheckIn(student, studentItem, results);
             }
         });
-
-
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
     }
 }

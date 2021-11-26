@@ -79,8 +79,8 @@ public class BaseDeviceState implements Serializable {
     @Override
     public String toString() {
         return "BaseDeviceState{" +
-                "state=" + state +
-                ", deviceId=" + deviceId +
+                "状态=" + state +
+                ", 设备Id=" + deviceId +
                 '}';
     }
 

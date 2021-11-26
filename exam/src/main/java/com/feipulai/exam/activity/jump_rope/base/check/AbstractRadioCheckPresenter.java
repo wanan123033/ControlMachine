@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.base.check;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.GetStateLedFacade;
 import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
@@ -14,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
@@ -55,12 +57,22 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.context = context;
     }
 
+    List stuPairs;
+
     @Override
     public void start() {
         setting = getSetting();
         systemSetting = SettingHelper.getSystemSetting();
         mLEDManager = new LEDManager();
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+
+        stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN
+                || TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
+        } else {
+            pairs = TestCache.getInstance().getTestingPairs();
+        }
+
         mCurrentConnect = new int[pairs.size() + 1];
         TestCache.getInstance().init();
         view.initView(systemSetting, setting, pairs);
@@ -72,7 +84,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         }
         RadioManager.getInstance().setOnRadioArrived(this);
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length + "---" + StringUtility.bytesToHexString(command.getCommand()) + "---切频指令");
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         facade = new GetStateLedFacade(this);
         facade.setmGetDeviceStatesLoopCount(getDeviceStatesLoopCount());
@@ -100,15 +112,23 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     public void showStuInfo(int position) {
         StuDevicePair pair = pairs.get(position);
         Student student = pair.getStudent();
-        List<RoundResult> resultList = TestCache.getInstance().getResults().get(student);
-        view.showStuInfo(student, resultList);
+        try {
+            if (TestCache.getInstance().getResults() != null) {
+                List<RoundResult> resultList = TestCache.getInstance().getResults().get(student);
+                view.showStuInfo(student, resultList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
     public void refreshEveryThing() {
         TestCache.getInstance().init();
         focusPosition = 0;
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
         view.refreshPairs(pairs);
         view.showStuInfo(null, null);
         resetLED();
@@ -160,7 +180,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             checkBeforeTest(true);
         }
         TestCache testCache = TestCache.getInstance();
-        Logger.i("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
+        LogUtils.operation("用户点击开始测试,所有考生信息:" + testCache.getAllStudents()
                 + "\n设备配对信息:" + testCache.getTestingPairs()
                 + "\n设置项信息:" + setting.toString());
     }
@@ -238,7 +258,8 @@ public abstract class AbstractRadioCheckPresenter<Setting>
     @Override
     public void settingChanged() {
         if (pairs != null && pairs.size() != getDeviceSumFromSetting()) {
-            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            List<StuDevicePair> newPairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
+            focusPosition = 0;
             for (int i = 0; i < pairs.size(); i++) {
                 if (i == newPairs.size()) {
                     break;
@@ -287,6 +308,15 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (int i = 0; i < pairs.size(); i++) {
             StuDevicePair pair = pairs.get(i);
             Student stu = pair.getStudent();
+            if (results!=null){
+                for (RoundResult result : results) {
+                    if (result.getIsDelete()) {
+                        pair.setCurrentRoundNo(result.getRoundNo());
+                        pair.setIsAgain(true);
+                    }
+                }
+            }
+
             if (stu != null && stu.getStudentCode().equals(student.getStudentCode())) {
                 view.showToast("该考生已绑定设备");
                 return;
@@ -337,6 +367,8 @@ public abstract class AbstractRadioCheckPresenter<Setting>
 
         facade.letDisplayWait3Sec();
         facade.resume();
+
+        TestCache.getInstance().setTestingPairs(pairs);
     }
 
     @Override
@@ -380,4 +412,13 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         endTest();
     }
 
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs) {
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())) {
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
+    }
 }

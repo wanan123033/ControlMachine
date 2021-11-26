@@ -1,12 +1,16 @@
 package com.feipulai.host.activity.vccheck;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.manager.VitalCapacityManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -35,6 +39,7 @@ public class VitalTestActivity extends BaseMoreActivity {
     private final int GET_SCORE_RESPONSE = 2;
     int hostId = SettingHelper.getSystemSetting().getHostId();
     private int frequency = SettingHelper.getSystemSetting().getUseChannel();
+    GripSetting setting;
     ;
     //    private int velocity = SerialConfigs.VITAL_VELOCITY;
     private int VERSION = 363;
@@ -42,29 +47,35 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void initData() {
         super.initData();
+        setting = SharedPrefsUtil.loadFormSource(this,GripSetting.class);
+        if (setting == null){
+            setting = new GripSetting();
+        }
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
         }
-        getToolbar().getRightView(0).setVisibility(View.GONE);
-        getToolbar().getRightView(1).setVisibility(View.GONE);
+//        getToolbar().getRightView(0).setVisibility(View.GONE);
+//        getToolbar().getRightView(1).setVisibility(View.GONE);
+//        getToolbar().getRightView(2).setVisibility(View.GONE);
     }
 
     @Override
     public void gotoItemSetting() {
-
+        Intent intent = new Intent(this,GripSettingActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public int setTestDeviceCount() {
-        return MAX_DEVICE_COUNT;
+        return setting.getDeviceSum();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.operation("VitalTestActivity onResume");
-        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+
+
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
 
         sendEmpty();
@@ -95,14 +106,15 @@ public class VitalTestActivity extends BaseMoreActivity {
      * @param deviceId 设备号
      */
     private void cmd(int index, int deviceId, int cmd) {
-        byte[] data = {(byte) 0xAB, (byte) index, 0x10, 0x02, (byte) deviceId, (byte) cmd, (byte) frequency, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0A};
-        int sum = 0;
-        for (int i = 0; i < data.length - 2; i++) {
-            sum += data[i];
-        }
-        data[14] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        VitalCapacityManager.cmd(index,deviceId,cmd,frequency);
+//        byte[] data = {(byte) 0xAB, (byte) index, 0x10, 0x02, (byte) deviceId, (byte) cmd, (byte) frequency, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0A};
+//        int sum = 0;
+//        for (int i = 0; i < data.length - 2; i++) {
+//            sum += data[i];
+//        }
+//        data[14] = (byte) sum;
+//        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
 
     }
 
@@ -110,27 +122,28 @@ public class VitalTestActivity extends BaseMoreActivity {
      * 新版本一对多控制命令
      */
     private void command(int deviceId, int cmd) {
-        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
-
-        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
-            data[2] = 0x0c;
-        } else {
-            data[2] = 0x09;
-        }
-        int sum = 0;
-        for (int i = 1; i < data.length - 2; i++) {
-            sum += data[i];
-        }
-        data[16] = (byte) sum;
-        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
-        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        VitalCapacityManager.command(deviceId,cmd,hostId);
+//        byte[] data = {(byte) 0xAA, 0x12, 0x09, 0x03, 0x01, (byte) hostId, (byte) deviceId, (byte) cmd,
+//                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x00, 0x0D};
+//
+//        if (MachineCode.machineCode == ItemDefault.CODE_WLJ) {
+//            data[2] = 0x0c;
+//        } else {
+//            data[2] = 0x09;
+//        }
+//        int sum = 0;
+//        for (int i = 1; i < data.length - 2; i++) {
+//            sum += data[i];
+//        }
+//        data[16] = (byte) sum;
+//        LogUtils.normal("肺活量开始测试指令:"+ StringUtility.bytesToHexString(data));
+//        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
     }
 
     public void sendEmpty() {
         LogUtils.operation("肺活量 sendEmpty");
         Log.i(TAG, "send_empty");
-        for (int i = 0; i < deviceState.length; i++) {
+        for (int i = 0; i < setTestDeviceCount(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();
             if (deviceState[i] == 0) {
                 if (baseDevice.getState() != BaseDeviceState.STATE_ERROR) {
@@ -163,8 +176,6 @@ public class VitalTestActivity extends BaseMoreActivity {
             }
         }
         mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
-
-
     }
 
 
@@ -209,7 +220,6 @@ public class VitalTestActivity extends BaseMoreActivity {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getResult(), detail.getStuDevicePair());
                         }
-
                     }
                     break;
                 case SEND_EMPTY:

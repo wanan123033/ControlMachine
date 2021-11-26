@@ -236,7 +236,7 @@ public class DeviceListAdapter extends BaseMultiItemQuickAdapter<DeviceDetail, B
                 }
 
                 oneViewHolder.txtStart.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
-                oneViewHolder.txtConfirm.setVisibility(item.isConfirmVisible() ? View.GONE : View.VISIBLE);
+                oneViewHolder.txtConfirm.setVisibility(item.isConfirmVisible() ? View.VISIBLE : View.GONE);
                 if (!isNextClickStart) {
                     oneViewHolder.txtStart.setVisibility(View.GONE);
                 }

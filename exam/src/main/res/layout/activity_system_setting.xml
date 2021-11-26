@@ -90,7 +90,8 @@
                     android:gravity="center"
                     android:imeOptions="actionDone"
                     android:inputType="textUri"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:text="192.168.1.100:7979" />
 
                 <TextView
                     android:id="@+id/btn_default"
@@ -337,6 +338,29 @@
                     android:layout_height="35dp"
                     android:layout_marginLeft="30dp"
                     android:background="@drawable/icon_spinner_bg" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_afr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="人脸对比相似度:" />
+
+                <Spinner
+                    android:id="@+id/sp_afr"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/icon_spinner_bg"
+                    android:entries="@array/afr_list"
+                    android:paddingLeft="20dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -658,6 +682,25 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_device_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="硬件版本号：" />
+
+                <TextView
+                    android:id="@+id/txt_device_version"
+                    style="@style/style_setting_tv_title" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -694,20 +737,20 @@
                     android:textColor="@color/white" />
 
 
-
                 <Button
                     android:id="@+id/btn_face_init"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/btn_click_bg_selected"
                     android:text="人脸识别激活"
-                    android:layout_marginLeft="20dp"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -731,9 +774,9 @@
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/btn_click_bg_selected"
                     android:text="发令语音设置"
-                    android:layout_marginLeft="20dp"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
             </LinearLayout>

@@ -72,7 +72,6 @@ public class EncryptUtil {
 //        String data = gson.toJson(signData);
 //        String sign = DigestUtils.sha1Hex(data);
         String sign = new String(Hex.encodeHex(DigestUtils.sha1(signData)));
-        Logger.i("getSignData===>" + sign);
         String randomS = randomString(BASESTRING, 10);
         AES_KEY = CHECK_CODE + randomS;
         String startString = sign.substring(0, 8);
@@ -118,8 +117,6 @@ public class EncryptUtil {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] encoderStr = cipher.doFinal(paramsData.getBytes("UTF-8"));
             String hexE = new String(Hex.encodeHex(encoderStr));
-            LogUtil.logDebugMessage("加密16：" + StringChineseUtil.parseByte2HexStr(encoderStr));
-            LogUtil.logDebugMessage("加密：" + StringChineseUtil.encode(encoderStr));
             return hexE;
         } catch (Exception e) {
             e.printStackTrace();

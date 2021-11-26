@@ -1,6 +1,5 @@
 package com.feipulai.exam.activity.data;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,14 +13,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.ResultDetailAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
@@ -32,7 +34,6 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
-import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -74,7 +75,9 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     TextView tv_ins_penalizeFoul;
     private DataRetrieveBean mDataRetrieveBean;
     private ResultDetailAdapter resultDetailAdapter;
+    private SystemSetting systemSetting;
     //    private Item mCurrentItem;
+    private LEDManager ledManager;
 
     private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
         @Override
@@ -85,6 +88,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     private String itemCode;
     private int vistity;
     private int testNo;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_display;
@@ -94,11 +98,14 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     protected void initData() {
         mDataRetrieveBean = (DataRetrieveBean) getIntent().getSerializableExtra(DataRetrieveActivity.DATA_EXTRA);
         itemCode = getIntent().getStringExtra(DataRetrieveActivity.DATA_ITEM_CODE);
-
+        systemSetting = SharedPrefsUtil.loadFormSource(getApplicationContext(), SystemSetting.class);
         vistity = getIntent().getIntExtra(ISSHOWPENALIZEFOUL, View.GONE);
         testNo = getIntent().getIntExtra(TESTNO, 1);
         tv_penalizeFoul.setVisibility(vistity);
         tv_ins_penalizeFoul.setVisibility(vistity);
+        if (vistity == View.VISIBLE){
+            ledManager = new LEDManager();
+        }
         Log.e("itemCode", "---------" + itemCode);
         mTvStuCode.setText(mDataRetrieveBean.getStudentCode());
         mTvStuName.setText(mDataRetrieveBean.getStudentName());
@@ -135,7 +142,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         }
     }
 
-    private void insertRound(DataRetrieveBean mDataRetrieveBean,int testNo) {
+    private void insertRound(DataRetrieveBean mDataRetrieveBean, int testNo) {
         int roundNo = 1;
         boolean isInsert = false;
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HW) {
@@ -159,15 +166,15 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             List<RoundResult> roundResults = null;
             if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
                 roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
-            }else {
-                roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
+            } else {
+                roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getGroupId(), mDataRetrieveBean.getExamType(), mDataRetrieveBean.getScheduleNo());
             }
-            if (roundResults != null && roundResults.size() < TestConfigs.getMaxTestCount(this)){
+            if (roundResults != null && roundResults.size() < TestConfigs.getMaxTestCount(this)) {
                 roundNo = roundResults.size() + 1;
                 isInsert = true;
             }
         }
-        if (isInsert ) {
+        if (isInsert) {
             RoundResult roundResult = new RoundResult();
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             roundResult.setStudentCode(mDataRetrieveBean.getStudentCode());
@@ -215,22 +222,22 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
             displayResults();
             toastSpeak("新增成绩成功");
-        }else {
+        } else {
             toastSpeak("无法新增轮次成绩");
         }
     }
 
     private void displayHW() {
-        List<RoundResult> heightResults = null,weightResults = null;
+        List<RoundResult> heightResults = null, weightResults = null;
         if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
             heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
                     .HEIGHT_ITEM);
             weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), HWConfigs
                     .WEIGHT_ITEM);
-        }else {
-            heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+        } else {
+            heightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getGroupId(), mDataRetrieveBean.getExamType(), mDataRetrieveBean.getScheduleNo(), HWConfigs
                     .HEIGHT_ITEM);
-            weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo(), HWConfigs
+            weightResults = DBManager.getInstance().queryResultsByStudentCode(mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getGroupId(), mDataRetrieveBean.getExamType(), mDataRetrieveBean.getScheduleNo(), HWConfigs
                     .WEIGHT_ITEM);
         }
 
@@ -268,8 +275,8 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         List<RoundResult> roundResults = null;
         if (mDataRetrieveBean.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
             roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode());
-        }else {
-            roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(),mDataRetrieveBean.getGroupId(),mDataRetrieveBean.getExamType(),mDataRetrieveBean.getScheduleNo());
+        } else {
+            roundResults = DBManager.getInstance().queryResultsByStudentCode(itemCode, mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getGroupId(), mDataRetrieveBean.getExamType(), mDataRetrieveBean.getScheduleNo());
         }
 
         Collections.sort(roundResults, roundResultComparator);
@@ -302,14 +309,15 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         super.onCreate(savedInstanceState);
         LogUtils.life("DataDisplayActivity onCreate");
     }
-    @OnClick({R.id.tv_penalizeFoul,R.id.tv_ins_penalizeFoul})
-    public void onClick(View view){
+
+    @OnClick({R.id.tv_penalizeFoul, R.id.tv_ins_penalizeFoul})
+    public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_penalizeFoul:
                 penalize();
                 break;
             case R.id.tv_ins_penalizeFoul:
-                insertRound(mDataRetrieveBean,testNo);
+                insertRound(mDataRetrieveBean, testNo);
                 break;
         }
     }
@@ -327,11 +335,38 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
                             if (currentResult != null) {
                                 currentResult.setResultState(RoundResult.RESULT_STATE_FOUL);
                                 DBManager.getInstance().updateRoundResult(currentResult);
+                                RoundResult laseResult;
+                                if (currentResult.getGroupId() == RoundResult.DEAFULT_GROUP_ID) {
+                                    laseResult = DBManager.getInstance().queryLastRountScoreByExamType(mDataRetrieveBean.getStudentCode(), mDataRetrieveBean.getExamType(), itemCode);
+                                } else {
+                                    laseResult = DBManager.getInstance().queryLastRountGroupBestScore(mDataRetrieveBean.getStudentCode(), currentResult.getGroupId());
+                                }
+                                if (laseResult != null && laseResult.getIsLastResult() == 0) {
+                                    //更新最好成绩
+                                    List<RoundResult> resultList = resultDetailAdapter.getData();
+                                    for (RoundResult roundResult : resultList) {
+                                        if (roundResult.getId() == laseResult.getId()) {
+                                            roundResult.setIsLastResult(1);
+                                        } else {
+                                            roundResult.setIsLastResult(0);
+                                        }
+
+                                    }
+//                                    laseResult.setIsLastResult(1);
+                                    DBManager.getInstance().updateRoundResult(resultList);
+                                }
+
                                 EventBus.getDefault().post(new BaseEvent(currentResult, EventConfigs.UPDATE_RESULT));
                                 toastSpeak("成绩状态更新成功!");
                                 sweetAlertDialog.dismissWithAnimation();
                                 displayResults();
                                 uploadResult(currentResult);
+
+                                ledManager.showString(systemSetting.getHostId(),mDataRetrieveBean.getStudentName(),0,0,true,true);
+                                ledManager.showString(systemSetting.getHostId(),"第"+currentResult.getRoundNo()+"次",10,0,false,true);
+                                ledManager.showString(systemSetting.getHostId(),"当前：",0,1,false,true);
+                                ledManager.showString(systemSetting.getHostId(),"X",13,1,false,true);
+
                             }
 
                         }
@@ -349,6 +384,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
 
     /**
      * 上传成绩
+     *
      * @param currentResult
      */
     private void uploadResult(RoundResult currentResult) {
@@ -366,11 +402,13 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
         uploadResult(uploadResults);
 
     }
+
     private void uploadResult(UploadResults uploadResults) {
-        ServerMessage.uploadResult(this,uploadResults);
+        ServerMessage.uploadResult(this, uploadResults);
     }
 
     RoundResult currentResult;
+
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
         currentResult = resultDetailAdapter.getItem(i);

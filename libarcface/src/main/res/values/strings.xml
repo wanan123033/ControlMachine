@@ -15,7 +15,7 @@
     <string name="active_engine">激活引擎</string>
     <string name="active_success">激活引擎成功</string>
     <string name="already_activated">引擎已激活，无需再次激活</string>
-    <string name="active_failed">引擎激活失败，错误码为 %2$d,首次使用请先联网</string>
+    <string name="active_failed">人脸识别激活失败，错误码为 %2$d,首次使用请先联网</string>
     <!--<string name="library_not_found">未找到库文件，请检查是否有将.so文件放至工程的 app\\src\\main\\jniLibs 目录下</string>-->
     <string name="ft_op_0">视频模式仅检测0度</string>
     <string name="ft_op_90">视频模式仅检测90度</string>

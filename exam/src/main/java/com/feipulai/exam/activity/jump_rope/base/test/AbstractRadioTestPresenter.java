@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.CountTimingTestFacade;
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
@@ -13,12 +14,13 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.IDeviceResult;
-import com.feipulai.exam.activity.jump_rope.DeviceDispatcher;
+import com.feipulai.exam.activity.jump_rope.DeviceDispatchers;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
@@ -58,7 +60,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected RadioTestContract.View<Setting> view;
     protected int[] deviceIdPIV;
     protected boolean mLinking;
-    private DeviceDispatcher deviceDispatcher;
+    private DeviceDispatchers deviceDispatcher;
     protected int focusPosition;
     protected Handler handler;
     private HandlerThread handlerThread;
@@ -71,8 +73,18 @@ public abstract class AbstractRadioTestPresenter<Setting>
     @Override
     public void start() {
         pairs = TestCache.getInstance().getTestingPairs();
+        if (pairs.isEmpty()){
+            List<BaseStuPair> basePairStu = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+            if (basePairStu != null)
+                pairs = CheckUtils.newPairs(basePairStu.size(),basePairStu);
+        }
+        if (pairs.isEmpty()){
+            view.quitTest();
+            return;
+        }
+        Log.e("TAG-----85",pairs.toString());
         setting = getSetting();
-        deviceDispatcher = new DeviceDispatcher(TestConfigs.getMaxTestCount(context));
+        deviceDispatcher = new DeviceDispatchers(TestConfigs.getMaxTestCount(context));
         systemSetting = SettingHelper.getSystemSetting();
         int size = pairs.size();
         int possibleMaxDeviceId = pairs.get(size - 1).getBaseDevice().getDeviceId();
@@ -140,7 +152,6 @@ public abstract class AbstractRadioTestPresenter<Setting>
         testState = TEST_COUNTING;
         ToastUtils.showShort("测试开始,请勿退出当前界面");
         onTestStarted();
-
     }
 
     @Override
@@ -165,6 +176,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
         resetDeviceResults();
         testState = WAIT_BGIN;
         startTest();
+        stopDevice();
+    }
+
+    public void stopDevice() {
+
     }
 
     private void resetDeviceResults() {
@@ -205,9 +221,9 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void confirmResults() {
+        LogUtils.operation("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
         onResultConfirmed();
         resetDevices();
-        LogUtils.operation("用户手动点击确认成绩,考生设备信息:" + pairs.toString());
         // view.tickInUI("");
 
         for (StuDevicePair pair : pairs) {
@@ -235,6 +251,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
 
     @Override
     public void dispatchDevices() {
+
         boolean sucess = deviceDispatcher.dispatchDevice(pairs, getGroupModeFromSetting());
         view.updateStates();
         if (!sucess) {
@@ -309,6 +326,11 @@ public abstract class AbstractRadioTestPresenter<Setting>
         view.enableStopUse(true);
         view.tickInUI("开始");
         testState = TESTING;
+        onTestStart();
+    }
+
+    public void onTestStart() {
+
     }
 
     @Override

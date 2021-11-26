@@ -13,17 +13,21 @@ public class StuDevicePair implements Serializable {
     //设备
     private BaseDeviceState baseDevice;
     //成绩
-	private IDeviceResult deviceResult;
-	//判罚
-	private int penalty;
-	
-	public IDeviceResult getDeviceResult(){
-		return deviceResult;
-	}
-	
-	public void setDeviceResult(IDeviceResult deviceResult){
-		this.deviceResult = deviceResult;
-	}
+    private IDeviceResult deviceResult;
+    //判罚
+    private int penalty;
+    private int battery;
+
+    private int currentRoundNo;  //当前轮次
+    private boolean again = false;
+
+    public IDeviceResult getDeviceResult() {
+        return deviceResult;
+    }
+
+    public void setDeviceResult(IDeviceResult deviceResult) {
+        this.deviceResult = deviceResult;
+    }
 
     public BaseDeviceState getBaseDevice() {
         return baseDevice;
@@ -40,23 +44,46 @@ public class StuDevicePair implements Serializable {
     public void setStudent(Student student) {
         this.student = student;
     }
-	
-	public int getPenalty() {
-		return penalty;
-	}
-	
-	public void setPenalty(int penalty) {
-		this.penalty = penalty;
-	}
-	
-	@Override
-	public String toString() {
-		return "StuDevicePair{" +
-				"student=" + student +
-				", baseDevice=" + baseDevice +
-				", deviceResult=" + deviceResult +
-				", penalty=" + penalty +
-				'}';
-	}
-	
+
+    public int getPenalty() {
+        return penalty;
+    }
+
+    public void setPenalty(int penalty) {
+        this.penalty = penalty;
+    }
+
+    @Override
+    public String toString() {
+        return "StuDevicePair{" +
+                "学生=" + student +
+                ", 设备信息=" + baseDevice +
+                ", 成绩=" + deviceResult +
+                ", 判罚=" + penalty +
+                '}';
+    }
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+    }
+
+    public int getCurrentRoundNo() {
+        return currentRoundNo;
+    }
+
+    public void setCurrentRoundNo(int currentRoundNo) {
+        this.currentRoundNo = currentRoundNo;
+    }
+
+    public void setIsAgain(boolean again) {
+        this.again = again;
+    }
+
+    public boolean isAgain() {
+        return again;
+    }
 }

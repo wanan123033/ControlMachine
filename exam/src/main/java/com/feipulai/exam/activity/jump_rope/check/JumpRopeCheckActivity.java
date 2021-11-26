@@ -70,7 +70,12 @@ public class JumpRopeCheckActivity
     TextView tvConflict;
     @BindView(R.id.ll_device_group)
     LinearLayout llDeviceGroup;
-
+    @BindView(R.id.img_AFR)
+    ImageView imgAFR;
+    @Override
+    protected View getImgAFR() {
+        return imgAFR;
+    }
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_jump_rope_check;
@@ -234,7 +239,7 @@ public class JumpRopeCheckActivity
     }
 
 
-    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices,R.id.img_AFR})
+    @OnClick({R.id.btn_change_hand_group, R.id.btn_kill_devices, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -252,6 +257,7 @@ public class JumpRopeCheckActivity
 
         }
     }
+
     public void showAFR() {
         if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
             ToastUtils.showShort("未选择人脸识别检录功能");

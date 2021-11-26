@@ -1,8 +1,14 @@
 package com.feipulai.device.serial;
 
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import com.feipulai.device.serial.command.ConvertCommand;
+import com.orhanobut.logger.utils.LogUtils;
+
+import java.io.IOException;
 
 /**
  * Created by James on 2018/11/8 0008.
@@ -12,10 +18,13 @@ public class RadioManager {
 
     private SerialPorter mSerialPorter;
     private volatile OnRadioArrivedListener mOnRadioArrived;
+    private volatile OnRadioR232Listener mOnRadio232;
     private volatile OnKwhListener mOnKwhListener;
     private static volatile RadioManager instance;
     public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
+    private HandlerThread mSendingHandlerThread;
+    private Handler mSendingHandler;
 
     private RadioManager() {
     }
@@ -34,15 +43,24 @@ public class RadioManager {
         mSerialPorter = new SerialPorter(SerialParams.RADIO, new SerialPorter.OnDataArrivedListener() {
             @Override
             public void onDataArrived(Message msg) {
-                if (mOnRadioArrived != null) {
-                    mOnRadioArrived.onRadioArrived(msg);
+                if (msg.arg1 == 0XD2) {
+                    if (mOnRadio232 != null) {
+                        mOnRadio232.onRadio232(msg);
+                    }
+                } else {
+                    if (mOnRadioArrived != null) {
+                        mOnRadioArrived.onRadioArrived(msg);
+                    }
                 }
+
+
                 if (mOnKwhListener != null && msg.what == SerialConfigs.CONVERTER_KWH_RESPONSE) {
                     mOnKwhListener.onKwhArrived(msg);
                 }
             }
         });
     }
+
 
     // 程序退出时才调用
     public synchronized void close() {
@@ -59,11 +77,22 @@ public class RadioManager {
     public void setOnRadioArrived(OnRadioArrivedListener onRadioArrived) {
         mOnRadioArrived = onRadioArrived;
     }
+
+    public void setOnRadio232(OnRadioR232Listener onRadio232) {
+        mOnRadio232 = onRadio232;
+    }
+
     public void setOnKwhListener(OnKwhListener onKwhListener) {
         mOnKwhListener = onKwhListener;
     }
+
     // 这个地方必须锁住,万恶之源
     public synchronized void sendCommand(ConvertCommand convertCommand) {
+//        if (null != mSendingHandler) {
+//            Message message = Message.obtain();
+//            message.obj = convertCommand;
+//            mSendingHandler.sendMessage(message);
+//        }
         ensureInterval();
         if (mSerialPorter == null)
             return;
@@ -75,8 +104,9 @@ public class RadioManager {
             //Thread.sleep(RADIO_INTERVAL);
             long curTime = System.currentTimeMillis();
             long expectTime = mlastSendTime + RADIO_INTERVAL;
+//            LogUtils.all("ensureInterval====>");
             if (curTime < expectTime) {
-                //Log.i("james",expectTime - curTime + "");
+//                LogUtils.all("ensureInterval====>" + (expectTime - curTime) + "");
                 Thread.sleep(expectTime - curTime);
             }
             mlastSendTime = System.currentTimeMillis();
@@ -89,6 +119,10 @@ public class RadioManager {
 
     public interface OnRadioArrivedListener {
         void onRadioArrived(Message msg);
+    }
+
+    public interface OnRadioR232Listener {
+        void onRadio232(Message msg);
     }
 
     public interface OnKwhListener {

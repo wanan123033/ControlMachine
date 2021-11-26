@@ -2,9 +2,13 @@ package com.feipulai.common.utils;
 
 import android.app.AlarmManager;
 import android.content.Context;
+import android.os.SystemClock;
 
 import com.feipulai.device.udp.UdpLEDUtil;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -44,9 +48,11 @@ public class DateUtil {
     public static String getCurrentTime(String pattern) {
         return formatTime(getCurrentTime(), pattern);
     }
+
     public static long getDayTime() {
         return 24 * 60 * 60 * 1000;
     }
+
     /**
      * 获取当前时间(按指定格式).
      * <h3>Version</h3> 1.0
@@ -93,10 +99,12 @@ public class DateUtil {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));//计时时间换算不需要加8
         return sdf.format(new Date(timeMillis));
     }
+
     public static String formatTime1(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(new Date(timeMillis));
     }
+
     public static String formatTime2(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8
@@ -252,6 +260,24 @@ public class DateUtil {
         }
     }
 
+    public static String getUseTime(long caculTime) {
+
+        int day = (int) (caculTime / 1000 / 60 / 60 / 24);
+        int hour = (int) (caculTime / 1000 / 60 / 60 % 24);
+        int minute = (int) (caculTime / 1000 / 60 % 60);
+        int second = (int) (caculTime / 1000 % 60);
+
+        if (caculTime < 60 * 1000) {
+            return second + "秒";
+        } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
+            return minute + "分钟";
+        } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
+            return hour + "小时" + minute + "分钟";
+        } else {//同一年内
+            return day + "天" + hour + "小时" + minute + "分钟";
+        }
+    }
+
     /**
      * 设置时区 Asia/Shangha
      *
@@ -279,12 +305,22 @@ public class DateUtil {
 
     public static void setSysDate(Context mContext, long time) {
 //        String curr_time = "20160606.120403";
-//        UdpLEDUtil.shellExec("/system/bin/date -s " + curr_time+"\n clock -w\n");
+//        UdpLEDUtil.shellExec("/system/bin/date -s " + curr_time + "\n clock -w\n");
 //        String curr_time = "052514412019.52";
-        String curr_time = formatTime(time, "MMddhhmmyyyy.ss");
+
+        String curr_time = formatTime1(time, "MMddHHmmyyyy.ss");
         LogUtil.logDebugMessage(curr_time);
         UdpLEDUtil.shellExec("date " +
                 curr_time + "\n busybox hwclock -w \n");
+//        Calendar c = Calendar.getInstance();
+//        c.set(c.YEAR, 2016);
+//        c.set(c.MONTH, 1);
+//        c.set(c.DAY_OF_MONTH, 1);
+//        c.set(c.HOUR, 1);
+//        c.set(c.MINUTE, 1);
+//        Long value = c.getTimeInMillis();
+//        SystemClock.setCurrentTimeMillis(value);
 
     }
+
 }

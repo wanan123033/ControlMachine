@@ -50,7 +50,7 @@ public class SerialPorter {
     }
 
     private void startReading(SerialParams config) {
-        Log.e("TAG",config +"---------");
+        Log.e("TAG", config + "---------");
         switch (config) {
 
             case QR_CODE:
@@ -79,7 +79,7 @@ public class SerialPorter {
 
     public void sendCommand(ConvertCommand cmd) {
         byte[] toSend = cmd.getCmdBytes();
-        LogUtils.all(StringUtility.bytesToHexString(toSend));
+        LogUtils.normal(StringUtility.bytesToHexString(toSend));
 ////        //TODO 添加写入文件给测试用
 //        DistanceParser.writeFileByString(DistanceParser.PATH_BASE, "PARSER_DEVICE_RETURN.txt", "发送==》" + DistanceParser.bytes2HexString(toSend));
         sendCommand(toSend);

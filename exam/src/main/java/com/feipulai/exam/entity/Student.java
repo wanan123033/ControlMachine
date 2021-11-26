@@ -20,6 +20,7 @@ import org.greenrobot.greendao.annotation.Unique;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 作者 王伟
@@ -274,19 +275,11 @@ public class Student implements Serializable {
     @Override
     public String toString() {
         return "Student{" +
+                ", 考号='" + studentCode + '\'' +
+                ", 姓名='" + studentName + '\'' +
+                ", 姓别=" + sex +
+                ", 身份证号='" + idCardNo + '\'' +
                 "id=" + id +
-                ", studentCode='" + studentCode + '\'' +
-                ", studentName='" + studentName + '\'' +
-                ", sex=" + sex +
-                ", idCardNo='" + idCardNo + '\'' +
-                ", icCardNo='" + icCardNo + '\'' +
-                ", className='" + className + '\'' +
-                ", schoolName='" + schoolName + '\'' +
-                ", downloadTime='" + downloadTime + '\'' +
-                ", studentItemList=" + studentItemList +
-                ", remark1='" + remark1 + '\'' +
-                ", remark2='" + remark2 + '\'' +
-                ", remark3='" + remark3 + '\'' +
                 // ", daoSession=" + daoSession +
                 // ", myDao=" + myDao +
                 '}';
@@ -320,6 +313,21 @@ public class Student implements Serializable {
 
     public String getSpeakStuName() {
         return StringChineseUtil.toChinese(studentName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return sex == student.sex &&
+                studentCode.equals(student.studentCode) &&
+                studentName.equals(student.studentName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentCode, studentName, sex);
     }
 
     /** called by internal mechanisms, do not call yourself. */

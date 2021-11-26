@@ -18,7 +18,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapter.ViewHolder>{
+public class NewDevicePairAdapter extends RecyclerView.Adapter<NewDevicePairAdapter.ViewHolder>{
     protected List<DeviceCollect> stuPairs;
     private int selectedPosition;
 
@@ -28,7 +28,7 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
 
     private int device =1;//1 腰带 2肩胛
     //private Context mContext;
-    private DeviceChangeAdapter.OnItemClickListener mOnItemClickListener;
+    private OnItemClickListener mOnItemClickListener;
 
     public NewDevicePairAdapter(Context context, List<DeviceCollect> stuPairs) {
         //mContext = context;
@@ -45,20 +45,20 @@ public class NewDevicePairAdapter extends RecyclerView.Adapter<DeviceChangeAdapt
     public void setSelectDevice(int device){
         this.device = device;
     }
-    public void setOnItemClickListener(DeviceChangeAdapter.OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
 
     @Override
-    public DeviceChangeAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+    public NewDevicePairAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.rv_stu_dev_item, parent, false);
-        return new DeviceChangeAdapter.ViewHolder(v);
+        return new NewDevicePairAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final DeviceChangeAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final NewDevicePairAdapter.ViewHolder holder, int position) {
         DeviceCollect pair = stuPairs.get(position);
         holder.mTvSitUp.setVisibility(View.VISIBLE);
         holder.mTvShoulder.setVisibility(View.VISIBLE);

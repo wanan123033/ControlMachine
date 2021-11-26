@@ -75,7 +75,10 @@ public abstract class BaseGroupActivity extends BaseCheckActivity {
     private int testNo;       //测试次数
     private int currentStudentIndex;  //当前正在测试的学生下标
 
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
 
+    }
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {

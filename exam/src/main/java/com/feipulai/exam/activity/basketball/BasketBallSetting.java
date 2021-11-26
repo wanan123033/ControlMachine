@@ -11,11 +11,11 @@ public class BasketBallSetting {
     public static final int WIRELESS_TYPE = 1;
     private boolean autoPair = true;
     private int testNo = 1;// 允许测试的次数
-    private int interceptSecond = 5;//默认5秒
-    private int sensitivity = 15;//灵敏度
+    private int interceptSecond = 2;//默认5秒
+    private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
-    private int penaltySecond;//违例罚秒
+    private double penaltySecond;//违例罚秒
     /**
      * 满分跳过
      */
@@ -26,8 +26,16 @@ public class BasketBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private int testType = 0;//0有线 1无线
+    private int testType = 0;//0有线 1无线 3无线6.6版本
+    private int deviceVersion = 0;//0:6.4 1无线6.6版本
 
+    public int getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(int deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
     public int getTestNo() {
         return testNo;
     }
@@ -68,11 +76,11 @@ public class BasketBallSetting {
         this.post = post;
     }
 
-    public int getPenaltySecond() {
+    public double getPenaltySecond() {
         return penaltySecond;
     }
 
-    public void setPenaltySecond(int penaltySecond) {
+    public void setPenaltySecond(double penaltySecond) {
         this.penaltySecond = penaltySecond;
     }
 
@@ -128,7 +136,8 @@ public class BasketBallSetting {
     @Override
     public String toString() {
         return "BasketBallSetting{" +
-                "testNo=" + testNo +
+                "autoPair=" + autoPair +
+                ", testNo=" + testNo +
                 ", interceptSecond=" + interceptSecond +
                 ", sensitivity=" + sensitivity +
                 ", hostIp='" + hostIp + '\'' +
@@ -138,6 +147,8 @@ public class BasketBallSetting {
                 ", maleFullScore=" + maleFullScore +
                 ", femaleFullScore=" + femaleFullScore +
                 ", testPattern=" + testPattern +
+                ", testType=" + testType +
+                ", deviceVersion=" + deviceVersion +
                 '}';
     }
 }

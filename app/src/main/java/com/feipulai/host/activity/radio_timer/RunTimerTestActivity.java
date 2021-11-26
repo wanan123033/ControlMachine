@@ -202,11 +202,12 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
 
     @Override
     protected void onResume() {
-        LogUtils.operation("RunTimerTestActivity onResume");
+        LogUtils.all("RunTimerTestActivity onResume");
         super.onResume();
         if (reLoad) {
             initView();
         }
+        getSetting();
     }
 
     private void showPop(int pos, View view) {
@@ -299,7 +300,7 @@ public class RunTimerTestActivity extends BaseRunTimerActivity {
                         BaseStuPair baseStuPair = new BaseStuPair();
                         baseStuPair.setStudent(runStudent.getStudent());
                         baseStuPair.setResult(runStudent.getOriginalMark());
-                        baseStuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
+                        baseStuPair.setResultState(runStudent.getOriginalMark() == 0? RoundResult.RESULT_STATE_WAIVE:RoundResult.RESULT_STATE_NORMAL);
                         baseStuPair.setStartTime(startTime);
                         baseStuPair.setEndTime(DateUtil.getCurrentTime());
                         disposeManager.saveResult(baseStuPair);

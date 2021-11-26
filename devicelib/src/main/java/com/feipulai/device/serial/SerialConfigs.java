@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class SerialConfigs {
 
+    public static int LOGGER_STATE = 0;
 
     private SerialConfigs() {
     }
@@ -302,4 +303,8 @@ public class SerialConfigs {
 
     public static final int CONVERTER_KWH_RESPONSE = 0x87;
     public static final int NEW_SIT_UP_SHOULDER = 0x88;
+    public static final int NEW_SIT_UP_SHOULDER_CONNECT = 0x89;
+    public static final int NEW_SIT_UP_SHOULDER_SYNC_TIME = 0x8A;
+    public static final int NEW_SIT_UP_SHOULDER_SYNC_STATE = 0x8B;
+    public static final int NEW_SIT_UP_SHOULDER_DATA = 0x8C;
 }

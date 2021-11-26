@@ -40,7 +40,7 @@ public class ServerMessage {
      *
      * @param context
      */
-    public static void downloadData(final Context context, final int examType) {
+    public static void downloadData(final Context context, final int examType, final String downTime) {
         itemList = null;
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
@@ -63,20 +63,20 @@ public class ServerMessage {
                         if (itemList != null) {
                             for (int i = 0; i < itemList.size(); i++) {
                                 if (!TextUtils.isEmpty(itemList.get(i).getItemCode())) {
-                                    subscriber.getItemStudent(itemList.get(i).getItemCode(), 1, examType);
+                                    subscriber.getItemStudent(downTime, itemList.get(i).getItemCode(), 1, examType);
                                     position = i + 1;
                                     return;
                                 }
                             }
 
                         } else {
-                            subscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, examType);
+                            subscriber.getItemStudent(downTime, TestConfigs.getCurrentItemCode(), 1, examType);
                         }
                         break;
                     case HttpSubscriber.STUDENT_BIZ://学生
                         if (itemList != null) {
                             if (position < itemList.size()) {
-                                subscriber.getItemStudent(itemList.get(position).getItemCode(), 1, examType);
+                                subscriber.getItemStudent(downTime, itemList.get(position).getItemCode(), 1, examType);
                                 position++;
                                 return;
                             }
@@ -148,6 +148,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -176,8 +177,8 @@ public class ServerMessage {
                 }
             }
         });
-
-        subscriber.getScheduleAll();
+        subscriber.uploadResult(uploadResultsList);
+//        subscriber.getScheduleAll();
     }
 
     /**
@@ -211,6 +212,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -262,7 +264,7 @@ public class ServerMessage {
      * 自动上传成绩,不处理没有项目代码等(处理项目代码等可能会导致 项目代码 变更,在测试过程中不应该出现这种情况)
      */
     public static void uploadResult(final List<UploadResults> uploadResultsList) {
-        Logger.i("自动上传成绩:" + uploadResultsList.toString());
+//        Logger.i("自动上传成绩:" + uploadResultsList.toString());
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
@@ -273,6 +275,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {
@@ -323,6 +326,7 @@ public class ServerMessage {
             public void onRequestData(Object data) {
 
             }
+
             @Override
             public void onSuccess(int bizType) {
                 switch (bizType) {

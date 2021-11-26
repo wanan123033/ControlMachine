@@ -228,7 +228,28 @@
                     android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_afr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="人脸对比相似度:" />
+
+                <Spinner
+                    android:id="@+id/sp_afr"
+                    android:layout_width="350dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/icon_spinner_bg"
+                    android:entries="@array/afr_list"
+                    android:paddingLeft="20dp" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="520dp"
                 android:layout_height="wrap_content"

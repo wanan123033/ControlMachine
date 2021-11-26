@@ -6,6 +6,7 @@ import android.os.Message;
 import com.feipulai.device.serial.IOPower;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.device.serial.SerialPorter;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 
@@ -54,6 +55,7 @@ public class PrinterManager{
 	}
 	
 	public void print(String text){
+		LogUtils.operation("热敏打印信息:=" + text);
 		try{
 			byte[] cmd = (text + "\n").getBytes("GBK");
 			mSerialPorter.sendCommand(cmd);

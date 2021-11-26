@@ -32,10 +32,10 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
-import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.base.AgainTestDialog;
+import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.jump_rope.view.StuSearchEditText;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -64,12 +64,14 @@ import com.inuker.bluetooth.library.connect.response.BleConnectResponse;
 import com.inuker.bluetooth.library.connect.response.BleNotifyResponse;
 import com.inuker.bluetooth.library.model.BleGattProfile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -106,13 +108,26 @@ public class IndividualCheckFragment
     private StudentItem mStudentItem;
     private List<RoundResult> mResults;
     private SystemSetting systemSetting;
-    private SweetAlertDialog addDialog;
 
     private BlueBindBean blueBindBean;
     private volatile boolean isStartThermometer = false;
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
     private ScannerGunManager scannerGunManager;
+    private ResitDialog.onClickQuitListener onClickQuitListener = new ResitDialog.onClickQuitListener() {
+        @Override
+        public void onCancel() {
+
+        }
+
+        @Override
+        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+            if (listener != null) {
+                listener.onIndividualCheckIn(student, studentItem, results);
+                listener.setRoundNo(student, roundNo);
+            }
+        }
+    };
 
     public void setResultView(ListView lvResults) {
         this.lvResults = lvResults;
@@ -121,7 +136,6 @@ public class IndividualCheckFragment
     public void setOnIndividualCheckInListener(OnIndividualCheckInListener listener) {
         this.listener = listener;
     }
-
 
 
     @Nullable
@@ -242,7 +256,7 @@ public class IndividualCheckFragment
             if (SettingHelper.getSystemSetting().isStartThermometer()) {
                 showThermometerDialog();
             } else {
-                listener.onIndividualCheckIn(mStudent, mStudentItem, null);
+                listener.onIndividualCheckIn(mStudent, mStudentItem, new ArrayList<RoundResult>());
             }
         }
     }
@@ -264,13 +278,13 @@ public class IndividualCheckFragment
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
+        listener = null;
         //null.unbind();
     }
 
 
     private void checkInUIThread(Student student, StudentItem studentItem) {
 
-        Logger.e("-------------单机测试");
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAutoScore()) {
             OperateProgressBar.showLoadingUi(getActivity(), "正在获取云端成绩...");
@@ -285,7 +299,6 @@ public class IndividualCheckFragment
 
     @Override
     public boolean onInputCheck(Student student) {
-        LogUtil.logDebugMessage("onInputCheck=============>" + student.getStudentCode());
         boolean needAdd = checkQulification(student.getStudentCode(), STUDENT_CODE);
         if (needAdd) {
             showAddHint(student);
@@ -364,14 +377,56 @@ public class IndividualCheckFragment
             }
             return canTemporaryAdd;
         }
-        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
             InteractUtils.toastSpeak(getActivity(), "无此项目");
             return false;
         }
-        List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+        final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
         if (results != null && results.size() >= TestConfigs.getMaxTestCount(getActivity())) {
-            InteractUtils.toastSpeak(getActivity(), "该考生已测试");
+            SystemSetting setting = SettingHelper.getSystemSetting();
+            if (setting.isAgainTest() && setting.isResit()) {
+                final Student finalStudent = student;
+                new SweetAlertDialog(getContext()).setContentText("需要重测还是补考呢?")
+                        .setCancelText("重测")
+                        .setConfirmText("补考")
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                AgainTestDialog dialog = new AgainTestDialog();
+                                dialog.setArguments(finalStudent, results, studentItem);
+                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                                dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                ResitDialog dialog = new ResitDialog();
+                                dialog.setArguments(finalStudent, results, studentItem);
+                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                                dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+                return false;
+            }
+            if (setting.isAgainTest()) {
+                AgainTestDialog dialog = new AgainTestDialog();
+                dialog.setArguments(student, results, studentItem);
+                dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
+                return false;
+            }
+            if (setting.isResit()) {
+                ResitDialog dialog = new ResitDialog();
+                dialog.setArguments(student, results, studentItem);
+                dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
+            } else {
+                InteractUtils.toastSpeak(getActivity(), "该考生已测试");
+            }
             return false;
         }
         mStudent = student;
@@ -382,10 +437,12 @@ public class IndividualCheckFragment
         checkInUIThread(student, studentItem);
         return false;
     }
+
     @Override
     public void onResponseTime(String responseTime) {
 
     }
+
     @Override
     public void onSuccess(RoundScoreBean result) {
         OperateProgressBar.removeLoadingUiIfExist(getActivity());
@@ -527,6 +584,12 @@ public class IndividualCheckFragment
     private void check() {
         if (listener != null) {
             hideSoftInput();
+            if (mStudent != null) {
+                LogUtils.operation("检入考生：" + mStudent.toString());
+            }
+            if (mResults == null) {
+                mResults = new ArrayList<>();
+            }
             listener.onIndividualCheckIn(mStudent, mStudentItem, mResults);
         }
     }
@@ -535,28 +598,23 @@ public class IndividualCheckFragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (addDialog == null) {
-                    addDialog = new SweetAlertDialog(getActivity()).setTitleText(getString(R.string.addStu_dialog_title))
-                            .setContentText(getString(R.string.addStu_dialog_content))
-                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    addDialog = null;
-                                    new AddStudentDialog(getActivity()).showDialog(student, false);
-                                }
-                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    addDialog = null;
-                                }
-                            });
-                }
 
-                if (addDialog != null) {
-                    addDialog.show();
-                }
+                new SweetAlertDialog(getActivity()).setTitleText(getString(R.string.addStu_dialog_title))
+                        .setContentText(getString(R.string.addStu_dialog_content))
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        new AddStudentDialog(getActivity()).showDialog(student, false);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
+
             }
         });
     }
@@ -648,6 +706,8 @@ public class IndividualCheckFragment
          * 检录的考生----对应的报名信息-----报名信息对应的成绩
          */
         void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results);
+
+        void setRoundNo(Student student, int roundNo);
     }
 
 }

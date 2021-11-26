@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -23,21 +24,34 @@ import android.widget.TextView;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.RunTimerManager;
+import com.feipulai.device.manager.SportTimerManger;
+import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
+import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.CorrespondTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener, RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener, TextWatcher, RunTimerImpl.RunTimerListener {
+public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener,
+        RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener,
+        TextWatcher, RunTimerImpl.RunTimerListener, RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
@@ -73,10 +87,15 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     RadioButton rbHundredSecond;
     @BindView(R.id.rb_ten_second)
     RadioButton rbTenSecond;
+    @BindView(R.id.btn_sync_time)
+    TextView syncTime;
+    @BindView(R.id.btn_connect)
+    Button btnConnect;
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
     private SerialDeviceManager deviceManager;
+    private SportTimerManger sportTimerManger;
 
     @Override
     protected int setLayoutResID() {
@@ -108,12 +127,20 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         etRunNum.addTextChangedListener(this);
         deviceManager = SerialDeviceManager.getInstance();
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
-        if (runTimerSetting.getConnectType() == 1){
+        if (runTimerSetting.getConnectType() == 1) {
             selfCheck.setText("设备配对");
         }
 
-        if (runTimerSetting.getConnectType() == 1){
+        if (runTimerSetting.getConnectType() == 1) {
             rgModel.setVisibility(View.GONE);
+        }
+
+        if (SettingHelper.getSystemSetting().getRadioLed() == 1) {
+            syncTime.setVisibility(View.VISIBLE);
+            RadioManager.getInstance().setOnRadioArrived(this);
+            sportTimerManger = new SportTimerManger();
+            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+            btnConnect.setVisibility(View.VISIBLE);
         }
     }
 
@@ -135,16 +162,9 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             rgModel.setVisibility(View.GONE);
         }
         //成绩精度
-        boolean isSecond;
-        int di = TestConfigs.sCurrentItem.getDigital();
-        if (di != 0) {
-            isSecond = di == 1;
-            rbHundredSecond.setEnabled(false);
-            rbTenSecond.setEnabled(false);
-        } else {
-            isSecond = runTimerSetting.isSecond();
-        }
-        radioGroupDegree.check(isSecond ? R.id.rb_ten_second : R.id.rb_hundred_second);
+        int digital = TestConfigs.sCurrentItem.getDigital();
+
+        radioGroupDegree.check(digital == 1 ? R.id.rb_ten_second : R.id.rb_hundred_second);
 
 
         //拦截方式
@@ -251,7 +271,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        deviceManager.setRS232ResiltListener(null);
     }
 
     @Override
@@ -259,10 +279,10 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
         switch (checkId) {
             case R.id.rb_hundred_second:
-                runTimerSetting.setSecond(false);
+                runTimerSetting.setDigital(2);
                 break;
             case R.id.rb_ten_second:
-                runTimerSetting.setSecond(true);
+                runTimerSetting.setDigital(1);
                 break;
 
             case R.id.rb_continue:
@@ -305,11 +325,11 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
      * 判断去盒子版统一计时独立计时显示
      */
     private void setTimerSelect() {
-        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1){//有起终点 并且是无盒子版
+        if (runTimerSetting.getInterceptPoint() == 3 && runTimerSetting.getConnectType() == 1) {//有起终点 并且是无盒子版
             rg_timerSelect.setVisibility(View.VISIBLE);
             rg_timerSelect.setOnCheckedChangeListener(this);
-            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent:R.id.rb_unified);
-        }else {
+            rg_timerSelect.check(runTimerSetting.isTimer_select() ? R.id.rb_independent : R.id.rb_unified);
+        } else {
             rg_timerSelect.setVisibility(View.GONE);
         }
     }
@@ -334,19 +354,22 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     @Override
     protected void onPause() {
         super.onPause();
+        TestConfigs.sCurrentItem.setCarryMode(runTimerSetting.getMarkDegree());
+        TestConfigs.sCurrentItem.setDigital(runTimerSetting.getDigital());
         String senNum = etSensitivityNum.getText().toString();
-        runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum)?5:Integer.parseInt(senNum));
+        runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();
+        EventBus.getDefault().post(new BaseEvent(null, EventConfigs.UPDATE_TEST_COUNT));
         SharedPrefsUtil.save(this, runTimerSetting);
     }
 
-    @OnClick({R.id.btn_self_check})
+    @OnClick({R.id.btn_self_check, R.id.btn_sync_time,R.id.btn_connect})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_self_check:
-                if (runTimerSetting.getConnectType() == 1){
+                if (runTimerSetting.getConnectType() == 1) {
                     startActivity(new Intent(this, NewRadioPairActivity.class));
-                }else {
+                } else {
                     if (runTimerSetting.getStartPoint() + runTimerSetting.getEndPoint() == 0) {
                         toastSpeak("必须设置拦截点");
                         return;
@@ -372,9 +395,30 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     RunTimerManager.cmdSetting(runNum, hostId, interceptPoint, way, sensor, 10);
                     //3秒自检
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
-                    break;
                 }
+                break;
+            case R.id.btn_sync_time:
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+//                mHandler.sendEmptyMessageDelayed(MSG_SYNC_TIME, 500);
+                break;
+            case R.id.btn_connect:
+                startActivity(new Intent(this, CorrespondTestActivity.class));
+                break;
         }
+    }
+
+    /**
+     * 返回当前时间精确到毫秒 不要年月日
+     *
+     * @return
+     */
+    public int getTime() {
+        Calendar Cld = Calendar.getInstance();
+        int HH = Cld.get(Calendar.HOUR_OF_DAY);
+        int mm = Cld.get(Calendar.MINUTE);
+        int SS = Cld.get(Calendar.SECOND);
+        int MI = Cld.get(Calendar.MILLISECOND);
+        return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
 //    private byte[] cmd(byte cmd, byte mark, byte value) {
@@ -386,6 +430,13 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        setting[10] = (byte) sum;
 //        return setting;
 //    }
+
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
 
     @Override
     protected void onDestroy() {
@@ -428,6 +479,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     private final int MSG_DISCONNECT = 0x1001;
     private final int MSG_CONNECT = 0x1002;
+    private final int MSG_SYNC_TIME = 0x1003;
     private int promote = 0;
     //3秒内检设备是否可用
     private volatile boolean isDisconnect = true;
@@ -455,11 +507,42 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                         promote++;
                     }
                     break;
+                case MSG_SYNC_TIME:
+                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
+                    if (runTimerSetting.getInterceptPoint() == 3) {
+                        runNum = runNum * 2;
+                    }
+                    for (int i = 0; i < runNum; i++) {
+                        try {
+                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
             }
             if (!isDialogShow && alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
+
+
             return false;
         }
     });
+
+    @Override
+    public void onRadioArrived(Message msg) {
+        switch (msg.what) {
+            case SerialConfigs.SPORT_TIMER_GET_TIME:
+                if (msg.obj instanceof SportResult) {
+                    if (((SportResult) msg.obj).getLongTime() > 0) {
+                        Log.i("SportResultListener", "获取时间");
+                    }
+
+                }
+                break;
+        }
+
+    }
 }

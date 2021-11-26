@@ -12,6 +12,7 @@ import com.feipulai.device.manager.SargentJumpMore;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SargentJumpResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.SargentJumpImpl;
@@ -23,6 +24,8 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.utils.LogUtils;
+
+import java.util.List;
 
 import butterknife.OnClick;
 
@@ -59,7 +62,6 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.life("SargentMoreTestActivity onResume");
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
@@ -266,5 +268,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     public void onClick(View view) {
         LogUtils.operation("摸高跳转至SargentPairActivity");
         startActivity(new Intent(this, SargentPairActivity.class));
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
     }
 }

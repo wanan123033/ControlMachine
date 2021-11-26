@@ -118,6 +118,4 @@ public class RxBus {
         mSubscriptionMap.remove(key);
     }
 
-
-
 }

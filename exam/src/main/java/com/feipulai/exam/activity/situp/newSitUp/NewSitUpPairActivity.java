@@ -70,7 +70,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
         mRvPairs.addItemDecoration(dividerItemDecoration);
         mAdapter = new NewDevicePairAdapter(this,deviceCollects);
         mRvPairs.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new DeviceChangeAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new NewDevicePairAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int viewId, int position) {
                 mAdapter.setSelected(position);
@@ -78,13 +78,13 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
                     case R.id.tv_arm:
 //                        mAdapter.setSelectDevice(2);
 //                        presenter.setDevice(2);
-                        LogUtils.operation("选择设备device："+ 2+"position:"+position);
+                        LogUtils.operation("选择设备："+ 2+"position:"+position);
                         presenter.changeFocusPosition(position, 2);
                         break;
                     case R.id.tv_sit_up:
 //                        mAdapter.setSelectDevice(1);
 //                        presenter.setDevice(1);
-                        LogUtils.operation("选择设备device："+ 1+"position:"+position);
+                        LogUtils.operation("选择设备："+ 1+"position:"+position);
                         presenter.changeFocusPosition(position, 1);
                         break;
                 }

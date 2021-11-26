@@ -70,7 +70,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     protected int isShowPenalizeFoul() {
-        return reachSetting.isPenalize() ? View.VISIBLE:View.GONE;
+        return reachSetting.isPenalize() ? View.VISIBLE : View.GONE;
     }
 
     @Override
@@ -93,18 +93,18 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE, 1));
         if (SerialDeviceManager.getInstance() != null && sitReachResiltListener.getTestState() != SitReachResiltListener.TestState.UN_STARTED) {
             //开始测试
-            LogUtils.normal(SerialConfigs.CMD_SIT_REACH_START.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START) + "---坐位体前屈开始测试指令");
+            LogUtils.serial("坐位体前屈开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
             //获取数据
-            LogUtils.normal(SerialConfigs.CMD_SIT_REACH_GET_SCORE.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE) + "---坐位体前屈开始测试指令");
+            LogUtils.serial("坐位体前屈开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }
     }
 
     @Override
     public void stuSkip() {
-        LogUtils.operation("坐位体前屈跳过测试:" + baseStuPair.toString());
-        LogUtils.normal(SerialConfigs.CMD_SIT_REACH_END.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_END) + "---坐位体前屈结束测试指令");
+        LogUtils.operation("坐位体前屈跳过测试:" + baseStuPair.getStudent().toString());
+        LogUtils.serial("坐位体前屈结束测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_END));
         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.UN_STARTED);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
@@ -115,7 +115,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void sendTestCommand(BaseStuPair baseStuPair) {
         this.baseStuPair = baseStuPair;
-        LogUtils.operation("坐位体前屈开始测试:" + baseStuPair.toString());
+        LogUtils.operation("坐位体前屈开始测试:" + baseStuPair.getStudent().toString());
         Logger.i(TAG + ":sendTestCommand发送开始测试");
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
@@ -123,10 +123,10 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         baseStuPair.setTestTime(System.currentTimeMillis() + "");
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
-            LogUtils.normal(SerialConfigs.CMD_SIT_REACH_START.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START) + "---坐位体前屈开始测试指令");
+            LogUtils.serial("坐位体前屈开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
             //获取数据
-            LogUtils.normal(SerialConfigs.CMD_SIT_REACH_GET_SCORE.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE) + "---坐位体前屈开始测试指令");
+            LogUtils.serial("坐位体前屈开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }
     }
@@ -142,7 +142,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void gotoItemSetting() {
-        LogUtils.operation("坐位体前屈跳转至SitReachSettingActivity");
+        LogUtils.operation("坐位体前屈跳转至设置界面");
         startActivity(new Intent(this, SitReachSettingActivity.class));
     }
 
@@ -163,7 +163,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         super.onPause();
         LogUtils.life("SitReachTestActivity onPause");
         if (SerialDeviceManager.getInstance() != null) {
-            LogUtils.normal(SerialConfigs.CMD_SIT_REACH_END.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_END) + "---坐位体前屈结束测试指令");
+            LogUtils.serial("坐位体前屈结束测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_END));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_END));
         }
         SerialDeviceManager.getInstance().close();
@@ -376,7 +376,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
                     Log.i("james", "===>" + "sendCommand");
                     if (SerialDeviceManager.getInstance() != null) {
-                        LogUtils.normal(SerialConfigs.CMD_SIT_REACH_GET_SCORE.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE) + "---坐位体前屈开始测试指令");
+                        LogUtils.serial("坐位体前屈获取成绩指令:" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                     }
                 }
@@ -418,7 +418,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
                             isDisconnect = true;
                             if (SerialDeviceManager.getInstance() != null) {
                                 //设备自检,校验连接是否正常
-                                LogUtils.normal(SerialConfigs.CMD_SIT_REACH_EMPTY.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY) + "---坐位体前屈自检指令");
+                                LogUtils.serial("坐位体前屈自检指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                             }

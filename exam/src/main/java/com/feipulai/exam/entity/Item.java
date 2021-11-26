@@ -193,7 +193,7 @@ public class Item {
                 "id=" + id +
                 ", itemCode='" + itemCode + '\'' +
                 ", machineCode=" + machineCode +
-                ", itemName='" + itemName + '\'' +
+                " , itemName='" + itemName + '\'' +
                 ", minValue=" + minValue +
                 ", maxValue=" + maxValue +
                 ", unit='" + unit + '\'' +

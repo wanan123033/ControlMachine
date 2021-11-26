@@ -13,20 +13,21 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.activity.base.BaseCheckActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
-import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -62,7 +63,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     /**
      * 最大测试次数
      */
-    public int maxTestTimes;
+//    public int maxTestTimes;
     public boolean isOverTimes;
     public RunTimerDisposeManager disposeManager;
     private int interceptWay;
@@ -84,20 +85,20 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         getSetting();
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         reLoad = false;
+        deviceManager.setRS232ResiltListener(runTimerListener);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         if (null == runTimerSetting) {
             runTimerSetting = new RunTimerSetting();
         }
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
+//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+//        } else {
+//            maxTestTimes = runTimerSetting.getTestTimes();
+//        }
         if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
                 || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
 //            getSetting();
@@ -119,11 +120,11 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         }
         Logger.i("runTimerSetting:" + runTimerSetting.toString());
 
-        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-        } else {
-            maxTestTimes = runTimerSetting.getTestTimes();
-        }
+//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
+//        } else {
+//            maxTestTimes = runTimerSetting.getTestTimes();
+//        }
 
         //跑道数量
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
@@ -133,7 +134,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
         int senNum = runTimerSetting.getSensitivityNum();
         int hostId = SettingHelper.getSystemSetting().getHostId();
         RunTimerManager.cmdSetting(runNum,hostId,interceptPoint,interceptWay,settingSensor,senNum);
-        maxTestTimes = runTimerSetting.getTestTimes();
+//        maxTestTimes = runTimerSetting.getTestTimes();
     }
 
 

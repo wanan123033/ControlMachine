@@ -3,9 +3,15 @@ package com.feipulai.exam.activity.jump_rope.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,12 +23,14 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.utils.print.PrintA4Util;
 import com.feipulai.common.utils.print.PrintBean;
 import com.feipulai.common.view.LoadingDialog;
+import com.feipulai.common.view.baseToolbar.DisplayUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.SerialConfigs;
@@ -31,6 +39,9 @@ import com.feipulai.device.serial.beans.JumpRopeResult;
 import com.feipulai.exam.BuildConfig;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.data.DataDisplayActivity;
+import com.feipulai.exam.activity.data.DataManageActivity;
+import com.feipulai.exam.activity.data.DataRetrieveActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -39,6 +50,7 @@ import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.PrintSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.DataRetrieveBean;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
@@ -53,6 +65,7 @@ import com.feipulai.exam.utils.HpPrintManager;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,6 +77,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.crypto.spec.SecretKeySpec;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by James on 2018/12/10 0010.
@@ -241,17 +256,34 @@ public class InteractUtils {
                 results = new ArrayList<>();
                 TestCache.getInstance().getResults().put(student, results);
             }
-            if (results.size() == 0) {
-                roundResult.setRoundNo(1);
-            } else {
-                roundResult.setRoundNo(results.size() + 1);
+            if (pair.getCurrentRoundNo() != 0){
+                roundResult.setRoundNo(pair.getCurrentRoundNo());
+                pair.setCurrentRoundNo(0);
+                roundResult.setResultTestState(1);
+                List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
+                if (stuPairs != null){
+                    for (BaseStuPair pp : stuPairs){
+                        if (pp.getStudent().getStudentCode().equals(pair.getStudent().getStudentCode()))
+                            pp.setRoundNo(0);
+                    }
+                }
+            }else {
+                if (results.size() == 0) {
+                    roundResult.setRoundNo(1);
+                } else {
+                    roundResult.setRoundNo(results.size() + 1);
+                }
+                roundResult.setResultTestState(0);
             }
-
             if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+//                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+                if (studentItem != null){
+                    roundResult.setExamType(studentItem.getExamType());
+                }
                 roundResult.setScheduleNo(TestCache.getInstance().getGroup().getScheduleNo());
             } else {
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
@@ -275,9 +307,9 @@ public class InteractUtils {
                 }
             }
             results.add(roundResult);
-            Logger.i("保存成绩:" + roundResult.toString());
 
             DBManager.getInstance().insertRoundResult(roundResult);
+            TestCache.getInstance().getResults().put(student, results);
             LogUtils.operation("保存成绩:" + roundResult.toString());
         }
         ToastUtils.showShort("成绩保存成功");
@@ -590,11 +622,13 @@ public class InteractUtils {
      * @param student     考生信息
      * @param results     考生对应成绩信息
      */
-    public static void showStuInfo(LinearLayout llStuDetail, Student student, List<RoundResult> results) {
+    public static void showStuInfo(final LinearLayout llStuDetail, final Student student, final List<RoundResult> results) {
+
         TextView mTvStudentName = (TextView) llStuDetail.findViewById(R.id.tv_studentName);
         TextView mTvStudentCode = (TextView) llStuDetail.findViewById(R.id.tv_studentCode);
         TextView mTvGender = (TextView) llStuDetail.findViewById(R.id.tv_gender);
         TextView mTvGrade = (TextView) llStuDetail.findViewById(R.id.tv_grade);
+        LinearLayout mllGrade = (LinearLayout) llStuDetail.findViewById(R.id.ll_grade);
         ImageView imgPortrait = llStuDetail.findViewById(R.id.iv_portrait);
         mTvStudentCode.setText(student == null ? "" : student.getStudentCode());
         mTvStudentName.setText(student == null ? "" : student.getStudentName());
@@ -609,14 +643,75 @@ public class InteractUtils {
 
         if (results == null || results.size() == 0) {
             mTvGrade.setText("");
+            mTvGrade.setVisibility(View.VISIBLE);
         } else {
-            StringBuilder sb = new StringBuilder();
+            mTvGrade.setVisibility(View.GONE);
+//            StringBuilder sb = new StringBuilder();
+//            for (int i = 0; i < results.size(); i++) {
+//                sb.append(InteractUtils.getDisplayResult(results.get(i)));
+//                sb.append("\n");
+//            }
+//            mTvGrade.setText(sb.toString());
+            mllGrade.removeAllViews();
             for (int i = 0; i < results.size(); i++) {
-                sb.append(InteractUtils.getDisplayResult(results.get(i)));
-                sb.append("\n");
+                TextView textView = new TextView(llStuDetail.getContext());
+                textView.setBackgroundResource(R.drawable.edit_search_bg);
+                textView.setGravity(Gravity.CENTER_VERTICAL);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(llStuDetail.getContext(), 35));
+                textView.setPadding(5, 0, 0, 0);
+                if (results.get(i).getIsDelete()) {
+                    textView.setText(results.get(i).getRoundNo() + ":");
+                } else {
+                    textView.setText(results.get(i).getRoundNo() + " : " + InteractUtils.getDisplayResult(results.get(i)));
+                }
+
+                textView.setTextSize(18f);
+                textView.setTag(i);
+                textView.setTextColor(ContextCompat.getColor(llStuDetail.getContext(), R.color.black));
+//                textView.setOnLongClickListener(new View.OnLongClickListener() {
+//                    @Override
+//                    public boolean onLongClick(View v) {
+//                        final int position = (int) v.getTag();
+//                        new SweetAlertDialog(llStuDetail.getContext(), SweetAlertDialog.WARNING_TYPE)
+//                                .setTitleText("考生<" + student.getStudentName() + ">第" + (position + 1) + "轮是否进行重测?")
+//                                .setConfirmText("确认").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                            @Override
+//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                sweetAlertDialog.dismissWithAnimation();
+//
+//
+//
+//                            }
+//                        }).setCancelText("取消").setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                            @Override
+//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                sweetAlertDialog.dismissWithAnimation();
+//
+//                            }
+//                        }).show();
+//
+//                        return false;
+//                    }
+//                });
+//                textView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Bundle bundle = new Bundle();
+//                        DataRetrieveBean bean = new DataRetrieveBean();
+//                        bean.setStudentCode(student.getStudentCode());
+//                        bean.setSex(student.getSex());
+//                        bean.setTestState(1);
+//                        bean.setStudentName(student.getStudentName());
+//                        bundle.putString(DataRetrieveActivity.DATA_ITEM_CODE, TestConfigs.getCurrentItemCode());
+//                        bundle.putSerializable(DataRetrieveActivity.DATA_EXTRA, bean);
+//                        IntentUtil.gotoActivity(llStuDetail.getContext(), DataDisplayActivity.class, bundle);
+//                    }
+//                });
+
+                mllGrade.addView(textView, params);
             }
-            mTvGrade.setText(sb.toString());
         }
+
     }
 
     /**

@@ -5,6 +5,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
+import android.os.Looper;
+import android.widget.Toast;
 
 import com.feipulai.common.utils.ActivityCollector;
 import com.orhanobut.logger.utils.LogUtils;
@@ -42,11 +44,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
     // 当UncaughtException发生时会转入该函数来处理
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        //if(ex == null){
-        //	return;
-        //}
-
-        // String deviceInfo = collectDeviceInfo(mContext);
         String erroMsg = getErrMessage(ex);
 
         LogUtils.crash("----------start------------------\n" +
@@ -56,12 +53,26 @@ public class CrashHandler implements UncaughtExceptionHandler {
         if (uploadOpersion != null) {
             uploadOpersion.upload(erroMsg);
         }
-        // if(mDefaultHandler != null){
-        // 	mDefaultHandler.uncaughtException(thread,ex);
-        // }
+        ex.printStackTrace();
+        //使用Toast来显示异常信息
+        new Thread() {
+
+            @Override
+            public void run() {
+                Looper.prepare();
+                Toast.makeText(mContext, "程序异常退出重启，请等侍...", Toast.LENGTH_LONG).show();
+                Looper.loop();
+            }
+        }.start();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+        }
         ActivityCollector.getInstance().finishAllActivity();
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
+
+
     }
 
     private String collectDeviceInfo(Context ctx) {

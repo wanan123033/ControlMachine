@@ -13,7 +13,7 @@ public class RunTimerSetting {
     /**
      * 精确度 百分位 /十分位
      */
-    private boolean isSecond = false;
+    private int digital = 2;
     /**
      * 拦截点 起始点1 /终点2 两者都选3
      */
@@ -37,6 +37,10 @@ public class RunTimerSetting {
      */
     private int interceptWay = 0;
     /**
+     * 计时方式 统一计时 false 独立计时 true 默认统一
+     */
+    private boolean timer_select;
+    /**
      *传感器信道
 
      */
@@ -45,6 +49,12 @@ public class RunTimerSetting {
      * 跑道数量
      */
     private String runNum = "4";
+    private int sensitivityNum = 5;
+    /**
+     * 连接方式 0 有盒子 1无盒子
+     */
+    private int connectType;
+    private boolean autoPair;
     /**
      * 男子满分
      */
@@ -110,12 +120,12 @@ public class RunTimerSetting {
         isFullReturn = fullReturn;
     }
 
-    public boolean isSecond() {
-        return isSecond;
+    public int getDigital() {
+        return digital;
     }
 
-    public void setSecond(boolean second) {
-        isSecond = second;
+    public void setDigital(int digital) {
+        this.digital = digital;
     }
 
     public int getInterceptPoint() {
@@ -144,9 +154,9 @@ public class RunTimerSetting {
 
     @Override
     public String toString() {
-        return "RunTimerSetting{" +
+        return "SportTimerSetting{" +
                 "isFullReturn=" + isFullReturn +
-                ", isSecond=" + isSecond +
+                ", digital=" + digital +
                 ", interceptPoint=" + interceptPoint +
                 ", testModel=" + testModel +
                 ", testTimes=" + testTimes +
@@ -173,5 +183,37 @@ public class RunTimerSetting {
 
     public void setEndPoint(int endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public int getSensitivityNum() {
+        return sensitivityNum;
+    }
+
+    public void setSensitivityNum(int sensitivityNum) {
+        this.sensitivityNum = sensitivityNum;
+    }
+
+    public int getConnectType() {
+        return connectType;
+    }
+
+    public void setConnectType(int connectType) {
+        this.connectType = connectType;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
+    }
+
+    public boolean isTimer_select() {
+        return timer_select;
+    }
+
+    public void setTimer_select(boolean timer_select) {
+        this.timer_select = timer_select;
     }
 }

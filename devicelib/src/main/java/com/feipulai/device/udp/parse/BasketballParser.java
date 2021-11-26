@@ -22,14 +22,16 @@ public class BasketballParser extends UDPParser {
         result.setType((data[1] & 0xff));
         switch ((data[1] & 0xff)) {
             case UDPBasketBallConfig.CMD_SET_TIME_RESPONSE://设置显示内容返回：0XA6， CMD_SET_TIME , Hund, Second, Minute, Hour,0XFF
-                result.setHund(data[2]*10);
+                result.setHund(data[2] * 10);
                 result.setSecond(data[3]);
                 result.setMinute(data[4]);
                 result.setHour(data[5]);
                 break;
+
             case UDPBasketBallConfig.CMD_GET_TIME_RESPONSE://获取时间显示 0XA6(包头) CMD_GET_TIME (命令), ucFD(遮挡1,2) , Hund(毫秒), Second(秒), Minute(分), Hour(时), flag(标志) ,0XFF(包尾)
+            case UDPBasketBallConfig.CMD_GET_RESULT_RESPONSE:
                 result.setUcFD(data[2]);
-                result.setHund(data[3]*10);
+                result.setHund(data[3] * 10);
                 result.setSecond(data[4]);
                 result.setMinute(data[5]);
                 result.setHour(data[6]);
@@ -45,14 +47,14 @@ public class BasketballParser extends UDPParser {
                 result.setUcStatus(data[2]);
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止
-                result.setHund(data[2]*10);
+                result.setHund(data[2] * 10);
                 result.setSecond(data[3]);
                 result.setMinute(data[4]);
                 result.setHour(data[5]);
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://中断时间
                 result.settNum(data[2]);
-                result.setHund(data[3]*10);
+                result.setHund(data[3] * 10);
                 result.setSecond(data[4]);
                 result.setMinute(data[5]);
                 result.setHour(data[6]);
@@ -60,20 +62,20 @@ public class BasketballParser extends UDPParser {
 
             case UDPBasketBallConfig.CMD_SET_BLOCKERTIME_RESPONSE://设置拦截器拦截的时间：0XA6， CMD_SET_ BLOCKERTIME, Second, 0XFF
             case UDPBasketBallConfig.CMD_GET_BLOCKERTIME_RESPONSE://获取拦截器拦截的时间0XA6， CMD_ GET _ BLOCKERTIME, Second, 0XFF
-                result.setSecond(data[2]&0xff);
+                result.setSecond(data[2] & 0xff);
                 break;
             case UDPBasketBallConfig.CMD_SET_PRECISION_RESPONSE://设置计时器时间显示精度
             case UDPBasketBallConfig.CMD_GET_PRECISION_RESPONSE://获取计时器时间显示精度
-                result.setuPrecision(data[2]&0xff);
+                result.setuPrecision(data[2] & 0xff);
                 break;
             case UDPBasketBallConfig.CMD_SET_T_RESPONSE://灵敏度
                 break;
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE://获取工作状态
-                if ((data[2]&0xff) == 0 && (data[6]&0xff) == 0xff) {
+                if ((data[2] & 0xff) == 0 && (data[6] & 0xff) == 0xff) {
                     return null;
                 }
-                result.setUcStatus(data[2]&0xff);
-                result.settNum(data[6]&0xff);
+                result.setUcStatus(data[2] & 0xff);
+                result.settNum(data[6] & 0xff);
 
                 break;
 

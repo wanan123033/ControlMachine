@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="files_root"
+        path="Android/data/com.feipulai.exam/" />
+    <external-path
+        name="external_storage_root"
+        path="." />
+    <external-path
+        name="external_path"
+        path="Download/" />
+    <files-path
+        name="images"
+        path="images/" />
+    <files-path
+        name="TC"
+        path="TC/" />
+    <files-path
+        name="Download"
+        path="Download/" />
+</paths>

@@ -97,14 +97,22 @@
                 android:text="违规返回" />
 
             <TextView
+                android:id="@+id/tv_device_detail"
+                style="@style/style_run_timer_text"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_toRightOf="@+id/tv_fault_back"
+                android:background="@drawable/selector_blue_grey"
+                android:paddingTop="15dp"
+                android:drawableTop="@mipmap/ready"
+                android:text="设备详情" />
+            <TextView
                 android:id="@+id/tv_force_start"
                 style="@style/style_run_timer_text"
-                android:layout_toRightOf="@+id/tv_fault_back"
+                android:layout_toRightOf="@+id/tv_device_detail"
                 android:drawableTop="@mipmap/force"
                 android:paddingTop="15dp"
                 android:background="@drawable/selector_red_grey"
                 android:text="强制启动" />
-
 
             <TextView
                 android:id="@+id/tv_mark_confirm"

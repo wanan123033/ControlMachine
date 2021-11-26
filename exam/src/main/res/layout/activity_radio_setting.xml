@@ -33,6 +33,14 @@
             android:background="@drawable/btn_click_bg"
             android:text="设备匹配"
             android:visibility="gone" />
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/btn_click_bg"
+            android:text="通信质量测试"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -163,6 +171,101 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_test_min"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="最小有效距离:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_test_min"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="厘米"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_test_max"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="最大有效距离:"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_test_max"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="厘米"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_test_led"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:text="显示子机计数:"
+                android:textSize="18sp" />
+            <CheckBox
+                android:id="@+id/cb_show_led"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center"
+                android:button="@drawable/checkbox_switch_selected" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_test_angle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -225,8 +328,6 @@
                 android:button="@null"
                 android:drawableRight="@drawable/checkbox_switch_selected"
                 android:drawablePadding="@dimen/dp_10" />
-
-
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

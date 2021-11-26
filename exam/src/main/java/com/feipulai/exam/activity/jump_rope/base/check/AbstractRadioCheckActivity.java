@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -21,8 +22,10 @@ import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.adapter.CheckPairAdapter;
 import com.feipulai.exam.activity.jump_rope.base.result.RadioResultActivity;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -42,6 +45,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.DividerItemDecoration;
 import com.feipulai.exam.view.WaitDialog;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,6 +72,18 @@ public abstract class AbstractRadioCheckActivity<Setting>
     private IndividualCheckFragment individualCheckFragment;
     protected FrameLayout afrFrameLayout;
     protected BaseAFRFragment afrFragment;
+    private ResitDialog.onClickQuitListener onClickQuitListener = new ResitDialog.onClickQuitListener() {
+        @Override
+        public void onCancel() {
+
+        }
+
+        @Override
+        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
+            presenter.onIndividualCheckIn(student, studentItem, results);
+            presenter.setRoundNo(student, roundNo);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +142,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             getDeleteAllView().setVisibility(View.GONE);
             getDeleteStuView().setVisibility(View.GONE);
             getStopUseView().setVisibility(View.GONE);
+            getImgAFR().setVisibility(View.GONE);
         }
 
         getRvPairs().setLayoutManager(new GridLayoutManager(this, 5));
@@ -135,7 +152,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getRvPairs().addItemDecoration(dividerItemDecoration);
         getRvPairs().setHasFixedSize(true);
         getRvPairs().setClickable(true);
-
+        Log.e("TAG----",pairs.size()+"-----");
         mAdapter = new CheckPairAdapter(this, pairs);
         mAdapter.setOnItemClickListener(this);
         getRvPairs().setAdapter(mAdapter);
@@ -147,7 +164,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         getStartTestView().setOnClickListener(this);
         getLedSettingView().setOnClickListener(this);
         getPairView().setOnClickListener(this);
-        if (getDetailsView()!= null){
+        if (getDetailsView() != null) {
             getDetailsView().setOnClickListener(this);
         }
         if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
@@ -185,7 +202,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
             showDeleteAllWarning();
         } else if (v == getDeleteStuView()) {// 删除考生
             presenter.deleteStudent();
-        }else if (v == getDetailsView()){
+        } else if (v == getDetailsView()) {
             startActivity(new Intent(this, DeviceChangeActivity.class));
         }
     }
@@ -272,7 +289,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         mAdapter.setSelected(position);
         mAdapter.notifyItemChanged(oldPosition);
         mAdapter.notifyItemChanged(position);
-        if (isRefreshStu) {
+        if (isRefreshStu && presenter != null) {
             presenter.showStuInfo(position);
         }
 
@@ -391,8 +408,9 @@ public abstract class AbstractRadioCheckActivity<Setting>
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        TestCache.getInstance().clear();
+//        TestCache.getInstance().clear();
         presenter.finishGetStateAndDisplay();
+        presenter = null;
     }
 
     private void initAFR() {
@@ -410,19 +428,62 @@ public abstract class AbstractRadioCheckActivity<Setting>
                 if (student == null) {
                     InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生不存在");
                     return;
-                }else{
+                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+                final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 if (studentItem == null) {
                     InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "无此项目");
                     return;
                 }
-                List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+                final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(AbstractRadioCheckActivity.this)) {
-                    InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生已测试");
+                    SystemSetting setting = SettingHelper.getSystemSetting();
+                    if (setting.isAgainTest() && setting.isResit()){
+                        final Student finalStudent = student;
+                        new SweetAlertDialog(AbstractRadioCheckActivity.this).setContentText("需要重测还是补考呢?")
+                                .setCancelText("重测")
+                                .setConfirmText("补考")
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        AgainTestDialog dialog = new AgainTestDialog();
+                                        dialog.setArguments(finalStudent,results,studentItem);
+                                        dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                                        dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                                        sweetAlertDialog.dismissWithAnimation();
+                                    }
+                                })
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        ResitDialog dialog = new ResitDialog();
+                                        dialog.setArguments(finalStudent,results,studentItem);
+                                        dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                                        dialog.show(getSupportFragmentManager(),"ResitDialog");
+                                        sweetAlertDialog.dismissWithAnimation();
+                                    }
+                                }).show();
+                        return;
+                    }
+                    if (setting.isAgainTest()){
+                        AgainTestDialog dialog = new AgainTestDialog();
+                        dialog.setArguments(student,results,studentItem);
+                        dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                        dialog.show(getSupportFragmentManager(),"AgainTestDialog");
+                        return;
+                    }
+                    if (setting.isResit()){
+                        ResitDialog dialog = new ResitDialog();
+                        dialog.setArguments(student,results,studentItem);
+                        dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                        dialog.show(getSupportFragmentManager(),"ResitDialog");
+                    }else {
+                        InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生已测试");
+                    }
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 presenter.onIndividualCheckIn(student, studentItem, results);
             }
@@ -458,6 +519,8 @@ public abstract class AbstractRadioCheckActivity<Setting>
     protected abstract View getDeleteAllView();
 
     protected abstract View getCheckInLayout();
+
+    protected abstract View getImgAFR();
 
     protected abstract LinearLayout getStuDetailLayout();
 

@@ -16,7 +16,7 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.orhanobut.logger.utils.LogUtils;
 
-public class RadioLinker implements Handler.Callback{
+public class RadioLinker implements Handler.Callback {
 
     public static final int NO_PAIR_RESPONSE_ARRIVED = 0x1;
     public final RadioPairListener listener;
@@ -45,7 +45,7 @@ public class RadioLinker implements Handler.Callback{
         }
         currentFrequency = 0;
         RadioChannelCommand command = new RadioChannelCommand(0);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切0频指令");
+        LogUtils.serial("切0频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
     }
 
@@ -56,7 +56,7 @@ public class RadioLinker implements Handler.Callback{
         }
         handlerThread = null;
         RadioChannelCommand command = new RadioChannelCommand(TARGET_FREQUENCY);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---切频指令");
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         currentFrequency = TARGET_FREQUENCY;
     }
@@ -79,17 +79,17 @@ public class RadioLinker implements Handler.Callback{
     }
 
     private void checkDevice(SportResult result) {
-        checkDevice(result.getDeviceId(), result.getHostId(),result.getFrequency());
+        checkDevice(result.getDeviceId(), result.getHostId(), result.getFrequency());
     }
 
 
-    public synchronized void checkDevice(int deviceId, int hostId,int frequency) {
-        Log.e("TAG115----","currentFrequency = "+currentFrequency+",frequency="+frequency+",deviceId="+deviceId+",currentDeviceId="+currentDeviceId);
+    public synchronized void checkDevice(int deviceId, int hostId, int frequency) {
+        Log.e("TAG115----", "currentFrequency = " + currentFrequency + ",frequency=" + frequency + ",deviceId=" + deviceId + ",currentDeviceId=" + currentDeviceId);
         if (currentFrequency == 0) {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId) {
                 onNewDeviceConnect();
-                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+//                listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
             } else {
                 listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
                 currentFrequency = TARGET_FREQUENCY;

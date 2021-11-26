@@ -34,7 +34,8 @@ public class Radio868Result {
                         && (data[0] & 0xff) == 0xaa
                         && (data[1] & 0xff) == 0x01
                         && (data[2] & 0xff) == 0xa2
-                        && data[12] == 0x0d) {
+                        && data[12] == 0x0d && ((data[5] & 0xff) == 0xb0 || (data[5] & 0xff) == 0xc1 || (data[5] & 0xff) == 0xC3)
+                ) {
                     setType(JUMPROPE_RESPONSE);
                     setResult(new JumpRopeResult(data));
                 }
@@ -463,16 +464,24 @@ public class Radio868Result {
         }
 
         //肩胛模块
-        if ((data[0] &0xff)== 0xAA  && data[2] == 0x05){
+        if ((data[0] & 0xff) == 0xAA && data[2] == 0x05) {
             setResult(new ShoulderResult(data));
-            switch (data[7]){
+            switch (data[7]) {
                 case 14://请求配对
                     setType(SerialConfigs.NEW_SIT_UP_SHOULDER);
                     break;
-                case 0 ://联络信号
-
+                case 0://联络信号
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_CONNECT);
                     break;
-
+                case 2://同步时间
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_TIME);
+                    break;
+                case 4://获取子机工作状态
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_SYNC_STATE);
+                    break;
+                case 9://获取子机工作状态
+                    setType(SerialConfigs.NEW_SIT_UP_SHOULDER_DATA);
+                    break;
 
             }
         }

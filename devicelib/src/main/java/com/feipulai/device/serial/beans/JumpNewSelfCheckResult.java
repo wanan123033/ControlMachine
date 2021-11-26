@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -26,7 +27,8 @@ public class JumpNewSelfCheckResult {
             jumpPoleState[3] = buf[15];
         }
 
-        LogUtils.normal("立定跳远自检新返回数据(解析前):" + buf.length + "---" + StringUtility.bytesToHexString(buf) + "---\n(解析后):" + toString());
+        LogUtils.serial("立定跳远自检新返回数据(解析前):" + StringUtility.bytesToHexString(buf));
+        LogUtils.serial("立定跳远自检新返回数据(解析后):" + toString());
     }
 
     public int[] getJumpPoleState() {

@@ -22,6 +22,7 @@ import com.feipulai.host.entity.StudentItem;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 import java.io.File;
@@ -58,6 +59,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
     protected void initData() {
         initUVCCamera();
     }
+
     private void initUVCCamera() {
         mUVCCamera = new UVCCameraProxy(mContext);
         mUVCCamera.setPreviewTexture(textureView2);
@@ -71,7 +73,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
             public void onGranted(UsbDevice usbDevice, boolean granted) {
                 if (granted) {
                     mUVCCamera.connectDevice(usbDevice);
-                }else {
+                } else {
                     mUVCCamera.connectDevice(usbDevice);
                 }
             }
@@ -96,10 +98,11 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
     }
 
     @OnClick({R.id.tv_cature})
-    public void onClick(View view){
+    public void onClick(View view) {
         isTakePicture = true;
         mPictureName = student.getStudentCode() + ".jpg";
     }
+
     @Override
     public void onPreviewFrame(final byte[] yuv) {
         if (isTakePicture) {
@@ -108,8 +111,8 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                 @Override
                 public File apply(String s) throws Exception {
                     YuvImage image = new YuvImage(yuv, ImageFormat.NV21, mWidth, mHeight, null);
-                    File file = new File(getContext().getFilesDir(),mPictureName);
-                    if (!file.exists()){
+                    File file = new File(getContext().getFilesDir(), mPictureName);
+                    if (!file.exists()) {
                         try {
                             file.createNewFile();
                         } catch (IOException e) {
@@ -118,7 +121,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                     }
                     try {
                         FileOutputStream fileOutputStream = new FileOutputStream(file);
-                        image.compressToJpeg(new Rect(0,0,mWidth,mHeight),100,fileOutputStream);
+                        image.compressToJpeg(new Rect(0, 0, mWidth, mHeight), 100, fileOutputStream);
                         fileOutputStream.flush();
                         fileOutputStream.close();
                     } catch (FileNotFoundException e) {
@@ -134,8 +137,9 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                         public Student apply(File file) throws Exception {
                             //插入数据库并导入到指定位置
 
-                            student.setPortrait(MyApplication.PATH_IMAGE+File.separator+student.getStudentCode() + ".jpg");
+                            student.setPortrait(MyApplication.PATH_IMAGE + File.separator + student.getStudentCode() + ".jpg");
                             DBManager.getInstance().insertStudent(student);
+                            LogUtils.operation("考生添加" + student.toString());
                             StudentItem studentItem = new StudentItem();
                             studentItem.setStudentCode(student.getStudentCode());
                             studentItem.setItemCode(TestConfigs.getCurrentItemCode());
@@ -149,28 +153,28 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                     })
                     .observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<Student>() {
-                @Override
-                public void onSubscribe(Disposable disposable) {
+                        @Override
+                        public void onSubscribe(Disposable disposable) {
 
-                }
+                        }
 
-                @Override
-                public void onNext(Student o) {
-                    ToastUtils.showShort("图片已保存");
-                    if (compareListener != null)
-                        compareListener.compareStu(student);
-                }
+                        @Override
+                        public void onNext(Student o) {
+                            ToastUtils.showShort("图片已保存");
+                            if (compareListener != null)
+                                compareListener.compareStu(student);
+                        }
 
-                @Override
-                public void onError(Throwable throwable) {
+                        @Override
+                        public void onError(Throwable throwable) {
 
-                }
+                        }
 
-                @Override
-                public void onComplete() {
+                        @Override
+                        public void onComplete() {
 
-                }
-            });
+                        }
+                    });
 
 
         }
@@ -179,6 +183,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
     public void setStudent(Student student) {
         this.student = student;
     }
+
     private boolean doRegister(File jpgFile) {
         //路径获取图片。并对图片做缩小处理
         Bitmap bitmap = ImageUtil.getSmallBitmap(jpgFile.getAbsolutePath());
@@ -203,6 +208,7 @@ public class BaseCatupeFragment extends BaseFragment implements PreviewCallback 
                 jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf(".")));
         return success;
     }
+
     public void setCompareListener(BaseAFRFragment.onAFRCompareListener compareListener) {
         this.compareListener = compareListener;
     }

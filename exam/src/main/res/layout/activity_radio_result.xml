@@ -11,17 +11,57 @@
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:textSize="20sp"
-        android:visibility="gone"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:text="成绩"
+        android:text="成绩(补考)"
         android:textSize="20sp"/>
+    <LinearLayout
+        android:id="@+id/ll_title_resit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        >
 
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="考号"
+            />
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="姓名"
+            />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_results_resit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="成绩(正常)"
+        android:textSize="20sp"/>
     <LinearLayout
         android:id="@+id/ll_title"
         android:layout_width="match_parent"

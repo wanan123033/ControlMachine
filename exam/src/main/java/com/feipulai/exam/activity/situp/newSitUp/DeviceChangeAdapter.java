@@ -40,6 +40,11 @@ public class DeviceChangeAdapter extends RecyclerView.Adapter<DeviceChangeAdapte
     public void setSelectDevice(int device){
         this.device = device;
     }
+
+    public int getDevice() {
+        return device;
+    }
+
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }

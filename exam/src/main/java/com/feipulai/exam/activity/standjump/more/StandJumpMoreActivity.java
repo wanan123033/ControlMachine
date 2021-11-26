@@ -10,17 +10,19 @@ import com.feipulai.device.manager.StandJumpManager;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSettingActivity;
+import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 
-import java.util.Date;
+import java.util.List;
 
 import butterknife.OnClick;
 
@@ -40,11 +42,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             standJumpSetting = new StandJumpSetting();
         super.initData();
         setFaultEnable(standJumpSetting.isPenalizeFoul());
-//        setFaultEnable(standJumpSetting.isPenalize());
-//        if (!standJumpSetting.isPenalize()) {
-//            setNextClickStart(false);
-//        }
-
+        setNextClickStart(false);
         facade = new StandJumpRadioFacade(deviceDetails, standJumpSetting, this);
     }
 
@@ -57,10 +55,18 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
             facade.setStandJumpSetting(standJumpSetting);
         }
         facade.setDeviceList(deviceDetails);
-        updateAdapterTestCount();
+
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
-
+        boolean isUser=false;
+        for (DeviceDetail detail : deviceDetails) {
+            if (detail.getStuDevicePair().getStudent()!=null){
+                isUser=true;
+            }
+        }
+        if (!isUser){
+            updateAdapterTestCount();
+        }
     }
 
     @Override
@@ -120,7 +126,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -206,5 +212,9 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         facade.finish();
         facade = null;
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+
     }
 }

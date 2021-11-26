@@ -10,12 +10,15 @@ import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.SystemUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -32,6 +35,26 @@ import java.util.HashMap;
 
 public class CommonUtils {
     /**
+     * 获取本地软件版本号
+     *
+     * @param ctx
+     * @return
+     */
+    public static int getLocalVersion(Context ctx) {
+        int localVersion = 0;
+        try {
+            PackageInfo packageInfo = ctx.getApplicationContext()
+                    .getPackageManager()
+                    .getPackageInfo(ctx.getPackageName(), 0);
+            localVersion = packageInfo.versionCode;
+            LogUtil.logDebugMessage("本软件的版本号。。" + localVersion);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return localVersion;
+    }
+
+    /**
      * 获取应用程序名称
      */
     public static synchronized String getAppName(Context context) {
@@ -46,6 +69,7 @@ public class CommonUtils {
         }
         return null;
     }
+
     @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String getDeviceId(Context context) {
 
@@ -56,7 +80,10 @@ public class CommonUtils {
             id = mTelephony.getDeviceId();
         } else {
             //android.provider.Settings;
-            id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            id = SystemUtil.getCPUSerial();
+            if (TextUtils.isEmpty(id)) {
+                id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            }
         }
         return id;
     }
@@ -66,7 +93,7 @@ public class CommonUtils {
         TelephonyManager phone = (TelephonyManager) MyApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
         WifiManager wifi = (WifiManager) MyApplication.getInstance().getSystemService(Context.WIFI_SERVICE);
 
-        return wifi.getConnectionInfo().getMacAddress() + "," + phone.getDeviceId() + "," + getCpuName() + "," + phone.getNetworkOperator();
+        return wifi.getConnectionInfo().getMacAddress() + "," + getDeviceId(MyApplication.getInstance()) + "," + getCpuName() + "," + phone.getNetworkOperator();
     }
 
     /**
@@ -149,7 +176,7 @@ public class CommonUtils {
         respost.setSign(EncryptUtil.getSignData(gson.toJson(object)));
         respost.setData(EncryptUtil.setEncryptData(object));
         respost.setRequestTime(String.valueOf(System.currentTimeMillis()));
-        Logger.d(respost.toString());
+//        LogUtils.net("请求请口参数：" + respost.toString());
         return respost;
     }
 
@@ -159,7 +186,7 @@ public class CommonUtils {
             ipAddress = "https://gkapidev.exam.fplcloud.com";
         }
         if (!ipAddress.startsWith("http")) {
-            ipAddress = "http://" + ipAddress + "/app/";
+            ipAddress = "http://" + ipAddress ;
         }
         return ipAddress;
     }

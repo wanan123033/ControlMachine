@@ -7,9 +7,11 @@ import android.support.multidex.MultiDexApplication;
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.ActivityLifeCycle;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.print.FontsUtil;
 import com.feipulai.device.serial.SerialParams;
+import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.netUtils.HttpSubscriber;
@@ -24,7 +26,7 @@ public class MyApplication extends MultiDexApplication {
     public static String SOFTWAREUUID = "FP-KTA2108_TC";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_TC_ANDROID";//硬件识别码
     public static final String DEVICECODE = "111";//硬件识别码
-
+    public static final String BACKUP_DIR = FileUtil.PATH_BASE + "/TC_BACKUP/";
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -50,15 +52,19 @@ public class MyApplication extends MultiDexApplication {
             @Override
             public void upload(String erroMsg) {
                 new UserSubscriber().uploadLog(erroMsg);
+                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
             }
         });
         FaceServer.ROOT_PATH = FileUtil.PATH_BASE + "TC_FACE/";
         FileUtil.createAllFile();
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
+        FileUtil.mkdirs(BACKUP_DIR);
         FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+
+        LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
         SerialParams.init(this);
-        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
+//        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
         HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码
     }

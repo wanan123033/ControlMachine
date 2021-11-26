@@ -18,7 +18,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         // 新版本1.0.1 测试加后面版本
-        versionName "1.1.1"
+        versionName "2.0.1"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -54,7 +54,7 @@ android {
             resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
         }
         ruiLiHeng {
-            initWith(buildTypes.release)
+            initWith(buildTypes.debug)
             applicationIdSuffix ".ruiliheng"
             resValue "string", "software_uuid","FP-KTA2108_TC-RLH"
             resValue "string", "hardware_uuid","FP-KTA2108_TC-RLH_ANDROID"

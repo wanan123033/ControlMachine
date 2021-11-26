@@ -30,11 +30,6 @@ public class BallPairAdapter extends DevicePairAdapter {
     public void onBindViewHolder(ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
 
-//        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-//            holder.mTvDeviceId.setText(position == 0 ? "近红外" : "计时屏");
-//        } else {
-//            holder.mTvDeviceId.setText(position == 0 ? "远红外" : position == 1 ? "近红外" : "计时屏");
-//        }
 
         String version = TextUtils.isEmpty(stuPairs.get(position).getBaseDevice().getDeviceVersion()) ? ""
                 : stuPairs.get(position).getBaseDevice().getDeviceVersion();
@@ -50,10 +45,10 @@ public class BallPairAdapter extends DevicePairAdapter {
         } else {
             switch (position) {
                 case 0:
-                    holder.mTvDeviceId.setText("远红外" +version);
+                    holder.mTvDeviceId.setText("近红外" +version);
                     break;
                 case 1:
-                    holder.mTvDeviceId.setText("近红外" +version);
+                    holder.mTvDeviceId.setText("远红外" +version);
                     break;
                 case 2:
                     holder.mTvDeviceId.setText("计时屏" +version);

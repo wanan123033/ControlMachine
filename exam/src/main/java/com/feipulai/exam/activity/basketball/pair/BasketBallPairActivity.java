@@ -58,10 +58,10 @@ public class BasketBallPairActivity
             }
         } else {
             switch (presenter.focusPosition) {
-                case 0:
-                case 1:
+                case 0://子机
+                case 1://子机
                     return 3;
-                case 2:
+                case 2://LED
                     return 2;
             }
 

@@ -52,7 +52,7 @@ public class SitPushUpManager {
 
 
     private void wrapAndSend(byte[] cmd) {
-        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 ||projectCode==PROJECT_CODE_SIT_UP_HAND) {
+        if (projectCode == PROJECT_CODE_SIT_UP || connectType == 1 || projectCode == PROJECT_CODE_SIT_UP_HAND) {
             RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
         } else {
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd));
@@ -120,7 +120,7 @@ public class SitPushUpManager {
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
         RadioChannelCommand command = new RadioChannelCommand(originFrequency);
-        LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---仰卧起坐俯卧撑切频指令");
+        LogUtils.serial("仰卧起坐俯卧撑切频指令:" + StringUtility.bytesToHexString(command.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(originFrequency)));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
@@ -128,10 +128,10 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---仰卧起坐俯卧撑设置参数指令");
+        LogUtils.serial("仰卧起坐俯卧撑设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+StringUtility.bytesToHexString(command1.getCommand())+"---仰卧起坐俯卧撑切频指令");
+        LogUtils.serial("仰卧起坐俯卧撑切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
@@ -164,7 +164,7 @@ public class SitPushUpManager {
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
         RadioChannelCommand command = new RadioChannelCommand(originFrequency);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---肺活量切频指令");
+        LogUtils.serial("肺活量切频指令:" + StringUtility.bytesToHexString(command.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
@@ -172,10 +172,10 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---肺活量设置参数指令");
+        LogUtils.serial("肺活量设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---肺活量切频指令");
+        LogUtils.serial("肺活量切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
@@ -215,10 +215,10 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---肺活量设置参数指令");
+        LogUtils.serial("肺活量设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---肺活量切频指令");
+        LogUtils.serial("肺活量切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
@@ -255,7 +255,7 @@ public class SitPushUpManager {
         //先切到通信频段
         //Log.i("james","originFrequency:" + originFrequency);
         RadioChannelCommand command = new RadioChannelCommand(originFrequency);
-        LogUtils.normal(command.getCommand().length+"---"+ StringUtility.bytesToHexString(command.getCommand())+"---摸高切频指令");
+        LogUtils.serial("摸高切频指令:" + StringUtility.bytesToHexString(command.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
         //Log.i("james",StringUtility.bytesToHexString(buf));
         try {
@@ -263,10 +263,10 @@ public class SitPushUpManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---摸高设置参数指令");
+        LogUtils.serial("摸高设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---摸高切频指令");
+        LogUtils.serial("摸高切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(command1));
     }
 
@@ -312,10 +312,10 @@ public class SitPushUpManager {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        LogUtils.normal(buf.length+"---"+ StringUtility.bytesToHexString(buf)+"---实心球设置参数指令");
+        LogUtils.serial("实心球设置参数指令:" + StringUtility.bytesToHexString(buf));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, buf));
         RadioChannelCommand command1 = new RadioChannelCommand(targetChannel);
-        LogUtils.normal(command1.getCommand().length+"---"+ StringUtility.bytesToHexString(command1.getCommand())+"---实心球切频指令");
+        LogUtils.serial("实心球切频指令:" + StringUtility.bytesToHexString(command1.getCommand()));
         RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(targetChannel)));
     }
 
@@ -348,11 +348,11 @@ public class SitPushUpManager {
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
         if (cmd[5] == 5)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐开始测试指令");
+            LogUtils.serial("仰卧起坐开始测试指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 8)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑开始测试指令");
-        else if (cmd[5]== 0x0b)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测测试指令");
+            LogUtils.serial("俯卧撑开始测试指令:" + StringUtility.bytesToHexString(cmd));
+        else if (cmd[5] == 0x0b)
+            LogUtils.serial("手臂检测测试指令:" + StringUtility.bytesToHexString(cmd));
         wrapAndSend(cmd);
     }
 
@@ -395,16 +395,16 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         if (cmd[5] == 5)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐获取状态指令");
+            LogUtils.serial("仰卧起坐获取状态指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 8)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑获取状态指令");
+            LogUtils.serial("俯卧撑获取状态指令:" + StringUtility.bytesToHexString(cmd));
         //Log.i("james",StringUtility.bytesToHexString(cmd));
         wrapAndSend(cmd);
     }
 
-    public void getGyroscopeInfo(int deviceId){
-        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,13 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
-        cmd[4] = (byte) (deviceId&0xff);
+    public void getGyroscopeInfo(int deviceId) {
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0, 13, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId & 0xff);
         for (int i = 2; i < 13; i++) {
             cmd[13] += cmd[i] & 0xff;
         }
@@ -412,15 +412,16 @@ public class SitPushUpManager {
 
     }
 
-    public void getSitUpHandAngle(int deviceId){
-        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0,14 , 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
-        cmd[4] = (byte) (deviceId&0xff);
+    public void getSitUpHandAngle(int deviceId) {
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0x0b, 0, 14, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId & 0xff);
         for (int i = 2; i < 13; i++) {
             cmd[13] += cmd[i] & 0xff;
         }
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---手臂检测指令");
     }
+
     /**
      * 结束测试
      */
@@ -441,11 +442,11 @@ public class SitPushUpManager {
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
         if (cmd[5] == 5)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐结束测试指令");
+            LogUtils.serial("仰卧起坐结束测试指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 8)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑结束测试指令");
+            LogUtils.serial("俯卧撑结束测试指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 0x0b)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---手臂检测结束测试指令");
+            LogUtils.serial("手臂检测结束测试指令:" + StringUtility.bytesToHexString(cmd));
         wrapAndSend(cmd);
     }
 
@@ -470,9 +471,9 @@ public class SitPushUpManager {
         }
         //Log.i("james",StringUtility.bytesToHexString(cmd));
         if (cmd[5] == 5)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐获取版本信息指令");
+            LogUtils.serial("仰卧起坐获取版本信息指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 8)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑获取版本信息指令");
+            LogUtils.serial("俯卧撑获取版本信息指令:" + StringUtility.bytesToHexString(cmd));
         wrapAndSend(cmd);
     }
 
@@ -494,7 +495,7 @@ public class SitPushUpManager {
         //[13]：累加和(从02到12共11个字节算术和的低字节)
         //[14] [15]：包尾高字节0x27   低字节0x0d
         byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0, 0, 0x07, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
-        if (projectCode == PROJECT_CODE_SIT_UP_HAND){
+        if (projectCode == PROJECT_CODE_SIT_UP_HAND) {
             cmd[4] = 2;
         }
         cmd[5] = (byte) (projectCode & 0xff);
@@ -503,9 +504,30 @@ public class SitPushUpManager {
             cmd[13] += cmd[i] & 0xff;
         }
         if (cmd[5] == 5)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---仰卧起坐设置计数角度命令指令");
+            LogUtils.serial("仰卧起坐设置计数角度命令指令:" + StringUtility.bytesToHexString(cmd));
         else if (cmd[5] == 8)
-            LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---俯卧撑设置计数角度命令指令");
+            LogUtils.serial("俯卧撑设置计数角度命令指令:" + StringUtility.bytesToHexString(cmd));
+        wrapAndSend(cmd);
+    }
+
+    public void setLedShow(int deviceId, int show) {
+        //[00] [01]：包头高字节0x54  低字节0x44
+        //[02] [03]：长度高字节0x00  低字节0x10
+        //[04]：0   --表示所有子机都要响应
+        //[05]：项目编号   5—仰卧起坐    8—俯卧撑
+        //[06]：0   –单机模式
+        //[07]：7   -- SetBaselineCmd命令
+        //[08]: 主机baseline (易中难，分别对应角度是55，65，75度，默认65度)
+        //[09]-[12]: 0 0 0 0
+        //[13]：累加和(从02到12共11个字节算术和的低字节)
+        //[14] [15]：包尾高字节0x27   低字节0x0d
+        byte[] cmd = {0x54, 0x44, 0, 0x10, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0x27, 0x0d};
+        cmd[4] = (byte) (deviceId & 0xff);
+        cmd[5] = (byte) (5 & 0xff);
+        cmd[8] = (byte) (show & 0xff);
+        for (int i = 2; i < 13; i++) {
+            cmd[13] += cmd[i] & 0xff;
+        }
         wrapAndSend(cmd);
     }
 

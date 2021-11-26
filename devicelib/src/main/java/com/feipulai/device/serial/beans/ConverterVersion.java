@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -34,7 +35,9 @@ public class ConverterVersion {
 			stringBuilder.append((char)(data[i] & 0xff));
 		}
 		date = stringBuilder.toString();
-		LogUtils.normal("返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
+
+		LogUtils.serial("版本号(解析前):" + StringUtility.bytesToHexString(data));
+		LogUtils.serial("版本号(解析后):" + toString());
 	}
 	
 	public String getVersionCode(){

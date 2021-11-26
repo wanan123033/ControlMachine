@@ -28,6 +28,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -52,6 +53,7 @@ public class InteractUtils {
     }
 
     public static void toastSpeak(Activity activity, final String msg) {
+        LogUtils.operation(msg);
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -154,6 +156,7 @@ public class InteractUtils {
                 }
                 bestResults.put(student, roundResult);
             }
+            LogUtils.operation("保存成绩：" + roundResult.toString());
             DBManager.getInstance().insertRoundResult(roundResult);
             saveResults.put(student, roundResult);
         }

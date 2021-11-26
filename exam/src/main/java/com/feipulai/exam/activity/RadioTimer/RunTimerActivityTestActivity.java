@@ -23,13 +23,18 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
+import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.base.BaseAFRFragment;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter2;
@@ -95,8 +100,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     TextView tvGetTime;
     private int testNo;
     private List<RunStudent> mList = new ArrayList<>();
-    private RunNumberAdapter2 mAdapter2;
-    private RunNumberAdapter mAdapter;
+    private RunNumberAdapter2 mAdapter2;//测试界面
+    private RunNumberAdapter mAdapter;//第一页显示道次
     private ResultPopWindow resultPopWindow;
     //    private ListView lvResults;
     @BindView(R.id.lv_results)
@@ -235,6 +240,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
     }
 
+
+
     private void showPop(int pos, View view) {
         marks.clear();
         RunStudent runStudent = mList.get(pos);
@@ -298,7 +305,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             case R.id.tv_wait_start://等待发令
                 LogUtils.operation("红外计时点击了等待发令");
                 waitStart();
-                if (currentTestTime >= maxTestTimes) {
+                if (currentTestTime >= setTestCount()) {
                     isOverTimes = true;
                 } else {
                     showReady(mList, true);
@@ -332,20 +339,25 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                 markConfirm();
                 for (RunStudent runStudent : mList) {
                     if (runStudent.getStudent() != null) {
-                        disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1,startTime);
+                        if (runStudent.getRoundNo() != 0){
+                            disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), runStudent.getRoundNo(), testNo + 1, startTime);
+                            runStudent.setRoundNo(0);
+                        }else {
+                            disposeManager.saveResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime, testNo + 1, startTime);
+                        }
                         List<RoundResult> resultList = DBManager.getInstance().queryResultsByStudentCode(runStudent.getStudent().getStudentCode());
                         List<String> list = new ArrayList<>();
                         for (RoundResult result : resultList) {
                             list.add(getFormatTime(result.getResult()));
                         }
 
-                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, maxTestTimes, -1);
+                        disposeManager.printResult(runStudent.getStudent(), list, currentTestTime, setTestCount(), -1);
                         list.clear();
                     }
                 }
                 disposeManager.setShowLed(mList);
 
-                if (currentTestTime >= maxTestTimes) {//回到初始界面
+                if (currentTestTime >= setTestCount()) {//回到初始界面
                     currentTestTime = 0;
                     llFirst.setVisibility(View.VISIBLE);
                     rlSecond.setVisibility(View.GONE);
@@ -372,6 +384,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         }
     }
 
+    private int setTestCount() {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        if (setting.isResit()){
+            return 1;
+        }
+        return TestConfigs.getMaxTestCount();
+    }
 
 
     @Override
@@ -406,7 +425,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
         if (roundResultList != null)
             LogUtils.operation("红外计时检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
-        if (roundResultList != null && roundResultList.size() >= maxTestTimes) {
+        if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             //已测试，不重测
 //            roundNo = roundResult.getRoundNo();
 //            selectTestDialog(student);
@@ -446,7 +465,6 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
             mAdapter.notifyDataSetChanged();
             showReady(mList, false);
         } else {
-
             ToastUtils.showShort("设备正在使用中");
         }
     }
@@ -505,7 +523,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
     @Override
     public void updateTableUI(RunTimerResult result) {
-
+        if (result.getTrackNum() == 0)
+            return;
         int realTime = (int) (result.getResult() - baseTimer);
         mList.get(result.getTrackNum() - 1).setMark(getFormatTime(realTime));
         mList.get(result.getTrackNum() - 1).setOriginalMark(realTime);
@@ -628,6 +647,7 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
                     InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "无此项目");
                     return;
                 }
+                LogUtils.operation("检入考生：" + student.toString());
                 // 可以直接检录
                 checkInUIThread(student,studentItem);
             }
@@ -635,5 +655,13 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
 
 
     }
-
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (RunStudent runStudent : mList){
+            Student student1 = runStudent.getStudent();
+            if (student1.getStudentCode().equals(student.getStudentCode())){
+                runStudent.setRoundNo(roundNo);
+            }
+        }
+    }
 }

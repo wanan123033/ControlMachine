@@ -41,6 +41,7 @@ import com.feipulai.host.netUtils.netapi.ServerIml;
 import com.feipulai.host.utils.ResultDisplayUtils;
 import com.feipulai.host.view.StuSearchEditText;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     }
 
     private void setDeviceCount(int deviceCount) {
-        LogUtil.logDebugMessage("使用设备数量：" + deviceCount);
+        LogUtils.operation("使用设备数量：" + deviceCount);
         this.deviceCount = deviceCount;
         deviceDetails.clear();
         for (int i = 0; i < deviceCount; i++) {
@@ -205,21 +206,22 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 BaseStuPair pair = deviceDetails.get(pos).getStuDevicePair();
                 switch (view.getId()) {
                     case R.id.txt_start:
-                        LogUtil.logDebugMessage("使用设备点击开始 ：" + pair.toString());
+
                         if (pair.getStudent() == null) {
                             toastSpeak("当前无学生测试");
-                            LogUtil.logDebugMessage("使用设备点击开始 ：当前无学生测试");
+                            LogUtils.operation("使用设备点击开始 ：当前无学生测试");
                             return;
                         }
                         if (deviceDetails.get(pos).getRound() >= setTestCount()) {
                             toastSpeak("当前学生测试完成");
-                            LogUtil.logDebugMessage("使用设备点击开始 ：当前学生测试完成");
+                            LogUtils.operation("使用设备点击开始 ：当前学生测试完成");
                             stuSkip(pos);
                             return;
                         }
+                        LogUtils.operation("使用设备点击开始 ：" + pair.getStudent().toString());
                         startTime = System.currentTimeMillis();
                         if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
-                            LogUtil.logDebugMessage("使用设备点击开始 ：开始测试");
+                            LogUtils.operation("使用设备点击开始 ：开始测试");
                             sendTestCommand(pair, pos);
 //                            view.setBackgroundColor(ContextCompat.getColor(BaseMoreActivity.this, R.color.gray_btn_bg_color));
                             deviceDetails.get(pos).getStuDevicePair().getTimeResult()[0] = "开始测试";
@@ -227,8 +229,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                         }
                         break;
                     case R.id.txt_skip:
-                        LogUtil.logDebugMessage("使用设备点击跳过 ： " + pair.toString());
+
                         if (pair.getStudent() != null) {
+                            LogUtils.operation("使用设备点击跳过 ： " + pair.getStudent().toString());
                             stuSkipDialog(pair.getStudent(), pos);
                         }
                         break;
@@ -247,7 +250,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Logger.i("stuSkip:" + student.toString());
+                        LogUtils.operation("跳过测试考生 ："+student.toString());
                         //测试结束学生清除 ，设备设置空闲状态
                         stuSkip(pos);
                         mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -315,7 +318,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         int count = deviceDetail.getRound();
         toastSpeak(String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1)
                 , String.format(getString(R.string.test_speak_hint), student.getStudentName(), count + 1));
-        LogUtil.logDebugMessage("添加测试学生：" + student.toString());
+        LogUtils.operation("添加测试学生：" + student.toString());
         deviceDetail.getStuDevicePair().setResult(-999);
         setShowLed(deviceDetail.getStuDevicePair(), index);
         deviceListAdapter.notifyItemChanged(index);
@@ -363,11 +366,11 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
-                LogUtil.logDebugMessage("点击LED设置：");
+                LogUtils.operation("点击LED设置：");
                 startActivity(new Intent(this, LEDSettingActivity.class));
                 break;
             case R.id.tv_device_pair:
-                LogUtil.logDebugMessage("点击设备配对");
+                LogUtils.operation("点击设备配对");
                 if (machineCode == ItemDefault.CODE_WLJ) {
                     startActivity(new Intent(this, GripPairActivity.class));
                 } else {
@@ -376,7 +379,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
                 break;
             case R.id.img_AFR:
-                LogUtil.logDebugMessage("点击人脸识别按钮：");
+                LogUtils.operation("点击人脸识别按钮：");
 //                gotoUVCFaceCamera();
                 showAFR();
                 break;

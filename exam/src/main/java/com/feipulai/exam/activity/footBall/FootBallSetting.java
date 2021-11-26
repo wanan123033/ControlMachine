@@ -6,11 +6,11 @@ package com.feipulai.exam.activity.footBall;
  */
 public class FootBallSetting {
     private int testNo = 1;// 允许测试的次数
-    private int interceptSecond = 5;//默认5秒
-    private int sensitivity = 15;//灵敏度
+    private int interceptSecond = 2;//默认5秒
+    private int sensitivity = 20;//灵敏度
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
-    private int penaltySecond;//违例罚秒
+    private double penaltySecond;//违例罚秒
     private int resultAccuracy = 1;//0 十分秒  1 百分秒
     private int carryMode = 1;//进位方式 对应项目进位（1.四舍五入 2.舍位 3.非零进取）
     private int useMode = 0 ;
@@ -25,7 +25,15 @@ public class FootBallSetting {
      */
     private int testPattern = 0;
     private int testType = 0;   //0 有线  1 无线
+    private int deviceVersion = 0;//0:6.4 1无线6.6版本
 
+    public int getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public void setDeviceVersion(int deviceVersion) {
+        this.deviceVersion = deviceVersion;
+    }
     public int getTestNo() {
         return testNo;
     }
@@ -66,11 +74,11 @@ public class FootBallSetting {
         this.post = post;
     }
 
-    public int getPenaltySecond() {
+    public double getPenaltySecond() {
         return penaltySecond;
     }
 
-    public void setPenaltySecond(int penaltySecond) {
+    public void setPenaltySecond(double penaltySecond) {
         this.penaltySecond = penaltySecond;
     }
 

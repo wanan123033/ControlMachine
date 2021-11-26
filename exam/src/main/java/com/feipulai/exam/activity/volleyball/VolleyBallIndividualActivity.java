@@ -252,6 +252,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
+
     }
 
     @Override
@@ -264,7 +265,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         if (student != null)
             LogUtils.operation("排球检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("排球检入到学生StudentItem:" + studentItem.toString());
+            LogUtils.all("排球检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
             LogUtils.operation("排球检入到学生成绩:" + results.size() + "----" + results.toString());
 
@@ -448,11 +449,17 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         }
         uploadResult(pair.getStudent());
         // 是否需要进行下一次测试
-        if (shouldContinue(result)) {
-            prepareForBegin();
-        } else {
-            prepareForFinish();
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+        if (studentItem.getExamType() == 2){
+            prepareForCheckIn();
+        }else {
+            if (shouldContinue(result)) {
+                prepareForBegin();
+            } else {
+                prepareForFinish();
+            }
         }
+
     }
 
     private boolean shouldContinue(int result) {
@@ -596,13 +603,13 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case VolleyBallManager.VOLLEY_BALL_DISCONNECT:
-                LogUtils.operation("排球设备断开连接...");
+                LogUtils.all("排球设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case VolleyBallManager.VOLLEY_BALL_CONNECT:
-                LogUtils.operation("排球设备已连接...");
+                LogUtils.all("排球设备已连接...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
@@ -739,9 +746,12 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         Student student = TestCache.getInstance().getAllStudents().get(0);
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         List<String> results = new ArrayList<>(maxTestNo);
+        for (int i = 0 ; i < maxTestNo ; i++){
+            results.add(new String());
+        }
         if (roundResults != null) {
-            for (RoundResult result : roundResults) {
-                results.add(ResultDisplayUtils.getStrResultForDisplay(result.getResult()));
+            for (int i = 0 ; i < roundResults.size() ; i++) {
+                results.set(i,ResultDisplayUtils.getStrResultForDisplay(roundResults.get(i).getResult()));
             }
         }
         BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);
@@ -882,5 +892,14 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         });
 
 
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
+        }
     }
 }

@@ -7,17 +7,28 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.height_weight.HWConfigs;
 import com.feipulai.host.activity.height_weight.HeightWeightCheckActivity;
 import com.feipulai.host.activity.jump_rope.check.JumpRopeCheckActivity;
+import com.feipulai.host.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.host.activity.medicine_ball.MedicineBallSelectActivity;
+import com.feipulai.host.activity.medicine_ball.MedicineBallSetting;
 import com.feipulai.host.activity.pullup.PullUpSelectActivity;
+import com.feipulai.host.activity.pullup.setting.PullUpSetting;
 import com.feipulai.host.activity.radio_timer.RunTimerFreeTestActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerSelectActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerSetting;
 import com.feipulai.host.activity.radio_timer.RunTimerTestActivity;
 import com.feipulai.host.activity.ranger.RangerPersonTestActivity;
 import com.feipulai.host.activity.ranger.RangerTestActivity;
 import com.feipulai.host.activity.sitreach.SitReachSelectActivity;
+import com.feipulai.host.activity.sitreach.SitReachSetting;
 import com.feipulai.host.activity.situp.check.SitUpCheckActivity;
+import com.feipulai.host.activity.situp.setting.SitUpSetting;
+import com.feipulai.host.activity.sporttime.SportTimeActivity;
+import com.feipulai.host.activity.sporttime.SportTimerSetting;
 import com.feipulai.host.activity.standjump.StandJumpSelectActivity;
+import com.feipulai.host.activity.standjump.StandJumpSetting;
 import com.feipulai.host.activity.vccheck.VitalTestActivity;
 import com.feipulai.host.activity.vision.Radio.VisionCheckActivity;
 import com.feipulai.host.activity.vision.Radio.VisionTestActivity;
@@ -49,7 +60,7 @@ public class TestConfigs {
     public static final int UPDATE_GRIDVIEW = 0x4;
     public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
 
-    public static final String DEFAULT_IP_ADDRESS = "http://192.168.0.53:8036";
+    public static final String DEFAULT_IP_ADDRESS = "192.168.0.100:8099";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> freedomActivity = new HashMap<>();
     public static final Map<Integer, String> machineNameMap = new HashMap<>();
@@ -75,11 +86,12 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_LDTY, StandJumpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_ZFP, RunTimerSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_WLJ, VitalTestActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SL, VisionCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_JGCJ, RangerPersonTestActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_SPORT_TIMER, SportTimeActivity.class);
 
         TestConfigs.freedomActivity.put(ItemDefault.CODE_SL, VisionTestActivity.class);
         TestConfigs.freedomActivity.put(ItemDefault.CODE_JGCJ, RangerTestActivity.class);
@@ -89,7 +101,7 @@ public class TestConfigs {
         // 每个机器码对应的机器名称
         TestConfigs.machineNameMap.put(ItemDefault.CODE_TS, MyApplication.getInstance().getString(R.string.jump_rope));
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YWQZ, MyApplication.getInstance().getString(R.string.sit_up));
-        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS,"双杠臂屈伸");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS, "双杠臂屈伸");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_HW, MyApplication.getInstance().getString(R.string.height_weight));
 
         TestConfigs.machineNameMap.put(ItemDefault.CODE_ZWTQQ, MyApplication.getInstance().getString(R.string.sit_reach));
@@ -102,6 +114,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_YTXS, "引体向上");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_JGCJ, "激光测距");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SL, "视力");
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_SPORT_TIMER, "运动计时");
 
         // 每个机器码对应的机器名称
         TestConfigs.itemMinScope.put(ItemDefault.CODE_ZWTQQ, -200);
@@ -186,6 +199,7 @@ public class TestConfigs {
         // 身高体重特殊处理,设置itemcode为身高项目
         if (machineCode == ItemDefault.CODE_HW) {
             sCurrentItem = DBManager.getInstance().queryItemByItemCode(TestConfigs.HEIGHT_ITEM_CODE);
+            HWConfigs.init();
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, TestConfigs.HEIGHT_ITEM_CODE);
             Logger.i("sCurrentItem:" + sCurrentItem.toString());
@@ -260,6 +274,27 @@ public class TestConfigs {
     public static String getItemCode(Item item) {
         return item.getItemCode() == null ? DEFAULT_ITEM_CODE :
                 item.getItemCode();
+    }
+
+    public static int getMaxTestCount(Context context) {
+        int result = TestConfigs.sCurrentItem.getTestNum();
+        if (result > 0) {
+            return result;
+        }
+        int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+        switch (machineCode) {
+            case ItemDefault.CODE_SPORT_TIMER:
+                result = SharedPrefsUtil.loadFormSource(context, SportTimerSetting.class).getTestTimes();
+                break;
+
+            default:
+                throw new IllegalArgumentException("wrong machine code");
+        }
+        return result;
+    }
+
+    public static int getMaxTestCount() {
+        return getMaxTestCount(MyApplication.getInstance());
     }
 
 }

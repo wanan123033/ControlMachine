@@ -58,7 +58,6 @@ public class PullUpManager{
 		//先切到通信频段
 		Log.i("james","originFrequency:" + originFrequency);
 		RadioChannelCommand command = new RadioChannelCommand(originFrequency);
-		LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
 		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 		Log.i("james",StringUtility.bytesToHexString(buf));
 		try{
@@ -66,10 +65,10 @@ public class PullUpManager{
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
-		LogUtils.normal(buf.length+"---"+StringUtility.bytesToHexString(buf)+"---引体向上设置频率指令");
+		LogUtils.serial("引体向上设置频率指令:" + StringUtility.bytesToHexString(buf));
 		RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868,buf));
 		command = new RadioChannelCommand(channel);
-		LogUtils.normal(command.getCommand().length+"---"+StringUtility.bytesToHexString(command.getCommand())+"---引体向上切频指令");
+		LogUtils.serial("引体向上切频指令:" + StringUtility.bytesToHexString(buf));
 		RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 	}
 	

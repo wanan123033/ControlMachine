@@ -1,10 +1,19 @@
 package com.feipulai.exam.netUtils;
 
+import com.baidu.tts.loopj.AsyncHttpClient;
 import com.feipulai.exam.netUtils.netapi.HttpApi;
 import com.feipulai.exam.netUtils.netapi.SSLSocketClient;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManager;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,24 +36,24 @@ public class HttpManager {
     public String TAG = "HttpManager";
     public static final String CACHE_NAME = "yourApkName";
     public static String BASE_URL = URLConstant.BASE_URL;
-    private static final int DEFAULT_CONNECT_TIMEOUT = 5;
-    private static final int DEFAULT_WRITE_TIMEOUT = 20;
-    private static final int DEFAULT_READ_TIMEOUT = 20;
+    public static int DEFAULT_CONNECT_TIMEOUT = 20;
+    public static int DEFAULT_WRITE_TIMEOUT = 20;
+    public static int DEFAULT_READ_TIMEOUT = 20;
     private Retrofit retrofit;
     private HttpApi httpApi;
     /**
      * 请求失败重连次数
      */
     private int RETRY_COUNT = 0;
-    private OkHttpClient.Builder okHttpBuilder;
+    public OkHttpClient.Builder okHttpBuilder;
     private static HttpManager instance;
 
     //构造方法私有
     private HttpManager() {
         //手动创建一个OkHttpClient并设置超时时间
         okHttpBuilder = new OkHttpClient.Builder();
-//        okHttpBuilder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
-//        okHttpBuilder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+        okHttpBuilder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
+        okHttpBuilder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 
         /**
          * 设置头信息
@@ -68,17 +77,21 @@ public class HttpManager {
 
 
 //        if (BuildConfig.DEBUG) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-//                Logger.d(message);
-            }
+//        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+//            @Override
+//            public void log(String message) {
+////                Logger.d(message);
+//            }
+//
+//
+//        });
+//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        //设置 Debug Log 模式
+//        okHttpBuilder.addInterceptor(loggingInterceptor);
+        okHttpBuilder       .addInterceptor(new LoggingInterceptor());
 
 
-        });
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //设置 Debug Log 模式
-        okHttpBuilder.addInterceptor(loggingInterceptor);
+
 //        }
 
         /**
@@ -88,10 +101,10 @@ public class HttpManager {
         okHttpBuilder.connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS);
 
 
-        okHttpBuilder.readTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS);
-        okHttpBuilder.connectTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+        okHttpBuilder.readTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+        okHttpBuilder.writeTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.SECONDS);
         //错误重连
-        okHttpBuilder.retryOnConnectionFailure(true);
+//        okHttpBuilder.retryOnConnectionFailure(false);
         retrofit = new Retrofit.Builder()
                 .client(okHttpBuilder.build())
 //                .addConverterFactory(GsonConverterFactory.create())//json转换成JavaBean

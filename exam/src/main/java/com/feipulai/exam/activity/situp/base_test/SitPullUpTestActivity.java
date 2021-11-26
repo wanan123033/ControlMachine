@@ -27,7 +27,6 @@ public abstract class SitPullUpTestActivity<Setting>
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		LogUtils.life("SitPullUpTestActivity onCreate");
 		presenter = (SitPullUpTestPresenter<Setting>) super.presenter;
 	}
 	

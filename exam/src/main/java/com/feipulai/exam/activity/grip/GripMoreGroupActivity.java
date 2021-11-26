@@ -14,6 +14,7 @@ import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreGroupActivity
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
 import com.feipulai.exam.entity.RoundResult;
+import com.orhanobut.logger.utils.LogUtils;
 
 /**
  * Created by pengjf on 2020/7/1.
@@ -33,13 +34,13 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
         if (null == setting) {
             setting = new GripSetting();
         }
+        LogUtils.operation("项目设置" + setting.toString());
         deviceState = new int[setting.getDeviceSum()];
         getState();
         RadioManager.getInstance().setOnRadioArrived(gripRadio);
         super.initData();
 
     }
-
     private void getState() {
         for (int i = 0; i < deviceDetails.size(); i++) {
             BaseDeviceState baseDevice = deviceDetails.get(i).getStuDevicePair().getBaseDevice();

@@ -31,6 +31,7 @@ import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.basketball.adapter.DribbleShootAdapter;
 import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -328,7 +329,18 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                     toastSpeak("已保存，请勿重复点击");
                     return;
                 }
-                disposeResult(timeResult, student, testRound, testNo);
+                for (int i = 0 ; i < getPairs().size() ; i++){
+                    StuDevicePair pair = getPairs().get(i);
+                    if (pair.getStudent().getStudentCode().equals(student.getStudentCode()) && pair.getCurrentRoundNo() != 0){
+                        disposeResult(timeResult, student, pair.getCurrentRoundNo(), testNo, false);
+                        pair.setCurrentRoundNo(0);
+                        break;
+                    }else if (pair.getStudent().getStudentCode().equals(student.getStudentCode())){
+                        disposeResult(timeResult, student, testRound, testNo, false);
+                        break;
+                    }
+                }
+
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
                 InteractUtils.showStuInfo(llStuDetail, student, results);
@@ -338,6 +350,9 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
                 resultAdapter.notifyDataSetChanged();
                 testRound++;
                 saved = true;
+                if (studentItem.getExamType() == 2){
+                    prepareForCheckIn();
+                }
                 break;
             case R.id.txt_finish_test:
                 LogUtils.operation("篮球运球投篮点击了结束测试...");
@@ -353,7 +368,16 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         }
     }
 
-
+    private void prepareForCheckIn() {
+        resultList.clear();
+        resultAdapter.notifyDataSetChanged();
+        TestCache.getInstance().clear();
+        getPairs().get(0).setStudent(null);
+        InteractUtils.showStuInfo(llStuDetail, null, null);
+        tvResult.setText("请检录");
+        state = WAIT_CHECK_IN;
+        setOperationUI();
+    }
 
     @Override
     public void disposeConnect(RunTimerConnectState connectState) {
@@ -608,6 +632,16 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
 
         if (timer != null ) {
             timer.dispose();
+        }
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        List<StuDevicePair> pairs = getPairs();
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
+            }
         }
     }
 }

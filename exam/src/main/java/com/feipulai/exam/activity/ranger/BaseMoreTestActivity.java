@@ -30,7 +30,6 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.PenalizeDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseDeviceState;
-import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
@@ -116,6 +115,12 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
     protected int setLayoutResID() {
         return R.layout.activity_base_more_test;
     }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        if (systemSetting.isResit())
+            this.roundNo = roundNo;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +197,6 @@ public abstract class BaseMoreTestActivity extends BaseCheckActivity implements 
 
     @Override
     public void onCheckIn(Student student) {
-        Logger.i("onCheckIn====>" + student.toString());
         if (student == null) {
             toastSpeak("该考生不存在");
             return;

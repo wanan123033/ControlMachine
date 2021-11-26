@@ -33,12 +33,12 @@ public class UploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getExtras()!=null){
+        if (intent != null && intent.getExtras()!=null){
             UploadResults uploadResults = (UploadResults) intent.getExtras().getSerializable(UploadResults.BEAN_KEY);
 
             uploadResult(uploadResults);
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_REDELIVER_INTENT;
     }
     /**
      * 成绩上传

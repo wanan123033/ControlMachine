@@ -1,5 +1,7 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
+import android.os.SystemClock;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -25,20 +27,17 @@ public class TimerKeeper {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
-                    public void accept(Long aLong) throws Exception {
+                    public void accept(Long aLong)  {
                         if (keepTime){
-                            temp++;
-                            disposeTime = temp*100;
-                            timeUpdateListener.onTimeUpdate((int) disposeTime);
+                            temp = (int) (SystemClock.elapsedRealtime()-disposeTime) ;
+                            timeUpdateListener.onTimeUpdate(( temp));
                         }
-
                     }
                 });
     }
 
     public void setStartInit(){
-        disposeTime = 0;
-        temp = 0;
+        disposeTime = SystemClock.elapsedRealtime();
         keepTime = true;
     }
 

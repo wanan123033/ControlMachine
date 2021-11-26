@@ -149,16 +149,17 @@ public class BasketballResult implements IDeviceResult {
     @Override
     public String toString() {
         return "BasketballResult{" +
-                "type=" + type +
-                ", hour=" + hour +
-                ", minute=" + minute +
-                ", second=" + second +
-                ", hund=" + hund +
-                ", uPrecision=" + uPrecision +
-                ", ucFD=" + ucFD +
-                ", tNum=" + tNum +
-                ", flag=" + flag +
-                ", ucStatus=" + ucStatus +
+                "指令类型=" + type +
+                ", 时=" + hour +
+                ", 分=" + minute +
+                ", 秒=" + second +
+                ", 毫秒=" + hund +
+                ",拦截时间=" + getResult() +
+                ", 精度=" + uPrecision +
+                ", 遮挡1,2=" + ucFD +
+                ", 传感器=" + tNum +
+                ", 标志=" + flag +
+                ", 设备工作状态=" + ucStatus +
                 '}';
     }
 

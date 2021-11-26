@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -23,7 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arcsoft.face.util.ImageUtils;
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
 import com.arcsoft.imageutil.ArcSoftImageFormat;
 import com.arcsoft.imageutil.ArcSoftImageUtil;
 import com.arcsoft.imageutil.ArcSoftImageUtilError;
@@ -34,10 +32,8 @@ import com.feipulai.common.db.DataBaseRespon;
 import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.dbutils.BackupManager;
 import com.feipulai.common.dbutils.FileSelectActivity;
-import com.feipulai.common.dbutils.FileSelectAdapter;
 import com.feipulai.common.dbutils.UsbFileAdapter;
 import com.feipulai.common.exl.ExlListener;
-import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.HandlerUtil;
@@ -54,12 +50,11 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
 import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.TypeListBean;
-import com.feipulai.exam.bean.UpdateApp;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
@@ -81,6 +76,8 @@ import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.tcp.CommonListener;
+import com.feipulai.exam.tcp.TcpDownLoadUtil;
 import com.feipulai.exam.utils.FileUtils;
 import com.feipulai.exam.utils.ImageUtil;
 import com.feipulai.exam.utils.StringChineseUtil;
@@ -88,6 +85,7 @@ import com.feipulai.exam.view.OperateProgressBar;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.widget.ProgressDialog;
@@ -95,6 +93,9 @@ import com.ww.fpl.videolibrary.camera.HkCameraManager;
 import com.yhy.gvp.listener.OnItemClickListener;
 import com.yhy.gvp.widget.GridViewPager;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
@@ -119,6 +120,8 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Headers;
+
+import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 
 public class DataManageActivity
         extends BaseTitleActivity
@@ -189,7 +192,7 @@ public class DataManageActivity
         DataBaseExecutor.addTask(new DataBaseTask() {
             @Override
             public DataBaseRespon executeOper() {
-                int stuCount = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0).size();
+                int stuCount = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0).size();
                 int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
 
                 return new DataBaseRespon(true, stuCount + "", afrCount);
@@ -214,7 +217,8 @@ public class DataManageActivity
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_group_import, R.mipmap.icon_data_down, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_delete_position
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup, R.mipmap.icon_data_backup};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_thermometer, R.mipmap.icon_result_import, R.mipmap.icon_position_down, R.mipmap.icon_data_backup, R.mipmap.icon_data_backup
+                , R.mipmap.icon_delete_logger};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -356,19 +360,8 @@ public class DataManageActivity
 
                     case 10://成绩上传
                         LogUtils.operation("用户点击了成绩上传...");
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                            if (itemList != null && itemList.size() > 0)
-                                showZcpSelect(itemList);
-                        } else {
-//                            if (TestConfigs.sCurrentItem.getItemCode() == null && TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
-//                                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(18);
-//                                if (items.size()>0){
-//                                    TestConfigs.sCurrentItem.setItemCode(items.get(0).getItemCode());
-//                                }
-//                            }
-                            uploadData();
-                        }
+
+                        showUploadDataDialog();
                         break;
                     case 11://数据导出
                         LogUtils.operation("用户点击了数据导出...");
@@ -405,6 +398,25 @@ public class DataManageActivity
                         break;
                     case 17://软件更新
                         getAPPS();
+                        break;
+                    case 18://日志删除
+                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
+                                .setContentText("是否清空删除所有日志文件").setConfirmText(getString(R.string.confirm))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
+                                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
+                                        toastSpeak("日志文件删除成功");
+                                    }
+                                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+
                         break;
                     default:
                         break;
@@ -498,7 +510,7 @@ public class DataManageActivity
                     @Override
                     public void onResponse(Headers headers) {
                         saveHeaders = headers;
-                        LogUtils.operation("saveHeaders=" + saveHeaders.toString());
+                        LogUtils.normal("保存头像返回头部信息=" + saveHeaders.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -523,6 +535,7 @@ public class DataManageActivity
                     public void onFinish(String fileName) {
 
                         if (!new File(MyApplication.PATH_IMAGE + fileName).exists()) {
+                            HandlerUtil.sendMessage(myHandler, 1, 1, "头像下载失败");
                             return;
                         }
 
@@ -587,7 +600,6 @@ public class DataManageActivity
                         downLoadProgressDialog.dismissDialog();
 
                     }
-
                 }
             }
 
@@ -673,7 +685,7 @@ public class DataManageActivity
     /**
      * 中长跑选择项目上传（和后面的上传更新逻辑有关，所以此处最好分项目上传)
      */
-    private void showZcpSelect(final List<Item> itemList) {
+    private void showZcpSelect(final boolean isUploadAll, final List<Item> itemList) {
         //默认选中第一个
         final String[] items = new String[itemList.size()];
         for (int i = 0; i < itemList.size(); i++) {
@@ -690,7 +702,7 @@ public class DataManageActivity
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (choice != -1) {
-                            uploadDataZCP(itemList.get(choice).getItemCode());
+                            uploadDataZCP(isUploadAll, itemList.get(choice).getItemCode());
                         }
                     }
                 });
@@ -698,7 +710,7 @@ public class DataManageActivity
     }
 
 
-    public void uploadData() {
+    public void uploadData(final boolean isUploadAll) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -706,12 +718,12 @@ public class DataManageActivity
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                     List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                     for (Item item : itemList) {
-                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(item.getItemCode());
+                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, item.getItemCode());
                         if (dbResultsList != null && dbResultsList.size() > 0)
                             uploadResultsList.addAll(dbResultsList);
                     }
                 } else {
-                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(TestConfigs.getCurrentItemCode());
+                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, TestConfigs.getCurrentItemCode());
                 }
 
                 return new DataBaseRespon(true, "", uploadResultsList);
@@ -731,11 +743,12 @@ public class DataManageActivity
         });
     }
 
-    public void uploadDataZCP(final String itemCode) {
+    public void uploadDataZCP(final boolean isUploadAll, final String itemCode) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
-                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(itemCode);
+                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll
+                        , itemCode);
 
                 return new DataBaseRespon(true, "", uploadResultsList);
             }
@@ -1016,8 +1029,53 @@ public class DataManageActivity
         super.onBackPressed();
     }
 
+    private void showDownLoadDialog(final int examType) {
+        final String[] lastDownLoadTime = new String[1];
+        String item[] = getResources().getStringArray(R.array.download_select);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.download_title)
+                .setSingleChoiceItems(item, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            lastDownLoadTime[0] = "";
+                        } else {
+                            lastDownLoadTime[0] = SharedPrefsUtil.getValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+                        }
+                    }
+                })
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                        ServerMessage.downloadData(DataManageActivity.this, examType, lastDownLoadTime[0]);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
+    }
+
+    private void showUploadDataDialog() {
+        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
+        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
+                .setItems(uploadType, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                            if (itemList != null && itemList.size() > 0)
+                                showZcpSelect(which == 0, itemList);
+                        } else {
+                            uploadData(which == 0);
+                        }
+
+                    }
+                }).create().show();
+    }
+    int type = 0;
     private void showDownloadDataDialog() {
-        String[] exemType = new String[]{"正常", "补考", "缓考"};
+
+        String[] exemType = new String[]{"正常", "补考", "缓考","TCP下载"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
                 .setItems(exemType, new DialogInterface.OnClickListener() {
                     @Override
@@ -1033,15 +1091,55 @@ public class DataManageActivity
                             case 2:
                                 examType = StudentItem.EXAM_DELAYED;
                                 break;
+                            case 3:
+                                type = 3;
+                                break;
+                        }
+                        String downTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
+                        if (type == 3){
+                            OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                            dataDownload(SettingHelper.getSystemSetting().getTcpIp());
+                            return;
+                        }
+                        if (!TextUtils.isEmpty(downTime)) {
+                            showDownLoadDialog(examType);
+                        } else {
+                            OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
+                            ServerMessage.downloadData(DataManageActivity.this, examType, "0");
                         }
 
-                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
-                        ServerMessage.downloadData(DataManageActivity.this, examType);
                     }
                 }).create().show();
     }
 
-
+    public void dataDownload(String tcpip) {
+        if(TextUtils.isEmpty(tcpip)){
+            OperateProgressBar.removeLoadingUiIfExist(this);
+            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tcpip.contains(":")) {
+            String ip = tcpip.substring(0, tcpip.indexOf(":"));
+            String port = tcpip.substring(tcpip.indexOf(":") + 1);
+            TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
+                @Override
+                public void onCommonListener(int no, String string) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                        }
+                    });
+                }
+            });
+            tcpDownLoad.getTcp(SCHEDULE, "");
+        }else {
+            OperateProgressBar.removeLoadingUiIfExist(this);
+            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -1052,12 +1150,12 @@ public class DataManageActivity
     }
 
     private void createFileNameDialog(EditDialog.OnConfirmClickListener confirmListener) {
-        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
+        DateFormat df = new SimpleDateFormat("yyyy年MM月dd日HH");
         new EditDialog.Builder(this).setTitle("文件名")
                 .setCanelable(false)
                 .setMessage("输入合法保存文件名")
                 .setEditHint("请输入文件名")
-                .setEditText(SettingHelper.getSystemSetting().getTestName() +
+                .setEditText(SettingHelper.getSystemSetting().getTestName() + TestConfigs.sCurrentItem.getItemName() +
                         SettingHelper.getSystemSetting().getHostId() + "号机" + df.format(new Date()))
                 .setPositiveButton(confirmListener)
                 .build().show();
@@ -1138,25 +1236,150 @@ public class DataManageActivity
         createFileNameDialog(new EditDialog.OnConfirmClickListener() {
             @Override
             public void OnClickListener(Dialog dialog, String content) {
-                String text = content.trim();
-                UsbFile targetFile;
+                backData(content);
+//                OperateProgressBar.showLoadingUi(DataManageActivity.this, "数据备份中...");
+//                String text = content.trim();
+//                UsbFile targetFile;
+//
+//                try {
+//                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");
+//                    boolean backupSuccess = backupManager.backup(targetFile);
+//                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
+//                    deleteFile.delete();
+//                    ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
+//                    Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
+//                            FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
+//                            : "数据库备份失败");
+////                    FileSelectActivity.sSelectedFile = null;
+//                    if (backupSuccess) {
+//                        UsbFile excelFile = FileSelectActivity.sSelectedFile.createFile(text + ".xls");
+//                        new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), DataManageActivity.this)
+//                                .writeExelData(excelFile);
+//                        zipFile(FileSelectActivity.sSelectedFile.getAbsolutePath() + "/" + text, FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName(),
+//                                FileSelectActivity.sSelectedFile.getName() + "/" + excelFile.getName());
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+//                    Logger.i("文件创建失败,数据库备份失败");
+//                }
+            }
+        });
+    }
+
+    private DateFormat df = new SimpleDateFormat("HH:mm:ss");
+
+    private void backData(final String fileName) {
+
+        OperateProgressBar.showLoadingUi(DataManageActivity.this, "数据备份中...");
+        final UsbFile file = new UsbFileAdapter(new File(MyApplication.BACKUP_DIR));
+
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
+                UsbFile targetFile = null;
                 try {
-                    targetFile = FileSelectActivity.sSelectedFile.createFile(text + ".db");
+                    targetFile = file.createFile(fileName + df.format(new Date()) + ".db");
                     boolean backupSuccess = backupManager.backup(targetFile);
-                    UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile("." + text + "delete.db");
+                    UsbFile deleteFile = file.createFile("." + fileName + "delete.db");
                     deleteFile.delete();
                     ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
-                    Logger.i(backupSuccess ? ("数据库备份成功,备份文件名:" +
-                            FileSelectActivity.sSelectedFile.getName() + "/" + targetFile.getName())
-                            : "数据库备份失败");
-                    FileSelectActivity.sSelectedFile = null;
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
                     Logger.i("文件创建失败,数据库备份失败");
                 }
+
+                return new DataBaseRespon(true, "", ((UsbFileAdapter) targetFile).getFile());
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                final UsbFile excelFile;
+                final File dbFile = (File) respon.getObject();
+                try {
+                    excelFile = file.createFile(fileName + df.format(new Date()) + ".xls");
+                    new ResultExlWriter(TestConfigs.getMaxTestCount(DataManageActivity.this), new ExlListener() {
+                        @Override
+                        public void onExlResponse(final int responseCode, final String reason) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort(reason);
+                                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                                    if (responseCode == ExlListener.EXEL_WRITE_SUCCESS) {
+                                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件压缩中...");
+
+                                    } else {
+                                        isProcessingData = false;
+                                    }
+                                }
+                            });
+
+                            if (responseCode == ExlListener.EXEL_WRITE_SUCCESS) {
+                                zipFile(fileName, MyApplication.BACKUP_DIR + fileName + df.format(new Date()) + ".zip",
+                                        dbFile, ((UsbFileAdapter) excelFile).getFile());
+                            }
+
+
+                        }
+                    }).writeExelData(excelFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
             }
         });
+    }
+
+    private void zipFile(String fileName, String zipPathName, File dbFile, File excelFile) {
+        // 生成的压缩文件
+        try {
+//            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + backUp);
+//            File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + excel);
+//                File file2 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/KS_LOGGER/operationLogger");
+            ZipFile zipFile = new ZipFile(zipPathName);
+            ZipParameters parameters = new ZipParameters();
+            // 压缩方式
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            // 压缩级别
+            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+            if (dbFile.exists()) {
+                zipFile.addFile(dbFile, parameters);
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + dbFile + "file is exists");
+            } else {
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + dbFile + "file is not exists");
+            }
+            if (excelFile.exists()) {
+                zipFile.addFile(excelFile, parameters);
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file is  exists");
+            } else {
+                Log.i("zipFile", Environment.getExternalStorageDirectory().getAbsolutePath() + excelFile + "file1 is not exists");
+            }
+            zipFile.addFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME, parameters);
+
+            UsbFile copeFile = FileSelectActivity.sSelectedFile.createFile(fileName + ".zip");
+            FileUtil.copyFile(zipFile.getFile(), copeFile);
+
+            UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile(".Delete" + fileName + ".zip");
+            deleteFile.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+            }
+        });
+
+
     }
 
     public void chooseFile() {
@@ -1182,6 +1405,7 @@ public class DataManageActivity
                 Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
                 DBManager.getInstance().clear();
                 SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
                 SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
                 DBManager.getInstance().initDB();
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
@@ -1274,6 +1498,7 @@ public class DataManageActivity
 //    }
 
     public void uploadFace() {
+        progressDialog = new ProgressDialog(DataManageActivity.this);
         DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -1287,46 +1512,55 @@ public class DataManageActivity
                     ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
                     return;
                 }
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        final int totalCount = studentList.size();
+                int activeCode = FaceEngine.activeOnline(DataManageActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4 && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.setMaxProgress(totalCount);
-                                progressDialog.show();
-                            }
-                        });
-                        List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-                        for (int i = 0; i < studentList.size(); i++) {
+                    executorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final int totalCount = studentList.size();
 
-
-                            Student student = studentList.get(i);
-                            registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
-                            final int finalI = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressDialog != null) {
-                                        progressDialog.refreshProgress(finalI);
-                                    }
+                                        progressDialog.setMaxProgress(totalCount);
+                                        progressDialog.show();
+
+
                                 }
                             });
-                        }
-                        FaceServer.getInstance().addFaceList(registerInfoList);
+                            List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                            for (int i = 0; i < studentList.size(); i++) {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("人脸特征检入成功");
-                                progressDialog.dismiss();
+
+                                Student student = studentList.get(i);
+                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                final int finalI = i;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (progressDialog != null) {
+                                            progressDialog.refreshProgress(finalI);
+                                        }
+                                    }
+                                });
                             }
-                        });
-                        Log.i("DataManageActivity", "run: " + executorService.isShutdown());
-                    }
-                });
+                            FaceServer.getInstance().addFaceList(registerInfoList);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showShort("人脸特征检入成功");
+                                    progressDialog.dismiss();
+                                }
+                            });
+                            Log.i("DataManageActivity", "run: " + executorService.isShutdown());
+                        }
+                    });
+                } else {
+                    ToastUtils.showShort("请启用人脸识别与激活");
+                }
+
             }
 
             @Override

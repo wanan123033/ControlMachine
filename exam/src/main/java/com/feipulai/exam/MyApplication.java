@@ -8,12 +8,16 @@ import android.text.TextUtils;
 import com.feipulai.common.CrashHandler;
 import com.feipulai.common.utils.ActivityLifeCycle;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.AdaptiveConfig;
 import com.feipulai.device.serial.SerialParams;
+import com.feipulai.exam.activity.SplashScreenActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.entity.Account;
+import com.feipulai.exam.netUtils.NetUtil;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothHelper;
 import com.kk.taurus.playerbase.config.PlayerConfig;
@@ -21,7 +25,6 @@ import com.kk.taurus.playerbase.config.PlayerLibrary;
 import com.kk.taurus.playerbase.record.PlayRecordManager;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
-
 
 public class MyApplication extends MultiDexApplication {
 
@@ -33,9 +36,10 @@ public class MyApplication extends MultiDexApplication {
     public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
     public static final String PATH_FACE = FileUtil.PATH_BASE + "KS_FACE_IMG/"; //人脸识别图片信息文件路径
-
+    public static final String BACKUP_DIR = FileUtil.PATH_BASE + "/KS_BACKUP/";
     public static final String DEVICECODE = "111";//硬件识别码
     public static Account account;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -50,6 +54,7 @@ public class MyApplication extends MultiDexApplication {
      */
     public static String TOKEN = "";
     public static String ADVANCED_PWD = "fpl2019";
+    public static String ADVANCED_AUTO_PWD = "fairplay.test";
 
     public void onCreate() {
         super.onCreate();
@@ -59,7 +64,10 @@ public class MyApplication extends MultiDexApplication {
         CrashHandler.getInstance().setUploadOpersion(new CrashHandler.UploadOpersion() {
             @Override
             public void upload(String erroMsg) {
-                new HttpSubscriber().uploadLog(erroMsg);
+                if (NetUtil.isNetworkConnected()){
+                    new HttpSubscriber().uploadLog(erroMsg);
+                }
+                IntentUtil.gotoActivity(instance, SplashScreenActivity.class);
             }
         });
         SettingHelper.init(this);
@@ -72,6 +80,7 @@ public class MyApplication extends MultiDexApplication {
         FileUtil.mkdirs(PATH_SPECIFICATION);
         FileUtil.mkdirs(PATH_IMAGE);
         FileUtil.mkdirs(PATH_PDF_IMAGE);
+        FileUtil.mkdirs(BACKUP_DIR);
 //        FileUtil.mkdirs(PATH_FACE);
         FileUtil.mkdirs(FaceServer.ROOT_PATH);
         //视频播放初始化库
@@ -95,7 +104,7 @@ public class MyApplication extends MultiDexApplication {
 
         SerialParams.init(this);
 
-        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
+//        registerActivityLifecycleCallbacks(new ActivityLifeCycle(SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME));
         SOFTWAREUUID = MyApplication.getInstance().getString(R.string.software_uuid);//软件识别码
         HARDWAREUUID = MyApplication.getInstance().getString(R.string.hardware_uuid);//硬件识别码
     }

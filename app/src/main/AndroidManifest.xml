@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.SET_TIME_ZONE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
@@ -179,6 +180,44 @@
         <activity
             android:name=".activity.explain.ExplainActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.sporttime.SportPairActivity" />
+        <activity android:name=".activity.sporttime.SportSettingActivity" />
+        <activity android:name=".activity.sporttime.SportInitWayActivity" />
+        <activity android:name=".activity.sporttime.SportTimeActivity" />
+        <activity android:name=".activity.vccheck.GripSettingActivity" />
+        <activity
+            android:name=".activity.radio_timer.RunTimerSelectActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.radio_timer.newRadioTimer.RadioDeviceDetailActivity"></activity>
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.pair.NewRadioPairActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.NewRadioTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.radio_timer.newRadioTimer.PreTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.setting.CorrespondTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.feipulai.host.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

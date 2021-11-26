@@ -41,10 +41,10 @@ public class StuInfo{
 	
 	@Override
 	public String toString(){
-		return "StuInfo{" +
-				"stuCode='" + stuCode + '\'' +
-				", stuName='" + stuName + '\'' +
-				", sex=" + sex +
+		return "IC卡学生信息{" +
+				"准考证号='" + stuCode + '\'' +
+				", 姓名='" + stuName + '\'' +
+				", 性别=" + sex +
 				'}';
 	}
 }

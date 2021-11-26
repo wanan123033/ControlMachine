@@ -25,10 +25,10 @@ public class SportResultListener implements RadioManager.OnRadioArrivedListener 
             case SerialConfigs.SPORT_TIMER_GET_TIME:
                 if (msg.obj instanceof  SportResult){
                     if (((SportResult) msg.obj).getLongTime()>0){
-                        sportMsgListener.onGetTime();
+                        sportMsgListener.onGetTime((SportResult) msg.obj);
                         Log.i("SportResultListener","获取时间");
                     }else {
-                        sportMsgListener.onGetDeviceState(((SportResult) msg.obj).getDeviceState());
+                        sportMsgListener.onGetDeviceState(((SportResult) msg.obj).getDeviceState(),((SportResult) msg.obj).getDeviceId());
                     }
 
                 }
@@ -44,8 +44,8 @@ public class SportResultListener implements RadioManager.OnRadioArrivedListener 
 
     public interface SportMsgListener{
         void onConnect(SportResult result);
-        void onGetTime();
+        void onGetTime( SportResult result);
         void onGetResult(SportResult result);
-        void onGetDeviceState(int deviceState);
+        void onGetDeviceState(int deviceState,int deviceId);
     }
 }

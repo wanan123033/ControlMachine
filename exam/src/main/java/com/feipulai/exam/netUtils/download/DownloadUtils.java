@@ -152,8 +152,8 @@ public class DownloadUtils {
                 }
                 os.write(buff, 0, len);
                 currentLength += len;
-                LogUtil.logDebugMessage("当前长度: " + currentLength);
-                LogUtil.logDebugMessage("当前进度: " + (int) (100 * currentLength / totalLength));
+//                LogUtil.logDebugMessage("当前长度: " + currentLength);
+//                LogUtil.logDebugMessage("当前进度: " + (int) (100 * currentLength / totalLength));
                 downloadListener.onProgress(file.getName(), (int) (100 * currentLength / totalLength));
                 if ((int) (100 * currentLength / totalLength) == 100 && mApi != null) {
                     downloadListener.onFinish(mPath);

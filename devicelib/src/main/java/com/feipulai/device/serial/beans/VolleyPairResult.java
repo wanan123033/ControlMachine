@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;
@@ -27,8 +28,9 @@ public class VolleyPairResult {
         frequency = data[12]&0xff;
         hostId=data[5]&0xff;
 //		Log.i("sargent",StringUtility.bytesToHexString(data));
-        LogUtils.normal("排球返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
+        LogUtils.serial("排球返回数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("排球返回数据(解析后):" + toString());
     }
 
     public int getScore(){

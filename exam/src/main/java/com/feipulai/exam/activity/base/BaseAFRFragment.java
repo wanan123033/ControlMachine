@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -26,13 +25,15 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
-import com.feipulai.common.utils.ImageUtil;
+import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.utils.print.ViewImageUtils;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.UserPhoto;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
@@ -43,7 +44,7 @@ import com.feipulai.exam.view.OperateProgressBar;
 import com.lgh.uvccamera.UVCCameraProxy;
 import com.lgh.uvccamera.callback.ConnectCallback;
 import com.lgh.uvccamera.callback.PreviewCallback;
-import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.CompareResult;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.faceserver.ThreadManager;
@@ -58,12 +59,7 @@ import com.ww.fpl.libarcface.util.face.RecognizeColor;
 import com.ww.fpl.libarcface.util.face.RequestFeatureStatus;
 import com.ww.fpl.libarcface.widget.FaceRectView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +72,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-
-import static com.scwang.smartrefresh.layout.util.DensityUtil.dp2px;
 
 /**
  * 人脸识别
@@ -145,7 +139,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
     protected void initData() {
         initEngine();
         initCamera();
-
+        if (SettingHelper.getSystemSetting().getAfrContrast() == 0) {
+            SIMILAR_THRESHOLD = 0.60F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 1) {
+            SIMILAR_THRESHOLD = 0.70F;
+        } else if (SettingHelper.getSystemSetting().getAfrContrast() == 2) {
+            SIMILAR_THRESHOLD = 0.80F;
+        } else {
+            SIMILAR_THRESHOLD = 0.90F;
+        }
     }
 
     private void initCamera() {
@@ -310,24 +312,13 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isOpenCamera = true;
             if (faceId == null) {
                 faceId = 0;
+            }else{
+                faceHelper.setName(faceId, Integer.toString(faceId));
+                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.TO_RETRY);
             }
-            retryRecognizeDelayed(faceId);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    //每次恢复初始状态
-//                    if (faceHelper != null) {
-//                        faceHelper.clearFace();
-//                        faceId = 0;
-//                        requestFeatureStatusMap.clear();
-//                        extractErrorRetryMap.clear();
-//                        delayFaceTaskCompositeDisposable.clear();
-//                    }
-//                    mUVCCamera.startPreview();
-//                }
-//            }, 100);
+//            retryRecognizeDelayed(faceId);
+
         } else {
-//            mUVCCamera.stopPreview();
             isOpenCamera = false;
             isStartFace = false;
         }
@@ -527,7 +518,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         drawHelper.draw(faceRectView2, drawInfoList);
     }
 
-    private final float SIMILAR_THRESHOLD = 0.80f;
+    private float SIMILAR_THRESHOLD = 0.90f;
     private int hasTry = 0;
 
     //3个线程查找
@@ -598,14 +589,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.SUCCEED);
 //                faceHelper.setName(faceId, mContext.getString(R.string.recognize_success_notice, lastCompareResult.getUserName()));
                 Student student = DBManager.getInstance().queryStudentByCode(lastCompareResult.getUserName());
-                Logger.e("compareResult==》特征识别成功" + student);
-                View view = getView();
-                view.setDrawingCacheEnabled(true);
-                view.buildDrawingCache(true);
-                Bitmap b = view.getDrawingCache();
-                saveStuImage(student,b);
-                b.recycle();
-                b = null;
+
+//                View view = getView();
+//                view.setDrawingCacheEnabled(true);
+//                view.buildDrawingCache(true);
+//                Bitmap b = view.getDrawingCache();
+//                saveStuImage(student,b);
+//                b.recycle();
+//                b = null;
 
                 isOpenCamera = false;
                 hasTry = 0;
@@ -629,6 +620,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         }
                     }
                 } else {
+                    LogUtils.operation("特征识别成功" + student);
                     compareListener.compareStu(student);
                     isStartFace = false;
                     isNetWork = false;
@@ -637,7 +629,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //                isOpenCamera=false;
             } else {
                 hasTry++;
-                Logger.e("compareResult==>null----" + hasTry);
+//                Logger.e("compareResult==>null----" + hasTry);
                 if (hasTry < 3) {
                     faceHelper.setName(faceId, getString(R.string.recognize_failed_notice, ""));
                     isStartFace = true;
@@ -673,11 +665,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     /**
      * 保存个人识别信息
+     *
      * @param student
      * @param b
      */
     private void saveStuImage(Student student, Bitmap b) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_stu_saveinfo,null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_stu_saveinfo, null);
         ImageView iv_real = view.findViewById(R.id.iv_real);
         ImageView iv_portrait = view.findViewById(R.id.iv_portrait);
         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -688,12 +681,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         TextView tv_id_card = view.findViewById(R.id.tv_id_card);
         iv_real.setImageBitmap(textureView2.getBitmap());
         iv_portrait.setImageBitmap(student.getBitmapPortrait());
-        tv_name.setText("姓名:"+student.getStudentName());
-        tv_item.setText("项目:"+TestConfigs.sCurrentItem.getItemName());
-        tv_sex.setText("性别:"+(student.getSex() == 0 ? "男":"女"));
-        tv_school.setText("学校:"+student.getSchoolName());
-        tv_stu_code.setText("考号:"+student.getStudentCode());
-        tv_id_card.setText("身份证号:"+student.getIdCardNo());
+        tv_name.setText("姓名:" + student.getStudentName());
+        tv_item.setText("项目:" + TestConfigs.sCurrentItem.getItemName());
+        tv_sex.setText("性别:" + (student.getSex() == 0 ? "男" : "女"));
+        tv_school.setText("学校:" + student.getSchoolName());
+        tv_stu_code.setText("考号:" + student.getStudentCode());
+        tv_id_card.setText("身份证号:" + student.getIdCardNo());
 
         String path = MyApplication.PATH_FACE;
 
@@ -701,8 +694,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(metric);
         int width = metric.widthPixels;     // 屏幕宽度（像素）
         int height = metric.heightPixels;   // 屏幕高度（像素）
-        ViewImageUtils.layoutView(view,  width, height);
-        ViewImageUtils.viewSaveToImage(view, path, student.getStudentCode()+"_"+TestConfigs.sCurrentItem.getItemName());
+        ViewImageUtils.layoutView(view, width, height);
+        ViewImageUtils.viewSaveToImage(view, path, student.getStudentCode() + "_" + TestConfigs.sCurrentItem.getItemName());
 
 //        view.setDrawingCacheEnabled(true);
 //        view.buildDrawingCache(true);
@@ -720,7 +713,24 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //        bs.recycle();
 //        bs = null;
     }
-
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+//        if (event.getTagInt()== EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED){
+//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+//            isStartFace = true;
+//            isOpenCamera = true;
+//            retryRecognizeDelayed(faceId);
+//            ToastUtils.showShort("拉取服务器数据完成");
+//            TtsManager.getInstance().speak("拉取服务器数据完成");
+//        }else if (event.getTagInt()==EventConfigs.SERVICE_UPLOAD_DATA_ERROR){
+//            isStartFace = true;
+//            isOpenCamera = true;
+//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+//            ToastUtils.showShort("拉取服务器数据失败，请重试");
+//            TtsManager.getInstance().speak("拉取服务器数据失败，请重试");
+//        }
+    }
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
 
     public void netFace() {
@@ -728,6 +738,19 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isNetface = true;
             isNetWork = false;
             isStartFace = false;
+            LogUtils.operation("进行在线人脸识别");
+//            if (getActivity() != null){
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        OperateProgressBar.showLoadingUi(getActivity(), "正在拉取服务器数据，请稍后");
+//                    }
+//                });
+//                Intent intent = new Intent(mContext, UpdateService.class);
+//                mContext.startService(intent);
+//                isNetface = false;
+//                return;
+//            }
             if (getActivity() != null)
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -788,14 +811,15 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         UserPhoto photo = (UserPhoto) data;
                         if (TextUtils.isEmpty(photo.getStudentcode())) {
                             //新增学生
+                            LogUtils.operation("进行在线人脸识别失败");
                             ToastUtils.showShort("在线识别失败");
                             compareListener.compareStu(null);
 
                         } else {
                             //识别成功，当前考生是否存在，不存在下载当前考生数据
                             Student student = DBManager.getInstance().queryStudentByCode(photo.getStudentcode());
-                            Log.e("TAG", "STUDENT=" + student);
                             if (student != null) {
+                                LogUtils.operation("进行在线人脸识别成功：" + student.toString());
                                 compareListener.compareStu(student);
                                 Intent intent = new Intent(mContext, UpdateService.class);
                                 mContext.startService(intent);
@@ -829,8 +853,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismissWithAnimation();
-                                    isStartFace = true;
-                                    retryRecognizeDelayed(faceId);
+//                                    isStartFace = true;
+//                                    retryRecognizeDelayed(faceId);
 
                                 }
                             });
@@ -901,7 +925,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL, studentCode);
+        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL,"", studentCode);
     }
 
     private onAFRCompareListener compareListener;

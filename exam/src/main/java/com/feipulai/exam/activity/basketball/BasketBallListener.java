@@ -17,6 +17,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
 
     private BasketBallResponseListener listener;
     private Handler mHandler;
+    private BasketballResult topResult;
 
     public BasketBallListener(final BasketBallResponseListener listener) {
         this.listener = listener;
@@ -32,6 +33,7 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     @Override
     public void onDataArrived(UDPResult result) {
         BasketballResult basketballResult = (BasketballResult) result.getResult();
+
         Logger.i("onDataArrived===>" + basketballResult.toString());
         switch (basketballResult.getType()) {
             case UDPBasketBallConfig.CMD_GET_STATUS_RESPONSE:
@@ -39,21 +41,22 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
                 if (basketballResult.getUcStatus() == 0) {
                     if (basketballResult.gettNum() == -1)
                         break;
-                    Logger.i("onDataArrived===>triggerStart");
                     listener.triggerStart(basketballResult);
                 } else {
-                    Logger.i("onDataArrived===>getDeviceStatus====>" + basketballResult.getUcStatus());
                     listener.getDeviceStatus(basketballResult.getUcStatus());
                 }
                 break;
             case UDPBasketBallConfig.CMD_SET_STATUS_STOP_RESPONSE://停止计时
-                Logger.i("onDataArrived===>getStatusStop====>");
                 listener.getStatusStop(basketballResult);
 
                 break;
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
-                Logger.i("onDataArrived===>getResult====>");
-                listener.getResult(basketballResult);
+            case UDPBasketBallConfig.CMD_GET_RESULT_RESPONSE:
+                if (basketballResult.getResult() != 0 && topResult == null || basketballResult.getResult() != topResult.getResult()) {
+                    listener.getResult(basketballResult);
+                    topResult = basketballResult;
+                }
+
                 break;
         }
     }

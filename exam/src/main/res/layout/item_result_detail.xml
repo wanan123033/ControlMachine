@@ -111,8 +111,11 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <View
+        <TextView
+            android:id="@+id/tv_in"
             android:layout_width="0dp"
+            android:textColor="@color/white"
+            android:gravity="center"
             android:layout_height="match_parent"
             android:layout_weight="0.4" />
     </LinearLayout>

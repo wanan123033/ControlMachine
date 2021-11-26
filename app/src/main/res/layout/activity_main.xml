@@ -4,20 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/icon_main_bg">
+
     <TextView
         android:id="@+id/txt_help"
         style="@style/style_txt_white_title"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="30dp"
         android:layout_marginTop="40dp"
-        android:drawablePadding="5dp"
+        android:layout_marginRight="30dp"
         android:drawableTop="@mipmap/icon_help"
-        android:textSize="@dimen/sp_16"
-        android:text="帮助" />
+        android:drawablePadding="5dp"
+        android:text="帮助"
+        android:textSize="@dimen/sp_16" />
+
+    <com.feipulai.host.view.BatteryView
+        android:id="@+id/view_battery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="70dp"
+        android:layout_toLeftOf="@+id/txt_help"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/txt_cut_time"
+            style="@style/style_txt_white_title"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="60dp"
+            android:layout_toRightOf="@+id/img_logo"
+            android:text="截止时间："
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/txt_use_time"
+            style="@style/style_txt_white_title"
+            android:layout_below="@+id/txt_cut_time"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/img_logo"
+            android:text="可用时长："
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/img_logo"
@@ -89,9 +117,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_select"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#FFB80D"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -119,10 +147,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_print"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_select"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#186FFF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -151,9 +179,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_print"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#0BF4FF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -181,10 +209,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_data_admin"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_print"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#FF7849"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -212,9 +240,9 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_alignTop="@+id/card_test"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_toRightOf="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#78F375"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -242,10 +270,10 @@
             android:layout_width="155dp"
             android:layout_height="155dp"
             android:layout_below="@+id/card_data_admin"
-            android:foreground="?android:attr/selectableItemBackground"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="13dp"
             android:layout_toRightOf="@+id/card_data_admin"
+            android:foreground="?android:attr/selectableItemBackground"
             custom:cardBackgroundColor="#9352FF"
             custom:cardCornerRadius="5dp"
             custom:cardElevation="0dp">
@@ -276,8 +304,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="6dp"
         android:layout_marginLeft="12dp"
+        android:layout_marginBottom="6dp"
         android:src="@mipmap/icon_code" />
 
     <TextView
@@ -286,8 +314,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/img_portrait"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="6dp"
         android:layout_marginLeft="23dp"
+        android:layout_marginBottom="6dp"
         android:layout_toRightOf="@+id/img_code"
         android:text="智能主机（安卓版）"
         android:textColor="@color/white"
@@ -298,10 +326,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/img_portrait"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="6dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginBottom="6dp"
         android:text="智能主机（安卓版）"
         android:textColor="@color/white"
         android:textSize="20sp" />

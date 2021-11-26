@@ -5,6 +5,7 @@ package com.feipulai.device.serial.beans;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -53,8 +54,9 @@ public class SitPushUpSetFrequencyResult {
 		frequency = data[8] & 0xff;
 		rate = data[9] & 0xff;
 		deviceId = data[4] & 0xff;
-		LogUtils.normal("硬件设置参数返回数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
+		LogUtils.serial("仰卧起坐/俯卧撑设置参数(解析前):" + StringUtility.bytesToHexString(data));
+		LogUtils.serial("仰卧起坐/俯卧撑设置参数(解析后):" + toString());
 	}
 	
 	public int getFrequency(){

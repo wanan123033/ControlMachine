@@ -13,6 +13,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
@@ -25,6 +26,8 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
+
+import java.util.List;
 
 import butterknife.OnClick;
 
@@ -48,6 +51,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         super.initData();
         manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         resultUpdate = new boolean[setting.getTestDeviceCount()];
+        setFaultEnable(setting.isPenalize());
     }
 
     @Override
@@ -274,5 +278,8 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         super.onDestroy();
         LogUtils.life("SitReachMoreActivity onDestroy");
         RadioManager.getInstance().setOnRadioArrived(null);
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
     }
 }

@@ -36,6 +36,10 @@ public class GetDeviceStatesTask implements Runnable {
         mIsGettingHandState = true;
     }
 
+    public void start(){
+        mIsFinished = false;
+    }
+
     @Override
     public void run() {
         if (listener == null) {
@@ -57,7 +61,7 @@ public class GetDeviceStatesTask implements Runnable {
                         }
                         // 对每一个获取状态
                         listener.onGettingState(j);
-                        Thread.sleep(10);
+                        Thread.sleep(200);
                     }
                 }
                 // 没有获取状态时,不更新界面配对情况

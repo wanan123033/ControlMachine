@@ -3,6 +3,7 @@ package com.feipulai.host.activity.main;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -17,27 +18,36 @@ import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DataRetrieveActivity;
 import com.feipulai.host.activity.explain.ExplainActivity;
+import com.feipulai.host.activity.radio_timer.RunTimerSelectActivity;
 import com.feipulai.host.activity.setting.LEDSettingActivity;
 import com.feipulai.host.activity.setting.SettingActivity;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.activity.setting.SystemSetting;
+import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.utils.TimerUtil;
+import com.feipulai.host.view.BatteryView;
+import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,9 +65,42 @@ public class MainActivity extends BaseActivity {
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.view_battery)
+    BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
 
+
+    @BindView(R.id.txt_cut_time)
+    TextView txtCutTime;
+    @BindView(R.id.txt_use_time)
+    TextView txtUseTime;
+    private ActivateBean activateBean;
+    private LEDManager ledManager= new LEDManager();
+    private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
+        @Override
+        public void timer(Long time) {
+
+            long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() == 0) {
+                activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
+            }
+            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+            if (activateBean.getValidRunTime() != 0 && activateBean.getValidEndTime() != 0
+                            && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
+                txtCutTime.setVisibility(View.VISIBLE);
+                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000) {
+                    txtUseTime.setVisibility(View.VISIBLE);
+                    txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
+                }
+            } else {
+                txtCutTime.setVisibility(View.GONE);
+                txtCutTime.setVisibility(View.GONE);
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +110,28 @@ public class MainActivity extends BaseActivity {
         DateUtil.setTimeZone(this, "Asia/Shanghai");
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
+        timerUtil.startTime(60, TimeUnit.SECONDS);
+        activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
+        RadioManager.getInstance().setOnKwhListener(new RadioManager.OnKwhListener() {
+            @Override
+            public void onKwhArrived(final Message msg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int state = msg.arg1;
+                        int level = msg.arg2;
+                        batteryView.setVisibility(View.VISIBLE);
+                        batteryView.updateState(level);
+                        if (state == 0) {//放电
+                            batteryView.updateView(level);
+                        } else {//充电
+                            batteryView.updateChargingView(level);
+                        }
+                    }
+                });
 
+            }
+        });
     }
 
     private boolean isSettingFinished() {
@@ -107,6 +171,19 @@ public class MainActivity extends BaseActivity {
         if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
             sb.append("-").append(
                     String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), systemSetting.getHostId()));
+            String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                    + " " + systemSetting.getHostId();
+            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId(), 1);
+
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, "菲普莱体育", 3, 3, false, true);
+            } else {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId());
+
+                ledManager.showString(systemSetting.getHostId(), title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showString(systemSetting.getHostId(), "菲普莱体育", 3, 3, false, true);
+            }
         }
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());
@@ -172,7 +249,13 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                IntentUtil.gotoActivity(MainActivity.this, LEDSettingActivity.class);
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                    Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    startActivity(intent);
+                }else {
+                    startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                }
                 break;
             case R.id.card_device_cut:
                 IntentUtil.gotoActivity(this, MachineSelectActivity.class);

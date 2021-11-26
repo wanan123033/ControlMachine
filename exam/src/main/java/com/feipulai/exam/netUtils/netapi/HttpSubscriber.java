@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.feipulai.common.utils.DateUtil;
@@ -55,6 +56,9 @@ import com.feipulai.exam.netUtils.download.DownloadListener;
 import com.feipulai.exam.netUtils.download.DownloadUtils;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
@@ -100,6 +104,11 @@ public class HttpSubscriber {
      * @param listener
      */
     public void activate(long currentRunTime, OnResultListener listener) {
+        //减少连接时长
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 5;
+        HttpManager.DEFAULT_READ_TIMEOUT = 5;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 5;
+        HttpManager.resetManager();
         Map<String, String> parameData = new HashMap<>();
         parameData.put("deviceIdentify", CommonUtils.getDeviceId(MyApplication.getInstance()));
         parameData.put("currentRunTime", currentRunTime + "");
@@ -108,6 +117,7 @@ public class HttpSubscriber {
 
         Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
+
     }
 
     /**
@@ -173,7 +183,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(ScheduleBean result) {
-//                Logger.e("getScheduleAll====>" + result.toString());
+                LogUtils.net("获取考点日程返回解析：" + result.toString());
                 if (result == null) {
                     if (onRequestEndListener != null) {
                         onRequestEndListener.onFault(SCHEDULE_BIZ);
@@ -238,7 +248,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(List<ItemBean> result) {
-//                Logger.e("getItemAll====>" + result.toString());
+                LogUtils.net("获取考点考试所有项目解析：" + result.toString());
                 if (result == null)
                     return;
                 List<Item> itemList = new ArrayList<>();
@@ -260,6 +270,9 @@ public class HttpSubscriber {
                             onRequestEndListener.onFault(ITEM_BIZ);
                         }
                         return;
+                    }
+                    if (TextUtils.equals(itemBean.getMachineCode(), "0")) {
+                        continue;
                     }
 
                     Item item = new Item();
@@ -398,120 +411,13 @@ public class HttpSubscriber {
     private List<String> stuList = new ArrayList<>();
 
     // 获取学生信息
-    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime) {
+    public void getItemStudent(final String lastDownLoadTime, final String itemCode, int batch, final int examType) {
         getItemStudent(itemCode, batch, examType, lastDownLoadTime, new String[]{});
     }
 
     // 获取学生信息
     public void getItemStudent(final String itemCode, int batch, final int examType) {
         getItemStudent(itemCode, batch, examType, "0", new String[]{});
-    }
-
-    /**
-     * 获取当前项目考生
-     *
-     * @param itemCode
-     * @param batch
-     * @param examType
-     */
-    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
-
-        Map<String, Object> parameData = new HashMap<>();
-        parameData.put("examItemCode", itemCode);
-        parameData.put("batch", batch);
-        parameData.put("examType", examType);
-        if (studentCode != null && studentCode.length != 0) {
-            parameData.put("studentCodeList", studentCode);
-        }
-        Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
-                CommonUtils.encryptQuery(STUDENT_BIZ + "", lastDownLoadTime, parameData));
-        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
-            @Override
-            public void onResponseTime(String responseTime) {
-                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
-                        SharedPrefsConfigs.LAST_DOWNLOAD_TIME, responseTime);
-            }
-
-            @Override
-            public void onSuccess(BatchBean<List<StudentBean>> result) {
-//                Logger.e("getStudent===>"+result);
-                if (result.getBatch() == 1) {
-                    stuList.clear();
-                }
-                Set<String> supplements = new HashSet<>();// 补考考生考号集合
-                if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
-                    ToastUtils.showShort("当前无数据下载更新");
-                    if (onRequestEndListener != null)
-                        onRequestEndListener.onSuccess(STUDENT_BIZ);
-                    return;
-                }
-
-                final List<Student> studentList = new ArrayList<>();
-                final List<StudentItem> studentItemList = new ArrayList<>();
-
-                for (StudentBean studentBean : result.getDataInfo()) {
-                    if (!stuList.contains(studentBean.getIdCard())) {
-                        stuList.add(studentBean.getIdCard());
-                    } else {
-                        Logger.i("重复考生====》" + studentBean.toString());
-                    }
-                    if (studentBean.getExamType() != 2 && supplements.contains(studentBean.getStudentCode())) {
-                        // 已经是补考的数据,有新的相同的数据过来,但是不是补考状态,不处理
-                        continue;
-                    }
-                    if (studentBean.getExamType() == 2) {
-                        supplements.add(studentBean.getStudentCode());
-                    }
-//                    Logger.i("getItemStudent" + studentBean.toString());
-                    Student student = new Student();
-                    student.setSex(studentBean.getGender());
-                    student.setSchoolName(studentBean.getSchoolName());
-                    student.setClassName(studentBean.getClassName());
-                    student.setStudentName(studentBean.getStudentName());
-                    student.setStudentCode(studentBean.getStudentCode());
-                    //                    student.setPortrait(studentBean.getPhotoData());
-                    //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
-                    if (studentBean.getPhotoData() != null) {
-                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
-                    }
-                    student.setFaceFeature(studentBean.getFaceFeature());
-                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, studentBean.getIdCard()));
-                    studentList.add(student);
-                    if (ScheduleBean.SITE_EXAMTYPE == 0) {
-                        SettingHelper.getSystemSetting().setTestPattern(SystemSetting.PERSON_PATTERN);
-                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                studentBean.getExamType(), studentBean.getScheduleNo());
-                        studentItemList.add(studentItem);
-                    } else {
-                        SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
-                    }
-                }
-                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-                DBManager.getInstance().insertStudentList(studentList);
-                DBManager.getInstance().insertStuItemList(studentItemList);
-
-                if (result.getBatch() < result.getBatchTotal()) {
-                    getItemStudent(itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
-                } else {
-
-                    if (onRequestEndListener != null)
-                        onRequestEndListener.onSuccess(STUDENT_BIZ);
-                }
-
-
-            }
-
-            @Override
-            public void onFault(int code, String errorMsg) {
-                Logger.i("getItemStudent  onFault");
-                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                ToastUtils.showShort("获取考生：" + errorMsg);
-                if (onRequestEndListener != null) {
-                    onRequestEndListener.onFault(STUDENT_BIZ);
-                }
-            }
-        }));
     }
 
     /**
@@ -533,7 +439,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
-//                Logger.i("getItemGroupAll====>" + result.toString());
+                LogUtils.net("获取分组信息解析：" + result.toString());
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(GROUP_BIZ);
@@ -578,6 +484,142 @@ public class HttpSubscriber {
                 ToastUtils.showShort("获取分组：" + errorMsg);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onFault(GROUP_BIZ);
+                }
+            }
+        }));
+    }
+
+    /**
+     * 获取当前项目考生
+     *
+     * @param itemCode
+     * @param batch
+     * @param examType
+     */
+    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
+
+        Map<String, Object> parameData = new HashMap<>();
+        parameData.put("examItemCode", itemCode);
+        parameData.put("batch", batch);
+        parameData.put("examType", examType);
+        if (studentCode != null && studentCode.length != 0) {
+            parameData.put("studentCodeList", studentCode);
+        }
+        Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
+                CommonUtils.encryptQuery(STUDENT_BIZ + "", lastDownLoadTime, parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<BatchBean<List<StudentBean>>>(new OnResultListener<BatchBean<List<StudentBean>>>() {
+            @Override
+            public void onResponseTime(String responseTime) {
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                        SharedPrefsConfigs.LAST_DOWNLOAD_TIME, responseTime);
+            }
+
+            @Override
+            public void onSuccess(BatchBean<List<StudentBean>> result) {
+                LogUtils.net("获取当前项目考生解析：" + result.toString());
+                if (result.getBatch() == 1) {
+                    stuList.clear();
+                }
+                Set<String> supplements = new HashSet<>();// 补考考生考号集合
+                if (result == null || result.getDataInfo() == null || result.getDataInfo().size() == 0) {
+                    ToastUtils.showShort("当前无数据下载更新");
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(STUDENT_BIZ);
+                    return;
+                }
+
+                final List<Student> studentList = new ArrayList<>();
+                final List<StudentItem> studentItemList = new ArrayList<>();
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                for (StudentBean studentBean : result.getDataInfo()) {
+                    if (!stuList.contains(studentBean.getIdCard())) {
+                        stuList.add(studentBean.getIdCard());
+                    } else {
+                        Logger.i("重复考生====》" + studentBean.toString());
+                    }
+                    if (studentBean.getExamType() != 2 && supplements.contains(studentBean.getStudentCode())) {
+                        // 已经是补考的数据,有新的相同的数据过来,但是不是补考状态,不处理
+                        continue;
+                    }
+                    if (studentBean.getExamType() == 2) {
+                        supplements.add(studentBean.getStudentCode());
+                    }
+//                    Logger.i("getItemStudent" + studentBean.toString());
+                    Student student = new Student();
+                    student.setSex(studentBean.getGender());
+                    student.setSchoolName(studentBean.getSchoolName());
+                    student.setClassName(studentBean.getClassName());
+                    student.setStudentName(studentBean.getStudentName());
+                    student.setStudentCode(studentBean.getStudentCode());
+                    //                    student.setPortrait(studentBean.getPhotoData());
+                    //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
+                    if (studentBean.getPhotoData() != null) {
+                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
+                    }
+                    student.setFaceFeature(studentBean.getFaceFeature());
+                    student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, studentBean.getIdCard()));
+                    studentList.add(student);
+                    if (ScheduleBean.SITE_EXAMTYPE == 0) {
+                        SettingHelper.getSystemSetting().setTestPattern(SystemSetting.PERSON_PATTERN);
+//                        if (studentBean.getExamType() == 0 || studentBean.getExamType() == 1) {
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    studentBean.getExamType(), 0, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        } else if (studentBean.getExamType() == 2) {
+//                            StudentItem dbStuItem = DBManager.getInstance().queryStudentItemByCode(studentBean.getExamItemCode(), studentBean.getStudentCode());
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    dbStuItem == null ? 0 : dbStuItem.getExamType(), 1, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        } else {
+//                            StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                    studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                    1, 1, studentBean.getScheduleNo());
+//                            studentItemList.add(studentItem);
+//                        }
+                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+                                studentBean.getExamType(), studentBean.getScheduleNo());
+                        studentItemList.add(studentItem);
+                    } else {
+                        SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
+                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+                                studentBean.getExamType(), studentBean.getScheduleNo());
+                        studentItemList.add(studentItem);
+                    }
+                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    }
+                }
+                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                    FaceServer.getInstance().addFaceList(registerInfoList);
+                }
+                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
+                DBManager.getInstance().insertStudentList(studentList);
+                DBManager.getInstance().insertStuItemList(studentItemList);
+                if (onRequestEndListener != null) {
+                    onRequestEndListener.onRequestData(studentList);
+                }
+                if (result.getBatch() < result.getBatchTotal()) {
+                    getItemStudent(itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
+                } else {
+
+                    if (onRequestEndListener != null)
+                        onRequestEndListener.onSuccess(STUDENT_BIZ);
+                }
+
+
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+                Logger.i("getItemStudent  onFault");
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                ToastUtils.showShort("获取考生：" + errorMsg);
+                if (onRequestEndListener != null) {
+                    onRequestEndListener.onFault(STUDENT_BIZ);
                 }
             }
         }));
@@ -670,6 +712,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(RoundScoreBean result) {
+                LogUtils.net("获取服务端成绩解析：" + result.toString());
                 if (result.getExist() == 1) {
                     List<RoundScoreBean.ScoreBean> scoreBeanList = result.getRoundList();
                     for (RoundScoreBean.ScoreBean score : scoreBeanList) {
@@ -754,12 +797,12 @@ public class HttpSubscriber {
      */
     public void uploadResult(final List<UploadResults> uploadResultsList) {
         int pageSum = 1;
-        if (uploadResultsList.size() > 100) {
+        if (uploadResultsList.size() > 20) {
             //获取上传分页数目
-            if (uploadResultsList.size() % 100 == 0) {
-                pageSum = uploadResultsList.size() / 100;
+            if (uploadResultsList.size() % 20 == 0) {
+                pageSum = uploadResultsList.size() / 20;
             } else {
-                pageSum = uploadResultsList.size() / 100 + 1;
+                pageSum = uploadResultsList.size() / 20 + 1;
             }
         }
         setUploadResult(0, pageSum, uploadResultsList);
@@ -795,12 +838,13 @@ public class HttpSubscriber {
      */
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
-//        if (pageNo == pageSum - 1) {
-//            uploadData = uploadResultsList.subList(pageNo * 50, uploadResultsList.size());
-//        } else {
-//            uploadData = uploadResultsList.subList(pageNo * 50, (pageNo + 1) * 50);
-//        }
-        uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
+        if (pageNo == pageSum - 1) {
+            uploadData = uploadResultsList.subList(pageNo, uploadResultsList.size());
+        } else {
+            uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
+        }
+
+        LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
         Logger.i("setUploadResult===>" + pageNo);
 
         TCPResultPackage rcPackage = new TCPResultPackage();
@@ -811,30 +855,16 @@ public class HttpSubscriber {
 
         final String data = rcPackage.EncodePackage(TestConfigs.sCurrentItem, uploadData, new PackageHeadInfo(), false, TCPConst.enumCodeType.CodeGB2312.getIndex());
         Log.i("data---", data);
-
+        LogUtils.net("上传成绩信息协议内容：" + data);
         if (tcpClientThread == null) {
             String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
-            String[] ip_port = tcpIp.split(":");
-            if (ip_port.length < 2) {
-                if (activity == null) {
-                    if (onRequestEndListener != null) {
-                        onRequestEndListener.onFault(UPLOAD_BIZ);
-                    }
-                    return;
-                }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastUtils.showShort("上传失败:ip或端口设置错误");
-                        if (onRequestEndListener != null) {
-                            onRequestEndListener.onFault(UPLOAD_BIZ);
-                        }
-                    }
-                });
+            if (TextUtils.isEmpty(tcpIp)) {
+                ToastUtils.showShort("TCP上传失败，TCP地址不能为空");
+                onRequestEndListener.onFault(UPLOAD_BIZ);
                 return;
             }
-            String ipStr = ip_port[0];
-            String portStr = ip_port[1];
+            String ipStr = tcpIp.split(":")[0];
+            String portStr = tcpIp.split(":")[1];
             tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
                 @Override
                 public void onMsgReceive(String text) {
@@ -982,11 +1012,12 @@ public class HttpSubscriber {
     }
 
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
+        LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo * 100, uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo * 20, uploadResultsList.size());
         } else {
-            uploadData = uploadResultsList.subList(pageNo * 100, (pageNo + 1) * 100);
+            uploadData = uploadResultsList.subList(pageNo * 20, (pageNo + 1) * 20);
         }
         Logger.i("setUploadResult===>" + pageNo);
         Observable<HttpResult<List<UploadResults>>> observable = HttpManager.getInstance().getHttpApi().uploadResult("bearer " + MyApplication.TOKEN,
@@ -1000,6 +1031,7 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(List<UploadResults> result) {
+                LogUtils.net("上传成绩返回解析：" + result.toString());
                 //更新上传状态
                 List<RoundResult> roundResultList = new ArrayList<>();
                 for (UploadResults uploadResults : uploadData) {
@@ -1054,7 +1086,7 @@ public class HttpSubscriber {
         parameData.put("deviceCode", MyApplication.DEVICECODE);
         final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
         Observable<HttpResult<List<SoftApp>>> observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);
-        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
+//        HttpManager.getInstance().changeBaseUrl("https://api.soft.fplcloud.com");
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<SoftApp>>(new OnResultListener<List<SoftApp>>() {
             @Override
             public void onResponseTime(String responseTime) {

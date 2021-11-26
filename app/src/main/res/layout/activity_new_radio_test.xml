@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_second"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="@dimen/dp_40"
+    tools:context="com.feipulai.host.activity.radio_timer.newRadioTimer.NewRadioTestActivity">
+
+    <include
+        android:id="@+id/tab_title"
+        layout="@layout/table_runner_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_timer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rl_control"
+        android:layout_below="@+id/tab_title"
+        android:layout_marginLeft="20dp"
+        android:background="@color/black" />
+
+    <RelativeLayout
+        android:id="@+id/rl_state"
+        android:layout_width="300dp"
+        android:layout_height="91dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@mipmap/bg_rectangle">
+
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="91dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="00:00.00"
+            android:textColor="@color/black"
+            android:textSize="40dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_run_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@+id/tv_timer"
+            android:padding="10dp"
+            android:text="空闲"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_toRightOf="@+id/rl_state">
+
+        <TextView
+            android:id="@+id/tv_wait_start"
+            style="@style/style_run_timer_text"
+            android:layout_marginRight="@dimen/dp_10"
+            android:background="@drawable/selector_blue_grey"
+            android:drawableTop="@mipmap/wait"
+            android:paddingTop="15dp"
+            android:text="等待发令" />
+
+        <TextView
+            android:id="@+id/tv_wait_ready"
+            style="@style/style_run_timer_text"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_toRightOf="@+id/tv_wait_start"
+            android:background="@drawable/selector_blue_grey"
+            android:drawableTop="@mipmap/ready"
+            android:paddingTop="15dp"
+            android:text="预备" />
+
+        <TextView
+            android:id="@+id/tv_fault_back"
+            style="@style/style_run_timer_text"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_toRightOf="@+id/tv_wait_ready"
+            android:background="@drawable/selector_yellow_grey"
+            android:drawableTop="@mipmap/fault"
+            android:paddingTop="15dp"
+            android:text="违规返回" />
+
+        <TextView
+            android:id="@+id/tv_device_detail"
+            style="@style/style_run_timer_text"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_toRightOf="@+id/tv_fault_back"
+            android:background="@drawable/selector_blue_grey"
+            android:drawableTop="@mipmap/ready"
+            android:paddingTop="15dp"
+            android:text="设备详情" />
+
+        <TextView
+            android:id="@+id/tv_force_start"
+            style="@style/style_run_timer_text"
+            android:layout_toRightOf="@+id/tv_device_detail"
+            android:background="@drawable/selector_red_grey"
+            android:drawableTop="@mipmap/force"
+            android:paddingTop="15dp"
+            android:text="强制启动" />
+
+        <TextView
+            android:id="@+id/tv_mark_confirm"
+            style="@style/style_run_timer_text"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:background="@drawable/selector_green_grey"
+            android:drawableTop="@mipmap/confirm"
+            android:paddingTop="15dp"
+            android:text="成绩确认" />
+    </RelativeLayout>
+</RelativeLayout>

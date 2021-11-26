@@ -1,5 +1,4 @@
 package com.feipulai.exam.activity.jump_rope;
-
 import android.util.Log;
 
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
@@ -137,26 +136,26 @@ public class DeviceDispatcher{
 					dispatchStudents.add(student);
 					continue;
 				}else{
-                    pair.setStudent(null);
-                }
+					pair.setStudent(null);
+				}
 			}
-            needProceed = true;
+			needProceed = true;
 		}
 		// 当前所有人都需要进行测试
-        if (!needProceed){
-            return true;
-        }
+		if (!needProceed){
+			return true;
+		}
 		for(int i = 0;i < pairs.size();i++){
 			StuDevicePair pair = pairs.get(i);
 			if (pair.getStudent() != null){
-			    continue;
-            }
+				continue;
+			}
 			if(hasMore){
 				Student stu = nextTestStudent(dispatchStudents);
-                if (stu != null) {
-                    pair.setStudent(stu);
-                    updateIndex.add(i);
-                    dispatchStudents.add(stu);
+				if (stu != null) {
+					pair.setStudent(stu);
+					updateIndex.add(i);
+					dispatchStudents.add(stu);
 				}else{
 					hasMore = false;
 				}

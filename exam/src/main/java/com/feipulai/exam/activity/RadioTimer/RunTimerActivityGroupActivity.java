@@ -20,8 +20,10 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.PopAdapter;
 import com.feipulai.exam.adapter.RunNumberAdapter2;
 import com.feipulai.exam.config.TestConfigs;
@@ -108,8 +110,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         rvTimer.setAdapter(mAdapter);
         group = (Group) TestConfigs.baseGroupMap.get("group");
         pairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-        if (group != null)
-            LogUtils.operation("红外计时获取到分组信息:"+group.toString());
+//        if (group != null)
+//            LogUtils.operation("红外计时获取到分组信息:"+group.toString());
         if (pairs != null)
             LogUtils.operation("红外计时获取到分组信息:"+pairs.toString());
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -236,7 +238,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                 LogUtils.operation("红外计时点击了等待发令");
                 waitStart();
                 startTime = System.currentTimeMillis()+"";
-                if (currentTestTime >= maxTestTimes) {
+                if (currentTestTime >= setTestCount()) {
                     isOverTimes = true;
                 } else {
                     showReady(mList, true);
@@ -299,6 +301,18 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
     }
 
+    public int setTestCount() {
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pairs.get(select).getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return pairs.get(select).getTestNo();
+//        }
+        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
+            return TestConfigs.sCurrentItem.getTestNum();
+        } else {
+            return TestConfigs.getMaxTestCount();
+        }
+    }
 
 
     @Override
@@ -322,7 +336,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
             mList.get(i).setMark("");
         }
 
-        if (currentTestTime < maxTestTimes) {//当前跑道学生是否测试完
+        if (currentTestTime < setTestCount()) {//当前跑道学生是否测试完
 //            for (int i = 0; i < runNum; i++) {
 //                mList.get(i).setMark("");
 //            }
@@ -343,7 +357,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
         boolean isAdd = true;
         if (tempGroup.size() <= 0) {
             currentTestTime++;
-            if (currentTestTime < maxTestTimes) {
+            if (currentTestTime < setTestCount()) {
                 tempGroup.addAll(groupRunList);
             } else {
                 isAdd = false;
@@ -366,7 +380,13 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
             if (tempGroup.size() > i) {
                 int size = DBManager.getInstance().
                         queryGroupRound(tempGroup.get(i).getStudent().getStudentCode(), group.getId() + "").size();
-                if (size < maxTestTimes) {
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pairs.get(select).getStudent().getStudentCode());
+                //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
+                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !pairs.get(select).isResit()){
+                    size = 0;
+                }
+                if (size < setTestCount()) {
                     mList.get(i).setStudent(tempGroup.get(i).getStudent());
                     LogUtils.operation("红外计时已在准备的学生:"+tempGroup.get(i).getStudent().toString());
                 } else {
@@ -376,7 +396,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
                     for (RoundResult result : roundResults) {
                         list.add(getFormatTime(result.getResult()));
                     }
-                    disposeManager.printResult(tempGroup.get(i).getStudent(), list, maxTestTimes, maxTestTimes, group.getGroupNo());
+                    disposeManager.printResult(tempGroup.get(i).getStudent(), list, setTestCount(), setTestCount(), group.getGroupNo());
                     list.clear();
                     mList.get(i).setStudent(null);
                 }
@@ -400,15 +420,27 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
      * 成绩确认
      */
     private void confirmResult() {
+        List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
         for (RunStudent runStudent : mList) {
             if (runStudent.getStudent() != null && !TextUtils.isEmpty(runStudent.getMark())) {
-                disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group,startTime);
+                if (runStudent.getRoundNo() != 0){
+                    disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), runStudent.getRoundNo(), group,startTime);
+                    runStudent.setRoundNo(0);
+                    if (stuPairs != null){
+                        for (BaseStuPair pp : stuPairs){
+                            if (pp.getStudent().getStudentCode().equals(runStudent.getStudent().getStudentCode()))
+                                pp.setRoundNo(0);
+                        }
+                    }
+                }else {
+                    disposeManager.saveGroupResult(runStudent.getStudent(), runStudent.getOriginalMark(), currentTestTime + 1, group,startTime);
+                }
                 List<RoundResult> resultList = DBManager.getInstance().queryGroupRound(runStudent.getStudent().getStudentCode(), group.getId() + "");
                 List<String> list = new ArrayList<>();
                 for (RoundResult result : resultList) {
                     list.add(getFormatTime(result.getResult()));
                 }
-                disposeManager.printResult(runStudent.getStudent(), list, currentTestTime + 1, maxTestTimes, group.getGroupNo());
+                disposeManager.printResult(runStudent.getStudent(), list, currentTestTime + 1, setTestCount(), group.getGroupNo());
                 list.clear();
 //                disposeManager.broadResult(runStudent.getStudent(), getFormatTime(runStudent.getOriginalMark()));
             }
@@ -430,12 +462,7 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 //        RoundResult roundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         List<RoundResult> roundResult = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
-        if (student != null)
-            LogUtils.operation("红外计时检入到学生:"+student.toString());
-        if (studentItem != null)
-            LogUtils.operation("红外计时检入到学生StudentItem:"+studentItem.toString());
-        if (roundResult != null)
-            LogUtils.operation("红外计时检入到学生成绩:"+roundResult.size()+"----"+roundResult.toString());
+
         if (roundResult != null) {
 //            selectTestDialog(student);
             return;
@@ -502,6 +529,8 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
     @Override
     public void updateTableUI(RunTimerResult result) {
+        if (result.getTrackNum() == 0)
+            return;
         int realTime = (int) (result.getResult() - baseTimer);
         mList.get(result.getTrackNum() - 1).setMark(getFormatTime(realTime));
         mList.get(result.getTrackNum() - 1).setOriginalMark(realTime);
@@ -609,5 +638,14 @@ public class RunTimerActivityGroupActivity extends BaseRunTimerActivity {
 
     private void gotoItemSetting() {
         startActivity(new Intent(this, RunTimerSettingActivity.class));
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (BaseStuPair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setRoundNo(roundNo);
+            }
+        }
     }
 }

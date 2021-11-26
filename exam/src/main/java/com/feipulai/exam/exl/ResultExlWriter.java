@@ -59,12 +59,12 @@ public class ResultExlWriter extends ExlWriter {
             List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
             for (Item item : itemList) {
                 List<Student> studentList = DBManager.getInstance().getItemStudent
-                        (item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
+                        ("-2",item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
 
                 generateRows(item, studentList);
             }
         } else {
-            List<Student> studentList = DBManager.getInstance().getItemStudent(TestConfigs.getCurrentItemCode(), -1, 0);
+            List<Student> studentList = DBManager.getInstance().getItemStudent("-2",TestConfigs.getCurrentItemCode(), -1, 0);
 
             generateRows(TestConfigs.sCurrentItem, studentList);
         }

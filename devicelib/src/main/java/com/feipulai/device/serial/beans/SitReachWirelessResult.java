@@ -1,5 +1,6 @@
 package com.feipulai.device.serial.beans;
 
+import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 /**
@@ -24,8 +25,9 @@ public class SitReachWirelessResult {
             frequency = (data[12] & 0xff);
             velocity = (data[13] & 0xff);
         }
-        LogUtils.normal("坐位体前屈返回设备数据(解析前):"+data.length+"---"+StringUtility.bytesToHexString(data)+"---\n(解析后):"+toString());
 
+        LogUtils.serial("坐位体前屈返回设备数据(解析前):" + StringUtility.bytesToHexString(data));
+        LogUtils.serial("坐位体前屈返回设备数据(解析后):" + toString());
     }
 
     private int deviceId;

@@ -28,7 +28,7 @@ public class SystemSetting {
     /**
      * 服务器Ip
      */
-    private String serverIp;
+    private String serverIp="192.168.0.100:7979";
 
     /**
      * tcp ip
@@ -129,6 +129,28 @@ public class SystemSetting {
 
     //手动输入成绩测试
     private boolean isInputTest;
+
+    /**
+     * 0 60
+     * 1 70
+     * 2 80
+     * 3 90
+     */
+    private int afrContrast = 3;
+    private boolean againTest;  //现场重测
+    private boolean isResit;  //现场补考
+    private String againPass;
+    private String resitPass;
+    private boolean resitPassBool;
+    private boolean againPassBool;
+    private boolean resultConfirm;
+    public int getAfrContrast() {
+        return afrContrast;
+    }
+
+    public void setAfrContrast(int afrContrast) {
+        this.afrContrast = afrContrast;
+    }
 
     public boolean isInputTest() {
         return isInputTest;
@@ -450,5 +472,61 @@ public class SystemSetting {
 
     public void setRadioLed(int radioLed) {
         this.radioLed = radioLed;
+    }
+
+    public void setAgainTest(boolean againTest) {
+        this.againTest = againTest;
+    }
+
+    public void setIsResit(boolean isResit) {
+        this.isResit = isResit;
+    }
+
+    public boolean isResit() {
+        return isResit;
+    }
+
+    public boolean isAgainTest() {
+        return againTest;
+    }
+
+    public void setAgainPass(String againPass) {
+        this.againPass = againPass;
+    }
+
+    public String getAgainPass() {
+        return againPass;
+    }
+
+    public void setResitPass(String resitPass) {
+        this.resitPass = resitPass;
+    }
+
+    public String getResitPass() {
+        return resitPass;
+    }
+
+    public void setResitPassBool(boolean resitPassBool) {
+        this.resitPassBool = resitPassBool;
+    }
+
+    public boolean getResitPassBool() {
+        return resitPassBool;
+    }
+
+    public void setAgainPassBool(boolean againPassBool) {
+        this.againPassBool = againPassBool;
+    }
+
+    public boolean getAgainPassBool() {
+        return againPassBool;
+    }
+
+    public boolean isResultConfirm() {
+        return resultConfirm;
+    }
+
+    public void setResultConfirm(boolean resultConfirm) {
+        this.resultConfirm = resultConfirm;
     }
 }

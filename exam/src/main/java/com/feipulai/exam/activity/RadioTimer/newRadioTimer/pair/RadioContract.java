@@ -12,7 +12,7 @@ public class RadioContract {
         void saveSettings();
     }
 
-    interface View {
+    public interface View {
 
         void updateSpecificItem(int focusPosition, int point);
 

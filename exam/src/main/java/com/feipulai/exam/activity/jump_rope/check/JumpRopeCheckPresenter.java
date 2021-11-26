@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.jump_rope.check;
 import android.content.Context;
 import android.os.Message;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.JumpRopeManager;
@@ -14,6 +15,7 @@ import com.feipulai.exam.activity.jump_rope.bean.JumpDeviceState;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
@@ -222,6 +224,8 @@ public class JumpRopeCheckPresenter
         if (setting.getDeviceGroup() != result.getHandGroup() - 1// 不同组
                 || deviceId > setting.getDeviceSum()// 非当前范围内手柄
                 || mCurrentConnect[deviceId] != 0// 已经设置过状态
+                || deviceId == 0
+                || SettingHelper.getSystemSetting().getHostId() != result.getHostId()//不同主机号
                 || result.getState() != JumpRopeManager.JUMP_ROPE_SPARE/*非空闲手柄状态*/) {
             return;
         }
@@ -243,9 +247,13 @@ public class JumpRopeCheckPresenter
         boolean lowBattery = result.getBatteryLeftPercent() <= 10;
 
         if (factoryId != originState.getFactoryId() && originState.getFactoryId() != JumpDeviceState.INVALID_FACTORY_ID) {
+            LogUtil.logDebugMessage("当前编号：" + originState.getFactoryId() + "  返回编号：" + (factoryId == originState.getFactoryId()) + factoryId);
             newState = BaseDeviceState.STATE_CONFLICT;
         } else if (lowBattery) {
             newState = BaseDeviceState.STATE_LOW_BATTERY;
+        }
+        if (originState.getFactoryId() > 0 && factoryId == 0) {
+            return;
         }
         if (newState != originState.getState()) {
             originState.setFactoryId(factoryId);

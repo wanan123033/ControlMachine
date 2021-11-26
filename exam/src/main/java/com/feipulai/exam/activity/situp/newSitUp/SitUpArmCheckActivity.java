@@ -31,7 +31,7 @@ public class SitUpArmCheckActivity extends SitPullUpCheckActivity {
 
     @Override
     protected Class<? extends Activity> getTestActivity() {
-        return  SitUpTestActivity.class;
+        return  NewSitUpTestActivity.class;
     }
 
     @Override

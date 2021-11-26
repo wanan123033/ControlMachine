@@ -37,7 +37,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     @BindView(R.id.ll_device_group_setting)
     LinearLayout llDeviceGroupSetting;
     @BindView(R.id.tv_init_way)
-    TextView txtInitWay;
+    public TextView txtInitWay;
     public DevicePairAdapter mAdapter;
     private MyHandler mHandler = new MyHandler(this);
     public SitPullUpPairPresenter presenter;

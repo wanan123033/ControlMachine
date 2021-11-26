@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +16,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.feipulai.common.utils.ActivityUtils;
-import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.device.led.LEDManager;
+import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LEDSettingActivity;
@@ -32,6 +31,8 @@ import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.adapter.RunNumberAdapter;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.RoundResult;
@@ -107,9 +108,14 @@ public class PreTestActivity extends BaseCheckActivity {
         return R.layout.activity_pre_test;
     }
 
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+
+    }
 
     @Override
     protected void initData() {
+        super.initData();
         getSetting();
         for (int i = 0; i < runNum; i++) {
             RunStudent runStudent = new RunStudent();
@@ -133,6 +139,64 @@ public class PreTestActivity extends BaseCheckActivity {
             }
         });
         etInputText.setData(lvResults, this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initLed();
+    }
+
+    private void initLed() {
+        RunLEDManager runLEDManager = null;
+        LEDManager mLEDManager = null;
+        int hostId = SettingHelper.getSystemSetting().getHostId();
+        String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                + " " + hostId;
+        int flag = 0;
+        if (SettingHelper.getSystemSetting().getRadioLed() == 0) {
+            runLEDManager = new RunLEDManager();
+            flag = 0;
+        } else {
+            mLEDManager = new LEDManager();
+            flag = 1;
+        }
+        if (flag == 0) {
+            runLEDManager.resetLEDScreen(hostId, title);
+        } else {
+            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
+            } else {
+                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
+                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+            }
+        }
+    }
+
+    @Override
+    public int setAFRFrameLayoutResID() {
+        return R.id.frame_camera;
+    }
+
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        switch (baseEvent.getTagInt()) {
+            case EventConfigs.UPDATE_TEST_COUNT:
+                int tmp = runNum;
+                getSetting();
+                mList.clear();
+                for (int i = 0; i < runNum; i++) {
+                    RunStudent runStudent = new RunStudent();
+                    runStudent.setResultList(new ArrayList<RunStudent.WaitResult>());
+                    mList.add(runStudent);
+                }
+                mAdapter.notifyDataSetChanged();
+
+                break;
+
+        }
     }
 
     /**
@@ -232,7 +296,16 @@ public class PreTestActivity extends BaseCheckActivity {
         }
         updateStuInfo(student);
         mAdapter.notifyDataSetChanged();
-//        showLedReady(mList, false);
+        showLedReady(mList, false);
+    }
+
+    /**
+     * 显示道次准备
+     */
+    private void showLedReady(List<RunStudent> runs, boolean ready) {
+        if (runs.size() < 0)
+            return;
+//        disposeManager.showReady(runs, ready);
     }
 
     private void updateStuInfo(Student student) {
@@ -269,7 +342,7 @@ public class PreTestActivity extends BaseCheckActivity {
         startActivity(new Intent(this, RunTimerSettingActivity.class));
     }
 
-    @OnClick({R.id.btn_start, R.id.btn_led, R.id.btn_device_pair,R.id.img_AFR})
+    @OnClick({R.id.btn_start, R.id.btn_led, R.id.btn_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
@@ -278,7 +351,7 @@ public class PreTestActivity extends BaseCheckActivity {
                     ToastUtils.showShort("请先添加学生");
                     return;
                 }
-                Intent intent = new Intent(this,NewRadioTestActivity.class);
+                Intent intent = new Intent(this, NewRadioTestActivity.class);
                 intent.putExtra("runStudent", (Serializable) mList);
                 startActivity(intent);
                 break;
@@ -295,28 +368,5 @@ public class PreTestActivity extends BaseCheckActivity {
         }
     }
 
-    @Override
-    public void compareStu(final Student student) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
 
-                if (student == null) {
-                    InteractUtils.toastSpeak(PreTestActivity.this, "该考生不存在");
-                    return;
-                }else{
-                    afrFrameLayout.setVisibility(View.GONE);
-                }
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-                if (studentItem == null) {
-                    InteractUtils.toastSpeak(PreTestActivity.this, "无此项目");
-                    return;
-                }
-                // 可以直接检录
-                checkInUIThread(student,studentItem);
-            }
-        });
-
-
-    }
 }

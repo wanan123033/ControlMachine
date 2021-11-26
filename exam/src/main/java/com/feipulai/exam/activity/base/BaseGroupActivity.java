@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,11 +26,14 @@ import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioGroupActivity;
-import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
+import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
+import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.medicineBall.MedicineBallSetting;
 import com.feipulai.exam.activity.medicineBall.more_device.BallGroupMoreActivity;
@@ -37,12 +41,15 @@ import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
 import com.feipulai.exam.activity.pushUp.PushUpGroupActivity;
 import com.feipulai.exam.activity.pushUp.PushUpSetting;
+import com.feipulai.exam.activity.pushUp.distance.PushUpDistanceTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.more_device.SargentTestGroupActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sitreach.SitReachSetting;
 import com.feipulai.exam.activity.sitreach.more_device.SitReachMoreGroupActivity;
+import com.feipulai.exam.activity.situp.newSitUp.SitUpArmCheckActivity;
+import com.feipulai.exam.activity.situp.setting.SitUpSetting;
 import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallGroupActivity;
@@ -51,14 +58,20 @@ import com.feipulai.exam.adapter.BaseGroupAdapter;
 import com.feipulai.exam.adapter.GroupAdapter;
 import com.feipulai.exam.adapter.ResultsAdapter;
 import com.feipulai.exam.adapter.ScheduleAdapter;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
+import com.feipulai.exam.config.StudentCache;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.netUtils.netapi.ServerMessage;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -115,6 +128,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
     private String scheduleText;
     private List<RoundResult> resultList = new ArrayList<>();
     private ResultsAdapter resultsAdapter;
+    private boolean isBack;
+    private SystemSetting systemSetting;
 
     @Override
     protected int setLayoutResID() {
@@ -125,7 +140,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     protected void initData() {
         ButterKnife.bind(this);
         initView();
-        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+        if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
             runLEDManager = new RunLEDManager();
         } else {
             mLEDManager = new LEDManager();
@@ -172,10 +187,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     private void initView() {
         TestConfigs.baseGroupMap.clear();
+        TestCache.getInstance().clear();
         rvTestStu.setLayoutManager(new LinearLayoutManager(this));
         stuPairsList = new ArrayList<>();
         stuAdapter = new BaseGroupAdapter(stuPairsList);
-
+        systemSetting = SettingHelper.getSystemSetting();
         rvTestStu.setAdapter(stuAdapter);
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         spSchedule.setAdapter(scheduleAdapter);
@@ -192,15 +208,71 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.setItemClickListener(new BaseGroupAdapter.OnPopItemClickListener() {
 
             @Override
-            public void itemClick(int pos, boolean isChecked) {
+            public void itemClick(final int pos, boolean isChecked) {
                 stuPairsList.get(pos).setCanTest(isChecked);
             }
         });
         stuAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                 if (stuPairsList.size() > 0) {
                     showStuInfo(stuPairsList.get(position).getStudent());
+                }
+                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
+                List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
+                Log.e("TAG", results.toString());
+                if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
+                    Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
+                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                        if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                            ResitDialog dialog = new ResitDialog();
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
+                            dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                @Override
+                                public void onCancel() {
+                                    stuPairsList.get(position).setCanTest(false);
+                                    stuPairsList.get(position).setResit(false);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+
+                                @Override
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+                                    stuPairsList.get(position).setTestNo(1);
+                                    stuPairsList.get(position).setRoundNo(0);
+                                    stuPairsList.get(position).setCanTest(true);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+                            });
+                            dialog.show(getSupportFragmentManager(), "ResitDialog");
+                        }
+                        if (systemSetting.isAgainTest()) {
+                            AgainTestDialog dialog = new AgainTestDialog();
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
+                            dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                                @Override
+                                public void onCancel() {
+                                    stuPairsList.get(position).setCanTest(false);
+                                    stuPairsList.get(position).setAgain(false);
+                                    stuAdapter.notifyItemChanged(position);
+                                }
+
+                                @Override
+                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+                                    for (int i = 0; i < results.size(); i++) {
+                                        RoundResult result = results.get(i);
+                                        if (result.isDelete()) {
+                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
+                                            stuPairsList.get(position).setRoundNo(roundNo);
+                                            stuPairsList.get(position).setCanTest(true);
+                                            stuAdapter.notifyItemChanged(position);
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+                            dialog.show(getSupportFragmentManager(), "AgainTestDialog");
+                        }
+                    }
                 }
             }
         });
@@ -210,7 +282,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     @Override
     protected void onDestroy() {
-        LogUtils.life("BaseGroupActivity onDestroy");
         super.onDestroy();
     }
 
@@ -263,7 +334,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
             getGroupList(scheduleText);
             txtGroupName.setText("请选择项目分组");
         }
-        LogUtils.operation("分组模式获取Schedules(日程):" + scheduleList.toString());
+//        LogUtils.operation("分组模式获取Schedules(日程):" + scheduleList.toString());
     }
 
     /**
@@ -274,7 +345,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNo(scheduleNo);
         groupList.addAll(dbGroupList);
         groupAdapter.notifyDataSetChanged();
-        LogUtils.operation("分组模式获取groupList(日程分组):" + groupList.toString());
+//        LogUtils.operation("分组模式获取groupList(日程分组):" + groupList.toString());
     }
 
     // 选择分组
@@ -287,7 +358,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         txtGroupName.setText(sb.toString());
         groupAdapter.setTestPosition(position);
         updateStudents(groupList.get(position));
-        LogUtils.operation("分组模式选择分组:" + groupList.get(position).toString());
+        LogUtils.all("分组模式选择分组:" + groupList.get(position).toString());
     }
 
     /**
@@ -305,7 +376,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuAdapter.notifyDataSetChanged();
         showLed(stuPairsList);
         if (stuPairsList.size() > 0) {
-            LogUtils.operation("分组模式获取分组学生:" + stuPairsList.toString());
+            LogUtils.all("分组模式获取分组学生:" + stuPairsList.toString());
             showStuInfo(stuPairsList.get(0).getStudent());
         }
 
@@ -462,7 +533,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     @SuppressWarnings("unchecked")
-    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print})
+    @OnClick({R.id.txt_group_name, R.id.img_last, R.id.img_next, R.id.txt_start_test, R.id.txt_print, R.id.score_upload})
 // R.id.tv_project_setting,
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -472,6 +543,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                 break;
             case R.id.img_last:
+                TestConfigs.baseGroupMap.clear();
+                TestCache.getInstance().clear();
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
                 if (groupAdapter.getTestPosition() > 0) {
@@ -479,6 +552,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 break;
             case R.id.img_next:
+                TestConfigs.baseGroupMap.clear();
+                TestCache.getInstance().clear();
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
                 if (groupList.size() > 0 && groupAdapter.getTestPosition() != groupList.size() - 1) {
@@ -489,17 +564,19 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //                startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
 //                break;
             case R.id.txt_start_test:
-
+                TestCache.getInstance().clear();
+                TestConfigs.baseGroupMap.clear();
                 if (groupAdapter.getTestPosition() == -1) {
                     toastSpeak("请先选择分组");
                     return;
                 }
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
-                if (groupList.get(groupAdapter.getTestPosition()).getIsTestComplete() == 1) {
-                    ToastUtils.showShort("该组测试完，请选择下一组");
-                    return;
-                }
+
+//                if (groupList.get(groupAdapter.getTestPosition()).getIsTestComplete() == 1) {
+//                    ToastUtils.showShort("该组测试完，请选择下一组");
+//                    return;
+//                }
                 TestConfigs.baseGroupMap.put("group", groupList.get(groupAdapter.getTestPosition()));
                 pairs.clear();
                 for (BaseStuPair pair : stuPairsList) {
@@ -507,6 +584,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         pairs.add(pair);
                         Student student = pair.getStudent();
                         List<RoundResult> results = getResults(student.getStudentCode());
+                        setStuPairsData(pair, results);
                         // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
                         TestConfigs.baseGroupMap.put(student, results);
                     }
@@ -515,7 +593,18 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     toastSpeak("当前无测试考生请重选!");
                     return;
                 }
+                if (isAllTest()) {
+                    ToastUtils.showShort("该组测试完，请选择下一组");
+                    return;
+                }
+                isBack = true;
                 TestConfigs.baseGroupMap.put("basePairStu", pairs);
+                StudentCache.getStudentCaChe().clear();
+                for (int i = 0; i < pairs.size(); i++) {
+                    StudentCache.getStudentCaChe().addStudent(pairs.get(i).getStudent());
+                    LogUtils.operation("分组进入测试学生:" + pairs.get(i).getStudent().toString());
+                }
+
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
                     PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
                     if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1)
@@ -523,7 +612,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         startActivity(new Intent(this, PushUpGroupActivity.class));
                         return;
                     }
-
+                    if (setting.getTestType() == 2) {
+                        startActivity(new Intent(this, PushUpDistanceTestActivity.class));
+                    }
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
                         SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType() == 2) {
@@ -564,6 +655,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, NewRadioGroupActivity.class));
                     return;
                 }
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ
+                        && SharedPrefsUtil.loadFormSource(this, SitUpSetting.class).getTestType() == 1) {
+                    startActivity(new Intent(this, SitUpArmCheckActivity.class));
+                    return;
+                }
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 
@@ -583,7 +679,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     trackNoMap.put(student, stuPair.getTrackNo());
                 }
                 if (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4
-                ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
+                        || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP) {
                     InteractUtils.printA4Result(this, groupList.get(groupAdapter.getTestPosition()));
                 } else {
                     InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),
@@ -594,13 +690,82 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
 
                 break;
+            case R.id.score_upload:
+                scoreUpload();
+                break;
         }
+    }
+
+    /**
+     * 分组成绩上传
+     */
+    private void scoreUpload() {
+        List<BaseStuPair> data = stuAdapter.getData();
+        for (BaseStuPair stuPair : data) {
+            List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
+            List<UploadResults> uploadResultsList = new ArrayList<>();
+            if (roundResultList != null && !roundResultList.isEmpty()) {
+                RoundResult currentResult = roundResultList.get(0);
+                UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
+                        currentResult.getStudentCode(), currentResult.getTestNo() + "", groupList.get(groupAdapter.getTestPosition()), RoundResultBean.beanCope(roundResultList));
+                uploadResultsList.add(uploadResults);
+            }
+//            ServerMessage.uploadResult(uploadResultsList);
+            ServerMessage.uploadResult(this, uploadResultsList);
+        }
+    }
+
+    /**
+     * 设置位置考生已测成绩
+     *
+     * @param roundResultList
+     */
+    public void setStuPairsData(BaseStuPair pair, List<RoundResult> roundResultList) {
+
+        String[] result = new String[TestConfigs.getMaxTestCount()];
+        for (int j = 0; j < roundResultList.size(); j++) {
+            if (j < result.length) {
+                switch (roundResultList.get(j).getResultState()) {
+                    case RoundResult.RESULT_STATE_FOUL:
+                        result[j] = "X";
+                        break;
+                    case -2:
+                        result[j] = "中退";
+                        break;
+                    default:
+                        result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
+                        break;
+                }
+            } else {
+                break;
+            }
+        }
+        pair.setTimeResult(result);
+    }
+
+    private boolean isAllTest() {
+
+        for (BaseStuPair stuPair : stuPairsList) {
+            Log.e("TAG----", stuPair.getTimeResult() + "");
+            if (stuPair.getTimeResult() != null) {
+                for (String s : stuPair.getTimeResult()) {
+                    if (TextUtils.isEmpty(s)) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+        }
+        return true;
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         TestConfigs.baseGroupMap.clear();
+        TestCache.getInstance().clear();
     }
 
     // LED 显示学生
@@ -664,7 +829,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     for (int i = 0; i < page; i++) {// 页
                         if (mLEDManager == null && runLEDManager == null)
                             return;
-                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                        if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
                             runLEDManager.showString(hostId, title, 0, 0, true, false);
                         } else {
                             mLEDManager.showString(hostId, title, 0, 0, true, false);
@@ -679,7 +844,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                             String rightStuName = showList.get(i * 6 + j * 2 + 1).getStudent().getStudentName();
                             rightStuName = InteractUtils.getStrWithLength(rightStuName, 4);
 
-                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP) {
+                            if (MachineCode.machineCode == ItemDefault.CODE_ZFP && SettingHelper.getSystemSetting().getRadioLed() == 0) {
                                 runLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
                             } else {
                                 mLEDManager.showString(hostId, leftStuName + rightStuName, 0, j + 1, false, j == 2);
@@ -698,7 +863,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
     }
 
     protected void onPause() {
-        LogUtils.life("BaseGroupActivity onPause");
         super.onPause();
         if (ledThread != null) {
             ledThread.interrupt();

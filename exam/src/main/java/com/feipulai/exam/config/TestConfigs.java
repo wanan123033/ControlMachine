@@ -8,6 +8,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.serial.MachineCode;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleRaceSettingActivity;
@@ -30,6 +31,7 @@ import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.footBall.FootBallSettingActivity;
 import com.feipulai.exam.activity.grip.GripMoreActivity;
 import com.feipulai.exam.activity.grip.GripMoreGroupActivity;
+import com.feipulai.exam.activity.grip.GripSetting;
 import com.feipulai.exam.activity.grip.GripSettingActivity;
 import com.feipulai.exam.activity.jump_rope.check.JumpRopeCheckActivity;
 import com.feipulai.exam.activity.jump_rope.setting.JumpRopeSetting;
@@ -83,6 +85,7 @@ import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.ItemDecideDialogBuilder;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -106,7 +109,7 @@ public class TestConfigs {
 
     public static final int UPDATE_GRIDVIEW = 0x4;
     public static final int MAX_TEST_NO = 3;
-    public static final String DEFAULT_IP_ADDRESS = "http://feipulai.com";
+    public static final String DEFAULT_IP_ADDRESS = "192.168.1.100:7979";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> groupActivity = new HashMap<>();
     public static final List<Integer> selectActivity = new ArrayList<>();
@@ -120,8 +123,8 @@ public class TestConfigs {
     public static final String WEIGHT_ITEM_CODE = "E02";
     public static final Map<Object, Object> baseGroupMap = new HashMap<>();
 
-    public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
-    public static final int GROUP_PATTERN_LOOP = 0x1;
+    public static final int GROUP_PATTERN_SUCCESIVE = 0x0;  //连续模式
+    public static final int GROUP_PATTERN_LOOP = 0x1;   //循环模式
 
     //项目默认取值范围
     public static final Map<Integer, Integer> itemMinScope = new HashMap<>();
@@ -217,7 +220,7 @@ public class TestConfigs {
                 sCurrentItem = item;
                 // 有项目代码,证明同步过项目信息,这时候要看成绩是否也同步了过来,这种就是之前的某次这样的操作没有完成而已,这里继续完成就是
                 MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, itemCode);
-                Logger.i("sCurrentItem:" + sCurrentItem.toString());
+                LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
                 return INIT_SUCCESS;
             }
         }
@@ -241,7 +244,7 @@ public class TestConfigs {
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
             sCurrentItem = itemList.get(0);
-            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
 
             return INIT_SUCCESS;
 
@@ -252,7 +255,7 @@ public class TestConfigs {
             MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
             SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
-            Logger.i("sCurrentItem:" + sCurrentItem.toString());
+            LogUtils.operation("当前选择项目:" + sCurrentItem.toString());
             return INIT_SUCCESS;
         }
         sCurrentItem = null;
@@ -560,10 +563,66 @@ public class TestConfigs {
             case ItemDefault.CODE_SPORT_TIMER:
                 result = SharedPrefsUtil.loadFormSource(context, SportTimerSetting.class).getTestTimes();
                 break;
+            case ItemDefault.CODE_WLJ:
+                result = SharedPrefsUtil.loadFormSource(context, GripSetting.class).getTestRound();
+                break;
             default:
                 throw new IllegalArgumentException("wrong machine code");
         }
         return result;
     }
+    public static int getMaxTestCount() {
+        return getMaxTestCount(MyApplication.getInstance());
+    }
 
+//    public static int getDeviceSumNum() {
+//        int result = 0;
+//        int machineCode = TestConfigs.sCurrentItem.getMachineCode();
+//        switch (machineCode) {
+//            case ItemDefault.CODE_ZWTQQ:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SitReachSetting.class).getTestDeviceCount();
+//                break;
+//            case ItemDefault.CODE_LDTY:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), StandJumpSetting.class).getTestDeviceCount();
+//                break;
+//            case ItemDefault.CODE_ZFP:
+//                result = Integer.parseInt(SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), RunTimerSetting.class).getRunNum());
+//                break;
+//            case ItemDefault.CODE_HWSXQ:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), MedicineBallSetting.class).getSpDeviceCount();
+//                break;
+//            case ItemDefault.CODE_TS:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class).getDeviceSum();
+//                break;
+//            case ItemDefault.CODE_YWQZ:
+//            case ItemDefault.CODE_SGBQS:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SitUpSetting.class).getDeviceSum();
+//                break;
+//            case ItemDefault.CODE_YTXS:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), PullUpSetting.class).getDeviceSum();
+//                break;
+//            case ItemDefault.CODE_PQ:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), VolleyBallSetting.class).getSpDeviceCount();
+//                break;
+//            case ItemDefault.CODE_FWC:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), PushUpSetting.class).getDeviceSum();
+//                break;
+//            case ItemDefault.CODE_WLJ:
+//            case ItemDefault.CODE_SHOOT:
+//            case ItemDefault.CODE_ZCP:
+//            case ItemDefault.CODE_ZQYQ:
+//            case ItemDefault.CODE_LQYQ:
+//                result = 1;
+//                break;
+//            case ItemDefault.CODE_MG:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SargentSetting.class).getSpDeviceCount();
+//                break;
+//            case ItemDefault.CODE_SPORT_TIMER:
+//                result = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SportTimerSetting.class).getDeviceCount();
+//                break;
+//            default:
+//                throw new IllegalArgumentException("wrong machine code");
+//        }
+//        return result;
+//    }
 }

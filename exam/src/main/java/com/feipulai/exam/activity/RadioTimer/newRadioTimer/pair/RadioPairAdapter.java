@@ -58,10 +58,18 @@ public class RadioPairAdapter extends RecyclerView.Adapter<RadioPairAdapter.View
     public void onBindViewHolder(final ViewHolder holder, int position) {
         StuDevicePair pair = stuPairs.get(position);
         BaseDeviceState deviceState = pair.getBaseDevice();
-        holder.mTvDeviceId.setText(String.format(Locale.CHINA,"%d", deviceState.getDeviceId()));
+        if (position == 0){
+            holder.mTvDeviceId.setText("-");
+        }else {
+            holder.mTvDeviceId.setText(String.format(Locale.CHINA,"%d道", deviceState.getDeviceId()));
+        }
         if (point == 1 && addNum>0){
-            String num = "子机编号"+(deviceState.getDeviceId()+addNum);
-            holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? String.format("√%s", num) : num);
+            if (position == 0){
+                holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? "√" : "");
+            }else {
+                String num = "子机编号"+(deviceState.getDeviceId()+addNum);
+                holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? String.format("√%s", num) : num);
+            }
         }else {
             holder.mTvStuInfo.setText(deviceState.getState() == BaseDeviceState.STATE_FREE ? "√" : "");
         }

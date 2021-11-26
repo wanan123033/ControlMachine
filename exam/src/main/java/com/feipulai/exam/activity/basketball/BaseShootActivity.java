@@ -10,7 +10,6 @@ import android.view.View;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
-import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
@@ -82,7 +81,6 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         if (state == WAIT_FREE || state == WAIT_CHECK_IN) {
 
             pairs.get(0).setStudent(student);
-
             for (RoundResult result : results) {
                 if (isFullSkip(result.getResult(), result.getResultState())) {
                     toastSpeak("满分");
@@ -157,10 +155,15 @@ public abstract class BaseShootActivity extends BaseTitleActivity
         return false;
     }
 
-    public void disposeResult(int order,Student student, int testRound ,int testNo) {
+    public void disposeResult(int order, Student student, int testRound, int testNo, boolean b) {
 
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         RoundResult roundResult = new RoundResult();
+        if (b){
+            roundResult.setResultTestState(1);
+        }else {
+            roundResult.setResultTestState(0);
+        }
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
@@ -205,6 +208,7 @@ public abstract class BaseShootActivity extends BaseTitleActivity
 
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
+
     }
 
 
@@ -273,6 +277,4 @@ public abstract class BaseShootActivity extends BaseTitleActivity
     }
 
     public abstract void getResult(RunTimerResult result);
-
-
 }

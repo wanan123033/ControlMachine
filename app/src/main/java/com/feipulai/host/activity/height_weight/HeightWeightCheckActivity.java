@@ -119,13 +119,11 @@ public class HeightWeightCheckActivity
     }
 
     private void prepareForCheckIn() {
-        LogUtils.operation("HeightWeightCheckActivity prepareForCheckIn");
         isTesting = false;
         isTestFinished = false;
     }
 
     private void prepareForTest() {
-        LogUtils.operation("HeightWeightCheckActivity prepareForTest " + mStudent.toString());
         isTesting = true;
         isTestFinished = false;
 
@@ -150,7 +148,6 @@ public class HeightWeightCheckActivity
 
     @Override
     protected void onResume() {
-        LogUtils.operation("HeightWeightCheckActivity onResume");
         super.onResume();
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         //mLEDManager.resetLEDScreen(hostId,TestConfigs.machineNameMap.get(ItemDefault.CODE_HW));
@@ -176,8 +173,8 @@ public class HeightWeightCheckActivity
             case UPDATE_NEW_RESULT:
                 String displayHeight = ResultDisplayUtils.getStrResultForDisplay(mHeightResult.getResult(), HWConfigs.HEIGHT_ITEM);
                 String displayWeight = ResultDisplayUtils.getStrResultForDisplay(mWeightResult.getResult(), HWConfigs.WEIGHT_ITEM);
-                LogUtils.operation("获取到学生成绩:mHeightResult=" + mHeightResult.toString());
-                LogUtils.operation("获取到学生成绩:mWeightResult=" + mWeightResult.toString());
+                LogUtils.operation("获取到学生成绩:身高=" + mHeightResult.toString());
+                LogUtils.operation("获取到学生成绩:体重=" + mWeightResult.toString());
                 txtHeightResult.setText(displayHeight);
                 txtWeightResult.setText(displayWeight);
                 txtTestResult.setText(displayHeight + "\n" + displayWeight);
@@ -213,6 +210,7 @@ public class HeightWeightCheckActivity
     @Override
     public void onRS232Result(Message msg) {
         // 只有测试状态下,才理会机器信息
+        LogUtils.operation("身高体重:isTesting"+isTesting +"isTestFinished"+isTestFinished);
         if (!isTesting || isTestFinished) {
             return;
         }

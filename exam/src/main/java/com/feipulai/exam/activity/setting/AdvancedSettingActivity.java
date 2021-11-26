@@ -1,9 +1,16 @@
 package com.feipulai.exam.activity.setting;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -14,6 +21,7 @@ import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.dialog.DialogUtils;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -45,7 +53,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by zzs on 2018/11/23
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-public class AdvancedSettingActivity extends BaseTitleActivity {
+public class AdvancedSettingActivity extends BaseTitleActivity implements TextWatcher {
 
     @BindView(R.id.edit_appkey)
     EditText editAppkey;
@@ -67,8 +75,22 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
     CheckBox swMedicineBall;
     @BindView(R.id.cb_input_test)
     CheckBox cbInputTest;
+    @BindView(R.id.cb_again)
+    CheckBox cbAgain;
+    @BindView(R.id.cb_resit)
+    CheckBox cbResit;
     @BindView(R.id.sp_jump_rope_state_count)
     Spinner spJumpRopeStateCount;
+    @BindView(R.id.et_again_pass)
+    EditText etAgainPass;
+    @BindView(R.id.cb_again_pass)
+    CheckBox cbAgainPass;
+    @BindView(R.id.et_resit_pass)
+    EditText etResitPass;
+    @BindView(R.id.cb_resit_pass)
+    CheckBox cbResitPass;
+    @BindView(R.id.sw_person_confirm)
+    CheckBox cbPersonConfirm;
     private SystemSetting systemSetting;
     private SitUpSetting sitUpSetting;
     private PullUpSetting pullUpSetting;
@@ -102,6 +124,12 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
 
         String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
         editAppkey.setText(serverToken);
+        etResitPass.setText(systemSetting.getResitPass());
+        etAgainPass.setText(systemSetting.getAgainPass());
+        cbResitPass.setChecked(systemSetting.getResitPassBool());
+        cbAgainPass.setChecked(systemSetting.getAgainPassBool());
+        etAgainPass.addTextChangedListener(this);
+        etResitPass.addTextChangedListener(this);
         swSitup.setChecked(sitUpSetting.isPenalize());
 
         cbInputTest.setChecked(systemSetting.isInputTest());
@@ -136,6 +164,10 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         ropeStateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spJumpRopeStateCount.setAdapter(ropeStateAdapter);
         spJumpRopeStateCount.setSelection(jumpRopeSetting.getGetStateLoopCount() - 3);
+
+        cbResit.setChecked(systemSetting.isResit());
+        cbAgain.setChecked(systemSetting.isAgainTest());
+        cbPersonConfirm.setChecked(systemSetting.isResultConfirm());
     }
 
     @OnItemSelected({R.id.sp_situp_angle, R.id.sp_jump_rope_state_count})
@@ -171,7 +203,9 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
         SharedPrefsUtil.save(this, sargentSetting);
     }
 
-    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach, R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test})
+    @OnCheckedChanged({R.id.sw_pullup, R.id.sw_situp, R.id.sw_volleyball, R.id.sw_sit_reach,
+            R.id.sw_standjump2, R.id.sw_sargent, R.id.sw_medicine_ball, R.id.cb_input_test,
+            R.id.cb_again,R.id.cb_resit,R.id.cb_again_pass,R.id.cb_resit_pass,R.id.sw_person_confirm})
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
 
@@ -199,7 +233,24 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
                 medicineBallSetting.setPenalizeFoul(isChecked);
                 break;
             case R.id.cb_input_test:
-                systemSetting.setInputTest(isChecked);
+                //fairplay.test
+                showAdvancedPwdDialog(isChecked);
+
+                break;
+            case R.id.cb_again:
+                systemSetting.setAgainTest(isChecked);
+                break;
+            case R.id.cb_resit:
+                systemSetting.setIsResit(isChecked);
+                break;
+            case R.id.cb_resit_pass:
+                systemSetting.setResitPassBool(isChecked);
+                break;
+            case R.id.cb_again_pass:
+                systemSetting.setAgainPassBool(isChecked);
+                break;
+            case R.id.sw_person_confirm:
+                systemSetting.setResultConfirm(isChecked);
                 break;
         }
     }
@@ -246,4 +297,52 @@ public class AdvancedSettingActivity extends BaseTitleActivity {
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        systemSetting.setAgainPass(etAgainPass.getText().toString());
+        systemSetting.setResitPass(etResitPass.getText().toString());
+    }
+
+    public void showAdvancedPwdDialog(boolean isChecked) {
+        if (isChecked) {
+            View view = LayoutInflater.from(this).inflate(R.layout.view_advanced_pwd, null);
+            final EditText editPwd = view.findViewById(R.id.edit_pwd);
+            Button btnCancel = view.findViewById(R.id.btn_cancel);
+            Button btnConfirm = view.findViewById(R.id.btn_confirm);
+
+            final Dialog dialog = DialogUtils.create(this, view, true);
+            dialog.show();
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+
+                }
+            });
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.equals(editPwd.getText().toString(), MyApplication.ADVANCED_AUTO_PWD)) {
+                        systemSetting.setInputTest(true);
+                        cbInputTest.setChecked(true);
+                        dialog.dismiss();
+                    } else {
+                        systemSetting.setInputTest(false);
+                        cbInputTest.setChecked(false);
+                        ToastUtils.showShort("密码错误");
+                    }
+                }
+            });
+        }
+    }
 }

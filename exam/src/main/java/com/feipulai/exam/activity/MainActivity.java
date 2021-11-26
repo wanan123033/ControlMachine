@@ -23,26 +23,30 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.led.LEDManager;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialParams;
 import com.feipulai.device.udp.UdpLEDUtil;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
+import com.feipulai.exam.activity.RadioTimer.RunTimerSelectActivity;
 import com.feipulai.exam.activity.base.BaseActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
+import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DataRetrieveActivity;
-import com.feipulai.exam.activity.data.print.PrintPreviewActivity;
 import com.feipulai.exam.activity.explain.ExplainActivity;
 import com.feipulai.exam.activity.setting.MonitoringBean;
 import com.feipulai.exam.activity.setting.MonitoringBindActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.ActivateBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
@@ -58,6 +62,7 @@ import com.ww.fpl.videolibrary.play.util.PUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,11 +75,39 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     TextView txtMainTitle;
     @BindView(R.id.txt_deviceid)
     TextView txtDeviceId;
+    @BindView(R.id.txt_cut_time)
+    TextView txtCutTime;
+    @BindView(R.id.txt_use_time)
+    TextView txtUseTime;
     @BindView(R.id.view_battery)
     BatteryView batteryView;
     private boolean mIsExiting;
     private Intent serverIntent;
     private Intent bindIntent;
+    private ActivateBean activateBean;
+    private LEDManager ledManager= new LEDManager();
+    private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
+        @Override
+        public void timer(Long time) {
+            long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
+
+            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
+            if (activateBean == null || activateBean.getValidEndTime() == 0 || activateBean.getValidRunTime() == 0) {
+                activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
+            }
+
+            if (activateBean.getValidRunTime() != 0 && activateBean.getValidEndTime() != 0 &&
+                    (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                            activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
+                txtCutTime.setVisibility(View.VISIBLE);
+                txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
+                if (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000) {
+                    txtUseTime.setVisibility(View.VISIBLE);
+                    txtUseTime.setText("可用时长：" + DateUtil.getUseTime(activateBean.getValidRunTime() - todayTime));
+                }
+            }
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +134,9 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                         int level = msg.arg2;
                         batteryView.setVisibility(View.VISIBLE);
                         batteryView.updateState(level);
-                        if (state==0){//放电
+                        if (state == 0) {//放电
                             batteryView.updateView(level);
-                        }else{//充电
+                        } else {//充电
                             batteryView.updateChargingView(level);
                         }
                     }
@@ -111,14 +144,15 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
             }
         });
+        timerUtil.startTime(60, TimeUnit.SECONDS);
 
-        //测试数据
+//        测试数据
 //        List<GroupItem> items = DBManager.getInstance().queryGroupItemByCode("11");
 //        List<RoundResult> roundResults = new ArrayList<>();
 //        RoundResult roundResult;
 //        int countI = 0;
 //        for (GroupItem groupItem : items
-//                ) {
+//        ) {
 //            Group group = DBManager.getInstance().queryGroup("11", 1);
 //            roundResult = new RoundResult();
 //            roundResult.setGroupId(group.getId());
@@ -138,6 +172,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //        }
 //        roundResults.get(2).setResultState(2);
 //        DBManager.getInstance().insertRoundResults(roundResults);
+
+
     }
 
     @Override
@@ -187,12 +223,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private void addTestResult() {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-        roundResult.setStudentCode("193012100030");
+        roundResult.setStudentCode("0111960128");
         String itemCode = TestConfigs.sCurrentItem.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : TestConfigs.sCurrentItem.getItemCode();
         roundResult.setItemCode(itemCode);
-        roundResult.setResult(122);
+        roundResult.setResult(54500);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
-        roundResult.setTestTime(DateUtil.getCurrentTime() + "");
+        roundResult.setTestTime("1621038454000");
+        roundResult.setEndTime("1621038499500");
         roundResult.setRoundNo(1);
         roundResult.setTestNo(1);
         roundResult.setExamType(0);
@@ -200,7 +237,22 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         roundResult.setIsLastResult(1);
         roundResult.setScheduleNo("1");
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
-        roundResult.setIsLastResult(1);
+        DBManager.getInstance().insertRoundResult(roundResult);
+        roundResult = new RoundResult();
+        roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+        roundResult.setStudentCode("0111960128");
+        roundResult.setItemCode(itemCode);
+        roundResult.setResult(54700);
+        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setTestTime("1621039570000");
+        roundResult.setEndTime("1621039624700");
+        roundResult.setRoundNo(2);
+        roundResult.setTestNo(1);
+        roundResult.setExamType(0);
+        roundResult.setUpdateState(0);
+        roundResult.setIsLastResult(0);
+        roundResult.setScheduleNo("1");
+        roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
         DBManager.getInstance().insertRoundResult(roundResult);
 
 //        List<RoundResult> results = new ArrayList<>();
@@ -235,6 +287,19 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
                     .append(systemSetting.getHostId()).append("号机");
 //            }
+            String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+                    + " " + systemSetting.getHostId();
+            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId(), 1);
+
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showSubsetString(systemSetting.getHostId(), 1, "菲普莱体育", 3, 3, false, true);
+            } else {
+                ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId());
+
+                ledManager.showString(systemSetting.getHostId(), title, 0, true, false, LEDManager.MIDDLE);
+                ledManager.showString(systemSetting.getHostId(), "菲普莱体育", 3, 3, false, true);
+            }
         }
         if (!TextUtils.isEmpty(systemSetting.getTestName())) {
             sb.append("-").append(systemSetting.getTestName());
@@ -277,8 +342,34 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
+
+//                LogUtil.logDebugMessage("固件版本：" + SystemUtil.getFirmwareVersion());
+//                ActivateBean activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
+//                DateUtil.setSysDate(this, activateBean.getCurrentTime());
+
+
 //                addTestResult();
 //                IntentUtil.gotoActivity(this,PrintPreviewActivity.class);
+                //todo 添加测试数据
+//                List<RoundResult> roundResults = new ArrayList<>();
+//                List<Student> studentList = DBManager.getInstance().dumpAllStudents();
+//                for (Student student : studentList) {
+//                    RoundResult roundResult = new RoundResult();
+//                    roundResult.setIsLastResult(1);
+//                    roundResult.setItemCode(TestConfigs.getCurrentItemCode());
+//                    roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+//                    roundResult.setMachineResult(1130 * 100);
+//                    roundResult.setResult(1130 * 100);
+//                    roundResult.setResultState(1);
+//                    roundResult.setRoundNo(1);
+//                    roundResult.setScheduleNo("3");
+//                    roundResult.setStudentCode(student.getStudentCode());
+//                    roundResult.setTestNo(1);
+//                    roundResult.setTestTime(System.currentTimeMillis() + "");
+//                    roundResults.add(roundResult);
+//                }
+//                DBManager.getInstance().insertRoundResults(roundResults);
+//                toastSpeak("添加成功");
                 break;
             case R.id.card_parameter_setting:
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
@@ -290,7 +381,13 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                    Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    startActivity(intent);
+                }else {
+                    startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
+                }
                 break;
             case R.id.card_device_cut:
                 startActivity(new Intent(this, MachineSelectActivity.class));
@@ -320,10 +417,12 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
         RadioManager.getInstance().close();
         super.onDestroy();
         if (mIsExiting) {
+            timerUtil.stop();
             Intent tcpServiceIntent = new Intent(this, MyTcpService.class);
             stopService(tcpServiceIntent);
             ActivityCollector.getInstance().finishAllActivity();
             System.exit(0);
+
         }
     }
 

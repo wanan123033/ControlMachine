@@ -24,14 +24,16 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.ActivateBean;
 import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpSubscriber;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
+import com.lgh.uvccamera.utils.LogUtil;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.utils.LogUtils;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SoundPlayUtils;
 import com.feipulai.common.utils.ToastUtils;
@@ -41,6 +43,7 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseActivity;
 import com.feipulai.host.activity.main.MainActivity;
 import com.feipulai.host.tts.TtsConfig;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 import com.ww.fpl.libarcface.util.ConfigUtil;
@@ -77,27 +80,17 @@ public class SplashScreenActivity extends BaseActivity {
 
 // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
+
         DateUtil.setTimeZone(this, "Asia/Shanghai");
 
 
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
-        runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
-        if (activateBean != null && activateBean.getValidRunTime() > 0) {
+        runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        if (runTime == 0) {
+//            showActivateConfirm(1);
+            activate();
+        } else if (activateBean != null && activateBean.getValidRunTime() > 0) {
 
-//            if (activateBean.getUseDeviceTime() - DateUtil.getDayTime() > activateBean.getValidRunTime()) {
-//                //超出使用时长
-//                //弹窗确定重新激活
-//                showActivateConfirm(2);
-//                return;
-//            } else {
-//                //更新使用时长 每一天有使用到都算使用一天
-//                if (!TextUtils.equals(DateUtil.getCurrentTime("yyyy-MM-dd")
-//                        , DateUtil.formatTime(activateBean.getUpdateTime(), "yyyy-MM-dd"))) {
-//                    activateBean.setUseDeviceTime(activateBean.getUseDeviceTime() + DateUtil.getDayTime());
-//                    activateBean.setUpdateTime(DateUtil.getCurrentTime());
-//                    SharedPrefsUtil.save(this, activateBean);
-//                }
-//            }
             if (runTime > activateBean.getValidRunTime()) {
                 //超出使用时长
                 //弹窗确定重新激活
@@ -105,9 +98,7 @@ public class SplashScreenActivity extends BaseActivity {
                 return;
             }
             activate();
-            if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
-                gotoMain();
-            }
+//            gotoMain();
 
 
         } else {
@@ -118,50 +109,21 @@ public class SplashScreenActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 这里是否还需要延时需要再测试后再修改
-//        DateUtil.setTimeZone(this,"Asia/Shangha");
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                init();
-//                if (SettingHelper.getSystemSetting().getCheckTool() != 4) {
-//                    Intent intent = new Intent();
-//                    intent.setClass(SplashScreenActivity.this, MainActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//
-//            }
-//        }, 1000);
-
 
     }
 
     private void gotoMain() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
-                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
-                        if (!isInit) {
-                            init();
-                        }
-
-                        Intent intent = new Intent();
-                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    }
-                } else {
-                    showActivateConfirm(2);
-                }
-
-            }
-        }, 3000);
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+        HttpManager.DEFAULT_READ_TIMEOUT = 20;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+        HttpManager.resetManager();
+        Intent intent = new Intent();
+//                        intent.setClass(SplashScreenActivity.this, AccountActivity.class);
+        intent.setClass(SplashScreenActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void activate() {
@@ -170,31 +132,35 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SplashScreenActivity.this, result);
                 if ((int) result.getActivateTime() == 0) {
                     //需要确认激活
                     showActivateConfirm(1);
                 } else if (result.getCurrentTime() > result.getValidEndTime()) {
+//                     .logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活
                     showActivateConfirm(2);
-                } else if (runTime > activateBean.getValidRunTime()) {
+                } else if (runTime > result.getValidRunTime()) {
                     //超出使用时长
                     //弹窗确定重新激活
                     showActivateConfirm(2);
-
+                    return;
                 } else {
                     //激活成功
-                    gotoMain();
+                    init();
 
                 }
             }
 
             @Override
             public void onFault(int code, String errorMsg) {
-                if (activateBean == null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                if ((activateBean == null || runTime > activateBean.getValidRunTime()) && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
                     toastSpeak(errorMsg);
                     //需要确认激活
                     showActivateConfirm(1);
+                } else if (activateBean != null && ActivityCollector.getInstance().isLastActivity(SplashScreenActivity.class)) {
+                    init();
                 }
 
             }
@@ -231,18 +197,44 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void init() {
-        isInit = true;
-        boolean isEngine = ConfigUtil.getISEngine(this);
-        if (isEngine) {
-            initLocalFace();
-        } else {
-            activeEngine();
-        }
-        SoundPlayUtils.init(MyApplication.getInstance());
-        LogUtils.initLogger(BuildConfig.DEBUG, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
-        ToastUtils.init(getApplicationContext());
-        //这里初始化时间很长,大约需要3s左右
-        TtsManager.getInstance().init(this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
+                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+
+                        if (!isInit) {
+                            isInit = true;
+
+                            SoundPlayUtils.init(MyApplication.getInstance());
+
+                            ToastUtils.init(getApplicationContext());
+                            //这里初始化时间很长,大约需要3s左右
+                            TtsManager.getInstance().init(SplashScreenActivity.this, TtsConfig.APP_ID, TtsConfig.APP_KEY, TtsConfig.SECRET_KEY);
+                            LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
+                            boolean isEngine = ConfigUtil.getISEngine(SplashScreenActivity.this);
+                            if (isEngine) {
+                                initLocalFace();
+                            } else {
+                                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+                                    ToastUtils.showShort("请在参数设置激活人脸识别");
+                                }
+                                gotoMain();
+                            }
+
+                        } else {
+                            gotoMain();
+                        }
+
+                        isInit = true;
+
+                    }
+                } else {
+                    showActivateConfirm(2);
+                }
+
+            }
+        }, 1000);
 
 
     }
@@ -250,14 +242,12 @@ public class SplashScreenActivity extends BaseActivity {
     private void initLocalFace() {
         //本地人脸库初始化
         boolean isFaceInit = FaceServer.getInstance().init(SplashScreenActivity.this);
-        Logger.d("initLocalFace====>" + isFaceInit);
         if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
 
             DataBaseExecutor.addTask(new DataBaseTask(this, "数据加载中...", true) {
                 @Override
                 public DataBaseRespon executeOper() {
                     List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
-                    Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                     for (Student student : studentList) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
@@ -268,15 +258,8 @@ public class SplashScreenActivity extends BaseActivity {
 
                 @Override
                 public void onExecuteSuccess(DataBaseRespon respon) {
-                    if (dialog != null && !dialog.isShowing() && activateBean != null) {
-//                        Intent intent = new Intent();
-//                        intent.setClass(SplashScreenActivity.this, MainActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                        finish();
-                        gotoMain();
-                    }
+
+                    gotoMain();
                 }
 
                 @Override
@@ -286,6 +269,8 @@ public class SplashScreenActivity extends BaseActivity {
             });
 
 
+        } else {
+            gotoMain();
         }
     }
 
@@ -321,20 +306,18 @@ public class SplashScreenActivity extends BaseActivity {
 
                     @Override
                     public void onNext(Integer activeCode) {
+
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
-
                             ConfigUtil.setISEngine(SplashScreenActivity.this, true);
+                            FaceServer.getInstance().init(SplashScreenActivity.this);
                             //本地人脸库初始化
                             initLocalFace();
-                            return;
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
 //                            ToastUtils.showShort(getString(R.string.already_activated));
                         } else {
                             ToastUtils.showShort(getString(R.string.active_failed));
-                        }
-                        if (dialog != null && !dialog.isShowing() && activateBean != null) {
-                            gotoMain();
+                            finish();
                         }
                     }
 

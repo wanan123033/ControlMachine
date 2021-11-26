@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/dp_10"
+    >
+    <LinearLayout
+        android:id="@+id/ll_beginning_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_height="@dimen/dp_40"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="起点拦截器"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_pairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/view_bottom"
+            android:layout_below="@+id/rl_check_in"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_ending_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_beginning_point"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="终点/折返点拦截器"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_end_pairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/view_bottom"
+            android:layout_below="@+id/rl_check_in"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:drawableLeft="@drawable/shape_state_default"
+                android:drawablePadding="10dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="@string/normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:drawableLeft="@drawable/shape_state_red"
+                android:gravity="center_vertical"
+                android:text="异常" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:drawableLeft="@drawable/shape_state_yellow"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/low_power" />
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/btn_change_bad"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginRight="@dimen/dp_20"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_20"
+            android:background="@drawable/btn_rectangle_selector"
+            android:text="故障更换"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_16" />
+    </RelativeLayout>
+</RelativeLayout>

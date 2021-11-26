@@ -15,8 +15,12 @@ import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseGroupTestActivity;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -76,12 +80,16 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     }
 
-    @Override
     public int setTestCount() {
+//        SystemSetting setting = SettingHelper.getSystemSetting();
+//        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),baseStuPair.getStudent().getStudentCode());
+//        if (setting.isResit() || studentItem.getMakeUpType() == 1){
+//            return baseStuPair.getTestNo();
+//        }
         if (TestConfigs.sCurrentItem.getTestNum() != 0) {
             return TestConfigs.sCurrentItem.getTestNum();
         } else {
-            return jumpSetting.getTestCount();
+            return TestConfigs.getMaxTestCount();
         }
     }
 
@@ -89,14 +97,10 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     protected void onResume() {
         super.onResume();
         LogUtils.life("StandJumpGroupTestActivity onResume");
-//        updateDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR, 1));
         SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
-        sendCheck();
-//        cbDeviceState.setVisibility(View.INVISIBLE);
-//        if (SerialDeviceManager.getInstance() != null && standResiltListener.getTestState() != StandResiltListener.TestState.UN_STARTED) {
-//            //开始测试
-//            SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
-//        }
+        if (standResiltListener.getTestState() != StandResiltListener.TestState.WAIT_RESULT) {
+            sendCheck();
+        }
     }
 
     @Override
@@ -107,9 +111,9 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 
     @Override
     public void startTest(BaseStuPair stuPair) {
-        LogUtils.operation("立定跳远开始测试:"+stuPair.toString());
+        LogUtils.operation("立定跳远开始测试:" + stuPair.getStudent().toString());
         baseStuPair = stuPair;
-        baseStuPair.setTestTime(System.currentTimeMillis()+"");
+        baseStuPair.setTestTime(System.currentTimeMillis() + "");
 //        sendCheck();
 //        //开始测试
 //        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
@@ -134,18 +138,21 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.life("StandJumpGroupTestActivity onPause");
-        //结束测试 发送结束指令
-        LogUtils.normal(SerialConfigs.CMD_END_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP)+"---跳远结束指令");
 
-        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
-        SerialDeviceManager.getInstance().close();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
+        LogUtils.life("StandJumpGroupTestActivity onPause");
+        //结束测试 发送结束指令
+        LogUtils.serial("跳远结束指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_END_JUMP) + "---");
+
+        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_END_JUMP));
+        SerialDeviceManager.getInstance().close();
     }
+
     /**
      * 发送检测设备指令
      */
@@ -153,7 +160,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
         isDisconnect = true;
         if (SerialDeviceManager.getInstance() != null) {
             //测量垫自检,校验连接是否正常
-            LogUtils.normal(SerialConfigs.CMD_SELF_CHECK_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP)+"---跳远自检指令");
+            LogUtils.serial("跳远自检指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SELF_CHECK_JUMP) + "---");
 
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SELF_CHECK_JUMP));
             mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
@@ -200,7 +207,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
                         ToastUtils.showShort("设备错误,考生请重测");
                         activity.sendCheck();
                         //开始测试
-                        LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+                        LogUtils.serial("跳远开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP) + "---");
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
                         //设置当前设置为空闲状态
                         activity.updateDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
@@ -264,7 +271,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
             isDisconnect = !isCheckDevice;
             if (isCheckDevice && standResiltListener.getTestState() == StandResiltListener.TestState.START_TEST) {
                 //开始测试
-                LogUtils.normal(SerialConfigs.CMD_START_JUMP.length+"---"+ StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP)+"---跳远开始测试指令");
+                LogUtils.serial("跳远开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_START_JUMP) + "---");
 
                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_START_JUMP));
             }

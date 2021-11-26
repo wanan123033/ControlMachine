@@ -67,6 +67,11 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
     @Override
     protected void convert(ViewHolder viewHolder, final RoundResult roundResult) {
         String displayStr;
+        if (roundResult.getResultTestState() == 1){
+            viewHolder.tv_in.setText("重测");
+        }else {
+            viewHolder.tv_in.setText("");
+        }
         if (!isHW) {
             viewHolder.mTvTimes.setText(roundResult.getRoundNo() + "");
             if (!TextUtils.isEmpty(roundResult.getTestTime())) {
@@ -219,7 +224,8 @@ public class ResultDetailAdapter extends BaseQuickAdapter<RoundResult, ResultDet
         LinearLayout mViewHead;
         @BindView(R.id.tv_end_time)
         TextView mTvEndTime;
-
+        @BindView(R.id.tv_in)
+        TextView tv_in;
 
         public ViewHolder(View view) {
             super(view);

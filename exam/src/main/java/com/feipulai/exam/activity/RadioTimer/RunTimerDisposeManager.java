@@ -41,7 +41,7 @@ public class RunTimerDisposeManager {
         int hostId = SettingHelper.getSystemSetting().getHostId();
         String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
                 + " " + hostId;
-        mLEDManager.resetLEDScreen(hostId,title);
+        mLEDManager.resetLEDScreen(hostId, title);
         PrinterManager.getInstance().init();
     }
 
@@ -74,7 +74,7 @@ public class RunTimerDisposeManager {
         }
     }
 
-    protected void saveResult(Student student, int result, int currentTestTime, int testNo,String startTime) {
+    protected void saveResult(Student student, int result, int currentTestTime, int testNo, String startTime) {
         //TODO 修改测试次数
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         RoundResult roundResult = new RoundResult();
@@ -83,7 +83,7 @@ public class RunTimerDisposeManager {
         roundResult.setItemCode(TestConfigs.getCurrentItemCode());
         roundResult.setResult(result);
         roundResult.setMachineResult(result);
-        roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+        roundResult.setResultState(result > 0 ? RoundResult.RESULT_STATE_NORMAL : RoundResult.RESULT_STATE_WAIVE);
         roundResult.setTestTime(startTime);
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(testNo);
@@ -106,9 +106,9 @@ public class RunTimerDisposeManager {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-        roundResult.setEndTime(System.currentTimeMillis()+"");
+        roundResult.setEndTime(System.currentTimeMillis() + "");
         DBManager.getInstance().insertRoundResult(roundResult);
-
+        LogUtils.operation("保存成绩：" + roundResult.toString());
         List<RoundResult> roundResultList = new ArrayList<>();
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(studentItem.getScheduleNo(), TestConfigs.getCurrentItemCode(),
@@ -125,7 +125,7 @@ public class RunTimerDisposeManager {
      * @param currentTestTime
      * @param group
      */
-    public void saveGroupResult(Student student, int result, int currentTestTime, Group group,String startTime) {
+    public void saveGroupResult(Student student, int result, int currentTestTime, Group group, String startTime) {
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(student.getStudentCode());
@@ -134,11 +134,16 @@ public class RunTimerDisposeManager {
         roundResult.setMachineResult(result);
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
         roundResult.setTestTime(startTime);
-        roundResult.setEndTime(System.currentTimeMillis()+"");
+        roundResult.setEndTime(System.currentTimeMillis() + "");
+
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
+//        roundResult.setExamType(group.getExamType());
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (studentItem != null){
+            roundResult.setExamType(studentItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
@@ -157,7 +162,7 @@ public class RunTimerDisposeManager {
             // 第一次测试
             roundResult.setIsLastResult(1);
         }
-        LogUtils.operation("红外计时保存成绩:"+roundResult.toString());
+        LogUtils.operation("红外计时保存成绩:" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
 
 
@@ -165,7 +170,7 @@ public class RunTimerDisposeManager {
         roundResultList.add(roundResult);
         UploadResults uploadResults = new UploadResults(group.getScheduleNo()
                 , TestConfigs.getCurrentItemCode(), student.getStudentCode()
-                , "1", group , RoundResultBean.beanCope(roundResultList,group));
+                , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
 

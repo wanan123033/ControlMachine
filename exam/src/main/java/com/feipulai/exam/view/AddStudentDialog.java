@@ -22,6 +22,7 @@ import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -142,12 +143,12 @@ public class AddStudentDialog {
             dbSchedule = DBManager.getInstance().getAllSchedules();
             scheduleList.addAll(dbSchedule);
             scheduleAdapter.notifyDataSetChanged();
-            if (scheduleList.size()<1){
+            if (scheduleList.size() < 1) {
                 scheduleList = DBManager.getInstance().getSchedules();
             }
-            if (scheduleList.size()> 0){
+            if (scheduleList.size() > 0) {
                 schedult = scheduleList.get(0).getScheduleNo();
-            }else {
+            } else {
                 schedult = "-1";
             }
 
@@ -200,6 +201,7 @@ public class AddStudentDialog {
         studentItem.setExamType(0);
         DBManager.getInstance().insertStudentItem(studentItem);
         ToastUtils.showShort("考生添加成功");
+        LogUtils.operation("添加考生：" + student.toString() + "   报名项目：" + TestConfigs.sCurrentItem.getItemName());
         EventBus.getDefault().post(new BaseEvent(student, EventConfigs.TEMPORARY_ADD_STU));
         dismissDialog();
     }

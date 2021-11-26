@@ -351,6 +351,10 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         } else {
             prepareForFinish();
         }
+        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),pair.getStudent().getStudentCode());
+        if (studentItem.getExamType() == 2){
+            prepareForCheckIn();
+        }
     }
 
     private boolean shouldContinue() {
@@ -677,6 +681,15 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                 afrFrameLayout.setVisibility(View.VISIBLE);
             } else {
                 afrFrameLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+    @Override
+    public void setRoundNo(Student student, int roundNo) {
+        for (StuDevicePair pair : pairs){
+            Student student1 = pair.getStudent();
+            if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())){
+                pair.setCurrentRoundNo(roundNo);
             }
         }
     }
