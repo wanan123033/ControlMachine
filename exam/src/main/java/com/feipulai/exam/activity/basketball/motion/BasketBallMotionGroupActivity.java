@@ -55,6 +55,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.PrintResultUtil;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -536,11 +537,17 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message message = mHandler.obtainMessage();
-        message.what = UPDATE_ON_TEXT;
-        message.obj = time;
-        mHandler.sendMessage(message);
+//        Message message = mHandler.obtainMessage();
+//        message.what = UPDATE_ON_TEXT;
+//        message.obj = time;
+//        mHandler.sendMessage(message);
+//        tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
     }
+
+    public void onTimeIOTaskUpdate(int time) {
+
+    }
+
     private void setPunish(int punishType) {
         if (state == TESTING || state == WAIT_BEGIN) {
             toastSpeak("测试中,不允许更改考试成绩");
@@ -679,7 +686,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
                     SystemSetting setting = SettingHelper.getSystemSetting();
                     StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                    if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
                         stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
                     }
                 }

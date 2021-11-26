@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SystemBrightUtils;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
@@ -41,6 +42,9 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.netUtils.CommonUtils;
+import com.feipulai.host.netUtils.HttpSubscriber;
+import com.feipulai.host.netUtils.OnResultListener;
+import com.feipulai.host.netUtils.netapi.UserSubscriber;
 import com.feipulai.host.utils.TimerUtil;
 import com.feipulai.host.view.BatteryView;
 import com.orhanobut.logger.Logger;
@@ -52,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by zzs on 2018/7/19
@@ -76,7 +81,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.txt_use_time)
     TextView txtUseTime;
     private ActivateBean activateBean;
-    private LEDManager ledManager= new LEDManager();
+    private SweetAlertDialog activateDialog;
+    private LEDManager ledManager = new LEDManager();
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
@@ -87,7 +93,7 @@ public class MainActivity extends BaseActivity {
             }
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);
             if (activateBean.getValidRunTime() != 0 && activateBean.getValidEndTime() != 0
-                            && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
+                    && (activateBean.getValidEndTime() - DateUtil.getCurrentTime() <= 3 * 24 * 60 * 60 * 1000 ||
                     activateBean.getValidRunTime() - todayTime <= 24 * 60 * 60 * 1000)) {
                 txtCutTime.setVisibility(View.VISIBLE);
                 txtCutTime.setText("截止时间：" + DateUtil.formatTime1(activateBean.getValidEndTime(), "yyyy年MM月dd日"));
@@ -107,7 +113,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        DateUtil.setTimeZone(this, "Asia/Shanghai");
         RadioManager.getInstance().init();
         StatusBarUtil.setImmersiveTransparentStatusBar(this);//设置沉浸式透明状态栏 配合使用
         timerUtil.startTime(60, TimeUnit.SECONDS);
@@ -168,7 +173,7 @@ public class MainActivity extends BaseActivity {
         StringBuilder sb = new StringBuilder(String.format(systemSetting.isFreedomTest() ? getString(R.string.versions_name_2)
                 : getString(R.string.versions_name), SystemBrightUtils.getCurrentVersion(this)));
 
-        if (machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
+        if (TestConfigs.sCurrentItem != null && machineCode != SharedPrefsConfigs.DEFAULT_MACHINE_CODE) {
             sb.append("-").append(
                     String.format(getString(R.string.host_name), TestConfigs.machineNameMap.get(machineCode), systemSetting.getHostId()));
             String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
@@ -224,6 +229,7 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.card_print:
+//                DBManager.getInstance().deleteAllStudent();
                 PrinterManager.getInstance().init();
                 PrinterManager.getInstance().selfCheck();
                 PrinterManager.getInstance().print("\n\n");
@@ -233,6 +239,7 @@ public class MainActivity extends BaseActivity {
 //                    result.setResultState(RoundResult.RESULT_STATE_NORMAL);
 //                }
 //                DBManager.getInstance().updateRoundResult(results);
+
                 break;
             case R.id.card_parameter_setting:
                 IntentUtil.gotoActivity(MainActivity.this, SettingActivity.class);
@@ -249,11 +256,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
                 break;
             case R.id.card_led:
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP){
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP) {
                     Intent intent = new Intent(MainActivity.this, RunTimerSelectActivity.class);
-                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG,11);
+                    intent.putExtra(RunTimerSelectActivity.GOTO_FLAG, 11);
                     startActivity(intent);
-                }else {
+                } else {
                     startActivity(new Intent(MainActivity.this, LEDSettingActivity.class));
                 }
                 break;
@@ -338,5 +345,65 @@ public class MainActivity extends BaseActivity {
 
 
         }
+    }
+
+    private void activate() {
+        final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+            @Override
+            public void onSuccess(ActivateBean result) {
+
+                activateBean = result;
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
+                SharedPrefsUtil.save(MainActivity.this, result);
+                if (result.getCurrentTime() > result.getValidEndTime()) {
+                    LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
+                    //超出使用时间 重新激活
+                    showActivateConfirm();
+                    return;
+                } else if (runTime > result.getValidRunTime()) {
+                    //超出使用时长
+                    //弹窗确定重新激活
+                    showActivateConfirm();
+                    return;
+                }
+                if (activateDialog != null && activateDialog.isShowing()) {
+                    activateDialog.dismissWithAnimation();
+                }
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+
+            }
+
+        });
+    }
+
+    private void showActivateConfirm() {
+
+        if (activateDialog != null && activateDialog.isShowing()) {
+            return;
+        }
+        activateDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("激活设备")
+
+                .setContentText("已超出可使用时长\n请联系管理员重新激活设备" + "\n" + CommonUtils.getDeviceId(this))
+                .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        sweetAlertDialog.dismissWithAnimation();
+//                        activateDialog = null;
+                        activate();
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        activateDialog = null;
+                        finish();
+                    }
+                });
+        activateDialog.setCanceledOnTouchOutside(false);
+        activateDialog.show();
     }
 }

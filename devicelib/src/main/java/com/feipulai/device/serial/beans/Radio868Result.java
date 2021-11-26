@@ -400,7 +400,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
             case ItemDefault.CODE_ZFP:
-                if ((data[0] & 0xff) == 0xAA && data.length == data[1]) {
+                if ((data[0] & 0xff) == 0xAA && data.length == data[1] && (data[data.length-1]& 0xff) == 0x0d) {
                     setResult(new SportResult(data));
                     switch (data[7]) {
                         case 20://子机配对

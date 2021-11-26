@@ -2,10 +2,12 @@ package com.feipulai.host.db;
 
 import android.content.Context;
 
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.host.entity.DaoMaster;
 import com.feipulai.host.entity.ItemDao;
 import com.feipulai.host.entity.RoundResultDao;
 import com.feipulai.host.entity.StudentDao;
+import com.feipulai.host.entity.StudentItemDao;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -26,7 +28,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
         Logger.i(oldVersion + "---先前和更新之后的版本---" + newVersion);
-
+        LogUtil.logDebugMessage(oldVersion + "---先前和更新之后的版本---" + newVersion);
         if (oldVersion < newVersion) {
             switch (newVersion) {
                 case 3:
@@ -36,8 +38,13 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                 case 5:
                     MigrationHelper.migrate(db, StudentDao.class);
                     MigrationHelper.migrate(db, ItemDao.class);
-                    break;
 
+                case 8:
+                    MigrationHelper.migrate(db, StudentDao.class);
+                    MigrationHelper.migrate(db, ItemDao.class);
+                    MigrationHelper.migrate(db, RoundResultDao.class);
+                    MigrationHelper.migrate(db, StudentItemDao.class);
+                    break;
             }
 
         }

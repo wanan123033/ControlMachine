@@ -46,6 +46,7 @@ import com.feipulai.common.utils.archiver.IArchiverListener;
 import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
+import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
@@ -107,6 +108,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Headers;
 
 /**
@@ -202,7 +204,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
         String[] typeName = getResources().getStringArray(R.array.data_admin);
         int[] typeRes = new int[]{R.mipmap.icon_data_import, R.mipmap.icon_data_down
                 , R.mipmap.icon_data_backup, R.mipmap.icon_data_restore, R.mipmap.icon_data_look, R.mipmap.icon_data_clear, R.mipmap.icon_result_upload,
-                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import, R.mipmap.icon_position_down, R.mipmap.icon_position_down, R.mipmap.icon_position_down};
+                R.mipmap.icon_result_import, R.mipmap.icon_template_export, R.mipmap.icon_position_import,
+                R.mipmap.icon_position_down, R.mipmap.icon_position_down, R.mipmap.icon_position_down, R.mipmap.icon_data_clear};
         for (int i = 0; i < typeName.length; i++) {
             TypeListBean bean = new TypeListBean();
             bean.setName(typeName[i]);
@@ -345,6 +348,23 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     case 12://软件更新
                         LogUtils.operation("用户点击了软件更新...");
                         getAPPS();
+                        break;
+                    case 13://日志删除
+                        new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(com.feipulai.common.R.string.clear_dialog_title))
+                                .setContentText("是否清除所有日志文件")
+                                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                showAuthCodeDialog();
+                            }
+                        }).setCancelText(getString(com.feipulai.common.R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                            }
+                        }).show();
+
                         break;
                 }
             }
@@ -720,7 +740,6 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, student.getStudentCode() + ".jpg", bitmap);
 
                     }
-//                    bitmap = ImageUtils.alignBitmapForBgr24(bitmap);
                     bitmap = ArcSoftImageUtil.getAlignedBitmap(bitmap, true);
                     if (bitmap == null) {
                         continue;
@@ -734,7 +753,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     String studentCode = jpgFile.getName().substring(0, jpgFile.getName().lastIndexOf("."));
                     byte[] success = FaceServer.getInstance().registerBgr24Byte(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             studentCode);
-                    if (student != null) {
+                    if (student != null && success != null) {
                         student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
                         DBManager.getInstance().updateStudent(student);
                     }
@@ -855,7 +874,13 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                             for (int i = 0; i < studentList.size(); i++) {
 
                                 Student student = studentList.get(i);
-                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                try {
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 final int finalI = i;
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -1169,8 +1194,10 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                 TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 FileUtil.delete(MyApplication.PATH_IMAGE);
                 FileUtil.delete(FaceServer.ROOT_PATH);
+                FileUtil.delete(MyApplication.BACKUP_DIR);
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+                FileUtil.mkdirs(MyApplication.BACKUP_DIR);
                 Glide.get(DataManageActivity.this).clearDiskCache();
                 Logger.i("进行数据清空");
                 FaceServer.getInstance().unInit();
@@ -1220,5 +1247,31 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
             }
         });
+    }
+
+    private void showAuthCodeDialog() {
+        //每次调用都需要重新生成,因为每次要生成新的验证码
+//        final EditText editText = new EditText(context);
+//        //设置只允许输入数字
+//        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        editText.setSingleLine();
+//        editText.setBackgroundColor(0xffcccccc);
+        final int authCode = (int) (Math.random() * 9000 + 1000);
+        Logger.i("生成验证码:" + authCode);
+
+        new EditDialog.Builder(this).setTitle("清空本地日志文件")
+                .setCanelable(false)
+                .setMessage(String.format(getString(com.feipulai.common.R.string.clear_data_content), "\n" + authCode))
+                .setEditHint(String.format(getString(com.feipulai.common.R.string.clear_data_content), ""))
+                .setPositiveButton(new EditDialog.OnConfirmClickListener() {
+                    @Override
+                    public void OnClickListener(Dialog dialog, String content) {
+                        FileUtil.delete(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME);
+                        LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
+                        toastSpeak("日志文件删除成功");
+                    }
+                })
+                .build().show();
+
     }
 }

@@ -281,7 +281,12 @@ public class HttpSubscriber {
                     item.setItemCode(itemBean.getExamItemCode());
                     item.setItemName(itemBean.getItemName());
                     item.setLastResultMode(itemBean.getLastResultMode());
-                    item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    try {
+                        item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    } catch (Exception e) {
+                        ToastUtils.showShort("下载项目数据机器码信息异常");
+                        return;
+                    }
                     item.setMaxValue(itemBean.getMaxResult());
                     item.setMinValue(itemBean.getMinResult());
                     item.setTestNum(itemBean.getResultTestNum());
@@ -584,10 +589,10 @@ public class HttpSubscriber {
                         studentItemList.add(studentItem);
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
-                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                studentBean.getExamType(), studentBean.getScheduleNo());
-                        studentItemList.add(studentItem);
+//                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+////                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+////                                studentBean.getExamType(), studentBean.getScheduleNo());
+////                        studentItemList.add(studentItem);
                     }
                     if (!TextUtils.isEmpty(student.getFaceFeature())) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));

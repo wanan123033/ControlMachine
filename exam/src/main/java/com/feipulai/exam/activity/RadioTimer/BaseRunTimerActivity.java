@@ -36,6 +36,8 @@ import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.CONNECT_STA
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.ILLEGAL_BACK;
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.TIME_RESPONSE;
 import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.TIME_UPDATE;
+import static com.feipulai.exam.config.EventConfigs.CONNECT_SETTING;
+import static com.feipulai.exam.config.EventConfigs.UPDATE_TEST_COUNT;
 
 /**
  * Created by pengjf on 2018/12/18.
@@ -50,8 +52,9 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private SerialDeviceManager deviceManager;
     /**
      * 测试状态
+     * 1设置回包 2等待命令回包3开始计时4计时结果5违规返回6结束
      */
-    public int testState = 0;
+    public int testState = 0;//1设置回包 2等待命令回包3开始计时4计时结果5违规返回6结束
     private boolean isForce;//强制开始
 //    private boolean isAuto;
     /**
@@ -88,26 +91,6 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        reLoad = false;
-        deviceManager.setRS232ResiltListener(runTimerListener);
-        runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
-        if (null == runTimerSetting) {
-            runTimerSetting = new RunTimerSetting();
-        }
-//        if (TestConfigs.sCurrentItem.getTestNum() != 0) {
-//            maxTestTimes = TestConfigs.sCurrentItem.getTestNum();
-//        } else {
-//            maxTestTimes = runTimerSetting.getTestTimes();
-//        }
-        if (runNum != Integer.parseInt(runTimerSetting.getRunNum()) || interceptPoint != runTimerSetting.getInterceptPoint()
-                || interceptWay != runTimerSetting.getInterceptWay() || settingSensor != runTimerSetting.getSensor()) {
-//            getSetting();
-            runNum = Integer.parseInt(runTimerSetting.getRunNum());
-            interceptPoint = runTimerSetting.getInterceptPoint();
-            interceptWay = runTimerSetting.getInterceptWay();
-            settingSensor = runTimerSetting.getSensor();
-            reLoad = true;
-        }
     }
 
     /**
@@ -260,6 +243,10 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 //            }
 
         } else {//关于连接状态
+            if (settingConnect){
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.SETTING_SUCCEED));
+                settingConnect = false;
+            }
             if (interceptPoint == 1) {//起始点拦截
                 if (connectState.getStartIntercept() == 0) {
                     if (promoteTimes.get("startIntercept") == 2) {
@@ -326,10 +313,21 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
 //        msg.what = CONNECT_STATE;
 //        mHandler.sendMessage(msg);
     }
-
-
-
-
+    private boolean settingConnect;
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        switch (baseEvent.getTagInt()){
+            case CONNECT_SETTING:
+                Log.i("CONNECT_SETTING","CONNECT_SETTING");
+                settingConnect = true;
+                getSetting();
+                break;
+            case UPDATE_TEST_COUNT:
+                reLoad = true;
+                break;
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -369,25 +367,28 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     private long disposeTime;
 
     public void keepTime() {
-        disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
+        if (disposable == null || disposable.isDisposed()){
+            disposable = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
+                    .observeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
+                    .subscribe(new Consumer<Long>() {
+                        @Override
+                        public void accept(Long aLong) throws Exception {
 
-                        if (testState == 3 || testState == 4) {
-                            disposeTime = aLong * 100;
-                            updateTimeText((int) disposeTime);
-                        }
-                        if (testState == 2 || testState == 5 || testState == 6) {
-                            disposeTime = 0;
-                            updateText("00:00.00");
-                            stop();
-                        }
+                            if (testState == 3 || testState == 4) {
+                                disposeTime = aLong * 100;
+                                updateTimeText((int) disposeTime);
+                            }
+                            if (testState == 2 || testState == 5 || testState == 6) {
+                                disposeTime = 0;
+                                updateText("00:00.00");
+                                stop();
+                            }
 
-                    }
-                });
+                        }
+                    });
+        }
+
     }
 
     public void stop() {

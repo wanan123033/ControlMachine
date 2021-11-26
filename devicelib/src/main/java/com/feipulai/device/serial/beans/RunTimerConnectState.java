@@ -1,6 +1,5 @@
 package com.feipulai.device.serial.beans;
 
-import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.Arrays;

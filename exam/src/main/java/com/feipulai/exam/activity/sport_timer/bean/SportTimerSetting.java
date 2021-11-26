@@ -16,6 +16,8 @@ public class SportTimerSetting {
     private int testTimes = 1;
     private String initRoute ;
     private int groupType;//0循环测试1连续测试
+    private int minEidit = 1;
+    private int sensity = 50;
     public int getDeviceCount() {
         return deviceCount;
     }
@@ -62,5 +64,21 @@ public class SportTimerSetting {
 
     public void setGroupType(int groupType) {
         this.groupType = groupType;
+    }
+
+    public int getMinEidit() {
+        return minEidit;
+    }
+
+    public void setMinEidit(int minEidit) {
+        this.minEidit = minEidit;
+    }
+
+    public int getSensity() {
+        return sensity;
+    }
+
+    public void setSensity(int sensity) {
+        this.sensity = sensity;
     }
 }

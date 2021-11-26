@@ -181,7 +181,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 SystemSetting setting = SettingHelper.getSystemSetting();
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                 //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
                     roundResultList.clear();
                 }
                 if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount())) {
@@ -198,7 +198,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
                     SystemSetting setting = SettingHelper.getSystemSetting();
                     StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+                    if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
                         roundResultList.clear();
                     }
                     if ((roundResultList.size() < setTestCount())) {
@@ -301,7 +301,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
         SystemSetting setting = SettingHelper.getSystemSetting();
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
+        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
         }
         int isTestComplete = group.getIsTestComplete();
@@ -337,7 +337,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 //        }
 
         dispatch(isAllTest);
-        if (studentItem.getExamType() == 2){
+        if (studentItem!=null&&studentItem.getExamType() == 2){
             if (nextPosition() != -1)
                 switchToPosition(nextPosition());
         }

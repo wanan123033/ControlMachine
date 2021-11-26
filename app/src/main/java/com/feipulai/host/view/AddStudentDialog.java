@@ -116,7 +116,13 @@ public class AddStudentDialog {
 
             } else {
                 LogUtils.operation("考生添加" + student.toString());
-                DBManager.getInstance().insertStudent(student);
+                try {
+                    // 插入学生信息
+                    DBManager.getInstance().insertStudent(student);
+                } catch (Exception e) {
+                    ToastUtils.showShort("该考生考好已存在");
+                    return;
+                }
             }
 
         }
@@ -127,9 +133,13 @@ public class AddStudentDialog {
         if (SettingHelper.getSystemSetting().isNetCheckTool()) {
 
         } else {
+            try {
+                DBManager.getInstance().insertStudentItem(studentItem);
+                ToastUtils.showShort("考生添加成功");
+            } catch (Exception e) {
+                ToastUtils.showShort("考生添加失败，考号不能重复");
+            }
 
-            DBManager.getInstance().insertStudentItem(studentItem);
-            ToastUtils.showShort("考生添加成功");
         }
 
         EventBus.getDefault().post(new BaseEvent(student, EventConfigs.TEMPORARY_ADD_STU));

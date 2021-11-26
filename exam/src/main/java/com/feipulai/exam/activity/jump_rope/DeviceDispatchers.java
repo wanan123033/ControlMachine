@@ -108,7 +108,8 @@ public class DeviceDispatchers {
         Student student = students.get(index);
         Log.e("TAG---79",student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem.getExamType() == 2){
+
+        if (studentItem != null && studentItem.getExamType() == 2){
             List<RoundResult> results = TestCache.getInstance().getResults().get(student);
             if (results == null || results.isEmpty()){
                 return student;
@@ -132,7 +133,7 @@ public class DeviceDispatchers {
                 continue;
             }
             StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-            if (studentItem.getExamType() == 2){
+            if (studentItem != null && studentItem.getExamType() == 2){
                 List<RoundResult> results = TestCache.getInstance().getResults().get(student);
                 if (results == null || results.isEmpty()){
                     pairs.get(i).setStudent(student);

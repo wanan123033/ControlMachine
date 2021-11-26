@@ -2,6 +2,8 @@ package com.feipulai.device.serial.runnable;
 
 import android.os.Message;
 
+import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialPorter;
 import com.feipulai.device.serial.beans.ConverterVersion;
@@ -30,10 +32,26 @@ public class RadioReadRunnable extends SerialReadRunnable {
             while (mInputStream.available() < 1) {
                 Thread.sleep(10);
             }
+
+//            if (MachineCode.machineCode == ItemDefault.CODE_HW) {
+//                byte[] data = new byte[17];
+//                mInputStream.read(data);
+//                if ((data[0] & 0xff) != 0x57) {
+//                    RS232Result rs232Result = new RS232Result(data);
+//                    msg.what = rs232Result.getType();
+//                    msg.arg1 = 0XD2;
+//                    msg.obj = rs232Result.getResult();
+//                }
+//
+//                return;
+//            }
+
             //找协议头
             //可能存在协议头冲突:如果协议头冲突，协议尾会出错，最多丢失两帧
             byte[] readLength = new byte[4];
             mInputStream.read(readLength, 0, 1);
+
+
             if ((readLength[0] & 0xff) != 0xa5) {
                 //Log.e("dddd","read wrong packet head: readLength[0]= " + readLength[0]);
                 LogUtils.all(readLength.length + "---" + StringUtility.bytesToHexString(readLength) + "---协议头错误,已过滤");

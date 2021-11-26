@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseCheckActivity;
+import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.adapter.SearchResultAdapter;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
@@ -62,7 +63,6 @@ public class StuSearchEditText extends RelativeLayout {
     private BaseCheckActivity mActivity;
     private RecyclerView mRecyclerView;
     private Context mContext;
-    private SweetAlertDialog addDialog;
 
     public StuSearchEditText(Context context) {
         super(context);
@@ -184,10 +184,10 @@ public class StuSearchEditText extends RelativeLayout {
                         return;
                     }
                     imgDelete.setVisibility(VISIBLE);
-//					//外接扫描不实时查
-//					if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
-//						return;
-//					}
+					//外接扫描不实时查
+					if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
+						return;
+					}
 
                     if (length == 18) {
                         //精确搜索身份证
@@ -222,28 +222,20 @@ public class StuSearchEditText extends RelativeLayout {
     }
 
     private void showAddHint(final Student student) {
-        if (addDialog == null) {
-            addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
-                    .setContentText(mContext.getString(R.string.addStu_dialog_content))
-                    .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            addDialog = null;
-                            new AddStudentDialog(mContext).showDialog(student, false);
-                        }
-                    }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            addDialog = null;
-                        }
-                    });
-        }
-        if (!addDialog.isShowing()) {
-            addDialog.show();
-        }
-
+        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+                .setContentText(mContext.getString(R.string.addStu_dialog_content))
+                .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+                new AddStudentDialog(mContext).showDialog(student, false);
+            }
+        }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).show();
     }
 
     @Override

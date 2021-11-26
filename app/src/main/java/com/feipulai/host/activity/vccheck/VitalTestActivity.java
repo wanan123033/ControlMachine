@@ -58,6 +58,10 @@ public class VitalTestActivity extends BaseMoreActivity {
 //        getToolbar().getRightView(0).setVisibility(View.GONE);
 //        getToolbar().getRightView(1).setVisibility(View.GONE);
 //        getToolbar().getRightView(2).setVisibility(View.GONE);
+        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
+        RadioManager.getInstance().setOnRadioArrived(resultImpl);
+
+        mHandler.sendEmptyMessageDelayed(SEND_EMPTY, 1000);
     }
 
     @Override
@@ -74,11 +78,6 @@ public class VitalTestActivity extends BaseMoreActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
-        RadioManager.getInstance().sendCommand(new ConvertCommand(new RadioChannelCommand(frequency)));
-
-        sendEmpty();
     }
 
     @Override

@@ -279,7 +279,7 @@ public class InteractUtils {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-//                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
                 if (studentItem != null){
                     roundResult.setExamType(studentItem.getExamType());
@@ -344,7 +344,7 @@ public class InteractUtils {
             jumpRopeSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class);
         }
         boolean isGroupMode = systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN;
-        String machineName = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode());
+        String machineName = TestConfigs.sCurrentItem.getItemName();
         machineName = InteractUtils.getStrWithLength(machineName, 8);
         if (isGroupMode) {
             title = String.format(Locale.CHINA, "%8s%d号机%d组",

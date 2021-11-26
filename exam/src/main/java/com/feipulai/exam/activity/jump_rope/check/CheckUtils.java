@@ -96,7 +96,7 @@ public class CheckUtils {
             Student student = pairList.get(i).getStudent();
             testCache.getAllStudents().add(student);
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-            if (studentItem.getExamType() != 2) {
+            if (studentItem==null||studentItem.getExamType() != 2) {
                 testCache.getResults().put(student, (List<RoundResult>) map.get(student));
             }
             testCache.getTrackNoMap().put(student, pairList.get(i).getTrackNo());
@@ -106,7 +106,7 @@ public class CheckUtils {
             testCache.getAllStudents().add(student);
 
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-            if (studentItem.getExamType() != 2) {
+            if (studentItem==null||studentItem.getExamType() != 2) {
                 testCache.getResults().put(student, (List<RoundResult>) map.get(student));
             }
             testCache.getTrackNoMap().put(student, pairList.get(i).getTrackNo());
@@ -130,7 +130,7 @@ public class CheckUtils {
                         (stuPair.getStudent().getStudentCode(), testCache.getGroup().getId() + "");
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPair.getStudent().getStudentCode());
                 if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount()) {
-                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                    if (studentItem != null && systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
                         if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
                             roundResultList.clear();
                         }
@@ -160,7 +160,7 @@ public class CheckUtils {
                             (stuPair.getStudent().getStudentCode(), testCache.getGroup().getId() + "");
                     StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(),stuPair.getStudent().getStudentCode());
                     if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount()) {
-                        if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                        if (studentItem != null && systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
                             if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
                                 roundResultList.clear();
                             }

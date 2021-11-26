@@ -12,9 +12,9 @@
 
         <LinearLayout
             android:layout_width="500dp"
-            android:layout_height="500dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/btn_bg_white"
             android:layout_centerInParent="true"
             android:orientation="vertical"
@@ -135,6 +135,69 @@
                     android:layout_marginLeft="50dp"
                     android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:text="最小间隔：" />
+
+                <EditText
+                    android:id="@+id/et_test_min"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="50dp"
+                    android:hint="1"
+                    android:inputType="number"
+                    android:background="@drawable/edit_search_bg" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:text="秒 (1-255)" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:text="灵 敏 度  ：" />
+
+                <EditText
+                    android:id="@+id/et_sense"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="50dp"
+                    android:hint="50"
+                    android:inputType="number"
+                    android:background="@drawable/edit_search_bg" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:text="毫秒 (10-255)" />
+            </LinearLayout>
+
             <RadioGroup
                 android:id="@+id/rg_model"
                 android:layout_width="match_parent"

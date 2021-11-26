@@ -110,13 +110,24 @@ public class ItemSubscriber {
                         ToastUtils.showShort("项目机器码不能为空，请联系管理员进行数据更新");
                         return;
                     }
+
+                    if (TextUtils.equals(itemBean.getMachineCode(), "0")) {
+                        continue;
+                    }
+
                     Item item = new Item();
                     item.setCarryMode(itemBean.getCarryMode());
                     item.setDigital(itemBean.getDecimalDigits());
                     item.setItemCode(itemBean.getExamItemCode());
                     item.setItemName(itemBean.getItemName());
                     item.setfResultType(itemBean.getLastResultMode());
-                    item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    try {
+                        item.setMachineCode(Integer.valueOf(itemBean.getMachineCode()));
+                    } catch (Exception e) {
+                        ToastUtils.showShort("下载项目数据机器码信息异常");
+                        return;
+                    }
+
                     item.setMaxValue(itemBean.getMaxResult());
                     item.setMinValue(itemBean.getMinResult());
                     item.setTestNum(itemBean.getResultTestNum());
@@ -272,9 +283,8 @@ public class ItemSubscriber {
                     }
                     ToastUtils.showShort("数据下载成功");
                     if (result.getDataInfo() != null && result.getDataInfo().size() > 0) {
-                        if (studentCode != null && studentCode.length != 0)
-                            SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
-                                    SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
+                        SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
+                                SharedPrefsConfigs.LAST_DOWNLOAD_TIME, result.getDataInfo().get(result.getDataInfo().size() - 1).getDownloadTime());
                     }
                 }
 

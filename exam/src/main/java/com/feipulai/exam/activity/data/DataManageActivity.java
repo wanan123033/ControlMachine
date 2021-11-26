@@ -406,9 +406,7 @@ public class DataManageActivity
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         sweetAlertDialog.dismissWithAnimation();
-                                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
-                                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
-                                        toastSpeak("日志文件删除成功");
+                                        showAuthCodeDialog();
                                     }
                                 }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
@@ -733,7 +731,25 @@ public class DataManageActivity
             public void onExecuteSuccess(DataBaseRespon respon) {
                 List<UploadResults> results = (List<UploadResults>) respon.getObject();
                 Log.e("UploadResults", "---------" + results.size());
-                ServerMessage.uploadResult(DataManageActivity.this, results);
+                if (results.size() == 0) {
+                    new SweetAlertDialog(DataManageActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("无可上传数据")
+                            .setContentText("是否进行日期筛查上传").setConfirmText(getString(R.string.confirm))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    IntentUtil.gotoActivity(DataManageActivity.this, DataUploadActivity.class);
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+                } else {
+                    ServerMessage.uploadResult(DataManageActivity.this, results);
+                }
+
             }
 
             @Override
@@ -1056,26 +1072,29 @@ public class DataManageActivity
     }
 
     private void showUploadDataDialog() {
-        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
-        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
-                .setItems(uploadType, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                            if (itemList != null && itemList.size() > 0)
-                                showZcpSelect(which == 0, itemList);
-                        } else {
-                            uploadData(which == 0);
-                        }
-
-                    }
-                }).create().show();
+        uploadData(false);
+//        String[] uploadType = new String[]{"上传全部成绩", "上传未上传考生成绩"};
+//        new AlertDialog.Builder(this).setTitle("选择成绩上传类型")
+//                .setItems(uploadType, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//                            List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+//                            if (itemList != null && itemList.size() > 0)
+//                                showZcpSelect(which == 0, itemList);
+//                        } else {
+//                            uploadData(which == 0);
+//                        }
+//
+//                    }
+//                }).create().show();
     }
+
     int type = 0;
+
     private void showDownloadDataDialog() {
 
-        String[] exemType = new String[]{"正常", "补考", "缓考","TCP下载"};
+        String[] exemType = new String[]{"正常", "补考", "缓考", "TCP下载"};
         new AlertDialog.Builder(this).setTitle("选择下载考试类型")
                 .setItems(exemType, new DialogInterface.OnClickListener() {
                     @Override
@@ -1097,7 +1116,7 @@ public class DataManageActivity
                         }
                         String downTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS,
                                 SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
-                        if (type == 3){
+                        if (type == 3) {
                             OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
                             dataDownload(SettingHelper.getSystemSetting().getTcpIp());
                             return;
@@ -1114,9 +1133,9 @@ public class DataManageActivity
     }
 
     public void dataDownload(String tcpip) {
-        if(TextUtils.isEmpty(tcpip)){
+        if (TextUtils.isEmpty(tcpip)) {
             OperateProgressBar.removeLoadingUiIfExist(this);
-            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
             return;
         }
         if (tcpip.contains(":")) {
@@ -1134,12 +1153,13 @@ public class DataManageActivity
                 }
             });
             tcpDownLoad.getTcp(SCHEDULE, "");
-        }else {
+        } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
-            Toast.makeText(getApplicationContext(),"请输入正确的TCP地址",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
             return;
         }
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -1413,8 +1433,11 @@ public class DataManageActivity
                 FileUtil.mkdirs(MyApplication.PATH_IMAGE);
                 FileUtil.delete(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
                 FileUtil.mkdirs(MyApplication.PATH_PDF_IMAGE);
+                FileUtil.delete(MyApplication.BACKUP_DIR);
+                FileUtil.mkdirs2(MyApplication.BACKUP_DIR);
                 FileUtil.delete(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
+
                 Glide.get(DataManageActivity.this).clearDiskCache();
                 FaceServer.getInstance().unInit();
                 FaceServer.getInstance().init(DataManageActivity.this);
@@ -1523,8 +1546,8 @@ public class DataManageActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                        progressDialog.setMaxProgress(totalCount);
-                                        progressDialog.show();
+                                    progressDialog.setMaxProgress(totalCount);
+                                    progressDialog.show();
 
 
                                 }
@@ -1534,7 +1557,12 @@ public class DataManageActivity
 
 
                                 Student student = studentList.get(i);
-                                registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                try {
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 final int finalI = i;
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -1569,6 +1597,32 @@ public class DataManageActivity
             }
         });
 
+
+    }
+
+    private void showAuthCodeDialog() {
+        //每次调用都需要重新生成,因为每次要生成新的验证码
+//        final EditText editText = new EditText(context);
+//        //设置只允许输入数字
+//        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        editText.setSingleLine();
+//        editText.setBackgroundColor(0xffcccccc);
+        final int authCode = (int) (Math.random() * 9000 + 1000);
+        Logger.i("生成验证码:" + authCode);
+
+        new EditDialog.Builder(this).setTitle("清空本地日志文件")
+                .setCanelable(false)
+                .setMessage(String.format(getString(com.feipulai.common.R.string.clear_data_content), "\n" + authCode))
+                .setEditHint(String.format(getString(com.feipulai.common.R.string.clear_data_content), ""))
+                .setPositiveButton(new EditDialog.OnConfirmClickListener() {
+                    @Override
+                    public void OnClickListener(Dialog dialog, String content) {
+                        FileUtil.deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.PATH_LOG_NAME);
+                        LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
+                        toastSpeak("日志文件删除成功");
+                    }
+                })
+                .build().show();
 
     }
 }

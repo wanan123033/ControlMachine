@@ -113,7 +113,6 @@ public class IndividualCheckFragment
     private volatile boolean isStartThermometer = false;
     private SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
-    private ScannerGunManager scannerGunManager;
     private ResitDialog.onClickQuitListener onClickQuitListener = new ResitDialog.onClickQuitListener() {
         @Override
         public void onCancel() {
@@ -147,9 +146,10 @@ public class IndividualCheckFragment
         mEtSelect.setOnCheckedInListener(this);
         EventBus.getDefault().register(this);
         systemSetting = SharedPrefsUtil.loadFormSource(getActivity(), SystemSetting.class);
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
+                LogUtils.operation("扫描结果："+code);
                 boolean needAdd = checkQulification(code, STUDENT_CODE);
                 if (needAdd) {
                     Student student = new Student();
@@ -162,7 +162,7 @@ public class IndividualCheckFragment
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
-        return scannerGunManager.dispatchKeyEvent(event);
+        return ScannerGunManager.getInstance().dispatchKeyEvent(event.getKeyCode(), event);
 
     }
 

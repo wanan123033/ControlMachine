@@ -16,12 +16,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.manager.RunTimerManager;
 import com.feipulai.device.manager.SportTimerManger;
@@ -31,6 +33,7 @@ import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.RunTimerConnectState;
 import com.feipulai.device.serial.beans.RunTimerResult;
 import com.feipulai.device.serial.beans.SportResult;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.NewRadioPairActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -49,9 +52,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.feipulai.exam.config.EventConfigs.CONNECT_SETTING;
+import static com.feipulai.exam.config.EventConfigs.SETTING_SUCCEED;
+
 public class RunTimerSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener,
-        TextWatcher, RunTimerImpl.RunTimerListener, RadioManager.OnRadioArrivedListener {
+        TextWatcher,  RadioManager.OnRadioArrivedListener {
 
     @BindView(R.id.sp_test_times)
     Spinner spTestTimes;
@@ -91,10 +97,20 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     TextView syncTime;
     @BindView(R.id.btn_connect)
     Button btnConnect;
+    @BindView(R.id.et_test_min)
+    EditText etTestMin;
+    @BindView(R.id.et_sense)
+    EditText etSense;
+    @BindView(R.id.ll_test_min)
+    LinearLayout llTestMin;
+    @BindView(R.id.ll_sensitive)
+    LinearLayout llSense;
+    @BindView(R.id.ll_sensitivity_num)
+    LinearLayout llSensitivity;
     private RunTimerSetting runTimerSetting;
     private int intercept_point;
     private SweetAlertDialog alertDialog;
-    private SerialDeviceManager deviceManager;
+//    private SerialDeviceManager deviceManager;
     private SportTimerManger sportTimerManger;
 
     @Override
@@ -125,7 +141,6 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        etFullMale.addTextChangedListener(this);
 //        etFullFemale.addTextChangedListener(this);
         etRunNum.addTextChangedListener(this);
-        deviceManager = SerialDeviceManager.getInstance();
         etSensitivityNum.setText(String.format("%d", runTimerSetting.getSensitivityNum()));
         if (runTimerSetting.getConnectType() == 1) {
             selfCheck.setText("设备配对");
@@ -141,6 +156,11 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             sportTimerManger = new SportTimerManger();
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
             btnConnect.setVisibility(View.VISIBLE);
+            etSense.setText(runTimerSetting.getSensity()+"");
+            etTestMin.setText(runTimerSetting.getMinEidit()+"");
+            llSense.setVisibility(View.VISIBLE);
+            llTestMin.setVisibility(View.VISIBLE);
+            llSensitivity.setVisibility(View.GONE);
         }
     }
 
@@ -271,7 +291,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        deviceManager.setRS232ResiltListener(null);
+
     }
 
     @Override
@@ -349,6 +369,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
 //        runTimerSetting.setFemaleFull(etFullFemale.getText().toString().trim());
 //        runTimerSetting.setMaleFull(etFullMale.getText().toString().trim());
         runTimerSetting.setRunNum(etRunNum.getText().toString());
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
     }
 
     @Override
@@ -359,8 +380,23 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         String senNum = etSensitivityNum.getText().toString();
         runTimerSetting.setSensitivityNum(TextUtils.isEmpty(senNum) ? 5 : Integer.parseInt(senNum));
         getInterceptPoint();
-        EventBus.getDefault().post(new BaseEvent(null, EventConfigs.UPDATE_TEST_COUNT));
+        if (sportTimerManger!= null){
+            if (TextUtils.isEmpty(etSense.getText().toString())){
+                runTimerSetting.setSensity(20);
+            }else {
+                runTimerSetting.setSensity(Integer.parseInt(etSense.getText().toString().trim()));
+            }
+            sportTimerManger.setSensitiveTime(SettingHelper.getSystemSetting().getHostId(),runTimerSetting.getMinEidit());
+            if (TextUtils.isEmpty(etTestMin.getText().toString())){
+                runTimerSetting.setMinEidit(1);
+            }else {
+                runTimerSetting.setMinEidit(Integer.parseInt(etTestMin.getText().toString().trim()));
+            }
+            sportTimerManger.setMinTime(SettingHelper.getSystemSetting().getHostId(),runTimerSetting.getMinEidit());
+        }
         SharedPrefsUtil.save(this, runTimerSetting);
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.CONNECT_SETTING));
+
     }
 
     @OnClick({R.id.btn_self_check, R.id.btn_sync_time,R.id.btn_connect})
@@ -380,19 +416,7 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     alertDialog.setTitleText("终端自检中...");
                     alertDialog.setCancelable(false);
                     alertDialog.show();
-
-                    int hostId = SettingHelper.getSystemSetting().getHostId();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x02, (byte) hostId)));//主机号
-                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
-                    deviceManager.setRS232ResiltListener(new RunTimerImpl(this));
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x01, (byte) runNum)));//跑道数
-                    int interceptPoint = runTimerSetting.getInterceptPoint();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x04, (byte) interceptPoint)));//拦截点
-                    int way = runTimerSetting.getInterceptWay();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x05, (byte) (way + 1))));//触发方式
-                    int sensor = runTimerSetting.getSensor();
-//                deviceManager.sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, cmd((byte) 0xc1, (byte) 0x08, (byte) (sensor))));//传感器信道
-                    RunTimerManager.cmdSetting(runNum, hostId, interceptPoint, way, sensor, 10);
+                    EventBus.getDefault().post(new BaseEvent(EventConfigs.CONNECT_SETTING));
                     //3秒自检
                     mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 5000);
                 }
@@ -421,20 +445,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
     }
 
-//    private byte[] cmd(byte cmd, byte mark, byte value) {
-//        byte[] setting = {(byte) 0xBB, 0x0C, (byte) 0xA0, 0x00, (byte) 0xA1, 0x00, cmd, mark, value, 0x00, 0x00, 0x0D};
-//        int sum = 0;
-//        for (int i = 0; i < 9; i++) {
-//            sum += setting[i];
-//        }
-//        setting[10] = (byte) sum;
-//        return setting;
-//    }
-
-
     @Override
     protected void onStop() {
-
         super.onStop();
     }
 
@@ -444,38 +456,17 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
     }
 
     @Override
-    public void onGetTime(RunTimerResult result) {
-
-    }
-
-    @Override
-    public void onConnected(RunTimerConnectState connectState) {
-        int intercept = runTimerSetting.getInterceptPoint();
-        switch (intercept) {
-            case 1:
-                if (connectState.getStartIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
-                break;
-            case 2:
-                if (connectState.getEndIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
-                break;
-            case 3:
-                if (connectState.getEndIntercept() == 1 || connectState.getStartIntercept() == 1) {
-                    mHandler.sendEmptyMessage(MSG_CONNECT);
-                }
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        switch (baseEvent.getTagInt()){
+            case SETTING_SUCCEED:
+                Log.i("CONNECT_SETTING","SETTING_SUCCEED");
+                mHandler.sendEmptyMessage(MSG_CONNECT);
                 break;
         }
-
-
     }
 
-    @Override
-    public void onTestState(int state) {
 
-    }
 
     private final int MSG_DISCONNECT = 0x1001;
     private final int MSG_CONNECT = 0x1002;
@@ -508,25 +499,24 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
                     }
                     break;
                 case MSG_SYNC_TIME:
-                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
-                    if (runTimerSetting.getInterceptPoint() == 3) {
-                        runNum = runNum * 2;
-                    }
-                    for (int i = 0; i < runNum; i++) {
-                        try {
-                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
+//                    int runNum = Integer.parseInt(runTimerSetting.getRunNum());
+//                    if (runTimerSetting.getInterceptPoint() == 3) {
+//                        runNum = runNum * 2;
+//                    }
+//                    for (int i = 0; i < runNum; i++) {
+//                        try {
+//                            sportTimerManger.getTime(i + 1, SettingHelper.getSystemSetting().getHostId());
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                     break;
             }
             if (!isDialogShow && alertDialog != null && alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
-
-
             return false;
         }
     });
@@ -537,7 +527,8 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             case SerialConfigs.SPORT_TIMER_GET_TIME:
                 if (msg.obj instanceof SportResult) {
                     if (((SportResult) msg.obj).getLongTime() > 0) {
-                        Log.i("SportResultListener", "获取时间");
+                        MyApplication.RADIO_TIME_SYNC = true;
+                        ToastUtils.showShort("时间同步成功");
                     }
 
                 }

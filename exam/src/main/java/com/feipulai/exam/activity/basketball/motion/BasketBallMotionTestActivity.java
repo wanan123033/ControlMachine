@@ -50,6 +50,7 @@ import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -668,9 +669,15 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
 
     @Override
     public void onTimeTaskUpdate(int time) {
-        Message message = mHandler.obtainMessage();
-        message.what = UPDATE_ON_TEXT;
-        message.arg1 = time;
-        mHandler.sendMessage(message);
+//        Message message = mHandler.obtainMessage();
+//        message.what = UPDATE_ON_TEXT;
+//        message.arg1 = time;
+//        mHandler.sendMessage(message);
+//        tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+    }
+
+
+    public void onTimeIOTaskUpdate(int time) {
+
     }
 }

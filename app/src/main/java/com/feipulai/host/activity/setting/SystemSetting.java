@@ -86,6 +86,7 @@ public class SystemSetting {
      */
     private int afrContrast = 3;
     private int radioLed;//用于区分红外计时版本0带盒子版，1不带盒子
+
     public int getAfrContrast() {
         return afrContrast;
     }
@@ -260,7 +261,11 @@ public class SystemSetting {
      * @return
      */
     public int getUseChannel() {
-        return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+        if (TestConfigs.sCurrentItem != null) {
+            return isCustomChannel ? channel : SerialConfigs.sProChannels.get(TestConfigs.sCurrentItem.getMachineCode()) + hostId - 1;
+        } else {
+            return 0;
+        }
     }
 
 

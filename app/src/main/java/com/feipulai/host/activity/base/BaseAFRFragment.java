@@ -119,7 +119,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             return false;
         }
     });
-    private SweetAlertDialog uploadDataDialog;
     private boolean isLodingServer = false;
 
     @Override
@@ -304,22 +303,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isOpenCamera = true;
             if (faceId == null) {
                 faceId = 0;
+            }else{
+                faceHelper.setName(faceId, Integer.toString(faceId));
+                requestFeatureStatusMap.put(faceId, RequestFeatureStatus.TO_RETRY);
             }
-            retryRecognizeDelayed(faceId);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    //每次恢复初始状态
-//                    if (faceHelper != null) {
-//                        faceHelper.clearFace();
-//                        faceId = 0;
-//                        requestFeatureStatusMap.clear();
-//                        extractErrorRetryMap.clear();
-//                        delayFaceTaskCompositeDisposable.clear();
-//                    }
-//                    mUVCCamera.startPreview();
-//                }
-//            }, 100);
         } else {
 //            mUVCCamera.stopPreview();
             isOpenCamera = false;
@@ -658,24 +645,24 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
     }
 
-//    @Override
-//    public void onEventMainThread(BaseEvent event) {
-//        super.onEventMainThread(event);
-//        if (event.getTagInt()== EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED){
-//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
-//            isStartFace = true;
-//            isOpenCamera = true;
-//            retryRecognizeDelayed(faceId);
-//            ToastUtils.showShort("拉取服务器数据完成");
-//            TtsManager.getInstance().speak("拉取服务器数据完成");
-//        }else if (event.getTagInt()==EventConfigs.SERVICE_UPLOAD_DATA_ERROR){
-//            isStartFace = true;
-//            isOpenCamera = true;
-//            OperateProgressBar.removeLoadingUiIfExist(getActivity());
-//            ToastUtils.showShort("拉取服务器数据失败，请重试");
-//            TtsManager.getInstance().speak("拉取服务器数据失败，请重试");
-//        }
-//    }
+    @Override
+    public void onEventMainThread(BaseEvent event) {
+        super.onEventMainThread(event);
+        if (event.getTagInt() == EventConfigs.SERVICE_UPLOAD_DATA_SUCCEED) {
+            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+            isStartFace = true;
+            isOpenCamera = true;
+            retryRecognizeDelayed(faceId);
+            ToastUtils.showShort("拉取服务器数据完成");
+            TtsManager.getInstance().speak("拉取服务器数据完成");
+        } else if (event.getTagInt() == EventConfigs.SERVICE_UPLOAD_DATA_ERROR) {
+            isStartFace = true;
+            isOpenCamera = true;
+            OperateProgressBar.removeLoadingUiIfExist(getActivity());
+            ToastUtils.showShort("拉取服务器数据失败，请重试");
+            TtsManager.getInstance().speak("拉取服务器数据失败，请重试");
+        }
+    }
 
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
 
@@ -685,18 +672,18 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isNetWork = false;
             isStartFace = false;
 
-//            if (getActivity() != null){
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        OperateProgressBar.showLoadingUi(getActivity(), "正在拉取服务器数据，请稍后");
-//                    }
-//                });
-//                Intent intent = new Intent(mContext, UpdateService.class);
-//                mContext.startService(intent);
-//                isNetface = false;
-//                return;
-//            }
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        OperateProgressBar.showLoadingUi(getActivity(), "正在拉取服务器数据，请稍后");
+                    }
+                });
+                Intent intent = new Intent(mContext, UpdateService.class);
+                mContext.startService(intent);
+                isNetface = false;
+                return;
+            }
 
             if (getActivity() != null)
                 getActivity().runOnUiThread(new Runnable() {
@@ -732,12 +719,12 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                             });
                         isNetface = false;
                         if (bizType == -1) {//在线未识别成功
-                            isStartFace = true;
+//                            isStartFace = true;
                             ToastUtils.showShort("在线识别失败");
                             compareListener.compareStu(null);
 
                         } else {
-                            isStartFace = true;
+//                            isStartFace = true;
                             retryRecognizeDelayed(faceId);
                             ToastUtils.showShort("网络异常");
                         }
@@ -786,26 +773,24 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
-                    uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
-                            .setContentText("是否进行服务器信息识别")
-                            .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-                                    getStudent(stuCode);
-                                }
-                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    sweetAlertDialog.dismissWithAnimation();
-//                                    isStartFace = true;
-//                                    retryRecognizeDelayed(faceId);
 
-                                }
-                            });
-                    uploadDataDialog.show();
-                }
+                new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
+                        .setContentText("是否进行服务器信息识别")
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        getStudent(stuCode);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        isStartFace = true;
+                        retryRecognizeDelayed(faceId);
+
+                    }
+                }).show();
             }
         });
 

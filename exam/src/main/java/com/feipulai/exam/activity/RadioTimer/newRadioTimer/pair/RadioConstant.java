@@ -8,4 +8,5 @@ public class RadioConstant {
     public static final int RUN_UPDATE_ADD_TIME = 0X05;
     public static final int RUN_UPDATE_COMPLETE = 0X06;
     public static final int RUN_UPDATE_TEXT = 0X07;
+    public static final int RUN_UPDATE_VIEW_VISIBLE= 0X08;
 }

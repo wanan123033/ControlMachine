@@ -1,55 +1,48 @@
 package com.feipulai.exam.activity.RadioTimer.newRadioTimer;
 
-import java.util.concurrent.ExecutorService;
+import android.os.SystemClock;
+
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class TimerTask {
-    private TimeUpdateListener timeUpdateListener;
-    private ExecutorService checkService ;
-    private TimeRunnable timeRunnable;
-
-    public TimerTask(TimeUpdateListener timeUpdateListener, int period) {
-        this.timeUpdateListener = timeUpdateListener;
-        checkService = Executors.newSingleThreadScheduledExecutor();
-        timeRunnable = new TimeRunnable(period);
-    }
-
+    private TimeUpdateListener listener;
+    private int period ;
+    private ScheduledExecutorService checkService;
     private volatile long disposeTime;
-    private boolean keepTime;
+    private volatile boolean keepTime;
+    public TimerTask(final TimeUpdateListener timeListener, final int period) {
+        this.listener = timeListener;
+        this.period = period;
 
+    }
 
     public void keepTime() {
-        checkService.submit(timeRunnable);
+        checkService = Executors.newSingleThreadScheduledExecutor();
+        checkService.scheduleWithFixedDelay(checkRun, 1000, period, TimeUnit.MILLISECONDS);
     }
 
-    private class TimeRunnable implements Runnable {
-        private int period;
-        private int realTime;
-        TimeRunnable(int period) {
-            this.period = period;
-        }
+    private CheckRun checkRun = new CheckRun();
+
+    private class CheckRun implements Runnable {
 
         @Override
         public void run() {
-            while (true) {
-                if (keepTime){
-//                    realTime = (int) (SystemClock.elapsedRealtime()-disposeTime);
-                    realTime = (int) (System.currentTimeMillis()-disposeTime);
-                    timeUpdateListener.onTimeTaskUpdate(realTime);
-                    try {
-                        Thread.sleep(period);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            intervalRun();
+        }
+    }
+
+    private void intervalRun() {
+        if (keepTime){
+            int realTime = (int) (SystemClock.elapsedRealtime() - disposeTime);
+            listener.onTimeTaskUpdate(realTime);
         }
     }
 
     public void setStart() {
-//        disposeTime = SystemClock.elapsedRealtime();
-        disposeTime = System.currentTimeMillis();
         keepTime = true;
+        disposeTime  = SystemClock.elapsedRealtime();
     }
 
     public void stopKeepTime() {

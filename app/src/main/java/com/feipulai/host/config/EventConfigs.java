@@ -8,7 +8,7 @@ public class EventConfigs {
 
 
     public static int TEMPORARY_ADD_STU = 1;
-    public static int EVENT_UPLOAD_ITEM_SUCCEED = 2;
+    public static int UPDATE_TIME = 2;
     public static int VISION_TEST_SUCCEED = 3;
     public static final int DATA_DOWNLOAD_SUCCEED = 4;
     public static final int UPDATE_TEST_COUNT = 5;

@@ -43,8 +43,9 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     private static final int MSG_DISCONNECT = 0X101;
     private static final int UPDATE_DEVICE = 0X102;
     private static final int UPDATE_RESULT = 0X103;
+    private static final int CHECK_CMD = 0X105;
     private GetResultRunnable resultRunnable;
-    private CheckDeviceRunnable statesRunnable;
+//    private CheckDeviceRunnable statesRunnable;
     private ExecutorService mExecutorService;
     private SitReachResiltListener sitReachResiltListener;
     //保存当前测试考生
@@ -88,11 +89,12 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
         SerialDeviceManager.getInstance().setRS232ResiltListener(sitReachResiltListener);
         mExecutorService = Executors.newFixedThreadPool(2);
         resultRunnable = new GetResultRunnable();
-        statesRunnable = new CheckDeviceRunnable();
+//        statesRunnable = new CheckDeviceRunnable();
         mExecutorService.submit(resultRunnable);
-        mExecutorService.submit(statesRunnable);
+        mHandler.sendEmptyMessage(CHECK_CMD);
+//        mExecutorService.submit(statesRunnable);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         if (SerialDeviceManager.getInstance() != null && sitReachResiltListener.getTestState() != SitReachResiltListener.TestState.UN_STARTED) {
             //开始测试
@@ -132,7 +134,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
         LogUtils.operation("坐位体前屈开始测试:" + stuPair.getStudent().toString());
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
             LogUtils.serial("坐位体前屈开始测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START) + "---");
@@ -165,13 +167,10 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
         }
         SerialDeviceManager.getInstance().close();
         resultRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setFinish(true);
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setFinish(true);
         resultRunnable.setFinish(true);
-        statesRunnable = null;
-        resultRunnable = null;
-        mHandler = null;
-        mExecutorService.shutdown();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
 
@@ -201,15 +200,18 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     public void getDeviceState(BaseDeviceState deviceState) {
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
-        Message msg = mHandler.obtainMessage();
-        msg.obj = state;
-        msg.what = UPDATE_DEVICE;
-        mHandler.sendMessage(msg);
+        if (mHandler != null && mHandler.obtainMessage() != null) {
+            Message msg = mHandler.obtainMessage();
+            msg.obj = state;
+            msg.what = UPDATE_DEVICE;
+            mHandler.sendMessage(msg);
+        }
 
     }
 
     @Override
     public void getResult(boolean isEnd, BaseStuPair stuPair) {
+        isDisconnect=false;
         if (isEnd) {
             if (stuPair.getResult() / 10 <= -15) {
                 confirmResult(stuPair);
@@ -224,7 +226,7 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
             }
         }
         Logger.i(TAG + ":getResult--->" + stuPair.toString());
-        Message msg = mHandler.obtainMessage();
+        Message msg = new Message();
         msg.obj = stuPair;
         msg.what = UPDATE_RESULT;
         mHandler.sendMessage(msg);
@@ -233,13 +235,13 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
     @Override
     public void EndDevice(boolean isFoul, int result) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
     }
 
     @Override
     public void AgainTest(BaseDeviceState deviceState) {
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         toastSpeak("错误重测");
     }
 
@@ -357,6 +359,12 @@ public class SitReachGroupTestActivity extends BaseGroupTestActivity implements 
                             }
 
                         }
+                        sendEmptyMessage(CHECK_CMD);
+                        break;
+                    case CHECK_CMD:
+                        activity.isDisconnect = true;
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
+                        sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                         break;
                 }
             }

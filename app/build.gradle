@@ -16,9 +16,9 @@ android {
         applicationId "com.feipulai.host"
         minSdkVersion 18
         targetSdkVersion 26
-        versionCode 1
+        versionCode 2
         // 新版本1.0.1 测试加后面版本
-        versionName "2.0.1"
+        versionName "2.0.2.3"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -43,23 +43,31 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.releaseConfig
-            resValue "string", "software_uuid","FP-KTA2108_TC"
-            resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
+            resValue "string", "software_uuid", "FP-KTA2108_TC"
+            resValue "string", "hardware_uuid", "FP-KTA2108_TC_ANDROID"
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
-            resValue "string", "software_uuid","FP-KTA2108_TC"
-            resValue "string", "hardware_uuid","FP-KTA2108_TC_ANDROID"
+            resValue "string", "software_uuid", "FP-KTA2108_TC"
+            resValue "string", "hardware_uuid", "FP-KTA2108_TC_ANDROID"
         }
         ruiLiHeng {
             initWith(buildTypes.debug)
             applicationIdSuffix ".ruiliheng"
-            resValue "string", "software_uuid","FP-KTA2108_TC-RLH"
-            resValue "string", "hardware_uuid","FP-KTA2108_TC-RLH_ANDROID"
+            resValue "string", "software_uuid", "FP-KTA2108_TC-RLH"
+            resValue "string", "hardware_uuid", "FP-KTA2108_TC-RLH_ANDROID"
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
 //            manifestPlaceholders = [APP_NAME: '睿力恒体测'] // 配置马甲包的应用名称
+        }
+        linnan {//岭南
+            initWith(buildTypes.debug)
+            applicationIdSuffix ".linnan"
+            // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
+//            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
+            resValue "string", "software_uuid", "FP-KTA2108_TC-LINNAN"
+            resValue "string", "hardware_uuid", "FP-KTA2108_TC-LINNAN_ANDROID"
         }
     }
 
@@ -81,7 +89,7 @@ android {
 }
 
 greendao {
-    schemaVersion 7
+    schemaVersion 9
 //    daoPackage 'com.feipulai.host.gen'
 //    targetGenDir 'src/main/java'
 }

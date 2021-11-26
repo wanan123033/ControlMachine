@@ -853,8 +853,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismissWithAnimation();
-//                                    isStartFace = true;
-//                                    retryRecognizeDelayed(faceId);
+                                    isStartFace = true;
+                                    retryRecognizeDelayed(faceId);
 
                                 }
                             });

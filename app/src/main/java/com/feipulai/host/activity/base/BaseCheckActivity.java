@@ -51,7 +51,6 @@ public abstract class BaseCheckActivity
     private boolean needAdd = true;
     public FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
-    private ScannerGunManager scannerGunManager;
     private BaseCatupeFragment catureFragment;
 
     public void setOpenDevice(boolean openDevice) {
@@ -73,7 +72,7 @@ public abstract class BaseCheckActivity
                 catureFragment = new BaseCatupeFragment();
             }
         }
-        scannerGunManager = new ScannerGunManager(new ScannerGunManager.OnScanListener() {
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
                 boolean needAdd = checkQulification(code, STUDENT_CODE);
@@ -88,7 +87,7 @@ public abstract class BaseCheckActivity
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (scannerGunManager != null && scannerGunManager.dispatchKeyEvent(event)) {
+        if (ScannerGunManager.getInstance().dispatchKeyEvent(event.getKeyCode(), event)) {
             return true;
         }
         return super.dispatchKeyEvent(event);
@@ -185,10 +184,6 @@ public abstract class BaseCheckActivity
         });
         if (student == null) {
             InteractUtils.toastSpeak(this, "该考生不存在");
-            if (SettingHelper.getSystemSetting().isNetCheckTool()) {
-                showAddHint(student);
-                afrFrameLayout.setVisibility(View.GONE);
-            }
             return;
         }
 
@@ -266,7 +261,11 @@ public abstract class BaseCheckActivity
         switch (flag) {
 
             case ID_CARD_NO:
+                LogUtils.all("StringCode====>" + code);
                 student = DBManager.getInstance().queryStudentByIDCode(code);
+                if (student != null) {
+                    LogUtils.all("StringCode====>" + student.toString());
+                }
                 break;
 
             case STUDENT_CODE:
@@ -283,6 +282,9 @@ public abstract class BaseCheckActivity
         }
         LogUtil.logDebugMessage("检入考生：" + student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        if (studentItem != null) {
+            LogUtils.all("studentItem====>" + studentItem.toString());
+        }
         if (studentItem == null) {
             if (needAdd) {
                 registerStuItem(student);
@@ -396,8 +398,6 @@ public abstract class BaseCheckActivity
                         sweetAlertDialog.dismissWithAnimation();
                     }
                 }).show();
-
-
 //                new AlertDialog.Builder(BaseCheckActivity.this)
 //                        .setCancelable(false)
 //                        .setTitle("提示")

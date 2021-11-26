@@ -222,8 +222,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
-                    Log.e("TAG", systemSetting.isResit() + "---" + systemSetting.isAgainTest() + "---" + (studentItem.getMakeUpType() == 1));
-                    if (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1) {
+                    if (studentItem != null && (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1)) {
                         if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
                             ResitDialog dialog = new ResitDialog();
                             dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
@@ -701,9 +700,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
      */
     private void scoreUpload() {
         List<BaseStuPair> data = stuAdapter.getData();
+
+        List<UploadResults> uploadResultsList = new ArrayList<>();
         for (BaseStuPair stuPair : data) {
             List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
-            List<UploadResults> uploadResultsList = new ArrayList<>();
+
             if (roundResultList != null && !roundResultList.isEmpty()) {
                 RoundResult currentResult = roundResultList.get(0);
                 UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
@@ -711,8 +712,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 uploadResultsList.add(uploadResults);
             }
 //            ServerMessage.uploadResult(uploadResultsList);
-            ServerMessage.uploadResult(this, uploadResultsList);
+
         }
+        ServerMessage.uploadResult(this, uploadResultsList);
     }
 
     /**

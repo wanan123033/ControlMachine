@@ -846,7 +846,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
-//        roundResult.setExamType(group.getExamType());
+        roundResult.setExamType(group.getExamType());
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
         if (studentItem != null) {
             roundResult.setExamType(studentItem.getExamType());
@@ -877,7 +877,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         //获取所有成绩设置为非最好成绩
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem.getExamType() == 2) {
+        if (studentItem!=null&&studentItem.getExamType() == 2) {
             continuousTestNext();
         }
     }
@@ -1073,7 +1073,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     SystemSetting setting = SettingHelper.getSystemSetting();
                     StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
                     //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-                    if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
+                    if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
                         stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
                     }
                     resultList.get(i).setResult(0);

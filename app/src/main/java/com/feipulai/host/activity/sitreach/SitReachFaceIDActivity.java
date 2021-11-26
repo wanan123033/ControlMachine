@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
     //获取成绩
     private GetResultRunnable resultRunnable = new GetResultRunnable();
-    private CheckDeviceRunnable statesRunnable = new CheckDeviceRunnable();
+    //    private CheckDeviceRunnable statesRunnable = new CheckDeviceRunnable();
     private ExecutorService mExecutorService;
 
     private LEDManager mLEDManager;
@@ -43,6 +43,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
     private MyHandler mHandler = new MyHandler(this);
     private static final int MSG_DISCONNECT = 0X101;
     private static final int MSG_START_TEST = 0X102;
+    private static final int CHECK_CMD = 0X105;
     private BaseStuPair baseStuPair;
 
     @Override
@@ -56,11 +57,12 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         }
         mExecutorService = Executors.newFixedThreadPool(2);
         mExecutorService.submit(resultRunnable);
-        mExecutorService.submit(statesRunnable);
+        mHandler.sendEmptyMessage(CHECK_CMD);
+//        mExecutorService.submit(statesRunnable);
         super.onCreate(savedInstanceState);
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.UN_STARTED);
         resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        statesRunnable.setTestState(sitReachResiltListener.getTestState());
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
 
     }
@@ -85,10 +87,10 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         }
         SerialDeviceManager.getInstance().close();
         resultRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
-        statesRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
-        statesRunnable.setFinish(true);
+//        statesRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
+//        statesRunnable.setFinish(true);
         resultRunnable.setFinish(true);
-
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     /**
@@ -102,13 +104,11 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
 
     @Override
     public void sendTestCommand(@NonNull BaseStuPair baseStuPair) {
-        LogUtils.operation("坐位体前屈开始测试:"+baseStuPair.toString());
+        LogUtils.operation("坐位体前屈开始测试:" + baseStuPair.toString());
         this.baseStuPair = baseStuPair;
         //3秒检测设备间隔
         mHandler.sendEmptyMessageDelayed(MSG_START_TEST, 3000);
     }
-
-
 
 
     @Override
@@ -132,13 +132,14 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
 
         @Override
         public void getResult(BaseStuPair stuPair) {
+            isDisconnect = false;
             updateResult(stuPair);
         }
 
         @Override
         public void EndDevice(boolean isFoul, int result) {
             resultRunnable.setTestState(sitReachResiltListener.getTestState());
-            statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//            statesRunnable.setTestState(sitReachResiltListener.getTestState());
             if (null == baseStuPair.getStudent()) {
                 mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "自由测试", mLEDManager.getX("自由测试"), 0, true, false);
             } else {
@@ -158,13 +159,14 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         @Override
         public void AgainTest(BaseDeviceState deviceState) {
             resultRunnable.setTestState(sitReachResiltListener.getTestState());
-            statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//            statesRunnable.setTestState(sitReachResiltListener.getTestState());
         }
 
         @Override
         public void stopResponse(int deviveId) {
 
         }
+
         @Override
         public void ready(int deviveId) {
             toastSpeak("开始测试");
@@ -193,15 +195,19 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
 //    }
     private void sendStartCommand() {
         sitReachResiltListener.setTestState(SitReachResiltListener.TestState.WAIT_RESULT);
-        resultRunnable.setTestState(sitReachResiltListener.getTestState());
-        statesRunnable.setTestState(sitReachResiltListener.getTestState());
+        if (resultRunnable != null && sitReachResiltListener != null) {
+            resultRunnable.setTestState(sitReachResiltListener.getTestState());
+        }
+//        if (statesRunnable != null && sitReachResiltListener != null) {
+//            statesRunnable.setTestState(sitReachResiltListener.getTestState());
+//        }
         if (SerialDeviceManager.getInstance() != null) {
             //开始测试
-            LogUtils.normal("坐位体前屈开始指令:"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
+            LogUtils.normal("坐位体前屈开始指令:" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_START));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_START));
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), "请测试", 5, 1, true, true);
             //获取数据
-            LogUtils.normal("坐位体前屈获取数据:"+StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
+            LogUtils.normal("坐位体前屈获取数据:" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
             SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
         }
     }
@@ -221,7 +227,6 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
             if (activity != null) {
                 switch (msg.what) {
                     case MSG_DISCONNECT:
-                        LogUtils.operation("坐位体前屈 2MSG_DISCONNECT:" + activity.isDisconnect);
                         if (activity.isDisconnect) {
                             // 判断2次点击事件时间
 
@@ -235,11 +240,17 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
                             activity.sitReachResiltListener.setTestState(SitReachResiltListener.TestState.UN_STARTED);
                             activity.resultRunnable.setTestState(SitReachResiltListener.TestState.UN_STARTED);
                         }
+                        sendEmptyMessage(CHECK_CMD);
                         break;
                     case MSG_START_TEST:
                         if (activity.baseStuPair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                             activity.sendStartCommand();
                         }
+                        break;
+                    case CHECK_CMD:
+                        activity.isDisconnect = true;
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
+                        sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                         break;
                 }
             }
@@ -264,7 +275,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
         public void run() {
             while (!isFinish) {
                 if (testState != SitReachResiltListener.TestState.UN_STARTED) {
-                    LogUtils.normal("坐位体前屈获取成绩指令:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
+                    LogUtils.normal("坐位体前屈获取成绩指令:" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                     if (SerialDeviceManager.getInstance() != null)
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_GET_SCORE));
                 }
@@ -304,7 +315,7 @@ public class SitReachFaceIDActivity extends BasePersonFaceIDActivity {
                             isDisconnect = true;
                             if (SerialDeviceManager.getInstance() != null) {
                                 //设备自检,校验连接是否正常
-                                LogUtils.normal("坐位体前屈设备自检指令:"+ StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY));
+                                LogUtils.normal("坐位体前屈设备自检指令:" + StringUtility.bytesToHexString(SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SIT_REACH_EMPTY));
                                 mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 3000);
                             }

@@ -73,7 +73,7 @@ public class ExplainActivity extends BaseTitleActivity {
                     LogUtil.logDebugMessage(getPackageName());
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         //  此处注意替换包名，
-                        Uri contentUri = FileProvider.getUriForFile(ExplainActivity.this, "com.feipulai.host.provider", fileList.get(position));
+                        Uri contentUri = FileProvider.getUriForFile(ExplainActivity.this, "com.feipulai.exam.provider", fileList.get(position));
                         intent.setDataAndType(contentUri, "application/pdf");
                     } else {
                         intent.setDataAndType(Uri.fromFile(fileList.get(position)), "application/pdf");
