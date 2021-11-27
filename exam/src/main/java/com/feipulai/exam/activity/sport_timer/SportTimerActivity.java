@@ -476,7 +476,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 } else {
                     ToastUtils.showShort("当前设备不可用或当前学生为空");
                 }
-
+                mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
                 break;
             case R.id.cb_device_state:
                 deviceDialog = new DeviceDialog(this, deviceStates);
@@ -690,7 +690,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
     @Override
     public void getDeviceStart() {
-        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
+//        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
     }
 
     private int lastTime;//上一次接收时间
