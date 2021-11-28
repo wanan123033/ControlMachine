@@ -50,17 +50,22 @@ public class ICCardDealer {
                 }
                 break;
             case AdaptiveConfig.LIN_NAN_SHI_FAN:
-                ItemDefault.keyA = AdaptiveConfig.IC_KEY;
-                stuData = readBlocks(ICBlockIndex.LIN_NAN_STU_INFO_BLOCK_NO);
-                if (stuData != null) {
-                    mStuInfo = IC_ResultResolve.getLinNanStuInfo(stuData);
-                } else {
-                    ItemDefault.keyA = AdaptiveConfig.KEY_DEFAULT;
+                try {
+                    ItemDefault.keyA = AdaptiveConfig.IC_KEY;
                     stuData = readBlocks(ICBlockIndex.LIN_NAN_STU_INFO_BLOCK_NO);
                     if (stuData != null) {
                         mStuInfo = IC_ResultResolve.getLinNanStuInfo(stuData);
+                    } else {
+                        ItemDefault.keyA = AdaptiveConfig.KEY_DEFAULT;
+                        stuData = readBlocks(ICBlockIndex.LIN_NAN_STU_INFO_BLOCK_NO);
+                        if (stuData != null) {
+                            mStuInfo = IC_ResultResolve.getLinNanStuInfo(stuData);
+                        }
                     }
+                }catch (Exception e){
+
                 }
+
                 break;
         }
 

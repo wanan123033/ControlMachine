@@ -433,7 +433,7 @@ public class SportPresent implements SportContract.Presenter {
     public void getDeviceCacheResult(int deviceId, int resultIndex) {
         setPause(true);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
