@@ -134,7 +134,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 
             cards.clear();
             for (ChipInfo chip : chipInfos
-                    ) {
+            ) {
                 if (!TextUtils.isEmpty(chip.getChipID1())) {
                     cards.add(chip.getChipID1());
                 }
@@ -182,7 +182,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                     @Override
                     public void onPositiveClick() {
                         for (ChipInfo chip : chipInfos
-                                ) {
+                        ) {
                             chip.setChipID1("");
                             chip.setChipID2("");
                         }
@@ -363,10 +363,12 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
-                        viewState.setBackgroundResource(R.drawable.blue_circle);
-                    } else {
-                        viewState.setBackgroundResource(R.drawable.red_circle);
+                    if (viewState != null) {
+                        if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
+                            viewState.setBackgroundResource(R.drawable.blue_circle);
+                        } else {
+                            viewState.setBackgroundResource(R.drawable.red_circle);
+                        }
                     }
                 }
             });
