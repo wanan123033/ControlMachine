@@ -535,14 +535,14 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     setIndependent();
                     mHandler.sendEmptyMessage(RUN_STOP);
                     sportPresent.keepTime = false;
-                    toastSpeak("成绩保存成功，返回中，请等待");
+                    toastSpeak("成绩保存中...");
                     EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_COUNT));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             finish();
                         }
-                    }, 4000);
+                    }, 2000);
 
                 }
 

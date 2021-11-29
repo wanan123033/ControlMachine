@@ -115,6 +115,7 @@ public class SportResult {
                     deviceId = data[6];
                     hostId = data[5];
                     battery = data[10];
+                    deviceState = data[16];
                 }
                 break;
             case 13:

@@ -193,8 +193,9 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     public void setDeviceStateStop() {
+        synKeep = 0;
         try {
-            setPause(true);
+            setPause(false);
             keepTime = false;
             Thread.sleep(1000);
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -250,6 +251,10 @@ public class SportPresent implements SportContract.Presenter {
     private SportResultListener sportResultListener = new SportResultListener(new SportResultListener.SportMsgListener() {
         @Override
         public void onConnect(SportResult result) {//连接情况
+            if (Math.abs(getTime() - result.getLongTime()) > 2000) {
+                sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());
+                MyApplication.RADIO_TIME_SYNC = true;
+            }
             if (result.getDeviceId() == 0 || (result.getDeviceId() - 1) >= connectState.length)
                 return;
             connectState[result.getDeviceId() - 1] = 1;
@@ -281,9 +286,29 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetResult(SportResult result) {//收到结果
             Log.i("SportResultListener", result.toString());
             FileUtils.log(result.toString());
+
+
             if (result.getDeviceId() == 0 || (result.getDeviceId() - 1) >= connectState.length)
                 return;
             connectState[result.getDeviceId() - 1] = 1;
+            if (synKeep == -1) {//需要计时
+                if (result.getDeviceState() != 1) {
+                    setDeviceState(result.getDeviceId(), 1);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getDeviceState(result.getDeviceId());
+                }
+            }
+
+            if (synKeep != -1) {//不需要计时
+                if (result.getDeviceState() == 1) {
+                    setDeviceState(result.getDeviceId(), 0);
+                }
+            }
+
             if (result.getDeviceState() != 1 && keepTime) {
                 setDeviceState(result.getDeviceId(), 1);
                 try {
@@ -292,6 +317,7 @@ public class SportPresent implements SportContract.Presenter {
                     e.printStackTrace();
                 }
                 getDeviceState(result.getDeviceId());
+                sportView.updateDeviceState(result.getDeviceId(), 1);
             } else {
                 sportView.updateDeviceState(result.getDeviceId(), 2);//计时
             }
@@ -321,21 +347,23 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetDeviceState(int deviceState, int deviceId) {
             if (deviceId == 0 || deviceId > connectState.length)
                 return;
-            if (deviceState == 1) {
-                if (keepTime) {
-                    sportView.updateDeviceState(deviceId, 2);
-                    sportView.getDeviceStart();
-//                    timeState[deviceId - 1] = 1;
-                }
-//                timeState[deviceId - 1] = 1;
-            } else {
-                if (keepTime) {
-                    sportView.updateDeviceState(deviceId, 1);
-                } else {
-                    sportView.getDeviceStop();
-                }
-//                timeState[deviceId - 1] = 0;
-            }
+//            if (deviceState == 1) {
+//                if (keepTime) {
+//                    sportView.updateDeviceState(deviceId, 2);
+//                    sportView.getDeviceStart();
+////                    timeState[deviceId - 1] = 1;
+//                }
+////                timeState[deviceId - 1] = 1;
+//            } else {
+//                if (keepTime) {
+//                    sportView.updateDeviceState(deviceId, 1);
+//                } else {
+//                    sportView.getDeviceStop();
+//                }
+////                timeState[deviceId - 1] = 0;
+//            }
+
+            sportView.updateDeviceState(deviceId, deviceState+1);
         }
     });
 

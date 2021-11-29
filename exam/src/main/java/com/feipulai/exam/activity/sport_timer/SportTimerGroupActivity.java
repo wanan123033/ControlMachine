@@ -372,6 +372,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 } else {
                     toastSpeak("当前设备不可用或当前学生为空");
                 }
+                mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
                 break;
             case R.id.txt_illegal_return:
                 if (testState == TestState.WAIT_RESULT) {
@@ -767,7 +768,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
      */
     @Override
     public void getDeviceStart() {
-        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
+//        mHandler.sendEmptyMessage(UPDATE_ON_WAIT);
     }
     private int lastTime;//上一次接收时间
     @Override
