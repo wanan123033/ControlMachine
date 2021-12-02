@@ -61,21 +61,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buf = (ByteBuf) msg;
-        byte[] req = new byte[buf.readableBytes()];//此方法读取不完整
-//        byte[] from = new byte[3];//先获取包长度
-//        buf.readBytes(from);
-//        String[] response1 = TcpConfig.bytesToHexStrings(from);
-//
-//        int len = Integer.parseInt(response1[2], 16);//包长
-//
-//        byte[] req = new byte[len - 3];//再获取包剩下的部分
+        byte[] req = new byte[buf.readableBytes()];
         buf.readBytes(req);
-
-        //合并两个byte数组得到完整包
-//        byte[] byte_3 = new byte[from.length + req.length];
-//        System.arraycopy(from, 0, byte_3, 0, from.length);
-//        System.arraycopy(req, 0, byte_3, from.length, req.length);
-
         String response = TcpConfig.bytesToHex(req);
         String[] response2 = TcpConfig.bytesToHexStrings(req);
 
@@ -83,7 +70,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             listener.onConnected("设备连接成功");
             return;
         }
-        Logger.i("客户端开始读取服务端过来的信息:" + Arrays.toString(response2));
+        Logger.i("收到主机发过来的数据:" + Arrays.toString(response2));
         //解析收到的包
         if (response.startsWith("a1") && response.endsWith("fff8") && Integer.parseInt(response2[1] + response2[2], 16) == response2.length) {
             int[] timeByte = new int[7];
@@ -121,9 +108,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 listener.onMessageReceive(currentDate, cardIds);
             }
         } else {
-            Logger.e("客户端开始读取服务端过来的信息:非法解析");
-//            listener.onMessageFailed("非法解析");
-
+            Logger.e("收到主机发过来的数据:非法解析");
             if (TextUtils.isEmpty(error1)) {
                 error1 = response;
                 error2 = response2.clone();
@@ -133,7 +118,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 System.arraycopy(error2, 0, byte_3, 0, error2.length);
                 System.arraycopy(response2, 0, byte_3, error2.length, response2.length);
 
-                Logger.i("客户端开始读取服务端过来的信息(分包合并):" + Arrays.toString(byte_3));
+                Logger.i("收到主机发过来的数据(分包合并):" + Arrays.toString(byte_3));
                 //解析收到的包
                 if (response.startsWith("a1") && response.endsWith("fff8") && Integer.parseInt(byte_3[1] + byte_3[2], 16) == byte_3.length) {
                     int[] timeByte = new int[7];

@@ -1251,25 +1251,31 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             public void run() {
                 if (hkCamera == null) {
                     hkCamera = new HkCameraManager(MiddleDistanceRaceForGroupActivity.this, camera_ip, HK_PORT, hk_user, hk_psw);
-                    hkInit = hkCamera.initeSdk();
-                    if (hkInit) {
-                        hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
-                        mHander.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                isInitOk = true;
-                                if (hkCamera.startPreview()) {
-                                    btnCamera.performClick();
-                                }
-                            }
-                        }, 600);
-                    } else {
+                    if (TextUtils.isEmpty(camera_ip)) {
                         isInitOk = true;
-                        ToastUtils.showShort("海康摄像头初始化失败");
+                    } else {
+                        hkInit = hkCamera.initeSdk();
+                        if (hkInit) {
+                            hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
+                            mHander.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    isInitOk = true;
+                                    if (hkCamera.startPreview()) {
+                                        btnCamera.performClick();
+                                    }
+                                }
+                            }, 600);
+                        } else {
+                            isInitOk = true;
+                            ToastUtils.showShort("海康摄像头初始化失败");
+                        }
                     }
                 } else {
                     isInitOk = true;
-                    hkCamera.startPreview();
+                    if (hkInit) {
+                        hkCamera.startPreview();
+                    }
                 }
             }
         }, 1500);
