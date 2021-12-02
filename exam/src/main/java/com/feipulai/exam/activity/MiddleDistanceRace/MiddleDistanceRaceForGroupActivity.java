@@ -523,8 +523,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
 //        }
         for (int i = 0; i < itemList.size(); i++) {
             items[i] = itemList.get(i).getItemName();
-            if(itemName.equals(items[i])){
-                mItemPosition=i;
+            if (itemName.equals(items[i])) {
+                mItemPosition = i;
             }
         }
 //        Log.i("spinnerItemSelected", Arrays.toString(items));
@@ -1496,6 +1496,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
 
     @Override
     public void onStartTiming(long time) {
+        Logger.i(TAG + "中长跑点击了开始计时" + timingLists.toString());
 //        Log.i("onMessageResponse", "开始计时---------" + time);
         int timerNo = 0;
         for (TimingBean timing : timingLists
@@ -1777,6 +1778,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             toastSpeak("请先选入组别");
             return;
         }
+        Logger.i(TAG + "中长跑点击了等待发令" + timingLists.get(position).toString());
 
         if (hkCamera != null && !hkCamera.m_bSaveRealData) {
             hkCamera.startRecord(System.currentTimeMillis());
@@ -1817,7 +1819,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         dialogUtil.showCommonDialog("是否违规返回", android.R.drawable.ic_dialog_alert, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG + "中长跑点击了违规返回按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了违规返回按钮" + timingLists.get(position).toString());
                 raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_BACK);
                 timingLists.get(position).setState(TIMING_STATE_BACK);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -1872,7 +1874,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         dialogUtil.showCommonDialog(notice, ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG + "中长跑点击了完成计时按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了完成计时按钮" + timingLists.get(position).toString());
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
 
                 for (int i = 0; i < timingLists.size(); i++) {
@@ -2004,11 +2006,11 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                         ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
                     }
                 }
-                Logger.i(TAG + "成绩", roundResults.toString());
+                Logger.i(TAG + "成绩:" + roundResults.toString());
                 //自动打印
 
                 if (SettingHelper.getSystemSetting().isAutoPrint() &&
-                        (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 ||SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
+                        (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
                     InteractUtils.printA4Result(mContext, dbGroupList);
 
                 } else {
@@ -2042,7 +2044,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         dialogUtil.showCommonDialog("是否删除当前组", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG + "中长跑点击了删除按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了删除按钮" + timingLists.get(position).toString());
                 //在成绩显示列删除选中组的所有考生
                 Iterator<RaceResultBean> it = resultDataList.iterator();
                 while (it.hasNext()) {
@@ -2496,7 +2498,7 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
             resultDataList.add(addPosition, raceResultBean);
         }
 
-//        Log.i(TAG, resultDataList.toString());
+        Logger.i("当前选中人员信息:" + resultDataList.toString());
         resultShowTable.notifyContent();
     }
 

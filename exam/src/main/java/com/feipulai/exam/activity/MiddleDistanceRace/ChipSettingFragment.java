@@ -27,8 +27,10 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ChipSettingAdapter;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipInfo;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -159,6 +161,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 //            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), null);
 //        }
         DBManager.getInstance().updateChipInfo(chipInfos);
+        Logger.i("芯片配置完成:" + chipInfos.toString());
         mHandler.removeMessages(2);
         mHandler.removeMessages(1);
         if (nettyClient != null)
