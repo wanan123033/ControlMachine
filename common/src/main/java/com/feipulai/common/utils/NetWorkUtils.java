@@ -125,7 +125,6 @@ public class NetWorkUtils {
 			e.printStackTrace();
 		}
 		return "";
-
 	}
 
 

@@ -68,7 +68,6 @@ public class ServerMessage {
                                     return;
                                 }
                             }
-
                         } else {
                             subscriber.getItemStudent(downTime, TestConfigs.getCurrentItemCode(), 1, examType);
                         }

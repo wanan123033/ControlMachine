@@ -27,8 +27,10 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.MiddleDistanceRace.adapter.ChipSettingAdapter;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.ChipInfo;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -134,7 +136,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 
             cards.clear();
             for (ChipInfo chip : chipInfos
-                    ) {
+            ) {
                 if (!TextUtils.isEmpty(chip.getChipID1())) {
                     cards.add(chip.getChipID1());
                 }
@@ -159,6 +161,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
 //            nettyClient.sendMsgToServer(TcpConfig.getCmdEndTiming(), null);
 //        }
         DBManager.getInstance().updateChipInfo(chipInfos);
+        Logger.i("芯片配置完成:" + chipInfos.toString());
         mHandler.removeMessages(2);
         mHandler.removeMessages(1);
         if (nettyClient != null)
@@ -182,7 +185,7 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
                     @Override
                     public void onPositiveClick() {
                         for (ChipInfo chip : chipInfos
-                                ) {
+                        ) {
                             chip.setChipID1("");
                             chip.setChipID2("");
                         }
@@ -363,10 +366,12 @@ public class ChipSettingFragment extends Fragment implements NettyListener, Chip
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
-                        viewState.setBackgroundResource(R.drawable.blue_circle);
-                    } else {
-                        viewState.setBackgroundResource(R.drawable.red_circle);
+                    if (viewState != null) {
+                        if (statusCode == NettyListener.STATUS_CONNECT_SUCCESS) {
+                            viewState.setBackgroundResource(R.drawable.blue_circle);
+                        } else {
+                            viewState.setBackgroundResource(R.drawable.red_circle);
+                        }
                     }
                 }
             });

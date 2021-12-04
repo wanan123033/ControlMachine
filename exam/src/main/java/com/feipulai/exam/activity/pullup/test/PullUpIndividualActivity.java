@@ -341,10 +341,8 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         int result = pair.getDeviceResult().getResult() + pair.getPenalty();
         Logger.i("引体向上成绩：" + ResultDisplayUtils.getStrResultForDisplay(result));
         if (systemSetting.isAutoBroadcast()) {
-
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(),
                     ResultDisplayUtils.getStrResultForDisplay(result)));
-
         }
 
         // 是否需要进行下一次测试

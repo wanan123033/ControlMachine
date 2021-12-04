@@ -1611,6 +1611,10 @@ public class DBManager {
         return groupItemDao.queryBuilder().where(GroupItemDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
+    public List<GroupItem> queryGroupItemBySchedule(String schedule) {
+        return groupItemDao.queryBuilder().where(GroupItemDao.Properties.ScheduleNo.eq(schedule)).list();
+    }
+
     /**
      * 查询某个项目某个性别某个组次的所有人
      *
@@ -1864,6 +1868,11 @@ public class DBManager {
                 .unique();
     }
 
+    public List<RoundResult> queryResultBySchedule(String scheduleNo) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.ScheduleNo.eq(scheduleNo))
+                .list();
+    }
 
     /**
      * 查询对应考生当前项目轮次成绩
@@ -2327,6 +2336,10 @@ public class DBManager {
         return itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
     }
 
+    public List<ItemSchedule> queryItemSchedulesBySchedule(String scheduleNo) {
+        return itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ScheduleNo.eq(scheduleNo)).list();
+    }
+
 //    public List<Schedule> getSchedulesByItemCode(String itemCode) {
 //        List<ItemSchedule> itemSchedules = itemScheduleDao.queryBuilder().where(ItemScheduleDao.Properties.ItemCode.eq(itemCode)).list();
 //        if (itemSchedules != null && itemSchedules.size() > 0) {
@@ -2608,6 +2621,10 @@ public class DBManager {
 
     public List<Group> queryGroup(String itemCode) {
         return groupDao.queryBuilder().where(GroupDao.Properties.ItemCode.eq(itemCode)).list();
+    }
+
+    public List<Group> queryGroupBySchedule(String schedule) {
+        return groupDao.queryBuilder().where(GroupDao.Properties.ScheduleNo.eq(schedule)).list();
     }
 
 

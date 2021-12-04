@@ -84,7 +84,6 @@ public class CommonUtils {
             if (TextUtils.isEmpty(id)) {
                 id = Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             }
-
         }
         return id;
     }

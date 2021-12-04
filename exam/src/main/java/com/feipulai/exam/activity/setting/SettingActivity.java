@@ -210,7 +210,6 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         printAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPrintTool.setAdapter(printAdapter);
 
-
         mSpHostId.setSelection(systemSetting.getHostId() - 1);
         mSwAutoBroadcast.setChecked(systemSetting.isAutoBroadcast());
         mSwAutoPrint.setChecked(systemSetting.isAutoPrint());

@@ -94,7 +94,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     private TimerUtil timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
         @Override
         public void timer(Long time) {
-
             long todayTime = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0l);
 
             SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, todayTime + 60 * 1000);

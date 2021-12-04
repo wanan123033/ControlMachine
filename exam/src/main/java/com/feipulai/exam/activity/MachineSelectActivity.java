@@ -105,8 +105,6 @@ public class MachineSelectActivity extends BaseTitleActivity
             bundle.putInt("machineCode", machineCode);
             IntentUtil.gotoActivity(this, SubItemsSelectActivity.class, bundle);
         }
-
-
     }
 
     @Override

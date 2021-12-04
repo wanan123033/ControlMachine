@@ -107,6 +107,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1458,25 +1459,31 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             public void run() {
                 if (hkCamera == null) {
                     hkCamera = new HkCameraManager(MiddleDistanceRaceForPersonActivity.this, camera_ip, HK_PORT, hk_user, hk_psw);
-                    hkInit = hkCamera.initeSdk();
-                    if (hkInit) {
-                        hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
-                        mHander.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                isInitOk = true;
-                                if (hkCamera.startPreview()) {
-                                    btnCamera.performClick();
-                                }
-                            }
-                        }, 600);
-                    } else {
+                    if (TextUtils.isEmpty(camera_ip)) {
                         isInitOk = true;
-                        ToastUtils.showShort("海康摄像头初始化失败");
+                    } else {
+                        hkInit = hkCamera.initeSdk();
+                        if (hkInit) {
+                            hkCamera.login2HK(etHKUser.getText().toString(), etHKPassWord.getText().toString());
+                            mHander.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    isInitOk = true;
+                                    if (hkCamera.startPreview()) {
+                                        btnCamera.performClick();
+                                    }
+                                }
+                            }, 600);
+                        } else {
+                            isInitOk = true;
+                            ToastUtils.showShort("海康摄像头初始化失败");
+                        }
                     }
                 } else {
                     isInitOk = true;
-                    hkCamera.startPreview();
+                    if (hkInit) {
+                        hkCamera.startPreview();
+                    }
                 }
             }
         }, 1500);
@@ -1647,6 +1654,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
 
     @Override
     public void onMessageReceive(long time, final String[] cardIds) {
+        Logger.i("解析接收到的芯片数据:" + Arrays.toString(cardIds));
         boolean isFind = false;//标记当前一轮芯片是否有效
         for (String card : cardIds
         ) {
@@ -1659,7 +1667,6 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             for (int i = 0; i < resultDataList.size(); i++) {
                 if (resultDataList.get(i).getColor() == chipInfo.getColor() && resultDataList.get(i).getVestNo() == chipInfo.getVestNo()) {
                     Log.i("resultDataList", "---" + resultDataList.get(i).toString());
-
                     String[] result = resultDataList.get(i).getResults();
                     if (resultDataList.get(i).getStartTime() == 0) {
                         break;
@@ -1727,6 +1734,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
     public void onStartTiming(long time) {
 //        Log.i("onMessageResponse", "开始计时---------" + time);
 //        Log.i("timingLists", timingLists.toString());
+        Logger.i(TAG + "中长跑点击了开始计时" + timingLists.toString());
         int timerNo = 0;
         for (TimingBean timing : timingLists
         ) {
@@ -2014,6 +2022,8 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             return;
         }
 
+        Logger.i(TAG + "中长跑点击了等待发令" + timingLists.get(position).toString());
+
         if (hkCamera != null && !hkCamera.m_bSaveRealData) {
             hkCamera.startRecord(System.currentTimeMillis());
         }
@@ -2052,7 +2062,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         dialogUtil.showCommonDialog("是否违规返回", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG + "中长跑点击了违规返回按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了违规返回按钮" + timingLists.get(position).toString());
                 raceTimingAdapter.notifyBackGround(holder, TIMING_STATE_BACK);
                 timingLists.get(position).setState(TIMING_STATE_BACK);
 //                raceTimingAdapter.notifyDataSetChanged();
@@ -2107,7 +2117,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             @Override
             public void onPositiveClick() {
                 //当前所有组是否还存在正在计时或者等待中的小组，否则停止录像
-                Logger.d(TAG + "中长跑点击了完成计时按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了完成计时按钮" + timingLists.get(position).toString());
                 timingLists.get(position).setState(TimingBean.TIMING_STATE_COMPLETE);
 
                 for (int i = 0; i < timingLists.size(); i++) {
@@ -2243,13 +2253,11 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
                         ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
                     }
                 }
-                Logger.i(TAG + "成绩", roundResults.toString());
+                Logger.i(TAG + "成绩:" + roundResults.toString());
                 //自动打印
-
                 if (SettingHelper.getSystemSetting().isAutoPrint() &&
                         (SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_A4 || SettingHelper.getSystemSetting().getPrintTool() == SystemSetting.PRINT_CUSTOM_APP)) {
                     InteractUtils.printA4Result(mContext, dbGroupList);
-
                 } else {
                     MiddlePrintUtil.print(roundResults, completeBeans, digital, carryMode);
                 }
@@ -2281,7 +2289,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
         dialogUtil.showCommonDialog("是否删除当前组", android.R.drawable.ic_dialog_info, new DialogUtil.DialogListener() {
             @Override
             public void onPositiveClick() {
-                Logger.d(TAG + "中长跑点击了删除按钮" + timingLists.get(position).toString());
+                Logger.i(TAG + "中长跑点击了删除按钮" + timingLists.get(position).toString());
                 //在成绩显示列删除选中组的所有考生
                 Iterator<RaceResultBean> it = resultDataList.iterator();
                 while (it.hasNext()) {
@@ -2722,6 +2730,7 @@ public class MiddleDistanceRaceForPersonActivity extends BaseCheckMiddleActivity
             resultDataList.add(addPosition, raceResultBean);
         }
 
+        Logger.i("当前选中人员信息:" + resultDataList.toString());
         resultShowTable.notifyContent();
     }
 
