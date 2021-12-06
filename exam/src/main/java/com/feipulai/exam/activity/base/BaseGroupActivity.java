@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -111,6 +112,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
     TextView tvGender;
     @BindView(R.id.iv_portrait)
     ImageView imgPortrait;
+    @BindView(R.id.cb_select_all)
+    CheckBox cbSelectAll;
     private List<BaseStuPair> stuPairsList;// 组内所有考生
     private CommonPopupWindow groupPop;
 
@@ -219,7 +222,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     showStuInfo(stuPairsList.get(position).getStudent());
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
-                List<RoundResult> results = DBManager.getInstance().queryResultsByStudentCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
+                List<RoundResult> results = getResults(stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
                     if (studentItem != null && (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1)) {
@@ -231,6 +234,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 public void onCancel() {
                                     stuPairsList.get(position).setCanTest(false);
                                     stuPairsList.get(position).setResit(false);
+                                    stuPairsList.get(position).setCanCheck(false);
                                     stuAdapter.notifyItemChanged(position);
                                 }
 
@@ -239,6 +243,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                     stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(0);
                                     stuPairsList.get(position).setCanTest(true);
+                                    stuPairsList.get(position).setCanCheck(true);
                                     stuAdapter.notifyItemChanged(position);
                                 }
                             });
@@ -252,6 +257,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 public void onCancel() {
                                     stuPairsList.get(position).setCanTest(false);
                                     stuPairsList.get(position).setAgain(false);
+                                    stuPairsList.get(position).setCanCheck(false);
                                     stuAdapter.notifyItemChanged(position);
                                 }
 
@@ -263,6 +269,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                             stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
                                             stuPairsList.get(position).setRoundNo(roundNo);
                                             stuPairsList.get(position).setCanTest(true);
+                                            stuPairsList.get(position).setCanCheck(true);
                                             stuAdapter.notifyItemChanged(position);
                                             break;
                                         }
@@ -316,7 +323,17 @@ public class BaseGroupActivity extends BaseTitleActivity {
         }
     }
 
-
+    @OnClick({R.id.cb_select_all})
+    public void onCheckedClickChanged(View view) {
+        CheckBox checkBox = (CheckBox) view;
+        for (BaseStuPair pair : stuPairsList) {
+            pair.setCanTest(checkBox.isChecked());
+        }
+        if (checkBox.isChecked()){
+            getCanTestStates(stuPairsList);
+        }
+        stuAdapter.notifyDataSetChanged();
+    }
     /**
      * 获取日程
      */
@@ -340,6 +357,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
      * 获取日程分组
      */
     private void getGroupList(String scheduleNo) {
+        cbSelectAll.setChecked(true);
         groupList.clear();
         List<Group> dbGroupList = DBManager.getInstance().getGroupByScheduleNo(scheduleNo);
         groupList.addAll(dbGroupList);
@@ -580,12 +598,31 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 pairs.clear();
                 for (BaseStuPair pair : stuPairsList) {
                     if (pair.isCanTest()) {
-                        pairs.add(pair);
                         Student student = pair.getStudent();
                         List<RoundResult> results = getResults(student.getStudentCode());
                         setStuPairsData(pair, results);
                         // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
                         TestConfigs.baseGroupMap.put(student, results);
+                        List<RoundResult> roundResultList= DBManager.getInstance().queryGroupRoundAll
+                                (student.getStudentCode(),groupList.get(groupAdapter.getTestPosition()).getId() + "");
+                        if (roundResultList.size()>=TestConfigs.getMaxTestCount()){
+                            List<Integer> rounds = new ArrayList<>();
+                            for (int i = 0; i < results.size(); i++) {
+                                if (results.size() > 0){  //需要改变轮次
+                                    int roundNo = results.get(i).getRoundNo();
+                                    rounds.add(roundNo);
+                                }
+                            }
+
+                            for (int j = 1 ; j <= TestConfigs.getMaxTestCount() ; j++) {
+                                if (!rounds.contains(j)) {
+                                    pair.setRoundNo(j);
+                                }
+                            }
+                        }
+
+
+                        pairs.add(pair);
                     }
                 }
                 if (pairs.size() <= 0) {
@@ -731,6 +768,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     case RoundResult.RESULT_STATE_FOUL:
                         result[j] = "X";
                         break;
+                    case RoundResult.RESULT_STATE_WAIVE:
+                        result[j] = "放弃";
+                        break;
+                    case RoundResult.RESULT_STATE_BACK:
                     case -2:
                         result[j] = "中退";
                         break;

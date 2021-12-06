@@ -571,6 +571,67 @@ public class TestConfigs {
         }
         return result;
     }
+    /**
+     * 获取是否满分跳过
+     *
+     * @return
+     */
+    public static int[] getFullSkip() {
+        int code = MachineCode.machineCode;
+        int[] full = null;
+        switch (code) {
+            case ItemDefault.CODE_ZWTQQ:
+                SitReachSetting sitReachSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SitReachSetting.class);
+                if (sitReachSetting.isFullReturn()) {
+                    full = new int[2];
+                    full[0] = (int) (sitReachSetting.getManFull() * 10);
+                    full[1] = (int) (sitReachSetting.getWomenFull() * 10);
+                }
+                break;
+            case ItemDefault.CODE_LDTY:
+                StandJumpSetting jumpSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), StandJumpSetting.class);
+                if (jumpSetting.isFullReturn()) {
+                    full = new int[2];
+                    full[0] = jumpSetting.getManFull() * 10;
+                    full[1] = jumpSetting.getWomenFull() * 10;
+                }
+
+                break;
+            case ItemDefault.CODE_HWSXQ:
+                MedicineBallSetting medicineBallSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), MedicineBallSetting.class);
+                if (medicineBallSetting.isFullReturn()) {
+                    full = new int[2];
+                    if (!TextUtils.isEmpty(medicineBallSetting.getMaleFull())) {
+                        full[0] = Integer.parseInt(medicineBallSetting.getMaleFull()) * 10;
+                    }
+                    if (!TextUtils.isEmpty(medicineBallSetting.getFemaleFull())) {
+                        full[1] = Integer.parseInt(medicineBallSetting.getFemaleFull()) * 10;
+                    }
+                }
+                break;
+            case ItemDefault.CODE_MG:
+                SargentSetting sargentSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), SargentSetting.class);
+                if (sargentSetting.isFullReturn()) {
+                    full = new int[2];
+                    if (!TextUtils.isEmpty(sargentSetting.getMaleFull())) {
+                        full[0] = Integer.parseInt(sargentSetting.getMaleFull()) * 10;
+                    }
+                    if (!TextUtils.isEmpty(sargentSetting.getFemaleFull())) {
+                        full[1] = Integer.parseInt(sargentSetting.getFemaleFull()) * 10;
+                    }
+                }
+                break;
+            case ItemDefault.CODE_PQ:
+                VolleyBallSetting volleyBallSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), VolleyBallSetting.class);
+                if (volleyBallSetting.isFullSkip()) {
+                    full = new int[2];
+                    full[0] = volleyBallSetting.getMaleFullScore();
+                    full[1] = volleyBallSetting.getFemaleFullScore();
+                }
+                break;
+        }
+        return full;
+    }
     public static int getMaxTestCount() {
         return getMaxTestCount(MyApplication.getInstance());
     }

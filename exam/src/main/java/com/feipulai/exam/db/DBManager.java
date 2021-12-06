@@ -1231,6 +1231,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(itemCode))
                 .where(RoundResultDao.Properties.ExamType.eq(examType))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
 
@@ -1814,6 +1815,21 @@ public class DBManager {
     public List<RoundResult> queryGroupRound(String studentCode, String groupId) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.GroupId.eq(groupId))
+                .orderAsc(RoundResultDao.Properties.RoundNo)
+                .list();
+    }
+    /**
+     * 查询对应考生当前项目轮次所有成绩
+     *
+     * @param studentCode 考号
+     * @return
+     */
+    public List<RoundResult> queryGroupRoundAll(String studentCode, String groupId) {
+        return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
