@@ -401,22 +401,6 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     /**
-     * @param students
-     * @param context
-     * @param results
-     * @param trackNoMap 序号集合
-     */
-    public void print(List<Student> students, Context context, Map<Student, List<RoundResult>> results, Map<Student, Integer> trackNoMap) {
-
-    }
-
-
-    public void showStudent(LinearLayout llStuDetail, Student student, int testNo) {
-        RoundResult result = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
-        InteractUtils.showStuInfo(llStuDetail, student, result);
-    }
-
-    /**
      * 获取子机工作状态
      */
     public void getDeviceState() {
@@ -434,6 +418,25 @@ public class SportPresent implements SportContract.Presenter {
         sportTimerManger.getDeviceState(deviceId, SettingHelper.getSystemSetting().getHostId());
     }
 
+
+    /**
+     * @param students
+     * @param context
+     * @param results
+     * @param trackNoMap 序号集合
+     */
+    public void print(List<Student> students, Context context, Map<Student, List<RoundResult>> results, Map<Student, Integer> trackNoMap) {
+
+    }
+
+
+    public void showStudent(LinearLayout llStuDetail, Student student, int testNo) {
+        RoundResult result = DBManager.getInstance().queryBestScore(student.getStudentCode(), testNo);
+        InteractUtils.showStuInfo(llStuDetail, student, result);
+    }
+
+
+
     //获取缓冲区成绩
     public void getDeviceCacheResult(int deviceId, int resultIndex) {
         setPause(true);
@@ -448,6 +451,7 @@ public class SportPresent implements SportContract.Presenter {
     private void setPause(boolean pause) {
         this.pause = pause;
     }
+
 
     public void printResult(Student student, List<String> results, int current, int max, int groupNo) {
         if (!SettingHelper.getSystemSetting().isAutoPrint() || current != max)

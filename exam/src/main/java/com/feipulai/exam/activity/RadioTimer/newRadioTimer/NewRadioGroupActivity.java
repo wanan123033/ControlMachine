@@ -176,7 +176,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 mAdapter.notifyDataSetChanged();
             }
         });
-        setView(false);
+        setView(new boolean[]{true,false,false,false,false,true});
         if (runTimerSetting.getInterceptPoint() == 3) {
             sportPresent = new SportPresent(this, (runNum * 2));
         } else {
@@ -242,13 +242,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         }
     }
 
-    private void setView(boolean enable) {
-        tvWaitStart.setSelected(!enable);
-        tvWaitReady.setSelected(enable);
-        tvFaultBack.setSelected(enable);
-        tvForceStart.setSelected(enable);
-        tvMarkConfirm.setSelected(enable);
-        tvDetail.setSelected(!enable);
+    private void setView(boolean[]  enable) {
+        tvWaitStart.setEnabled(enable[0]);
+        tvWaitReady.setEnabled(enable[1]);
+        tvFaultBack.setEnabled(enable[2]);
+        tvForceStart.setEnabled(enable[3]);
+        tvMarkConfirm.setEnabled(enable[4]);
+        tvDetail.setEnabled(enable[5]);
     }
 
     /**
@@ -382,8 +382,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     runStudent.setIndependentTime(0);
                 }
                 mAdapter.notifyDataSetChanged();
-                setView(true);
-                tvMarkConfirm.setSelected(false);
+                setView(new boolean[]{false,true,true,true,false,false});
                 if (tvWaitStart.getVisibility() == View.VISIBLE) {
                     playUtils.play(13);//播放各就各位
                 }
@@ -418,7 +417,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 testing = false;
                 LogUtils.operation("红外计时点击了违规返回");
                 sportPresent.setDeviceStateStop();
-                setView(false);
+                setView(new boolean[]{true,false,false,false,false,true});
                 timerKeeper.stopKeepTime();
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
@@ -737,7 +736,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     tvRunState.setText("计时");
                     break;
                 case RUN_STOP:
-                    setView(false);
+                    setView(new boolean[]{true,false,false,false,false,true});
                     tvRunState.setText("空闲");
                     break;
                 case RUN_RESULT:

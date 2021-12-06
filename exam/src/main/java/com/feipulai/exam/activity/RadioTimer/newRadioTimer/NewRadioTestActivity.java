@@ -160,7 +160,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         sportPresent.rollConnect();
         sportPresent.setContinueRoll(true);
         testState = TestState.UN_STARTED;
-        setView(false);
+        setView(new boolean[]{true,false,false,false,false,true});
 
         PopAdapter popAdapter = new PopAdapter(marks);
         resultPopWindow = new ResultPopWindow(this, popAdapter);
@@ -251,13 +251,14 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         resultPopWindow.showPopOrDismiss(view);
     }
 
-    private void setView(boolean enable) {
-        tvWaitStart.setSelected(!enable);
-        tvWaitReady.setSelected(enable);
-        tvFaultBack.setSelected(enable);
-        tvForceStart.setSelected(enable);
-        tvMarkConfirm.setSelected(enable);
-        tvDetail.setSelected(!enable);
+
+    private void setView(boolean[]  enable) {
+        tvWaitStart.setEnabled(enable[0]);
+        tvWaitReady.setEnabled(enable[1]);
+        tvFaultBack.setEnabled(enable[2]);
+        tvForceStart.setEnabled(enable[3]);
+        tvMarkConfirm.setEnabled(enable[4]);
+        tvDetail.setEnabled(enable[5]);
     }
 
     @Override
@@ -366,7 +367,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         startTime = System.currentTimeMillis() + "";
         sportPresent.clearLed(1);
         timerTask.setStart();
-
     }
 
     @Override
@@ -519,8 +519,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     runStudent.getResultList().clear();
                 }
                 adapter.notifyDataSetChanged();
-                setView(true);
-                tvMarkConfirm.setSelected(false);
+                setView(new boolean[]{false,true,true,true,false,false});
                 if (tvWaitStart.getVisibility() == View.VISIBLE) {
                     playUtils.play(13);//播放各就各位
                 }
@@ -538,13 +537,12 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
-                tvWaitReady.setSelected(false);
                 break;
             case R.id.tv_fault_back:
                 testing = false;
                 timerTask.stopKeepTime();
                 sportPresent.setDeviceStateStop();
-                setView(false);
+                setView(new boolean[]{true,false,false,false,false,true});
                 for (RunStudent runStudent : mList) {
                     if (runStudent == null) {
                         continue;
@@ -620,7 +618,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 public void run() {
                     finish();
                 }
-            },5000);
+            },3000);
 
         }
     }
@@ -651,15 +649,11 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case RUN_START:
-
-                    tvWaitStart.setSelected(false);
-                    tvWaitReady.setSelected(false);
-                    tvForceStart.setSelected(false);
-                    tvMarkConfirm.setSelected(true);
+                    setView(new boolean[]{false,false,true,false,true,false});
                     tvRunState.setText("计时");
                     break;
                 case RUN_STOP:
-                    setView(false);
+                    setView(new boolean[]{true,false,false,false,false,true});
                     tvRunState.setText("空闲");
                     break;
                 case RUN_RESULT:
@@ -673,7 +667,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(msg.arg1, false));
                     break;
                 case RUN_UPDATE_VIEW_VISIBLE:
-                    setView(true);
                     break;
             }
             return false;
