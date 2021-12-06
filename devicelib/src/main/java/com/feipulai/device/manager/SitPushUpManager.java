@@ -108,7 +108,7 @@ public class SitPushUpManager {
         buf[7] = 0x0b;      //命令
         buf[8] = (byte) (targetChannel & 0xff); //高字节在先
         buf[9] = 4;
-        buf[10] = 0;
+        buf[10] = (byte) (hostId&0xff);
         buf[11] = 0;
         buf[12] = 0;
         for (int i = 2; i < 13; i++) {

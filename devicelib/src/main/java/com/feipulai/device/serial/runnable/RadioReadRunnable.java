@@ -131,7 +131,7 @@ public class RadioReadRunnable extends SerialReadRunnable {
                     LogUtils.serial("心跳包返回数据:" + StringUtility.bytesToHexString(data));
                     msg.arg1 = data[0] & 0xff;//充电状态
                     msg.arg2 = data[1] & 0xff;//电量百分比
-                    msg.obj = data[9] & 0xff;//当前频率
+//                    msg.obj = data[9] & 0xff;//当前频率
                     msg.what = SerialConfigs.CONVERTER_KWH_RESPONSE;
                     break;
             }
