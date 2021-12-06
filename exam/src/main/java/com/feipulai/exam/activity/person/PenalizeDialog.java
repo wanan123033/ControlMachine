@@ -336,7 +336,7 @@ public class PenalizeDialog {
             roundResult.setRoundNo(roundResultList.size() + 1);
             roundResult.setIsLastResult(0);
             roundResult.setUpdateState(0);
-            roundResult.setResult(-999);
+            roundResult.setResult(0);
             roundResult.setResultState(resultState);
             roundResult.setTestTime(System.currentTimeMillis() + "");
             roundResult.setEndTime(System.currentTimeMillis() + "");
