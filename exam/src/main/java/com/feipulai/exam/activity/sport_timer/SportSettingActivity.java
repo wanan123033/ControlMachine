@@ -26,6 +26,7 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
 import com.feipulai.exam.activity.sport_timer.pair.SportPairActivity;
 import com.feipulai.exam.config.TestConfigs;
+import com.feipulai.exam.db.DBManager;
 
 import java.util.Calendar;
 
@@ -164,6 +165,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
             setting.setMinEidit(Integer.parseInt(etTestMin.getText().toString().trim()));
         }
         stm.setMinTime(SettingHelper.getSystemSetting().getHostId(),setting.getMinEidit());
+        DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
         SharedPrefsUtil.save(this, setting);
     }
 
