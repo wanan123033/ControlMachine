@@ -103,7 +103,7 @@
                 android:layout_toRightOf="@+id/tv_fault_back"
                 android:background="@drawable/selector_ready"
                 android:paddingTop="15dp"
-                android:drawableTop="@mipmap/ready"
+                android:drawableTop="@mipmap/icon_detail"
                 android:text="设备详情" />
             <TextView
                 android:id="@+id/tv_force_start"

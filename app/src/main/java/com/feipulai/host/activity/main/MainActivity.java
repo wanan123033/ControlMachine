@@ -161,7 +161,11 @@ public class MainActivity extends BaseActivity {
                 showTestName();
             }
         });
-        showTestName();
+        try{
+            showTestName();
+        }catch (Exception e){
+            toastSpeak("项目选择错误,请重选");
+        }
         if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
             MachineCode.machineCode = machineCode;
         }

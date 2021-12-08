@@ -184,23 +184,29 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     @Override
     protected void onResume() {
         super.onResume();
-        machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
-                .DEFAULT_MACHINE_CODE);
-        String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
-        int initState = TestConfigs.init(this, machineCode, itemCode, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showTestName();
+        try {
+            machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
+                    .DEFAULT_MACHINE_CODE);
+            String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+            int initState = TestConfigs.init(this, machineCode, itemCode, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showTestName();
+                }
+            });
+            showTestName();
+            if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
+                MachineCode.machineCode = machineCode;
             }
-        });
-        showTestName();
-        if (initState != TestConfigs.INIT_NO_MACHINE_CODE) {
-            MachineCode.machineCode = machineCode;
+            //所有界面在此关闭tcp上传线程（待测试）
+            if (ServerMessage.subscriber0 != null) {
+                ServerMessage.subscriber0.stopSendTcpThread();
+            }
+        }catch (Exception e){
+            Log.i("wrong",e.getMessage());
+            toastSpeak("项目选择错误,请重选");
         }
-        //所有界面在此关闭tcp上传线程（待测试）
-        if (ServerMessage.subscriber0 != null) {
-            ServerMessage.subscriber0.stopSendTcpThread();
-        }
+
 //        testUpload();
 
 //        createFile();

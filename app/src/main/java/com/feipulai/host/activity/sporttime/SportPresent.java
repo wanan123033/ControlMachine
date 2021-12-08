@@ -57,7 +57,7 @@ public class SportPresent implements SportContract.Presenter {
     //    private volatile int[] timeState;
     private LEDManager mLEDManager;
     //    private ScheduledExecutorService checkService;
-    private ExecutorService service = Executors.newFixedThreadPool(3);
+    private ExecutorService service = Executors.newCachedThreadPool();
     //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     public boolean keepTime;//是否开始计时
     private boolean pause;//暂停
@@ -65,7 +65,7 @@ public class SportPresent implements SportContract.Presenter {
     private static final String TAG = "SportPresent";
     private static final int INTERVAL = 200;
     private static final int DISCONNECT_COUNT = 10;
-
+    private volatile int wait_stop_flag = -1;
     public SportPresent(SportContract.SportView sportView, int deviceCount) {
         mLEDManager = new LEDManager();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
@@ -90,7 +90,8 @@ public class SportPresent implements SportContract.Presenter {
 //        sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), getTime());//向所有子机发同步时间
 //            checkService.scheduleWithFixedDelay(checkRun, 1000, 1000, TimeUnit.MILLISECONDS);
             connect = true;
-            service.execute(checkRun);
+
+            service.submit(checkRun);
             Thread.sleep(100);
             getDeviceTime(1);
         } catch (InterruptedException e) {
@@ -147,6 +148,30 @@ public class SportPresent implements SportContract.Presenter {
 
             }
 
+            if (wait_stop_flag == 0){
+                try {
+                    Thread.sleep(500);
+                    sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+                    Thread.sleep(500);
+                    sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+                    wait_stop_flag = -1;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (wait_stop_flag == 1){
+                try {
+                    Thread.sleep(500);
+                    sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+                    Thread.sleep(500);
+                    sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+                    wait_stop_flag = -1;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 
@@ -178,15 +203,16 @@ public class SportPresent implements SportContract.Presenter {
             }
             synKeep = -1;
             setRunState(1);
-            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
-            Thread.sleep(500);
             for (int i = 0; i < connectState.length; i++) {
                 sendIndex[i] = 1;
             }
-            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
-            Thread.sleep(500);
-            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
-        } catch (InterruptedException e) {
+            wait_stop_flag = 0;
+//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+//            Thread.sleep(500);
+//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+//            Thread.sleep(500);
+//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         getDeviceState();
@@ -199,12 +225,13 @@ public class SportPresent implements SportContract.Presenter {
             setRunState(0);
             setPause(false);
             keepTime = false;
-            Thread.sleep(1000);
-            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
-            Thread.sleep(100);
-            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+            wait_stop_flag = 1;
+//            Thread.sleep(1000);
+//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+//            Thread.sleep(100);
+//            sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
             getDeviceState();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -217,6 +244,7 @@ public class SportPresent implements SportContract.Presenter {
 //        }
         connect = false;
         keepTime = false;
+        wait_stop_flag = -1;
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
         try {
 //            if (checkService != null)

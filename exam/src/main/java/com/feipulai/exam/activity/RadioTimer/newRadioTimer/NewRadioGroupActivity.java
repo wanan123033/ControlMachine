@@ -244,6 +244,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         }
     }
 
+    /**
+     * 对应机器 等待0、预备1、违规返回2、强启3、成绩确认4、设备详情5。
+     * @param enable
+     */
     private void setView(boolean[]  enable) {
         tvWaitStart.setEnabled(enable[0]);
         tvWaitReady.setEnabled(enable[1]);
@@ -414,7 +418,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             case R.id.tv_wait_ready://预备
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
-                tvWaitReady.setSelected(false);
+                setView(new boolean[]{false,false,true,true,false,false});
                 break;
             case R.id.tv_fault_back://违规返回
                 testing = false;

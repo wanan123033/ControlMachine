@@ -74,7 +74,7 @@
             android:id="@+id/tv_wait_start"
             style="@style/style_run_timer_text"
             android:layout_marginRight="@dimen/dp_10"
-            android:background="@drawable/selector_blue_grey"
+            android:background="@drawable/selector_wait"
             android:drawableTop="@mipmap/wait"
             android:paddingTop="15dp"
             android:text="等待发令" />
@@ -84,7 +84,7 @@
             style="@style/style_run_timer_text"
             android:layout_marginRight="@dimen/dp_10"
             android:layout_toRightOf="@+id/tv_wait_start"
-            android:background="@drawable/selector_blue_grey"
+            android:background="@drawable/selector_ready"
             android:drawableTop="@mipmap/ready"
             android:paddingTop="15dp"
             android:text="预备" />
@@ -94,7 +94,7 @@
             style="@style/style_run_timer_text"
             android:layout_marginRight="@dimen/dp_10"
             android:layout_toRightOf="@+id/tv_wait_ready"
-            android:background="@drawable/selector_yellow_grey"
+            android:background="@drawable/selector_fault"
             android:drawableTop="@mipmap/fault"
             android:paddingTop="15dp"
             android:text="违规返回" />
@@ -104,8 +104,8 @@
             style="@style/style_run_timer_text"
             android:layout_marginRight="@dimen/dp_10"
             android:layout_toRightOf="@+id/tv_fault_back"
-            android:background="@drawable/selector_blue_grey"
-            android:drawableTop="@mipmap/ready"
+            android:background="@drawable/selector_ready"
+            android:drawableTop="@mipmap/icon_detail"
             android:paddingTop="15dp"
             android:text="设备详情" />
 
@@ -113,7 +113,7 @@
             android:id="@+id/tv_force_start"
             style="@style/style_run_timer_text"
             android:layout_toRightOf="@+id/tv_device_detail"
-            android:background="@drawable/selector_red_grey"
+            android:background="@drawable/selector_force"
             android:drawableTop="@mipmap/force"
             android:paddingTop="15dp"
             android:text="强制启动" />
@@ -123,7 +123,7 @@
             style="@style/style_run_timer_text"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/dp_10"
-            android:background="@drawable/selector_green_grey"
+            android:background="@drawable/selector_confirm"
             android:drawableTop="@mipmap/confirm"
             android:paddingTop="15dp"
             android:text="成绩确认" />
