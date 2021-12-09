@@ -422,6 +422,53 @@ public class SitPushUpManager {
         LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---手臂检测指令");
     }
 
+    public void syncTime(int hostId, int time,int show){
+        byte data[] = new byte[16];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 16;
+        data[2] = (byte) 0x05;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) 0xFF;
+        data[7] = (byte) 1;
+
+        data[8] = (byte) (time >> 24 & 0xff);
+        data[9] = (byte) (time >> 16 & 0xff);
+        data[10] = (byte) (time >> 8 & 0xff);
+        data[11] = (byte) (time & 0xff);
+
+        data[12] = (byte) show;
+        data[13] = 0;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[14] += data[i];
+        }
+        data[15] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("仰卧起坐肩胛同步时间:" + StringUtility.bytesToHexString(data));
+    }
+
+    public void getTime(int deviceId, int hostId){
+        byte data[] = new byte[13];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 13;
+        data[2] = (byte) 0x05;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) deviceId;
+        data[7] = (byte) 2;
+        data[8] = (byte) 0x00;
+        data[9] = (byte) 0x00;
+        data[10] = (byte) 0x00;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[11] += data[i];
+        }
+        data[12] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("仰卧起坐肩胛获取时间:" + StringUtility.bytesToHexString(data));
+    }
+
     /**
      * 结束测试
      */
