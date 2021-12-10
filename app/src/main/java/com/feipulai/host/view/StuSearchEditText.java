@@ -133,19 +133,25 @@ public class StuSearchEditText extends RelativeLayout {
         addView(view);
 //        setInputType(EditorInfo.TYPE_CLASS_TEXT);
 //        setImeOptions(EditorInfo.IME_ACTION_GO);
+        //todo 与扫描枪扫描查询冲突重檢入
         etInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    if (!TextUtils.isEmpty(etInputText.getText().toString())) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                search();
-                            }
-                        }, 200);
+                    if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
+                        etInputText.setText("");
+                        showInput(false);
+                        return true;
                     }
+//                    if (!TextUtils.isEmpty(etInputText.getText().toString())) {
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                search();
+//                            }
+//                        }, 200);
+//                    }
                     return true;
                 }
                 return false;

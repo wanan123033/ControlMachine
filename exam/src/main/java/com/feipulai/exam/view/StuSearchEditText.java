@@ -141,16 +141,21 @@ public class StuSearchEditText extends RelativeLayout {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    if (!TextUtils.isEmpty(etInputText.getText().toString())
-                            && SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                search();
-                            }
-                        }, 200);
+                    if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
+                        etInputText.setText("");
+                        showInput(false);
+                        return true;
                     }
+//                    if (!TextUtils.isEmpty(etInputText.getText().toString())
+//                            && SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
+//
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                search();
+//                            }
+//                        }, 200);
+//                    }
                     return true;
                 }
                 return false;
