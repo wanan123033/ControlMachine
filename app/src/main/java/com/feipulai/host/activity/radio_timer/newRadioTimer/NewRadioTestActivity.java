@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
@@ -745,15 +746,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //        msg.arg1 = time;
 //        mHandler.sendMessage(msg);
         EventBus.getDefault().post(new BaseEvent(time, EventConfigs.UPDATE_TIME));
-//        if (testState == TestState.WAIT_RESULT){
-//            String formatTime ;
-//            if (time<60*60*1000){
-//                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
-//            }else {
-//                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
-//            }
-//            sportPresent.showLedString(formatTime);
-//        }
+        if (testState == TestState.WAIT_RESULT){
+            String formatTime ;
+            if (time<60*60*1000){
+                formatTime = DateUtil.formatTime1(time, "mm:ss.S");
+            }else {
+                formatTime = DateUtil.formatTime1(time, "HH:mm:ss");
+            }
+            sportPresent.showLedString(formatTime);
+        }
 
     }
 
