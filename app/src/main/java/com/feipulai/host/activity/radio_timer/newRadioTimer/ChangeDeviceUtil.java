@@ -126,7 +126,7 @@ public class ChangeDeviceUtil implements RadioManager.OnRadioArrivedListener, Ra
 
     public void release(){
         if (checkService!=null){
-            checkService.shutdown();
+            checkService.shutdownNow();
         }
         if (linker!=null){
             linker.cancelPair();

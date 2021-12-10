@@ -662,8 +662,8 @@ public class SportPresent implements SportContract.Presenter {
      * @param runs
      */
     public void setShowLed(List<RunStudent> runs) {
-//        MyRunnable r = new MyRunnable(runs);
-//        service.submit(r);
+        MyRunnable r = new MyRunnable(runs);
+        service.submit(r);
     }
 
     public void clearLed(int t) {
@@ -744,8 +744,8 @@ public class SportPresent implements SportContract.Presenter {
     }
 
     public void showReadyLed(List<RunStudent> runs) {
-//        ShowReady r = new ShowReady(runs);
-//        service.submit(r);
+        ShowReady r = new ShowReady(runs);
+        service.submit(r);
     }
 
     private class ShowReady implements Runnable {
