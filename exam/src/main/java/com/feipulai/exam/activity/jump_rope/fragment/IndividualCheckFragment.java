@@ -334,6 +334,7 @@ public class IndividualCheckFragment
         if (needAdd) {
             Student student = new Student();
             student.setIdCardNo(idCardInfo.getId());
+            student.setStudentName(idCardInfo.getName());
             showAddHint(student);
         }
     }

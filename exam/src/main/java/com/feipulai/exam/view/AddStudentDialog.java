@@ -22,6 +22,7 @@ import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -179,12 +180,17 @@ public class AddStudentDialog {
         //}
         return true;
     }
-
+    private Student student;
     private void addStudent() {
-        Student student = new Student();
+        if (student == null){
+            student = new Student();
+        }
         student.setStudentCode(editStuCode.getText().toString());
         student.setStudentName(editStuName.getText().toString());
         student.setSex(sex);
+        if (!TextUtils.isEmpty(student.getIdCardNo())){
+            student.setIdCardNo(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, student.getIdCardNo()));
+        }
         try {
             // 插入学生信息
             DBManager.getInstance().insertStudent(student);
@@ -215,6 +221,7 @@ public class AddStudentDialog {
     public void showDialog(Student student, Boolean isCanceledOnTouchOutside) {
         if (student == null)
             return;
+        this.student = student;
         editStuCode.setText(student.getStudentCode());
         editStuName.setText(student.getStudentName());
         spStuSex.setSelection(student.getSex());
@@ -242,6 +249,7 @@ public class AddStudentDialog {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
+        student = null;
     }
 
     /**
