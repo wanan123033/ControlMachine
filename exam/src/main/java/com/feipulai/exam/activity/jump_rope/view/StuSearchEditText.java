@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -148,7 +149,11 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
                 if (actionId == EditorInfo.IME_ACTION_GO
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-
+                    if (SettingHelper.getSystemSetting().getCheckTool() == 3) {
+                        etInputText.setText("");
+                        showInput(false);
+                        return true;
+                    }
                     if (TextUtils.isEmpty(v.getText().toString().trim())) {
                         return true;
                     }
@@ -161,7 +166,7 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 //                        mLvResults.setAdapter(adapter);
 //                        mLvResults.setVisibility(View.VISIBLE);
 //                    }
-                    search(etInputText.getText().toString());
+//                    search(etInputText.getText().toString());
 
 
                     return true;
@@ -257,6 +262,25 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
             case R.id.txt_search:
                 search(etInputText.getText().toString());
                 break;
+        }
+    }
+    /**
+     * 是否关闭键盘
+     *
+     * @param show true 显示， false 关闭键盘
+     */
+    public void showInput(boolean show) {
+        try {
+            if (show) {
+                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInputFromInputMethod(etInputText.getApplicationWindowToken(), 0);
+            } else {
+                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etInputText.getApplicationWindowToken(), 0);
+            }
+        } catch (NullPointerException e1) {
+
+        } catch (Exception e) {
         }
     }
 }

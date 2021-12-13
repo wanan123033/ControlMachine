@@ -8,14 +8,14 @@
   },
   {
     "name": "RS232",
-    "serial": "/dev/ttyS2",
+    "serial": "/dev/ttyS3",
     "baud": 115200,
     "type": "serial",
     "versions": 3
   },
   {
     "name": "RADIO",
-    "serial": "/dev/ttyS2",
+    "serial": "/dev/ttyS3",
     "baud": 115200,
     "type": "serial",
     "versions": 3
@@ -36,7 +36,7 @@
   },
   {
     "name": "PRINTER",
-    "serial": "/dev/ttyS2",
+    "serial": "/dev/ttyS3",
     "baud": 115200,
     "type": "serial",
     "versions": 3
