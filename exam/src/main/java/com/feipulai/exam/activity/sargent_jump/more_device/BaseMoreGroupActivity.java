@@ -1314,7 +1314,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         }
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,baseStuPair.getStudent().getStudentCode());
+        if (group.getExamType() == StudentItem.EXAM_MAKE){
+            roundResult.setExamType(group.getExamType());
+        }else {
+            roundResult.setExamType(groupItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
@@ -1353,9 +1358,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 , "1", group, RoundResultBean.beanCope(roundResultList, group));
 
         uploadResult(uploadResults);
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),roundResult.getStudentCode());
 
-        if (studentItem != null && studentItem.getExamType() == 2){
+        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE){
             toSkip(stuAdapter.getTestPosition());
         }
     }

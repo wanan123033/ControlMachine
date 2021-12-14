@@ -10,6 +10,7 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.StudentCache;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -86,6 +87,7 @@ public class DeviceDispatchers {
                 index = -1;
             }
             Student student = nextStudent();
+
             pair.setStudent(student);
             if (student == null) {
                 continue;
@@ -107,19 +109,37 @@ public class DeviceDispatchers {
 
         Student student = students.get(index);
         Log.e("TAG---79",student.toString());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        int testPattern = SettingHelper.getSystemSetting().getTestPattern();
+        if (testPattern == SystemSetting.PERSON_PATTERN) {
+            StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
 
-        if (studentItem != null && studentItem.getExamType() == 2){
-            List<RoundResult> results = TestCache.getInstance().getResults().get(student);
-            if (results == null || results.isEmpty()){
-                return student;
-            }else {
-                return nextStudent();
+            if (studentItem != null && studentItem.getExamType() == StudentItem.EXAM_MAKE) {
+                List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+                if (results == null || results.isEmpty()) {
+                    return student;
+                } else {
+                    return nextStudent();
+                }
+            } else {
+                List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+                if (results == null || results.size() < testNo) {
+                    return student;
+                }
             }
         }else {
-            List<RoundResult> results = TestCache.getInstance().getResults().get(student);
-            if (results == null || results.size() < testNo){
-                return student;
+            GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+            if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
+                List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+                if (results == null || results.isEmpty()) {
+                    return student;
+                } else {
+                    return nextStudent();
+                }
+            } else {
+                List<RoundResult> results = TestCache.getInstance().getResults().get(student);
+                if (results == null || results.size() < testNo) {
+                    return student;
+                }
             }
         }
         return null;

@@ -19,10 +19,12 @@ import com.feipulai.common.utils.LogUtil;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.adapter.PenalizeResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -320,14 +322,21 @@ public class PenalizeDialog {
         //如果是空值判罚应该增加一个值 包含groupId?
         if (resultState != RoundResult.RESULT_STATE_NORMAL && mAdapter.getClick() >= roundResultList.size()) {
             RoundResult roundResult = new RoundResult();
-            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
+            SystemSetting systemSetting = SettingHelper.getSystemSetting();
+            if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN){
+                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
+                roundResult.setExamType(studentItem.getExamType());
+                roundResult.setScheduleNo(studentItem.getScheduleNo());
+            }else {
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(),queryStudent.getStudentCode());
+                roundResult.setExamType(groupItem.getExamType());
+                roundResult.setScheduleNo(groupItem.getScheduleNo());
+            }
             roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
             roundResult.setStudentCode(queryStudent.getStudentCode());
             roundResult.setItemCode(TestConfigs.getCurrentItemCode());
             roundResult.setMachineResult(0);
             roundResult.setTestNo(1);
-            roundResult.setExamType(studentItem.getExamType());
-            roundResult.setScheduleNo(studentItem.getScheduleNo());
             roundResult.setUpdateState(0);
             roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
             if (getGroupId() != -1) {

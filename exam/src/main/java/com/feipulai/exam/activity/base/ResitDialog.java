@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +12,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScoreAdapter;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -47,6 +45,7 @@ public class ResitDialog extends DialogFragment{
     private ScoreAdapter adapter;
     private int selectPos;
     private SystemSetting systemSetting;
+    private GroupItem groupItem;
 
     @Nullable
     @Override
@@ -60,6 +59,11 @@ public class ResitDialog extends DialogFragment{
         this.student = student;
         this.results = results;
         this.studentItem = studentItem;
+    }
+    public void setArguments(Student student, List<RoundResult> results, GroupItem groupItem) {
+        this.student = student;
+        this.results = results;
+        this.groupItem = groupItem;
     }
     public void setOnIndividualCheckInListener(onClickQuitListener listener){
         this.listener = listener;
@@ -95,19 +99,33 @@ public class ResitDialog extends DialogFragment{
                 if (systemSetting.getResitPassBool()){
                     String pass = et_password.getText().toString().trim();
                     if (pass.equals(systemSetting.getResitPass())){
-                        studentItem.setExamType(2);
-                        DBManager.getInstance().updateStudentItem(studentItem);
-                        results.clear();
-                        listener.onCommit(student, studentItem, results,0);
+                        if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                            studentItem.setExamType(StudentItem.EXAM_MAKE);
+                            DBManager.getInstance().updateStudentItem(studentItem);
+                            results.clear();
+                            listener.onCommitPattern(student, studentItem, results, 0);
+                        }else {
+                            groupItem.setExamType(StudentItem.EXAM_MAKE);
+                            DBManager.getInstance().updateGroupItem(groupItem);
+                            results.clear();
+                            listener.onCommitGroup(student, groupItem, results, 0);
+                        }
                         dismiss();
                     }else {
                         Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
                     }
                 }else {
-                    studentItem.setExamType(2);
-                    DBManager.getInstance().updateStudentItem(studentItem);
-                    results.clear();
-                    listener.onCommit(student, studentItem, results,0);
+                    if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                        studentItem.setExamType(2);
+                        DBManager.getInstance().updateStudentItem(studentItem);
+                        results.clear();
+                        listener.onCommitPattern(student, studentItem, results, 0);
+                    }else {
+                        groupItem.setExamType(StudentItem.EXAM_MAKE);
+                        DBManager.getInstance().updateGroupItem(groupItem);
+                        results.clear();
+                        listener.onCommitGroup(student, groupItem, results, 0);
+                    }
                     dismiss();
                 }
 
@@ -119,6 +137,8 @@ public class ResitDialog extends DialogFragment{
 
     public interface onClickQuitListener{
         void onCancel();
-        void onCommit(Student student,StudentItem studentItem,List<RoundResult> results,int roundNo);
+        void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo);
+
+        void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo);
     }
 }

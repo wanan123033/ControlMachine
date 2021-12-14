@@ -79,7 +79,7 @@ public abstract class AbstractRadioCheckActivity<Setting>
         }
 
         @Override
-        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results,int roundNo) {
+        public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
             presenter.onIndividualCheckIn(student, studentItem, results);
             presenter.setRoundNo(student, roundNo);
         }

@@ -2505,7 +2505,7 @@ public class DBManager {
     public List<Group> getGroupByScheduleNo(String scheduleNo) {
         return groupDao.queryBuilder()
                 .where(GroupDao.Properties.ScheduleNo.eq(scheduleNo))
-                .where(GroupDao.Properties.ItemCode.eq(TestConfigs.sCurrentItem.getItemCode()))
+                .where(GroupDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .list();
     }
 
@@ -2715,6 +2715,25 @@ public class DBManager {
                     .unique();
         }
     }
+
+    /**
+     *
+     * @param itemCode
+     * @param studentCode
+     * @return
+     */
+    public GroupItem getItemStuGroupItem(String itemCode, String studentCode) {
+        List<GroupItem> groupItems = groupItemDao.queryBuilder()
+                .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
+                .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
+                .list();
+        for (GroupItem groupItem : groupItems){
+            if (groupItem.getExamType() == StudentItem.EXAM_MAKE){
+                return groupItem;
+            }
+        }
+        return groupItems.get(0);
+    }
 //    public GroupItem getItemStuGroupItem(Group group, String studentCode) {
 //        return groupItemDao.queryBuilder()
 //                .where(GroupItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -2885,5 +2904,9 @@ public class DBManager {
 
     public void saveSchedules(List<Schedule> schedules) {
         scheduleDao.insertInTx(schedules);
+    }
+
+    public void updateGroupItem(GroupItem groupItem) {
+        groupItemDao.updateInTx(groupItem);
     }
 }

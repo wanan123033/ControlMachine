@@ -42,6 +42,7 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -364,7 +365,7 @@ public abstract class BaseCheckActivity
             return false;
         }
         final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) {
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount()) {
             SystemSetting setting = SettingHelper.getSystemSetting();
             if (setting.isAgainTest() && setting.isResit()) {
                 final Student finalStudent = student;
@@ -594,7 +595,7 @@ public abstract class BaseCheckActivity
     }
 
     @Override
-    public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+    public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
         onIndividualCheckIn(student, studentItem, results);
         setRoundNo(student, roundNo);
     }
@@ -795,5 +796,10 @@ public abstract class BaseCheckActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
+
     }
 }

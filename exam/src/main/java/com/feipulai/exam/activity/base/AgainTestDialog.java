@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +15,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.jump_rope.bean.TestCache;
-import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScoreAdapter;
@@ -28,8 +25,6 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.Toast;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,7 +108,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
                         results.remove(selectPos);
-                        listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
+                        listener.onCommitPattern(student, studentItem, results,roundResult.getRoundNo());
                         dismiss();
                     }else {
                         Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
@@ -127,7 +122,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
                     results.remove(selectPos);
-                    listener.onCommit(student, studentItem, results,roundResult.getRoundNo());
+                    listener.onCommitPattern(student, studentItem, results,roundResult.getRoundNo());
                     dismiss();
                 }
 

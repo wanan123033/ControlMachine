@@ -47,6 +47,7 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -298,12 +299,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
-        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
-            stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
-        }
+
         int isTestComplete = group.getIsTestComplete();
         if (isTestComplete == Group.NOT_TEST) {
             group.setIsTestComplete(Group.NOT_FINISHED);
@@ -337,7 +333,8 @@ public class PushUpGroupActivity extends BaseTitleActivity
 //        }
 
         dispatch(isAllTest);
-        if (studentItem!=null&&studentItem.getExamType() == 2){
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
+        if (groupItem!=null&&groupItem.getExamType() == StudentItem.EXAM_MAKE){
             if (nextPosition() != -1)
                 switchToPosition(nextPosition());
         }

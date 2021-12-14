@@ -67,6 +67,7 @@ import com.feipulai.exam.config.StudentCache;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
@@ -239,7 +240,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+                                public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+
+                                }
+
+                                @Override
+                                public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
                                     stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(0);
                                     stuPairsList.get(position).setCanTest(true);
@@ -262,7 +268,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 }
 
                                 @Override
-                                public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+                                public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+
+                                }
+
+                                @Override
+                                public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
                                     for (int i = 0; i < results.size(); i++) {
                                         RoundResult result = results.get(i);
                                         if (result.isDelete()) {

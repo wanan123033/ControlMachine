@@ -56,6 +56,7 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -279,10 +280,11 @@ public class InteractUtils {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-                roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
-                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-                if (studentItem != null){
-                    roundResult.setExamType(studentItem.getExamType());
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestCache.getInstance().getGroup(),student.getStudentCode());
+                if (TestCache.getInstance().getGroup().getExamType() == StudentItem.EXAM_MAKE){
+                    roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+                }else {
+                    roundResult.setExamType(groupItem.getExamType());
                 }
                 roundResult.setScheduleNo(TestCache.getInstance().getGroup().getScheduleNo());
             } else {

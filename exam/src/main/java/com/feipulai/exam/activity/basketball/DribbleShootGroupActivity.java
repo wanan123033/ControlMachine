@@ -41,6 +41,7 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
@@ -752,10 +753,11 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
             roundResult.setResultTestState(0);
         }
         roundResult.setTestNo(1);
-        roundResult.setExamType(group.getExamType());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem != null){
-            roundResult.setExamType(studentItem.getExamType());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
+        if (group.getExamType() == StudentItem.EXAM_MAKE){
+            roundResult.setExamType(group.getExamType());
+        }else {
+            roundResult.setExamType(groupItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
@@ -780,14 +782,10 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         LogUtils.operation("篮球确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
         //获取所有成绩设置为非最好成绩
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()){
-            stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
-        }
+
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
-        if (studentItem!=null&&studentItem.getExamType() == 2){
+        if (groupItem!=null&&groupItem.getExamType() == StudentItem.EXAM_MAKE){
             continuousTestNext();
         }
 

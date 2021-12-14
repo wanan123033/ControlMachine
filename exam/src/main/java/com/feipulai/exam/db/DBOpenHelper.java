@@ -7,6 +7,8 @@ import com.feipulai.exam.entity.ChipGroupDao;
 import com.feipulai.exam.entity.ChipInfoDao;
 import com.feipulai.exam.entity.DaoMaster;
 import com.feipulai.exam.entity.GroupDao;
+import com.feipulai.exam.entity.GroupItem;
+import com.feipulai.exam.entity.GroupItemDao;
 import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 import com.feipulai.exam.entity.RoundResultDao;
@@ -65,6 +67,9 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                 case 15:
                     MigrationHelper.migrate(db, RoundResultDao.class);
                     MigrationHelper.migrate(db, StudentItemDao.class);
+                    break;
+                case 16:
+                    MigrationHelper.migrate(db, GroupItemDao.class);
                     break;
 
             }

@@ -95,6 +95,7 @@ public class MachineSelectActivity extends BaseTitleActivity
             int init = TestConfigs.init(this, machineCode, null, this);
             if (init == TestConfigs.INIT_SUCCESS) {
                 systemSetting.setHostId(1);
+                systemSetting.setItemCode(TestConfigs.getCurrentItemCode());
                 SharedPrefsUtil.save(MachineSelectActivity.this, systemSetting);
                 ActivityCollector.getInstance().finishAllActivityExcept(MainActivity.class);
                 finish();

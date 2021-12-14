@@ -463,7 +463,7 @@ public class HttpSubscriber {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
                             GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
+                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0,groupBean.getExamType());
                             groupItemList.add(groupItem);
                         }
                     }
@@ -659,7 +659,7 @@ public class HttpSubscriber {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
                             GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0);
+                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0,groupBean.getExamType());
                             groupItemList.add(groupItem);
                         }
                     }

@@ -7,12 +7,14 @@ import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.printer.PrinterManager;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.entity.Student;
@@ -139,10 +141,11 @@ public class RunTimerDisposeManager {
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (studentItem != null){
-            roundResult.setExamType(studentItem.getExamType());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestCache.getInstance().getGroup(),student.getStudentCode());
+        if (TestCache.getInstance().getGroup().getExamType() == StudentItem.EXAM_MAKE){
+            roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
+        }else {
+            roundResult.setExamType(groupItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);

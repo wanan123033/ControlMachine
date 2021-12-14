@@ -1,6 +1,8 @@
 package com.feipulai.exam.activity.jump_rope.bean;
 
 import com.feipulai.device.serial.beans.IDeviceResult;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Student;
 
 import java.io.Serializable;

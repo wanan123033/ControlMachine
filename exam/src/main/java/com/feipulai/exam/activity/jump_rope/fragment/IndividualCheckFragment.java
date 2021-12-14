@@ -120,7 +120,7 @@ public class IndividualCheckFragment
         }
 
         @Override
-        public void onCommit(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+        public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
             if (listener != null) {
                 listener.onIndividualCheckIn(student, studentItem, results);
                 listener.setRoundNo(student, roundNo);

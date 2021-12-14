@@ -18,6 +18,7 @@ import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.basketball.motion.BasketBallMotionTestActivity;
+import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.sport_timer.bean.SportTestResult;
@@ -26,6 +27,7 @@ import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.RunStudent;
 import com.feipulai.exam.entity.Student;
@@ -878,7 +880,12 @@ public class SportPresent implements SportContract.Presenter {
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
+        if (group.getExamType() == StudentItem.EXAM_MAKE){
+            roundResult.setExamType(group.getExamType());
+        }else {
+            roundResult.setExamType(groupItem.getExamType());
+        }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());

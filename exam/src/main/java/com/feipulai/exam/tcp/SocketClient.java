@@ -7,12 +7,16 @@ import android.util.Base64;
 import android.util.Log;
 
 
+import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.MyApplication;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -261,7 +265,7 @@ public class SocketClient {
                         case EVENT:
 							Log.i("itemInfos", itemInfos.toString());
 
-//                            DBManager.getInstance().insertItem(itemInfos);
+                            DBManager.getInstance().insertItem(itemInfos);
                             break;
                         case TRACK:
 //                             DBManager.getInstance().insertStudent(studentInfos);
@@ -467,21 +471,37 @@ public class SocketClient {
 //                            FaceServer.getInstance().addFace(faceFeature);
 //                        }
                         GroupItem itemGroup = new GroupItem();
-                        itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
+                        Group group = new Group();
+                        SystemSetting systemSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(),SystemSetting.class);
+                        itemGroup.setItemCode(systemSetting.getItemCode());
+                        group.setItemCode(systemSetting.getItemCode());
                         if (m_strSort.contains("补")) {
                             itemGroup.setGroupType(1);
+                            group.setGroupType(1);
                         } else {
                             itemGroup.setGroupType(0);
+                            group.setGroupType(0);
                         }
                         itemGroup.setSortName(m_strSort);
+                        group.setSortName(m_strSort);
                         itemGroup.setGroupType(m_nSex);
+                        group.setGroupType(m_nSex);
+
                         itemGroup.setStudentCode(studentInfo.getStudentCode());
 //                itemGroup.setItemGroupName(m_strGameEventName);
                         itemGroup.setGroupNo(m_nGrp);
+                        group.setGroupNo(m_nGrp);
 //                itemGroup.setExamPlaceName(m_strExamSitePlace);
                         itemGroup.setScheduleNo(m_nField + "");
+                        group.setScheduleNo(m_nField+"");
 //                itemGroup.setSubItemCode("");
                         DBManager.getInstance().insertGroupItem(itemGroup);
+                        DBManager.getInstance().insertGroup(group);
+                        ItemSchedule itemSchedule = new ItemSchedule();
+                        itemSchedule.setScheduleNo(group.getScheduleNo());
+                        itemSchedule.setItemCode(group.getItemCode());
+                        DBManager.getInstance().insertItemSchedule(itemSchedule);
+                        Log.i("SocketClient", "JieXiStudentGroup" + itemGroup.toString());
                         Log.e("TAG",studentInfo.toString());
                         DBManager.getInstance().insertStudent(studentInfo);
                     } else {
@@ -533,6 +553,7 @@ public class SocketClient {
     }
 
     private void JieXiEvent(String[] result) {
+        Log.e("TAG","JieXiEvent===>"+Arrays.toString(result));
         if (result.length > 1) {
             m_nEventType = result[3];
             Log.i(TAG, "m_nEventType: " + m_nEventType);
@@ -553,6 +574,7 @@ public class SocketClient {
                 itemInfo.setItemCode(result[12]);
                 itemInfo.setTestType(m_nProperty);
                 itemInfos.add(itemInfo);
+
             }
         }
     }
@@ -574,8 +596,9 @@ public class SocketClient {
             if (m_nEventType.equals("2")) {
                 Schedule schedule = new Schedule();
                 schedule.setScheduleNo(String.valueOf(m_nScheduleNo));
-                schedule.setBeginTime(m_strTime);
+                schedule.setBeginTime(DateUtil.getTimeMillis(m_strTime,"yyyy-MM-dd HH:mm:ss")+"");
                 schedules.add(schedule);
+                DBManager.getInstance().insertSchedule(schedule);
             }
         }
     }

@@ -981,10 +981,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         Log.e("TAG", "round=" + roundResult.getRoundNo());
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        roundResult.setExamType(group.getExamType());
-        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), baseStuPair.getStudent().getStudentCode());
-        if (studentItem != null) {
-            roundResult.setExamType(studentItem.getExamType());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,baseStuPair.getStudent().getStudentCode());
+        if (group.getExamType() == StudentItem.EXAM_MAKE){
+            roundResult.setExamType(group.getExamType());
+        }else {
+            roundResult.setExamType(groupItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setUpdateState(0);
@@ -1017,15 +1018,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
-        SystemSetting setting = SettingHelper.getSystemSetting();
-        //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if (studentItem != null) {
-            if ((setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairsList.get(stuAdapter.getTestPosition()).isResit()) {
-                stuPairsList.get(stuAdapter.getTestPosition()).setResit(true);
-            }
-        }
         uploadServer(baseStuPair, roundResult);
-        if (studentItem != null && studentItem.getExamType() == 2) {
+        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
             //是否测试到最后一位
             continuousTest();
         }
