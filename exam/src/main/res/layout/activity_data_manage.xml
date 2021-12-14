@@ -38,8 +38,7 @@
         style="@style/txt_black_style"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:text="@string/afr_count_hint" />
+        android:layout_marginBottom="15dp"  />
     <LinearLayout
         android:layout_width="602dp"
         android:layout_height="405dp"

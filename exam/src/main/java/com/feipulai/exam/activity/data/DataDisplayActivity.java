@@ -404,7 +404,7 @@ public class DataDisplayActivity extends BaseTitleActivity implements BaseQuickA
     }
 
     private void uploadResult(UploadResults uploadResults) {
-        ServerMessage.uploadResult(this, uploadResults);
+        ServerMessage.baseUploadResult(this, uploadResults);
     }
 
     RoundResult currentResult;

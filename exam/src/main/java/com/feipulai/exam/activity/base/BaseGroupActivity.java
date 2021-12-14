@@ -762,7 +762,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //            ServerMessage.uploadResult(uploadResultsList);
 
         }
-        ServerMessage.uploadResult(this, uploadResultsList);
+        ServerMessage.baseUploadResult(this, uploadResultsList);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.feipulai.common.exl.ExlReader;
 import com.feipulai.common.exl.ExlReaderUtil;
 import com.feipulai.common.exl.GetReaderDataListener;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
@@ -28,6 +29,7 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.EncryptUtil;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,12 +147,12 @@ public class StuItemExLReader extends ExlReader {
         //  0场地	1组别	2性别	3准考证号	4姓名	5单位	6项目	7赛次	8场次	9分组	10道次或序号
         // 11考试时间	12编号	13小组号	14身份证号	15分组性别	16日程时间	17项目代码	18考试类型
         String stuCode = rowList.get(3);
-        String sex = rowList.get(2);
+        String sex = rowList.get(2).trim();
         String stuName = rowList.get(4);
         String itemName = rowList.get(6);
         String itemCode = rowList.get(17);
         String sessionNo = rowList.get(8);
-        String groupSex = rowList.get(15);
+        String groupSex = rowList.get(15).trim();
         String tranches = rowList.get(1);
         String groupNo = rowList.get(9);
         String scheduleTime = rowList.get(16);
@@ -167,16 +169,18 @@ public class StuItemExLReader extends ExlReader {
             }
             bean.setStudentCode(stuCode);
 
-            if ("男".equals(sex)) {
+            if ("男".contains(sex)) {
                 bean.setSex(Student.MALE);
-            } else if ("女".equals(sex)) {
+            } else if ("女".contains(sex)) {
                 bean.setSex(Student.FEMALE);
             } else {
                 // 不男不女
+                LogUtils.operation("EXL导入数据错误：" + rowList.toString());
                 return null;
             }
 
             if (TextUtils.isEmpty(stuName)) {
+                LogUtils.operation("EXL导入数据考生姓名空：" + rowList.toString());
                 return null;
             }
             bean.setStudentName(stuName);
@@ -186,6 +190,7 @@ public class StuItemExLReader extends ExlReader {
             }
             if (TextUtils.isEmpty(itemName) || !mItemName.equals(itemName)) {
                 // 表里面所有行的项目名必须相同
+                LogUtils.operation("EXL导入所有行的项目名必须相同：" + rowList.toString());
                 return null;
             }
             bean.setItemName(itemName);
@@ -195,6 +200,7 @@ public class StuItemExLReader extends ExlReader {
             }
             if (TextUtils.isEmpty(itemCode) || !mItemCode.equals(itemCode)) {
                 // 表里面所有行的项目代码必须相同
+                LogUtils.operation("EXL导入数据项目代码空：" + rowList.toString());
                 return null;
             }
             bean.setItemCode(itemCode);
@@ -205,7 +211,7 @@ public class StuItemExLReader extends ExlReader {
                 if (!TextUtils.isEmpty(idCardNo)) {
 
 
-                    bean.setIdCardNo(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY,idCardNo));
+                    bean.setIdCardNo(EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, idCardNo));
                 }
             }
 
@@ -222,7 +228,7 @@ public class StuItemExLReader extends ExlReader {
                     //混合
                     bean.setGroupSex(Group.MIXTURE);
                 } else {
-                    return null;
+                    LogUtils.operation("EXL导入分组姓别错误：" + rowList.toString());
                 }
 
                 if (TextUtils.isEmpty(tranches)) {

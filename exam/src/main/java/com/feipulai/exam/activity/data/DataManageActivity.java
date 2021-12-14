@@ -360,8 +360,8 @@ public class DataManageActivity
 
                     case 10://成绩上传
                         LogUtils.operation("用户点击了成绩上传...");
-
-                        showUploadDataDialog();
+                        IntentUtil.gotoActivity(DataManageActivity.this, DataUploadActivity.class);
+//                        showUploadDataDialog();
                         break;
                     case 11://数据导出
                         LogUtils.operation("用户点击了数据导出...");
@@ -683,29 +683,29 @@ public class DataManageActivity
     /**
      * 中长跑选择项目上传（和后面的上传更新逻辑有关，所以此处最好分项目上传)
      */
-    private void showZcpSelect(final boolean isUploadAll, final List<Item> itemList) {
-        //默认选中第一个
-        final String[] items = new String[itemList.size()];
-        for (int i = 0; i < itemList.size(); i++) {
-            items[i] = itemList.get(i).getItemName();
-        }
-        choice = -1;
-        update_zcp_dialog = new AlertDialog.Builder(this).setIcon(R.mipmap.ic_launcher).setTitle("选择上传项目")
-                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        choice = i;
-                    }
-                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (choice != -1) {
-                            uploadDataZCP(isUploadAll, itemList.get(choice).getItemCode());
-                        }
-                    }
-                });
-        update_zcp_dialog.create().show();
-    }
+//    private void showZcpSelect(final boolean isUploadAll, final List<Item> itemList) {
+//        //默认选中第一个
+//        final String[] items = new String[itemList.size()];
+//        for (int i = 0; i < itemList.size(); i++) {
+//            items[i] = itemList.get(i).getItemName();
+//        }
+//        choice = -1;
+//        update_zcp_dialog = new AlertDialog.Builder(this).setIcon(R.mipmap.ic_launcher).setTitle("选择上传项目")
+//                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        choice = i;
+//                    }
+//                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        if (choice != -1) {
+//                            uploadDataZCP(isUploadAll, itemList.get(choice).getItemCode());
+//                        }
+//                    }
+//                });
+//        update_zcp_dialog.create().show();
+//    }
 
 
     public void uploadData(final boolean isUploadAll) {
@@ -747,7 +747,7 @@ public class DataManageActivity
                         }
                     }).show();
                 } else {
-                    ServerMessage.uploadResult(DataManageActivity.this, results);
+                    ServerMessage.baseUploadResult(DataManageActivity.this, results);
                 }
 
             }
@@ -759,29 +759,29 @@ public class DataManageActivity
         });
     }
 
-    public void uploadDataZCP(final boolean isUploadAll, final String itemCode) {
-        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
-            @Override
-            public DataBaseRespon executeOper() {
-                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll
-                        , itemCode);
-
-                return new DataBaseRespon(true, "", uploadResultsList);
-            }
-
-            @Override
-            public void onExecuteSuccess(DataBaseRespon respon) {
-                List<UploadResults> results = (List<UploadResults>) respon.getObject();
-                Log.e("UploadResults", "---------" + results.size());
-                ServerMessage.uploadZCPResult(DataManageActivity.this, itemCode, results);
-            }
-
-            @Override
-            public void onExecuteFail(DataBaseRespon respon) {
-
-            }
-        });
-    }
+//    public void uploadDataZCP(final boolean isUploadAll, final String itemCode) {
+//        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
+//            @Override
+//            public DataBaseRespon executeOper() {
+//                List<UploadResults> uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll
+//                        , itemCode);
+//
+//                return new DataBaseRespon(true, "", uploadResultsList);
+//            }
+//
+//            @Override
+//            public void onExecuteSuccess(DataBaseRespon respon) {
+//                List<UploadResults> results = (List<UploadResults>) respon.getObject();
+//                Log.e("UploadResults", "---------" + results.size());
+//                ServerMessage.uploadZCPResult(DataManageActivity.this, itemCode, results);
+//            }
+//
+//            @Override
+//            public void onExecuteFail(DataBaseRespon respon) {
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {

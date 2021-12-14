@@ -121,12 +121,14 @@ public class DataUploadActivity extends BaseTitleActivity {
         spSelectItems.setSelection(index);
     }
 
-    @OnClick({R.id.btnAllUpload, R.id.btnUpload})
+    @OnClick({R.id.btnAllUpload, R.id.btnUpload, R.id.btnNotUpload})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnAllUpload:
-
-                uploadResultAll();
+                uploadResultAll(true);
+                break;
+            case R.id.btnNotUpload:
+                uploadResultAll(false);
                 break;
             case R.id.btnUpload:
                 List<String> studentCode = new ArrayList<>();
@@ -138,13 +140,14 @@ public class DataUploadActivity extends BaseTitleActivity {
                 if (studentCode.size() == 0) {
                     ToastUtils.showShort("无数据可以上传");
                 } else {
-                    //tcp
-                    if (SettingHelper.getSystemSetting().isTCP()) {
-                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
-                    } else {
-                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
-
-                    }
+                    ServerMessage.baseUploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+//                    //tcp
+//                    if (SettingHelper.getSystemSetting().isTCP()) {
+//                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+//                    } else {
+//                        ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+//
+//                    }
                 }
 
 
@@ -231,7 +234,7 @@ public class DataUploadActivity extends BaseTitleActivity {
         }
     });
 
-    private void uploadResultAll() {
+    private void uploadResultAll(final boolean isUploadAll) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
@@ -239,12 +242,12 @@ public class DataUploadActivity extends BaseTitleActivity {
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                     List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                     for (Item item : itemList) {
-                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(true, item.getItemCode());
+                        List<UploadResults> dbResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, item.getItemCode());
                         if (dbResultsList != null && dbResultsList.size() > 0)
                             uploadResultsList.addAll(dbResultsList);
                     }
                 } else {
-                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(true, TestConfigs.getCurrentItemCode());
+                    uploadResultsList = DBManager.getInstance().getUploadResultsAll(isUploadAll, TestConfigs.getCurrentItemCode());
                 }
 
                 return new DataBaseRespon(true, "", uploadResultsList);
@@ -254,7 +257,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             public void onExecuteSuccess(DataBaseRespon respon) {
                 List<UploadResults> results = (List<UploadResults>) respon.getObject();
                 Log.e("UploadResults", "---------" + results.size());
-                ServerMessage.uploadResult(DataUploadActivity.this, results);
+                ServerMessage.baseUploadResult(DataUploadActivity.this, results);
 
             }
 

@@ -53,7 +53,7 @@ public class UploadService extends Service {
             ToastUtils.showShort("自动上传成绩需下载更新项目信息");
             return;
         }
-        ServerMessage.uploadResult(null, uploadResults);
+        ServerMessage.baseUploadResult(null, uploadResults);
 
     }
 }

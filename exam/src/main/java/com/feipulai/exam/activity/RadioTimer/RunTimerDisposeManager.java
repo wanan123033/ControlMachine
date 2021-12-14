@@ -193,7 +193,7 @@ public class RunTimerDisposeManager {
             return;
         }
 
-        ServerMessage.uploadResult(null, uploadResults);
+        ServerMessage.baseUploadResult(null, uploadResults);
 
     }
 

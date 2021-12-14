@@ -28,7 +28,7 @@ public class SystemSetting {
     /**
      * 服务器Ip
      */
-    private String serverIp="192.168.0.100:7979";
+    private String serverIp = "192.168.0.100:7979";
 
     /**
      * tcp ip
@@ -36,7 +36,7 @@ public class SystemSetting {
     private String tcpIp;
 
     private boolean isTCP = false;
-
+    private boolean isTCPSimultaneous = false;
     /**
      * 主机号
      */
@@ -144,7 +144,6 @@ public class SystemSetting {
     private boolean resitPassBool;
     private boolean againPassBool;
     private boolean resultConfirm;
-    private String itemCode;
 
     public int getAfrContrast() {
         return afrContrast;
@@ -354,6 +353,14 @@ public class SystemSetting {
         isStartThermometer = startThermometer;
     }
 
+    public boolean isTCPSimultaneous() {
+        return isTCPSimultaneous;
+    }
+
+    public void setTCPSimultaneous(boolean TCPSimultaneous) {
+        isTCPSimultaneous = TCPSimultaneous;
+    }
+
     public List<MonitoringBean> getMonitoringList() {
         List<MonitoringBean> list;
         if (TextUtils.isEmpty(monitoringJson)) {
@@ -530,13 +537,5 @@ public class SystemSetting {
 
     public void setResultConfirm(boolean resultConfirm) {
         this.resultConfirm = resultConfirm;
-    }
-
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
-    }
-
-    public String getItemCode() {
-        return itemCode;
     }
 }

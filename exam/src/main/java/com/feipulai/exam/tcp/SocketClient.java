@@ -472,9 +472,8 @@ public class SocketClient {
 //                        }
                         GroupItem itemGroup = new GroupItem();
                         Group group = new Group();
-                        SystemSetting systemSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(),SystemSetting.class);
-                        itemGroup.setItemCode(systemSetting.getItemCode());
-                        group.setItemCode(systemSetting.getItemCode());
+                        itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
+                        group.setItemCode(TestConfigs.getCurrentItemCode());
                         if (m_strSort.contains("补")) {
                             itemGroup.setGroupType(1);
                             group.setGroupType(1);

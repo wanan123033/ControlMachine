@@ -163,12 +163,32 @@
                     android:id="@+id/cb_is_tcp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="45dp"
                     android:button="@drawable/checkbox_switch_selected" />
 
 
             </LinearLayout>
 
+            <RelativeLayout
+                android:id="@+id/rlTCPSimultaneous"
+                android:layout_width="520dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="1dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/style_setting_tv_title"
+                    android:text="TCP/HTTP成绩上传同时启动:" />
+
+                <CheckBox
+                    android:id="@+id/cb_tcp_simultaneous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:button="@drawable/checkbox_switch_selected" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -131,6 +132,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     TextView btnPrintSetting;
     @BindView(R.id.cb_is_tcp)
     CheckBox cbIsTcp;
+    @BindView(R.id.rlTCPSimultaneous)
+    RelativeLayout rlTCPSimultaneous;
+    @BindView(R.id.cb_tcp_simultaneous)
+    CheckBox cbTcpSimultaneous;
     @BindView(R.id.sw_auto_score)
     CheckBox mSwAutoScore;
     @BindView(R.id.sp_print_tool)
@@ -265,6 +270,10 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         cbMonitoring.setChecked(systemSetting.isBindMonitoring());
         cbThermometer.setChecked(systemSetting.isStartThermometer());
         cbIsTcp.setChecked(systemSetting.isTCP());
+        cbTcpSimultaneous.setChecked(systemSetting.isTCPSimultaneous());
+        if (systemSetting.isTCP()) {
+            rlTCPSimultaneous.setVisibility(View.VISIBLE);
+        }
 
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_SGBQS) {
             txtHostHint.setVisibility(View.VISIBLE);
@@ -407,7 +416,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_account_setting,
             R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern
-            , R.id.btn_voice_setting})
+            , R.id.btn_voice_setting, R.id.cb_tcp_simultaneous})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tcp_test:
@@ -415,6 +424,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.cb_is_tcp://是否使用TCP
                 systemSetting.setTCP(cbIsTcp.isChecked());
+                if (systemSetting.isTCP()) {
+                    rlTCPSimultaneous.setVisibility(View.VISIBLE);
+                } else {
+                    rlTCPSimultaneous.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.cb_tcp_simultaneous:
+                systemSetting.setTCPSimultaneous(cbTcpSimultaneous.isChecked());
                 break;
             case R.id.btn_thermometer://蓝牙体温抢设置
                 IntentUtil.gotoActivity(this, BlueToothListActivity.class);
@@ -596,7 +613,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             systemSetting.setChannel(Integer.valueOf(editCustomChannel.getText().toString().trim()));
         }
         RadioChannelCommand command = new RadioChannelCommand(systemSetting.getUseChannel());
-        LogUtils.serial(  "切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 
         HttpManager.resetManager();

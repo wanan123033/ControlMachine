@@ -28,13 +28,13 @@ public class ExlReaderUtil {
     private int cellLength = 0;
 
 
-    private ExlListener listener=new ExlListener() {
+    private ExlListener listener = new ExlListener() {
         @Override
         public void onExlResponse(int responseCode, String reason) {
 
         }
     };
-    private GetReaderDataListener readerDataListener=new GetReaderDataListener() {
+    private GetReaderDataListener readerDataListener = new GetReaderDataListener() {
         @Override
         public void readerLineData(int rowNum, List<String> data) {
 
@@ -86,7 +86,7 @@ public class ExlReaderUtil {
                     List<String> rowData = new ArrayList<>();
                     for (int i = 0; i < cellLength; i++) {
                         String cellString = getStringVal(row.getCell(i));
-                        rowData.add(TextUtils.isEmpty(cellString) ? "" : cellString);
+                        rowData.add(TextUtils.isEmpty(cellString) ? "" : cellString.trim());
                     }
                     readerDataListener.readerLineData(rowNum, rowData);
                 }

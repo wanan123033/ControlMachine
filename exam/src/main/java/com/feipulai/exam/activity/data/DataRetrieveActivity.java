@@ -292,16 +292,17 @@ public class DataRetrieveActivity extends BaseTitleActivity
 //                    mProgressDialog.dismiss();
                     ToastUtils.showShort("未选中数据上传");
                 } else {
+                    ServerMessage.baseUploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
                     //tcp
-                    if (SettingHelper.getSystemSetting().isTCP()) {
-                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
-                    } else {
-                        if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
-                        } else {
-                            ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
-                        }
-                    }
+//                    if (SettingHelper.getSystemSetting().isTCP()) {
+//                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+//                    } else {
+//                        if (mCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+//                            ServerMessage.uploadZCPResult(this, mCurrentItem.getItemName(), DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+//                        } else {
+//                            ServerMessage.uploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
+//                        }
+//                    }
                 }
                 break;
 //            case R.id.btn_print:

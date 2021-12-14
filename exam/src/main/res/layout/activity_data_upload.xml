@@ -5,6 +5,18 @@
     android:layout_height="match_parent">
 
     <Button
+        android:id="@+id/btnNotUpload"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_click_bg_selected"
+        android:text="上传未上传成绩"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/btnAllUpload"
         android:layout_width="160dp"
         android:layout_height="45dp"
@@ -13,7 +25,7 @@
         android:text="上传全部成绩"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btnNotUpload"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -50,8 +62,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorAccent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/rvResultDate" />
+        app:layout_constraintBottom_toTopOf="@+id/rvResultDate"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvResultDate"

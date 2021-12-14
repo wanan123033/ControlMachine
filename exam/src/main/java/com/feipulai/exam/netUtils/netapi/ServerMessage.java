@@ -130,10 +130,10 @@ public class ServerMessage {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
         }
-        if (SettingHelper.getSystemSetting().isTCP()) {
-            uploadTCPResult(context, uploadResultsList);
-            return;
-        }
+//        if (SettingHelper.getSystemSetting().isTCP()) {
+//            uploadTCPResult(context, uploadResultsList);
+//            return;
+//        }
         final LoadingDialog loadingDialog;
         if (context != null) {
             loadingDialog = new LoadingDialog(context);
@@ -165,6 +165,7 @@ public class ServerMessage {
                         if (loadingDialog != null && loadingDialog.isShow()) {
                             loadingDialog.dismissDialog();
                         }
+                        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPLOAD_RESULT_SUCCEED));
                         break;
                 }
             }
@@ -174,6 +175,7 @@ public class ServerMessage {
                 if (loadingDialog != null && loadingDialog.isShow()) {
                     loadingDialog.dismissDialog();
                 }
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.UPLOAD_RESULT_FAULT));
             }
         });
         subscriber.uploadResult(uploadResultsList);
@@ -186,10 +188,13 @@ public class ServerMessage {
      * @param context
      * @param uploadResultsList
      */
-    public static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
+    private static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
         if (SettingHelper.getSystemSetting().isTCP()) {
             uploadTCPResult(context, uploadResultsList);
-            return;
+            if (!SettingHelper.getSystemSetting().isTCPSimultaneous()) {
+                return;
+            }
+
         }
 //        Logger.d("uploadZCPResult==>"+uploadResultsList.toString());
 
@@ -256,7 +261,8 @@ public class ServerMessage {
                 }
             }
         });
-        subscriber.getScheduleAll();
+//        subscriber.getScheduleAll();
+        subscriber.uploadResult(uploadResultsList);
     }
 
     /**
@@ -280,17 +286,22 @@ public class ServerMessage {
                 switch (bizType) {
                     case HttpSubscriber.UPLOAD_BIZ://上传成绩
                         Logger.i("成绩自动上传成功");
+                        EventBus.getDefault().post(new BaseEvent(EventConfigs.UPLOAD_RESULT_SUCCEED));
                         break;
                 }
             }
 
             @Override
             public void onFault(int bizType) {
+                EventBus.getDefault().post(new BaseEvent(EventConfigs.UPLOAD_RESULT_FAULT));
                 Logger.i("成绩自动上传失败");
             }
         });
         if (SettingHelper.getSystemSetting().isTCP()) {
             subscriber.uploadResultTCP(null, uploadResultsList);
+            if (SettingHelper.getSystemSetting().isTCPSimultaneous()) {
+                subscriber.uploadResult(uploadResultsList);
+            }
         } else {
             subscriber.uploadResult(uploadResultsList);
         }
@@ -304,7 +315,7 @@ public class ServerMessage {
      * @param context
      * @param uploadResultsList
      */
-    public static void uploadTCPResult(Context context, final List<UploadResults> uploadResultsList) {
+    private static void uploadTCPResult(Context context, final List<UploadResults> uploadResultsList) {
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
@@ -355,12 +366,43 @@ public class ServerMessage {
      * @param context       null 则不显示dialog
      * @param uploadResults
      */
-    public static void uploadResult(final Context context, UploadResults uploadResults) {
+    private static void uploadResult(final Context context, UploadResults uploadResults) {
 
         if (uploadResults == null)
             return;
         List<UploadResults> uploadResultsList = new ArrayList<>();
         uploadResultsList.add(uploadResults);
         uploadResult(context, uploadResultsList);
+    }
+
+
+    public static void baseUploadResult(final Context context, UploadResults uploadResults) {
+        if (uploadResults == null)
+            return;
+        List<UploadResults> uploadResultsList = new ArrayList<>();
+        uploadResultsList.add(uploadResults);
+        if (SettingHelper.getSystemSetting().isTCP()) {
+            uploadTCPResult(context, uploadResultsList);
+            if (SettingHelper.getSystemSetting().isTCPSimultaneous()) {
+                uploadResult(null, uploadResultsList);
+            }
+        } else {
+            uploadResult(context, uploadResultsList);
+        }
+    }
+
+    public static void baseUploadResult(final Context context, final List<UploadResults> uploadResultsList) {
+        if (uploadResultsList == null || uploadResultsList.size() == 0) {
+            ToastUtils.showShort("没有需要上传的成绩");
+            return;
+        }
+        if (SettingHelper.getSystemSetting().isTCP()) {
+            uploadTCPResult(context, uploadResultsList);
+            if (SettingHelper.getSystemSetting().isTCPSimultaneous()) {
+                uploadResult(null, uploadResultsList);
+            }
+        } else {
+            uploadResult(context, uploadResultsList);
+        }
     }
 }

@@ -202,8 +202,8 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             if (ServerMessage.subscriber0 != null) {
                 ServerMessage.subscriber0.stopSendTcpThread();
             }
-        }catch (Exception e){
-            Log.i("wrong",e.getMessage());
+        } catch (Exception e) {
+            Log.i("wrong", e.getMessage());
             toastSpeak("项目选择错误,请重选");
         }
 
@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             sb.append("-").append(TestConfigs.machineNameMap.get(machineCode))
                     .append(systemSetting.getHostId()).append("号机");
 //            }
-            String title = TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode())
+            String title = TestConfigs.machineNameMap.get(machineCode)
                     + " " + systemSetting.getHostId();
             if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
                 ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId(), 1);

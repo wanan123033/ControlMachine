@@ -194,7 +194,7 @@ public class StuItemExLReader extends ExlReader {
 
         ExelReadBean bean = new ExelReadBean();
         String stuCode = data.get(2);
-        String sex = data.get(1);
+        String sex = data.get(1).trim();
         String stuName = data.get(0);
         String itemName = data.get(5);
         String itemCode = data.get(6);

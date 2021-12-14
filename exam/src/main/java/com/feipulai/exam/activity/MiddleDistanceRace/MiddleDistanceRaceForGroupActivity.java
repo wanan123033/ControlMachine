@@ -69,6 +69,8 @@ import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScheduleAdapter;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -510,7 +512,13 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
         }
         spRaceSchedule.setSelection(schedulePosition, false);
     }
-
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == EventConfigs.UPLOAD_RESULT_SUCCEED || baseEvent.getTagInt() == EventConfigs.UPLOAD_RESULT_FAULT) {
+            refreshItemList();
+        }
+    }
     /**
      * 上传之后会更新数据库，在此更新内存中的数据
      */
@@ -2009,7 +2017,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
 //                    Logger.i("自动上传成绩:" + uploadResults.toString());
 //                    ServerMessage.uploadResult(uploadResults);
                     if (itemName != null) {
-                        ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+//                        ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+                        ServerMessage.baseUploadResult(mContext, uploadResults);
                     }
                 }
                 Logger.i(TAG + "成绩:" + roundResults.toString());
@@ -2291,7 +2300,8 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                             uploadResults.add(uploadResult);
                         }
                         if (itemName != null) {
-                            ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+//                            ServerMessage.uploadZCPResult(mContext, itemName, uploadResults);
+                            ServerMessage.baseUploadResult(mContext, uploadResults);
                         }
                         break;
                     case 2:

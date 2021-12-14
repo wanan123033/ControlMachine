@@ -1,10 +1,17 @@
 package com.feipulai.exam.tcp;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import static com.feipulai.exam.tcp.TCPConst.EVENT;
 import static com.feipulai.exam.tcp.TCPConst.FIELD;
@@ -80,7 +87,26 @@ public class TcpDownLoadUtil {
                         getTcp(EVENT, "");
                         break;
                     case EVENT:
-                        getTcp(TRACK, null);
+                        int initState = TestConfigs.init(mContext, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                                    EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                                    ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                                    downLoadListener.onCommonListener(DOWNLOAD_FLAG, "当前考点无此项目，请重新选择项目");
+                                    return;
+                                }else{
+                                    getTcp(TRACK, null);
+                                }
+
+                            }
+                        });
+                        if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                            getTcp(TRACK, null);
+                        } else {
+                            ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                            downLoadListener.onCommonListener(DOWNLOAD_FLAG, "当前考点无此项目，请重新选择项目");
+                        }
                         break;
                     case TRACK:
                         getTcp(FIELD, null);
