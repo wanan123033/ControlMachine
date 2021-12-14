@@ -589,10 +589,10 @@ public class HttpSubscriber {
                         studentItemList.add(studentItem);
                     } else {
                         SettingHelper.getSystemSetting().setTestPattern(SystemSetting.GROUP_PATTERN);
-                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
-                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
-                                studentBean.getExamType(), studentBean.getScheduleNo());
-                        studentItemList.add(studentItem);
+//                        StudentItem studentItem = new StudentItem(studentBean.getStudentCode(),
+//                                studentBean.getExamItemCode(), studentBean.getMachineCode(), studentBean.getStudentType(),
+//                                studentBean.getExamType(), studentBean.getScheduleNo());
+//                        studentItemList.add(studentItem);
                     }
                     if (!TextUtils.isEmpty(student.getFaceFeature())) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
