@@ -222,14 +222,14 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (stuPairsList.size() > 0) {
                     showStuInfo(stuPairsList.get(position).getStudent());
                 }
-                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.sCurrentItem.getItemCode(), stuPairsList.get(position).getStudent().getStudentCode());
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(groupList.get(groupAdapter.getTestPosition()),stuPairsList.get(position).getStudent().getStudentCode());
                 List<RoundResult> results = getResults(stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
-                    if (studentItem != null && (systemSetting.isResit() || systemSetting.isAgainTest() || studentItem.getMakeUpType() == 1)) {
-                        if (systemSetting.isResit() || studentItem.getMakeUpType() == 1) {
+                    if (groupItem != null && (systemSetting.isResit() || systemSetting.isAgainTest())) {
+                        if (systemSetting.isResit()) {
                             ResitDialog dialog = new ResitDialog();
-                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, groupItem);
                             dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
                                 @Override
                                 public void onCancel() {
@@ -257,7 +257,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         }
                         if (systemSetting.isAgainTest()) {
                             AgainTestDialog dialog = new AgainTestDialog();
-                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, studentItem);
+                            dialog.setArguments(stuPairsList.get(position).getStudent(), results, groupItem);
                             dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
                                 @Override
                                 public void onCancel() {

@@ -116,7 +116,7 @@ public class ResitDialog extends DialogFragment{
                     }
                 }else {
                     if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
-                        studentItem.setExamType(2);
+                        studentItem.setExamType(StudentItem.EXAM_MAKE);
                         DBManager.getInstance().updateStudentItem(studentItem);
                         results.clear();
                         listener.onCommitPattern(student, studentItem, results, 0);

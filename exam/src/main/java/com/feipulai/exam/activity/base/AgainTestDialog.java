@@ -19,6 +19,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScoreAdapter;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -48,10 +49,17 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     @BindView(R.id.et_password)
     EditText et_password;
     private SystemSetting systemSetting;
+    private GroupItem groupItem;
+
     public void setArguments(Student student, List<RoundResult> results, StudentItem studentItem) {
         this.student = student;
         this.results = results;
         this.studentItem = studentItem;
+    }
+    public void setArguments(Student student, List<RoundResult> results, GroupItem groupItem) {
+        this.student = student;
+        this.results = results;
+        this.groupItem = groupItem;
     }
     @Nullable
     @Override
@@ -108,7 +116,12 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
                         results.remove(selectPos);
-                        listener.onCommitPattern(student, studentItem, results,roundResult.getRoundNo());
+                        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+                        if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                            listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
+                        }else {
+                            listener.onCommitGroup(student, groupItem, results, roundResult.getRoundNo());
+                        }
                         dismiss();
                     }else {
                         Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
@@ -122,7 +135,12 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
                     results.remove(selectPos);
-                    listener.onCommitPattern(student, studentItem, results,roundResult.getRoundNo());
+                    SystemSetting systemSetting = SettingHelper.getSystemSetting();
+                    if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
+                        listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
+                    }else {
+                        listener.onCommitGroup(student, groupItem, results, roundResult.getRoundNo());
+                    }
                     dismiss();
                 }
 
