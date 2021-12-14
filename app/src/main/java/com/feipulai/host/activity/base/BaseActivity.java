@@ -2,6 +2,7 @@ package com.feipulai.host.activity.base;
 
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,7 +59,11 @@ public class BaseActivity extends FragmentActivity {
 //        hostId = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.HOST_ID, 1);
 //        setTitle("智能主机[体测版]-" + TestConfigs.machineNameMap.get(machineCode) + hostId + "号机");
     }
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Logger.i(newConfig.toString());
+        super.onConfigurationChanged(newConfig);
+    }
     @Override
     protected void onRestart() {
         Logger.d(mActivityName + ".onRestart");

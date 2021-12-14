@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 import static com.feipulai.exam.tcp.PackageHeadInfo.g_SepFlag;
@@ -47,6 +48,7 @@ import static com.feipulai.exam.tcp.TCPConst.SORT;
 import static com.feipulai.exam.tcp.TCPConst.SPORTS;
 import static com.feipulai.exam.tcp.TCPConst.TRACK;
 import static org.greenrobot.eventbus.EventBus.TAG;
+
 //{id=null, studentCode='1826710094', itemCode='default', machineCode=0, studentType=0, examType=0, scheduleNo='6', remark1='null', remark2='null', remark3='null'}
 public class SocketClient {
     private Context mContext;
@@ -62,8 +64,9 @@ public class SocketClient {
     private ArrayList<Schedule> schedules = new ArrayList<>();
     private ArrayList<Item> itemInfos = new ArrayList<>();
 
-    public interface CallBackSocketTCP{
+    public interface CallBackSocketTCP {
         public void Receive(String info);
+
         public void isConnect(boolean state);
     }
 
@@ -71,8 +74,9 @@ public class SocketClient {
         mContext = MyApplication.getInstance();
         UseLen = 0;
     }
-    public void getTCPConnect(final String tcpIp, final int tcpPort, final String data, final int type, final CallBackSocketTCP call){
-        new Thread(){
+
+    public void getTCPConnect(final String tcpIp, final int tcpPort, final String data, final int type, final CallBackSocketTCP call) {
+        new Thread() {
             @Override
             public void run() {
                 super.run();
@@ -91,14 +95,14 @@ public class SocketClient {
 //                            call.Receive(String.valueOf(info));
 //                            break;
 //                        }
-                        Log.e("TAG","--------------------");
+                        Log.e("TAG", "--------------------");
                         if (SENDCHECK == type) {
                             String info = receiveData2();
                             call.Receive(info);
                         } else if (FPPICCARD == type) {
                             flag = false;
                             call.Receive("");
-                        }else {
+                        } else {
 
                             int info = receiveData(type);
                             call.Receive(String.valueOf(info));
@@ -108,13 +112,14 @@ public class SocketClient {
                         Thread.sleep(1000);
                     }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     call.isConnect(false);
                 }
             }
         }.start();
     }
+
     //检测是否连接 如果断开就重连
     public boolean isConnect() {
         if (socketTcp.isClosed()) {//检测是否关闭状态
@@ -131,6 +136,7 @@ public class SocketClient {
         OutputStream outputStream = socketTcp.getOutputStream();
         outputStream.write(data.getBytes("GB2312"));
     }
+
     //接收数据
     public String receiveData2() throws IOException {
         InputStream inputStream = socketTcp.getInputStream();
@@ -153,6 +159,7 @@ public class SocketClient {
         }
         return target;
     }
+
     public int receiverSchedule(int ntype) throws IOException {
         InputStream inputStream = socketTcp.getInputStream();
         while (flag) {
@@ -161,12 +168,13 @@ public class SocketClient {
             inputStream.read(array);
             String str = new String(array, "GBK");
             Log.e("TAG====>", str);
-            if (str.contains("PFPSchedule")){  //过滤第一条消息
+            if (str.contains("PFPSchedule")) {  //过滤第一条消息
 
             }
         }
         return 0;
     }
+
     public int receiveData(int ntype) throws IOException {
         InputStream inputStream = socketTcp.getInputStream();
         while (flag) {
@@ -263,7 +271,7 @@ public class SocketClient {
                         case SORT:
                             break;
                         case EVENT:
-							Log.i("itemInfos", itemInfos.toString());
+                            Log.i("itemInfos", itemInfos.toString());
 
                             DBManager.getInstance().insertItem(itemInfos);
                             break;
@@ -282,7 +290,7 @@ public class SocketClient {
                     closeSocket();
                     return ntype;
                 } else {
-                    Log.e(TAG, "继续读取--------"+flag);
+                    Log.e(TAG, "继续读取--------" + flag);
                     continue;
                 }
             } else {
@@ -292,6 +300,7 @@ public class SocketClient {
         }
         return returnFlag;
     }
+
     private void JieXiSend(String[] result) {
         if (result.length > 1) {
             m_nEventType = result[3];
@@ -373,7 +382,6 @@ public class SocketClient {
             int m_nGroupType = Integer.parseInt(result[22]);
 
 
-
             if (result.length > 22) {
                 //纪录名称
 //                ArrayList<String> m_strRecordRanks = new ArrayList<>();
@@ -444,13 +452,14 @@ public class SocketClient {
                     } else if (i < 33 + studentNo * 14) {
                         m_strBestScore.add(result[i]);
                     } else if (i < 33 + studentNo * 15) {
-                        Log.i("m_nExamStatus","--->"+Integer.parseInt(result[i]));
+                        Log.i("m_nExamStatus", "--->" + Integer.parseInt(result[i]));
                         m_nExamStatus.add(Integer.parseInt(result[i]));
                     }
                 }
 
                 StudentItem studentItem;
                 Student studentInfo;
+                List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                 for (int i = 0; i < studentNo; i++) {
                     studentInfo = DBManager.getInstance().queryStudentByCode(studentCodes.get(i));
                     if (studentInfo == null) {
@@ -465,11 +474,11 @@ public class SocketClient {
                         studentInfo.setStudentCode(studentCodes.get(i));
 //                        studentInfo.setExamCode(m_strNotes.get(i));
                         studentInfo.setIdCardNo(studentCodes.get(i));
-//                        if (!m_strBestScore.isEmpty()&&!TextUtils.isEmpty(m_strBestScore.get(i))) {
-//                            studentInfo.setFaceFeature(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT));
-//                            FaceRegisterInfo faceFeature = new FaceRegisterInfo(studentInfo.getFaceFeature(), studentInfo.getStudentCode());
-//                            FaceServer.getInstance().addFace(faceFeature);
-//                        }
+                        if (!m_strBestScore.isEmpty() && !TextUtils.isEmpty(m_strBestScore.get(i))) {
+                            studentInfo.setFaceFeature(m_strBestScore.get(i));
+                            FaceRegisterInfo faceFeature = new FaceRegisterInfo(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT), studentInfo.getStudentCode());
+                            registerInfoList.add(faceFeature);
+                        }
                         GroupItem itemGroup = new GroupItem();
                         Group group = new Group();
                         itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
@@ -492,7 +501,7 @@ public class SocketClient {
                         group.setGroupNo(m_nGrp);
 //                itemGroup.setExamPlaceName(m_strExamSitePlace);
                         itemGroup.setScheduleNo(m_nField + "");
-                        group.setScheduleNo(m_nField+"");
+                        group.setScheduleNo(m_nField + "");
 //                itemGroup.setSubItemCode("");
                         DBManager.getInstance().insertGroupItem(itemGroup);
                         DBManager.getInstance().insertGroup(group);
@@ -501,13 +510,13 @@ public class SocketClient {
                         itemSchedule.setItemCode(group.getItemCode());
                         DBManager.getInstance().insertItemSchedule(itemSchedule);
                         Log.i("SocketClient", "JieXiStudentGroup" + itemGroup.toString());
-                        Log.e("TAG",studentInfo.toString());
+                        Log.e("TAG", studentInfo.toString());
                         DBManager.getInstance().insertStudent(studentInfo);
                     } else {
                         if (!TextUtils.isEmpty(m_strBestScore.get(i)) && studentInfo.getFaceFeature() == null) {
-//                            studentInfo.setFaceFeature(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT));
-//                            FaceRegisterInfo faceFeature = new FaceRegisterInfo(studentInfo.getFaceFeature(), studentInfo.getStudentCode());
-//                            FaceServer.getInstance().addFace(faceFeature);
+                            studentInfo.setFaceFeature(m_strBestScore.get(i));
+                            FaceRegisterInfo faceFeature = new FaceRegisterInfo(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT), studentInfo.getStudentCode());
+                            registerInfoList.add(faceFeature);
                             DBManager.getInstance().updateStudent(studentInfo);
                         }
                     }
@@ -540,19 +549,20 @@ public class SocketClient {
 //                    studentItem.setExamPlace(m_strExamSitePlace);
                     studentItem.setStudentCode(studentCodes.get(i));
 //                    studentItem.setSubItemCode("");
-                    Log.e("TAG",studentItem.toString());
-                    if ("null".equals(studentItem.getItemCode()) || TextUtils.isEmpty(studentItem.getItemCode())){
+                    Log.e("TAG", studentItem.toString());
+                    if ("null".equals(studentItem.getItemCode()) || TextUtils.isEmpty(studentItem.getItemCode())) {
 
-                    }else {
+                    } else {
                         DBManager.getInstance().insertStudentItem(studentItem);
                     }
                 }
+                FaceServer.getInstance().addFaceList(registerInfoList);
             }
         }
     }
 
     private void JieXiEvent(String[] result) {
-        Log.e("TAG","JieXiEvent===>"+Arrays.toString(result));
+        Log.e("TAG", "JieXiEvent===>" + Arrays.toString(result));
         if (result.length > 1) {
             m_nEventType = result[3];
             Log.i(TAG, "m_nEventType: " + m_nEventType);
@@ -595,7 +605,7 @@ public class SocketClient {
             if (m_nEventType.equals("2")) {
                 Schedule schedule = new Schedule();
                 schedule.setScheduleNo(String.valueOf(m_nScheduleNo));
-                schedule.setBeginTime(DateUtil.getTimeMillis(m_strTime,"yyyy-MM-dd HH:mm:ss")+"");
+                schedule.setBeginTime(DateUtil.getTimeMillis(m_strTime, "yyyy-MM-dd HH:mm:ss") + "");
                 schedules.add(schedule);
                 DBManager.getInstance().insertSchedule(schedule);
             }
