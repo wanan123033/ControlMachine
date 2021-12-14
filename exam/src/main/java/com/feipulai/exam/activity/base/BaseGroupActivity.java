@@ -246,8 +246,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
-                                    stuPairsList.get(position).setTestNo(1);
-                                    stuPairsList.get(position).setRoundNo(0);
+                                    stuPairsList.get(position).setTestNo(roundNo);
+                                    stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);
                                     stuAdapter.notifyItemChanged(position);

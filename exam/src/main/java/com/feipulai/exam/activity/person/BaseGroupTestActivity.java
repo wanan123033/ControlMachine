@@ -194,6 +194,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 getTestPair().setResultState(state);
                 getTestPair().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
                 doTestEnd(getTestPair().getBaseDevice(), getTestPair());
+                editResultDialog.dismissDialog();
             }
         });
         penalizeDialog = new PenalizeDialog(this, setTestCount());
@@ -1254,6 +1255,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //            }
             if (isShowPenalizeFoul() == View.GONE) {
                 continuousTestNext();
+
             }
         }
     }

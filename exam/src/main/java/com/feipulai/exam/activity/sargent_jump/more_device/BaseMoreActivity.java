@@ -114,6 +114,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 pair.setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
                 deviceListAdapter.notifyDataSetChanged();
                 doResult(pair, 0);
+                editResultDialog.dismissDialog();
             }
         });
     }

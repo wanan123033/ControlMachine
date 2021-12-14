@@ -23,6 +23,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -102,13 +103,11 @@ public class ResitDialog extends DialogFragment{
                         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             studentItem.setExamType(StudentItem.EXAM_MAKE);
                             DBManager.getInstance().updateStudentItem(studentItem);
-                            results.clear();
-                            listener.onCommitPattern(student, studentItem, results, 0);
+                            listener.onCommitPattern(student, studentItem, new ArrayList<RoundResult>(), results.size()+1);
                         }else {
                             groupItem.setExamType(StudentItem.EXAM_MAKE);
                             DBManager.getInstance().updateGroupItem(groupItem);
-                            results.clear();
-                            listener.onCommitGroup(student, groupItem, results, 0);
+                            listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), results.size()+1);
                         }
                         dismiss();
                     }else {
@@ -118,13 +117,12 @@ public class ResitDialog extends DialogFragment{
                     if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         studentItem.setExamType(StudentItem.EXAM_MAKE);
                         DBManager.getInstance().updateStudentItem(studentItem);
-                        results.clear();
-                        listener.onCommitPattern(student, studentItem, results, 0);
+
+                        listener.onCommitPattern(student, studentItem,  new ArrayList<RoundResult>(), results.size()+1);
                     }else {
                         groupItem.setExamType(StudentItem.EXAM_MAKE);
                         DBManager.getInstance().updateGroupItem(groupItem);
-                        results.clear();
-                        listener.onCommitGroup(student, groupItem, results, 0);
+                        listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), results.size()+1);
                     }
                     dismiss();
                 }

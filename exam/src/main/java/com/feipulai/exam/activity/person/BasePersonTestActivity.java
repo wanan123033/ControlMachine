@@ -243,6 +243,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 pair.setResultState(state);
                 pair.setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
                 doResult();
+                editResultDialog.dismissDialog();
             }
         });
         penalizeDialog = new PenalizeDialog(this, setTestCount());
