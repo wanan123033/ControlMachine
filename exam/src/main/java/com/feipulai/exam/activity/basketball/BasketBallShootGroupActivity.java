@@ -723,7 +723,7 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
                 DBManager.getInstance().updateRoundResult(bestResult);
             }
         }
-        LogUtils.operation("篮球投篮确认保存成绩:result = " + roundResult.getResult() + "---" + roundResult.toString());
+        LogUtils.operation("篮球投篮确认保存成绩: " + roundResult.toString());
         DBManager.getInstance().insertRoundResult(roundResult);
 
         //获取所有成绩设置为非最好成绩

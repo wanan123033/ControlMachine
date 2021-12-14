@@ -112,7 +112,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("摸高开始测试:index="+index+",pair="+pair);
+        LogUtils.operation("摸高开始测试:第="+(index+1)+"机:"+pair.getStudent().toString());
         pair.setTestTime(DateUtil.getCurrentTime()+"");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -206,7 +206,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
                     if (result != null)
-                        LogUtils.operation("摸高更新成绩:score="+result.getScore()+",result="+result.toString());
+                        LogUtils.all("摸高更新成绩:score="+result.getScore()+",result="+result.toString());
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getScore() * 10;

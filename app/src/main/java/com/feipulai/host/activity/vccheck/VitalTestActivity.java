@@ -82,7 +82,7 @@ public class VitalTestActivity extends BaseMoreActivity {
 
     @Override
     public void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("VitalTestActivity 测试开始:"+pair.toString()+"---"+index);
+        LogUtils.operation("测试开始:"+pair.toString()+"第"+(index+1)+"机");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();

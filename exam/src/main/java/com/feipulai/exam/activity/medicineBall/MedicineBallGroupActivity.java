@@ -175,14 +175,14 @@ public class MedicineBallGroupActivity extends BaseGroupTestActivity {
                     BaseDeviceState device1 = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
                     activity.updateDevice(device1);
                     activity.toastSpeak("测试结束");
-                    LogUtils.operation("实心球结束了测试");
+                    LogUtils.all("实心球结束了测试");
                     break;
                 case DELAY:
-                    LogUtils.operation("实心球设备空闲");
+                    LogUtils.all("实心球设备空闲");
                     activity.sendFree();
                     break;
                 case UPDATEDEVICE:
-                    LogUtils.operation("实心球更新设备状态");
+                    LogUtils.all("实心球更新设备状态");
                     BaseDeviceState deviceState = new BaseDeviceState(BaseDeviceState.STATE_ERROR, 0);
                     activity.updateDevice(deviceState);
                     activity.sendFree();

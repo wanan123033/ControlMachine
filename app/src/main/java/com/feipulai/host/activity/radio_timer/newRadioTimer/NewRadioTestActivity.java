@@ -343,7 +343,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //            baseTimer = sportPresent.getTime();
 //            sportPresent.setSynKeep(baseTimer);
 //        }
-        LogUtils.operation("红外计时开始时间baseTimer：" + baseTimer);
+        LogUtils.operation("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
         currentTestTime++;
@@ -417,7 +417,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
                 if (null == mList.get(temp).getStudent())
                     return;
-                LogUtils.operation("baseTimer:" + baseTimer + "result.getLongTime():" + result.getLongTime());
+                LogUtils.operation("拦截成绩：开始时间:" + baseTimer + "拦截时间:" + result.getLongTime());
                 int realTime = (result.getLongTime() - baseTimer);
                 setRunWayTime(temp, realTime,result.getCurrentTime());
             }
@@ -440,7 +440,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         mList.get(temp).setMark(getFormatTime(realTime));
         mList.get(temp).setOriginalMark(realTime);
         if (!TextUtils.isEmpty(mList.get(temp).getStudent().getStudentName())) {
-            LogUtils.operation("baseTimer:" + mList.get(temp).getStudent().getStudentName() + realTime);
+            LogUtils.operation("分道考生拦截时间:" + mList.get(temp).getStudent().getStudentName() +"---"+ realTime);
         }
         RunStudent.WaitResult waitResult = new RunStudent.WaitResult();
         waitResult.setOriResult(realTime);

@@ -84,7 +84,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     }
     @Override
     public void onItemClick(int position) {
-        LogUtils.operation("更改了设备ID deviceId 在配对");
+        LogUtils.all("更改了设备ID deviceId 在配对");
         presenter.changeFocusPosition(position);
     }
 
@@ -118,7 +118,7 @@ public abstract class SitPullPairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
-                LogUtils.operation("勾选了自动匹配");
+                LogUtils.all("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
             case R.id.tv_init_way:

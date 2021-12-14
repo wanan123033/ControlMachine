@@ -101,7 +101,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void updateSpecificItem(int position, int point) {
-        LogUtils.operation("正在匹配position:" + position + "point:" + point);
+        LogUtils.all("正在匹配position:" + position + "point:" + point);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
         msg.arg1 = position;
@@ -145,7 +145,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void onItemClick(int position, int point) {
-        LogUtils.operation("更改了设备position:" + position + "point:" + point);
+        LogUtils.all("更改了设备position:" + position + "point:" + point);
         presenter.changeFocusPosition(position, point);
     }
 
@@ -153,7 +153,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
-                LogUtils.operation("勾选了自动匹配");
+                LogUtils.all("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
 //            case R.id.btn_helper:

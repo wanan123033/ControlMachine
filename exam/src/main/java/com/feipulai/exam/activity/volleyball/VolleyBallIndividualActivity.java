@@ -263,11 +263,11 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         }
 
         if (student != null)
-            LogUtils.operation("排球检入到学生:" + student.toString());
+            LogUtils.all("排球检入到学生:" + student.toString());
         if (studentItem != null)
             LogUtils.all("排球检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
-            LogUtils.operation("排球检入到学生成绩:" + results.size() + "----" + results.toString());
+            LogUtils.all("排球检入到学生成绩:" + results.size() + "----" + results.toString());
 
         pairs.get(0).setStudent(student);
         TestCache.getInstance().init();
@@ -285,7 +285,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
             TestCache.getInstance().getResults().put(student, results);
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
-            LogUtils.operation("当前考生:stuCode=" + student.getStudentCode() + "---testNo=" + testNo);
+            LogUtils.operation("当前考生:考号=" + student.getStudentCode() + "---当前测试次数=" + testNo);
             TestCache.getInstance().getTestNoMap().put(student, testNo);
         }
 

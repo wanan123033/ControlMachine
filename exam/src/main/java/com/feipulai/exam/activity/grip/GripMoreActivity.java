@@ -59,7 +59,7 @@ public class GripMoreActivity extends BaseMoreActivity {
         setting = SharedPrefsUtil.loadFormSource(this, GripSetting.class);
         if (setting == null)
             setting = new GripSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         deviceState = new int[setting.getDeviceSum()];
         resultUpdate = new boolean[setting.getDeviceSum()];
         for (int i = 0; i < deviceState.length; i++) {

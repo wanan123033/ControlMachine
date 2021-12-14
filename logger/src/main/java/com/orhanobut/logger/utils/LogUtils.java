@@ -187,7 +187,7 @@ public class LogUtils {
      * @param message
      */
     public static void normal(String message) {
-//        Logger.t(NORMAL_TAG).i(message);
+        Logger.t(NORMAL_TAG).i(message);
     }
     /**
      * 发送串品日志打印

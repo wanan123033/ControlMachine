@@ -324,7 +324,7 @@ public class SargentTestActivity extends BasePersonTestActivity {
         stuPair.setResult(result);
         if (testState == TestState.WAIT_RESULT) {
             testState = TestState.UN_STARTED;
-            LogUtils.operation("实心球发送==onResultArrived》" + testState);
+            LogUtils.all("实心球发送==onResultArrived》" + testState);
             if (sargentSetting.isFullReturn()) {
                 if (stuPair.getStudent().getSex() == Student.MALE) {
                     stuPair.setFullMark(stuPair.getResult() >= Integer.parseInt(sargentSetting.getMaleFull()) * 10);

@@ -34,7 +34,7 @@ public class GripMoreGroupActivity extends BaseMoreGroupActivity {
         if (null == setting) {
             setting = new GripSetting();
         }
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         deviceState = new int[setting.getDeviceSum()];
         getState();
         RadioManager.getInstance().setOnRadioArrived(gripRadio);

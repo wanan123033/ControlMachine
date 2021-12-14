@@ -140,7 +140,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
         setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
         if (setting == null)
             setting = new FootBallSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         useMode = setting.getUseMode();
 //        //初始化UDP
 //        UdpClient.getInstance().init(1527);
@@ -364,7 +364,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getDeviceStatus(int status) {
-        LogUtils.operation("足球获取到设备状态值:" + status);
+        LogUtils.all("足球获取到设备状态值:" + status);
         switch (status) {
             case 1:
                 txtDeviceStatus.setText("空闲");
@@ -406,7 +406,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void triggerStart(BasketballResult result) {
-        LogUtils.operation("足球开始计时:useMode=" + useMode + ",result=" + result.toString());
+        LogUtils.all("足球开始计时:useMode=" + useMode + ",result=" + result.toString());
         Log.i(TAG, "triggerStart:" + result.toString());
         switch (useMode) {
             case 0://单拦截
@@ -448,7 +448,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getResult(BasketballResult result) {
-        LogUtils.operation("足球获取到结果数据:useMode=" + useMode + ",state=" + state + ",result=" + result);
+        LogUtils.all("足球获取到结果数据:useMode=" + useMode + ",state=" + state + ",result=" + result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
             return;
@@ -534,7 +534,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             testRoundResult.setResult(testResult.getResult());
             testRoundResult.setMachineResult(testResult.getSelectMachineResult());
             testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
-            LogUtils.operation("足球更新本次轮次成绩:result = " + testRoundResult.getResult() + "---" + testRoundResult.toString());
+            LogUtils.operation("足球更新本次轮次成绩: " + testRoundResult.toString());
             DBManager.getInstance().updateRoundResult(testRoundResult);
 
             //获取所有成绩设置为非最好成绩
@@ -562,7 +562,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void getStatusStop(BasketballResult result) {
-        LogUtils.operation("足球停止计时:state = " + state + ",result = " + result);
+        LogUtils.all("足球停止计时:state = " + state + ",result = " + result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;

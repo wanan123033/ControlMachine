@@ -142,7 +142,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
         if (setting == null)
             setting = new FootBallSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
@@ -418,7 +418,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 //                *               STATUS_RUNING 	    3		//Start Run
 //                *               STATUS_PREP  		4		//Prepare to release
 //                *               STATUS_PAUSE 		5		//Display release time,But Timer is Running
-        LogUtils.operation("足球设备状态值:" + udpStatus);
+        LogUtils.all("足球设备状态值:" + udpStatus);
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {
             case 1:
@@ -458,7 +458,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     public void triggerStart(BasketballResult result) {
         if (result != null)
-            LogUtils.operation("足球开始计时:useMode=" + useMode + ",result.gettNum()=" + result.gettNum());
+            LogUtils.all("足球开始计时:useMode=" + useMode + ",result.gettNum()=" + result.gettNum());
         Log.i(TAG, "triggerStart:" + result.toString());
         switch (useMode) {
             case 0://单拦截
@@ -632,7 +632,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     @Override
     public void getStatusStop(BasketballResult result) {
         if (result != null)
-            LogUtils.operation("足球停止计时:state=" + state + "---" + result.toString());
+            LogUtils.all("足球停止计时:state=" + state + "---" + result.toString());
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;

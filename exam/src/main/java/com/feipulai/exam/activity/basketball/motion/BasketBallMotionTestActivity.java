@@ -165,7 +165,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
 
     private void gotoItemSetting() {
         if (!isConfigurableNow()) {
-            LogUtils.operation("跳转至篮球项目设置界面");
+            LogUtils.all("跳转至篮球项目设置界面");
             IntentUtil.gotoActivityForResult(this, BasketBallSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
@@ -194,7 +194,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         sportPresent = new SportPresent(this,2);
 
         StuDevicePair pair = new StuDevicePair();
@@ -586,7 +586,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements B
 
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
-        LogUtils.operation("跳转至篮球设备配对界面");
+        LogUtils.all("跳转至篮球设备配对界面");
         IntentUtil.gotoActivity(this, SportPairActivity.class);
     }
     @Override

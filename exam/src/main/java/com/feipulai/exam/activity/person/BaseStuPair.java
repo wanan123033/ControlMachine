@@ -158,17 +158,11 @@ public class BaseStuPair implements Serializable {
     @Override
     public String toString() {
         return "BaseStuPair{" +
-                "result=" + result +
-                ", resultState=" + resultState +
-                ", isFullMark=" + isFullMark +
-                ", trackNo=" + trackNo +
-                ", student=" + student +
-                ", baseDevice=" + baseDevice +
-                ", timeResult=" + Arrays.toString(timeResult) +
-                ", canTest=" + canTest +
-                ", canCheck=" + canCheck +
-                ", notBest=" + notBest +
-                ", baseHeight=" + baseHeight +
+                "成绩=" + result +
+                ", 成绩状态=" + resultState +
+                ", 是否满分=" + isFullMark +
+                ", 分道=" + trackNo +
+                ", 考生=" + student +
                 '}';
     }
 

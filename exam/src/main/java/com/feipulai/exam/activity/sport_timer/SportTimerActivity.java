@@ -402,11 +402,11 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (student != null)
-            LogUtils.operation("运动计时检入到学生:" + student.toString());
+            LogUtils.all("运动计时检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("运动计时检入到学生StudentItem:" + studentItem.toString());
+            LogUtils.all("运动计时检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
-            LogUtils.operation("运动计时检入到学生成绩:" + results.size() + "----" + results.toString());
+            LogUtils.all("运动计时检入到学生成绩:" + results.size() + "----" + results.toString());
         if (testState == TestState.UN_STARTED) {
             pair.setStudent(student);
             mStudentItem = studentItem;

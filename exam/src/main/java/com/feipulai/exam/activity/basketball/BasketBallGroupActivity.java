@@ -138,7 +138,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
@@ -351,7 +351,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getDeviceStatus(int status) {
-        LogUtils.operation("篮球获取到设备状态值:" + status);
+        LogUtils.all("篮球获取到设备状态值:" + status);
         switch (status) {
             case 1:
                 if (isExistTestPlace()) {
@@ -404,7 +404,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getResult(BasketballResult result) {
-        LogUtils.operation("篮球获取到结果数据:状态=" + state + ",成绩=" + result);
+        LogUtils.all("篮球获取到结果数据:状态=" + state + ",成绩=" + result);
 //        timerUtil.release();
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || TextUtils.isEmpty(testDate)) {
@@ -493,7 +493,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void getStatusStop(BasketballResult result) {
-        LogUtils.operation("篮球停止计时:状态 = " + state + ",成绩 = " + result);
+        LogUtils.all("篮球停止计时:状态 = " + state + ",成绩 = " + result);
         //非测试不做处理
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;

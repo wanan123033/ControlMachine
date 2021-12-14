@@ -524,19 +524,19 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case SitPushUpManager.STATE_DISCONNECT:
-                LogUtils.operation("俯卧撑设备断开连接...");
+                LogUtils.all("俯卧撑设备断开连接...");
                 cbDeviceState.setChecked(false);
                 pairs.get(position()).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case SitPushUpManager.STATE_FREE:
-                LogUtils.operation("俯卧撑设备空闲中...");
+                LogUtils.all("俯卧撑设备空闲中...");
                 cbDeviceState.setChecked(true);
                 pairs.get(position()).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
-                LogUtils.operation("俯卧撑设备更新成绩中...");
+                LogUtils.all("俯卧撑设备更新成绩中...");
                 SitPushUpStateResult result = (SitPushUpStateResult) msg.obj;
                 intervalCount = msg.arg1;
                 pairs.get(position()).setDeviceResult(result);

@@ -695,7 +695,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                         temp = (result.getDeviceId() - runNum) - 1;
                     }
                 }
-                LogUtils.operation("time:" + result.getLongTime() + "base:" + baseTimer);
+                LogUtils.all("拦截时间:" + result.getLongTime() + "开始时间:" + baseTimer);
                 int realTime = (result.getLongTime() - baseTimer);
                 if (realTime < 0)
                     return;

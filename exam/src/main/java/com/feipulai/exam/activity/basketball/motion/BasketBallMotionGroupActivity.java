@@ -157,7 +157,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
     }
     private void gotoItemSetting() {
         if (!isConfigurableNow()) {
-            LogUtils.operation("跳转至篮球项目设置界面");
+            LogUtils.all("跳转至篮球项目设置界面");
             IntentUtil.gotoActivityForResult(this, BasketBallSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");

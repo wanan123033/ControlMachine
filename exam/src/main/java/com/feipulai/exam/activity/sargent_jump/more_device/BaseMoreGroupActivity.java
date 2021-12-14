@@ -356,7 +356,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     case R.id.txt_skip://跳过
                         Student student = pair.getStudent();
                         if (student != null) {
-                            LogUtils.operation("点击了跳过:stuCode=" + student.getStudentCode());
+                            LogUtils.operation("点击了跳过:考生考号=" + student.getStudentCode());
                             stuSkipDialog(student, pos);
                         }
                         break;
@@ -502,7 +502,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         deviceDetails.get(index).getStuDevicePair().setCanTest(true);
 
         if (deviceDetails.get(index).getStuDevicePair().getStudent() != null) {
-            LogUtils.operation("studentSkip=>跳过考生：" + deviceDetails.get(index).getStuDevicePair().getStudent().getStudentName());
+            LogUtils.operation("跳过考生：" + deviceDetails.get(index).getStuDevicePair().getStudent().getStudentName());
             deviceDetails.get(index).getStuDevicePair().setStudent(null);
             deviceDetails.get(index).getStuDevicePair().setResult(-999);
             deviceDetails.get(index).getStuDevicePair().setTimeResult(new String[setTestCount()]);
@@ -840,24 +840,24 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
             toastSpeak("该考生不存在");
             return;
         }
-        LogUtils.operation("检入学生" + student.toString());
+        LogUtils.all("检入学生" + student.toString());
         StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
         if (studentItem == null) {
             toastSpeak("无此项目");
             return;
         }
-        LogUtils.operation("检入学生StudentItem" + studentItem.toString());
+        LogUtils.all("检入学生StudentItem" + studentItem.toString());
 
         //是否开启身份验证
         if (SettingHelper.getSystemSetting().isIdentityMark() && studentList.size() > 0) {
             //考生分组测试的成绩
             List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
-            LogUtils.operation("检入到学生成绩:" + roundResultList.toString());
+            LogUtils.all("检入到学生成绩:" + roundResultList.toString());
             //学生在分组中是否有进行检入
             GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
             if ((roundResultList.size() == 0 || roundResultList.size() < setTestCount()) && groupItem != null) {
                 roundNo = roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
-                LogUtils.operation("检入到学生轮次:roundNo = " + roundNo);
+                LogUtils.operation("检入到学生轮次: = " + roundNo);
                 gotoTest(student);
                 groupItem.setIdentityMark(1);
                 DBManager.getInstance().updateStudentGroupItem(groupItem);
@@ -868,7 +868,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 toastSpeak(student.getSpeakStuName() + "考生已测试完成",
                         student.getStudentName() + "考生已测试完成");
             }
-            LogUtils.operation("检入到学生成绩:" + roundResultList.toString());
+            LogUtils.all("检入到学生成绩:" + roundResultList.toString());
         }
     }
 
@@ -895,7 +895,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
     public void updateDevice(BaseDeviceState deviceState) {
         int deviceId = deviceState.getDeviceId();
-        LogUtils.operation("更新摸高设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
+        LogUtils.all("更新摸高设备状态:deviceId=" + deviceId + ",deviceState=" + deviceState.toString());
         BaseStuPair pair = null;
         int deviceIndex = 0;
         for (int i = 0; i < deviceDetails.size(); i++) {
@@ -1294,7 +1294,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
 
     private void saveResult(BaseStuPair baseStuPair, int roundNo, int index) {
-        LogUtils.operation("保存成绩:baseStuPair=" + baseStuPair.toString() + "---roundNo=" + roundNo + "---index=" + index);
+        LogUtils.all("保存成绩:baseStuPair=" + baseStuPair.toString() + "---roundNo=" + roundNo + "---index=" + index);
         RoundResult roundResult = new RoundResult();
         roundResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
         roundResult.setStudentCode(baseStuPair.getStudent().getStudentCode());

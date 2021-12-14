@@ -244,11 +244,11 @@ public class PushUpIndividualActivity extends BaseTitleActivity
     @Override
     public void onIndividualCheckIn(Student student, StudentItem studentItem, List<RoundResult> results) {
         if (student != null)
-            LogUtils.operation("俯卧撑检入到学生:" + student.toString());
+            LogUtils.all("俯卧撑检入到学生:" + student.toString());
         if (studentItem != null)
-            LogUtils.operation("俯卧撑检入到学生StudentItem:" + studentItem.toString());
+            LogUtils.all("俯卧撑检入到学生StudentItem:" + studentItem.toString());
         if (results != null)
-            LogUtils.operation("俯卧撑检入到学生成绩:" + results.size() + "----" + results.toString());
+            LogUtils.all("俯卧撑检入到学生成绩:" + results.size() + "----" + results.toString());
         if (state != WAIT_CHECK_IN) {
             toastSpeak("当前考生还未完成测试,拒绝检录");
             return;
@@ -568,19 +568,19 @@ public class PushUpIndividualActivity extends BaseTitleActivity
 
         switch (msg.what) {
             case SitPushUpManager.STATE_DISCONNECT:
-                LogUtils.operation("俯卧撑设备已断开...");
+                LogUtils.all("俯卧撑设备已断开...");
                 cbDeviceState.setChecked(false);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_DISCONNECT);
                 break;
 
             case SitPushUpManager.STATE_FREE:
-                LogUtils.operation("俯卧撑设备空闲中...");
+                LogUtils.all("俯卧撑设备空闲中...");
                 cbDeviceState.setChecked(true);
                 pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
                 break;
 
             case UPDATE_SCORE:
-                LogUtils.operation("俯卧撑设备更新成绩中...");
+                LogUtils.all("俯卧撑设备更新成绩中...");
                 SitPushUpStateResult result = (SitPushUpStateResult) msg.obj;
                 intervalCount = msg.arg1;
                 pairs.get(0).setDeviceResult(result);

@@ -161,7 +161,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
         if (setting == null)
             setting = new BasketBallSetting();
-        LogUtils.operation("项目设置" + setting.toString());
+        LogUtils.all("项目设置" + setting.toString());
         facade = new BasketBallRadioFacade(setting.getTestType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
@@ -433,7 +433,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 //                *               STATUS_PREP  		4		//Prepare to release
 //                *               STATUS_PAUSE 		5		//Display release time,But Timer is Running
         //6检入
-        LogUtils.operation("篮球设备返回状态值:" + udpStatus);
+        LogUtils.all("篮球设备返回状态值:" + udpStatus);
         pairs.get(0).getBaseDevice().setState(BaseDeviceState.STATE_FREE);
         switch (udpStatus) {
             case 1:
@@ -586,7 +586,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void getStatusStop(BasketballResult result) {
         //非测试不做处理
         if (result != null)
-            LogUtils.operation("篮球停止计时:状态=" + state + ",成绩=" + result.getResult());
+            LogUtils.all("篮球停止计时:状态=" + state + ",成绩=" + result.getResult());
         if (state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_CONFIRM) {
             return;
         }
@@ -722,7 +722,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private void startProjectSetting() {
         if (!isConfigurableNow()) {
-            LogUtils.operation("跳转至篮球项目设置界面");
+            LogUtils.all("跳转至篮球项目设置界面");
             IntentUtil.gotoActivityForResult(this, BasketBallSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
@@ -734,13 +734,13 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private boolean isConfigurableNow() {
         boolean flag = !(state == WAIT_FREE || state == WAIT_CHECK_IN || state == WAIT_BEGIN);
-        LogUtils.operation("篮球isConfigurableNow(是否是使用中) = " + flag);
+        LogUtils.all("篮球isConfigurableNow(是否是使用中) = " + flag);
         return flag;
     }
 
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
-        LogUtils.operation("跳转至篮球设备配对界面");
+        LogUtils.all("跳转至篮球设备配对界面");
         IntentUtil.gotoActivity(this, BasketBallPairActivity.class);
     }
 

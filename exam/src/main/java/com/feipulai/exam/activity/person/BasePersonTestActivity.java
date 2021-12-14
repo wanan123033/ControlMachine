@@ -1133,7 +1133,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         }
         PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()));
         PrinterManager.getInstance().print("\n");
-        LogUtils.operation("自动打印完成");
+        LogUtils.all("自动打印完成");
 
     }
 

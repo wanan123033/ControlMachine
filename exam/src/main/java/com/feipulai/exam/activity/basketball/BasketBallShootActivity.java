@@ -406,7 +406,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
     @Override
     public void getResult(RunTimerResult result) {
         Log.i("拦截：",result.toString());
-        LogUtils.operation("篮球投篮拦截："+result.toString());
+        LogUtils.all("篮球投篮拦截："+result.toString());
         //根据折返点拦截次数更新投篮次数
         if (result.getTrackNum() == 1 && !txtRun.isEnabled()) {//投篮的拦截的道号必须设定为1道
             testResult = result.getOrder();//第几次
@@ -447,7 +447,7 @@ public class BasketBallShootActivity extends BaseShootActivity implements BaseAF
 
     @Override
     public void changeState(final int testState) {
-        LogUtils.operation("篮球投篮返回状态..."+testState);
+        LogUtils.all("篮球投篮返回状态..."+testState);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

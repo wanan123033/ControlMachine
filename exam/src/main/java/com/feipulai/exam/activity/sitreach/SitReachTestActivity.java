@@ -148,7 +148,7 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
 
     @Override
     public void gotoItemSetting() {
-        LogUtils.operation("坐位体前屈跳转至设置界面");
+        LogUtils.all("坐位体前屈跳转至设置界面");
         startActivity(new Intent(this, SitReachSettingActivity.class));
     }
 
@@ -323,15 +323,15 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
             if (activity != null) {
                 switch (msg.what) {
                     case UPDATE_DEVICE:
-                        LogUtils.operation("坐位体前屈更新设备状态:" + msg.obj.toString());
+                        LogUtils.all("坐位体前屈更新设备状态:" + msg.obj.toString());
                         activity.updateDevice((BaseDeviceState) msg.obj);
                         break;
                     case UPDATE_RESULT:
-                        LogUtils.operation("坐位体前屈更新成绩:" + msg.obj.toString());
+                        LogUtils.all("坐位体前屈更新成绩:" + msg.obj.toString());
                         activity.updateResult((BaseStuPair) msg.obj);
                         break;
                     case MSG_DISCONNECT:
-                        LogUtils.operation("坐位体前屈设备未连接...");
+                        LogUtils.all("坐位体前屈设备未连接...");
                         Logger.i(TAG + ":1MSG_DISCONNECT:" + activity.isDisconnect);
                         if (activity.isDisconnect) {
                             // 判断2次提示时间

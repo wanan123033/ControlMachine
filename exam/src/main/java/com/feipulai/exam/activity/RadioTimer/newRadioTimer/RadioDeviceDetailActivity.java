@@ -149,7 +149,7 @@ public class RadioDeviceDetailActivity extends BaseTitleActivity implements Devi
     }
 
     public void updateSpecificItem(int position, int point) {
-        LogUtils.operation("正在匹配position:" + position + "point:" + point);
+        LogUtils.all("正在匹配position:" + position + "point:" + point);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
         msg.arg1 = position;

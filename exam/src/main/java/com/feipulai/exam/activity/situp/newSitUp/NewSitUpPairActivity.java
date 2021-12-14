@@ -78,13 +78,13 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
                     case R.id.tv_arm:
 //                        mAdapter.setSelectDevice(2);
 //                        presenter.setDevice(2);
-                        LogUtils.operation("选择设备："+ 2+"position:"+position);
+                        LogUtils.normal("选择设备："+ 2+"position:"+position);
                         presenter.changeFocusPosition(position, 2);
                         break;
                     case R.id.tv_sit_up:
 //                        mAdapter.setSelectDevice(1);
 //                        presenter.setDevice(1);
-                        LogUtils.operation("选择设备："+ 1+"position:"+position);
+                        LogUtils.normal("选择设备："+ 1+"position:"+position);
                         presenter.changeFocusPosition(position, 1);
                         break;
                 }
@@ -95,7 +95,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
 
     @Override
     public void updateSpecificItem(int position,int device) {
-        LogUtils.operation("更新设备device："+ device+"position:"+position);
+        LogUtils.all("更新设备device："+ device+"position:"+position);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
         msg.arg1 = position;
@@ -105,7 +105,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
 
     @Override
     public void select(int position,int device) {
-        LogUtils.operation("处理设备device："+ device+"position:"+position);
+        LogUtils.all("处理设备device："+ device+"position:"+position);
 //        int oldSelectPosition = mAdapter.getSelected();
 //        mAdapter.setSelected(position);
 //        updateSpecificItem(oldSelectPosition,device);
@@ -132,7 +132,7 @@ public class NewSitUpPairActivity extends BaseTitleActivity implements NewSitUpP
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
-                LogUtils.operation("勾选了自动匹配");
+                LogUtils.all("勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }

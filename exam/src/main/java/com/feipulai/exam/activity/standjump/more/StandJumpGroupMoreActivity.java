@@ -58,7 +58,7 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
     public void toStart(int pos) {
         int deviceId = deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId();
         Student student = deviceDetails.get(pos).getStuDevicePair().getStudent();
-        LogUtils.operation("立定跳远开始测试:deviceId="+deviceId+",student="+student.toString());
+        LogUtils.operation("立定跳远开始测试:设备ID="+deviceId+",考生="+student.toString());
         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), deviceId);
         try {
             Thread.sleep(100);

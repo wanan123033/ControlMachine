@@ -295,7 +295,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
     }
 
     private void showValidResult(final int result, final boolean fault, final BaseStuPair stuPair) {
-        LogUtils.operation("成绩只扫描到两个点：" + result);
+        LogUtils.all("成绩只扫描到两个点：" + result);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("成绩是否有效");
         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
@@ -359,7 +359,7 @@ public class MedicineBallTestActivity extends BasePersonTestActivity {
 
     @Override
     public void gotoItemSetting() {
-        LogUtils.operation("实心球跳转设置界面");
+        LogUtils.all("实心球跳转设置界面");
         startActivity(new Intent(this, MedicineBallSettingActivity.class));
     }
 

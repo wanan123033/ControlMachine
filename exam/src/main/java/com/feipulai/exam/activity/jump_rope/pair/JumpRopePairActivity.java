@@ -138,7 +138,7 @@ public class JumpRopePairActivity extends BaseTitleActivity
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
-                LogUtils.operation("跳绳配对勾选了自动匹配");
+                LogUtils.all("跳绳配对勾选了自动匹配");
                 presenter.changeAutoPair(mSwAutoPair.isChecked());
                 break;
         }
