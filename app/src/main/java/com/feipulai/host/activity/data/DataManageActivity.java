@@ -50,6 +50,7 @@ import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
+import com.feipulai.host.activity.base.ClearDataDialog;
 import com.feipulai.host.activity.setting.SettingHelper;
 import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.UploadResults;
@@ -294,7 +295,8 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                         startActivity(intent);
                         break;
                     case 5: //数据清空
-                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
+                        new ClearDataDialog(DataManageActivity.this).showDialog();
+//                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
                         break;
 
                     case 6://成绩上传

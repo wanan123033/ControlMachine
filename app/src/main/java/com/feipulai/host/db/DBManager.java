@@ -15,6 +15,8 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.RoundResultDao;
 import com.feipulai.host.entity.Student;
 import com.feipulai.host.entity.StudentDao;
+import com.feipulai.host.entity.StudentFace;
+import com.feipulai.host.entity.StudentFaceDao;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.entity.StudentItemDao;
 import com.feipulai.host.utils.EncryptUtil;
@@ -44,6 +46,7 @@ public class DBManager {
     private static StudentDao studentDao;
     private static StudentItemDao studentItemDao;
     private static RoundResultDao roundResultDao;
+    private static StudentFaceDao studentFaceDao;
     private static Database db;
     private static DaoSession daoSession;
     public static DBOpenHelper helper;
@@ -81,6 +84,7 @@ public class DBManager {
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
         studentDao = daoSession.getStudentDao();
+        studentFaceDao = daoSession.getStudentFaceDao();
         itemDao = daoSession.getItemDao();
         studentItemDao = daoSession.getStudentItemDao();
         roundResultDao = daoSession.getRoundResultDao();
@@ -1100,6 +1104,24 @@ public class DBManager {
         }
         LogUtil.logDebugMessage(timeList.toString());
         return null;
+    }
+    public void insertStudentFaces(List<StudentFace> studentFaces) {
+        studentFaceDao.insertInTx(studentFaces);
+    }
+
+    public void insertStudentFace(StudentFace studentFace) {
+        studentFaceDao.insertInTx(studentFace);
+    }
+
+    public void clearFace() {
+        studentFaceDao.deleteAll();
+    }
+
+    public StudentFace getStudentFeatures(String studentCode) {
+        return studentFaceDao.queryBuilder().where(StudentFaceDao.Properties.StudentCode.eq(studentCode)).unique();
+    }
+    public List<StudentFace> getStudentFeatures() {
+        return studentFaceDao.queryBuilder().list();
     }
     /********************************************多表操作**********************************************************************/
 

@@ -44,6 +44,7 @@ import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentFace;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.HttpManager;
@@ -536,6 +537,7 @@ public class HttpSubscriber {
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                List<StudentFace> studentFaces = new ArrayList<>();
                 for (StudentBean studentBean : result.getDataInfo()) {
                     if (!stuList.contains(studentBean.getIdCard())) {
                         stuList.add(studentBean.getIdCard());
@@ -556,6 +558,10 @@ public class HttpSubscriber {
                     student.setClassName(studentBean.getClassName());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
+                    StudentFace face = new StudentFace();
+                    face.setStudentCode(studentBean.getStudentCode());
+                    face.setFaceFeature(studentBean.getFaceFeature());
+                    studentFaces.add(face);
                     //                    student.setPortrait(studentBean.getPhotoData());
                     //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
                     if (studentBean.getPhotoData() != null) {
@@ -604,6 +610,7 @@ public class HttpSubscriber {
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
+                DBManager.getInstance().insertStudentFaces(studentFaces);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onRequestData(studentList);
                 }

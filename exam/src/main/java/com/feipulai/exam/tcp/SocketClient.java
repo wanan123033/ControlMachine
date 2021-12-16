@@ -19,6 +19,7 @@ import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.ItemSchedule;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentFace;
 import com.feipulai.exam.entity.StudentItem;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
@@ -479,6 +480,10 @@ public class SocketClient {
                             FaceRegisterInfo faceFeature = new FaceRegisterInfo(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT), studentInfo.getStudentCode());
                             registerInfoList.add(faceFeature);
                         }
+                        StudentFace studentFace = new StudentFace();
+                        studentFace.setStudentCode(studentCodes.get(i));
+                        studentFace.setFaceFeature(m_strBestScore.get(i));
+                        DBManager.getInstance().insertStudentFace(studentFace);
                         GroupItem itemGroup = new GroupItem();
                         Group group = new Group();
                         itemGroup.setItemCode(TestConfigs.getCurrentItemCode());

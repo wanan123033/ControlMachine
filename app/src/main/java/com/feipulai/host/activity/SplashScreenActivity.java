@@ -29,6 +29,7 @@ import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.entity.StudentFace;
 import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpSubscriber;
@@ -251,9 +252,9 @@ public class SplashScreenActivity extends BaseActivity {
             DataBaseExecutor.addTask(new DataBaseTask(this, "数据加载中...", false) {
                 @Override
                 public DataBaseRespon executeOper() {
-                    List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
+                    List<StudentFace> studentList = DBManager.getInstance().getStudentFeatures();
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-                    for (Student student : studentList) {
+                    for (StudentFace student : studentList) {
                         try {
                             byte[] faceByte = Base64.decode(student.getFaceFeature(), Base64.DEFAULT);
                             registerInfoList.add(new FaceRegisterInfo(faceByte, student.getStudentCode()));

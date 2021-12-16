@@ -1248,11 +1248,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             ledHandler.sendMessageDelayed(msg, 3000);
         } else {
             //是否测试到最后一位
-//            if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
-//                //全部次数测试完，
-//                allTestComplete();
-//                return;
-//            }
+            if (stuAdapter.getTestPosition() == stuPairsList.size() - 1) {
+                //全部次数测试完，
+                allTestComplete();
+                return;
+            }
             if (isShowPenalizeFoul() == View.GONE) {
                 continuousTestNext();
 

@@ -13,6 +13,7 @@ import com.feipulai.exam.entity.ItemDao;
 import com.feipulai.exam.entity.MachineResultDao;
 import com.feipulai.exam.entity.RoundResultDao;
 import com.feipulai.exam.entity.StudentDao;
+import com.feipulai.exam.entity.StudentFaceDao;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentItemDao;
 import com.orhanobut.logger.Logger;
@@ -70,6 +71,7 @@ public class DBOpenHelper extends DaoMaster.OpenHelper {
                     break;
                 case 16:
                     MigrationHelper.migrate(db, GroupItemDao.class);
+                    MigrationHelper.migrate(db, StudentFaceDao.class);
                     break;
 
             }

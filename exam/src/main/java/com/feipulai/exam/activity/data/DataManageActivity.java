@@ -355,7 +355,8 @@ public class DataManageActivity
                         break;
                     case 9: //数据清空
                         LogUtils.operation("用户点击了数据清空...");
-                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
+                        showClearDialog();
+//                        new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
                         break;
 
                     case 10://成绩上传
@@ -421,6 +422,10 @@ public class DataManageActivity
                 }
             }
         });
+    }
+
+    private void showClearDialog() {
+        new ClearDataDialog(DataManageActivity.this).showDialog();
     }
 
 

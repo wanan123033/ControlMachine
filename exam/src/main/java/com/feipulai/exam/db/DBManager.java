@@ -36,6 +36,8 @@ import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.ScheduleDao;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentDao;
+import com.feipulai.exam.entity.StudentFace;
+import com.feipulai.exam.entity.StudentFaceDao;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentItemDao;
 import com.feipulai.exam.entity.StudentThermometer;
@@ -85,6 +87,7 @@ public class DBManager {
     private static ChipInfoDao chipInfoDao;
     private static StudentThermometerDao thermometerDao;
     private static AccountDao accountDao;
+    private static StudentFaceDao studentFaceDao;
     private static Database db;
     private static DaoSession daoSession;
     public static DBOpenHelper helper;
@@ -125,6 +128,7 @@ public class DBManager {
         chipInfoDao = daoSession.getChipInfoDao();
         accountDao = daoSession.getAccountDao();
         thermometerDao = daoSession.getStudentThermometerDao();
+        studentFaceDao = daoSession.getStudentFaceDao();
 //        Account account = accountDao.queryBuilder().where(AccountDao.Properties.Account.eq("fairplay")).unique();
 //        if (account == null) {
 //            insterAccount("fairplay", "fpl.2021", 0);
@@ -282,6 +286,11 @@ public class DBManager {
         return studentDao.queryBuilder()
                 .where(StudentDao.Properties.FaceFeature.notEq(""))
                 .where(StudentDao.Properties.FaceFeature.isNotNull()).list();
+    }
+    public List<StudentFace> getStudentFeatures() {
+        return studentFaceDao.queryBuilder()
+                .where(StudentFaceDao.Properties.FaceFeature.notEq(""))
+                .where(StudentFaceDao.Properties.FaceFeature.isNotNull()).list();
     }
 
     public List<Student> queryByItemStudentFeatures() {
@@ -2908,5 +2917,21 @@ public class DBManager {
 
     public void updateGroupItem(GroupItem groupItem) {
         groupItemDao.updateInTx(groupItem);
+    }
+
+    public void insertStudentFaces(List<StudentFace> studentFaces) {
+        studentFaceDao.insertInTx(studentFaces);
+    }
+
+    public void insertStudentFace(StudentFace studentFace) {
+        studentFaceDao.insertInTx(studentFace);
+    }
+
+    public void clearFace() {
+        studentFaceDao.deleteAll();
+    }
+
+    public StudentFace getStudentFeatures(String studentCode) {
+        return studentFaceDao.queryBuilder().where(StudentFaceDao.Properties.StudentCode.eq(studentCode)).unique();
     }
 }

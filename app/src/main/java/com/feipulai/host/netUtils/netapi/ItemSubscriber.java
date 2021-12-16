@@ -28,6 +28,7 @@ import com.feipulai.host.db.DBManager;
 import com.feipulai.host.entity.Item;
 import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
+import com.feipulai.host.entity.StudentFace;
 import com.feipulai.host.entity.StudentItem;
 import com.feipulai.host.netUtils.CommonUtils;
 import com.feipulai.host.netUtils.HttpManager;
@@ -249,12 +250,16 @@ public class ItemSubscriber {
                     student.setMajorName(studentBean.getSubject());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
+                    StudentFace studentFace = new StudentFace();
+                    studentFace.setStudentCode(studentBean.getStudentCode());
+                    studentFace.setFaceFeature(studentBean.getFaceFeature());
+                    DBManager.getInstance().insertStudentFace(studentFace);
 //                    student.setPortrait(studentBean.getPhotoData());
 //
 //                    if (studentBean.getPhotoData() != null) {
 //                        ImageUtil.saveBitmapToFile(MyApplication.PATH_IMAGE, studentBean.getStudentCode() + ".jpg", ImageUtil.base64ToBitmap(studentBean.getPhotoData()));
 //                    }
-                    student.setFaceFeature(studentBean.getFaceFeature());
+//                    student.setFaceFeature(studentBean.getFaceFeature());
                     student.setIdCardNo(TextUtils.isEmpty(studentBean.getIdCard()) ? null : EncryptUtil.setEncryptString(Student.ENCRYPT_KEY, studentBean.getIdCard()));
 
                     studentList.add(student);

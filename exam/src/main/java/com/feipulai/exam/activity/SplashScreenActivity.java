@@ -36,6 +36,7 @@ import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentFace;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.netUtils.OnResultListener;
@@ -259,10 +260,10 @@ public class SplashScreenActivity extends BaseActivity {
             DataBaseExecutor.addTask(new DataBaseTask(this, "", true) {
                 @Override
                 public DataBaseRespon executeOper() {
-                    List<Student> studentList = DBManager.getInstance().queryStudentFeatures();
+                    List<StudentFace> studentList = DBManager.getInstance().getStudentFeatures();
                     Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
-                    for (Student student : studentList) {
+                    for (StudentFace student : studentList) {
                         try {
                             byte[] faceByte = Base64.decode(student.getFaceFeature(), Base64.DEFAULT);
                             registerInfoList.add(new FaceRegisterInfo(faceByte, student.getStudentCode()));
@@ -336,7 +337,8 @@ public class SplashScreenActivity extends BaseActivity {
                                 List<Student> studentList = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0);
                                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
                                 for (Student student : studentList) {
-                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                    StudentFace face = DBManager.getInstance().getStudentFeatures(student.getStudentCode());
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(face.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
                                 }
                                 FaceServer.getInstance().addFaceList(registerInfoList);
                             }
