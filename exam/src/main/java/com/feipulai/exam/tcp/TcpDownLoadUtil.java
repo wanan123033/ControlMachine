@@ -109,7 +109,8 @@ public class TcpDownLoadUtil {
                         }
                         break;
                     case TRACK:
-                        getTcp(FIELD, null);
+//                        getTcp(FIELD, null);
+                        downLoadListener.onCommonListener(DOWNLOAD_FLAG, "数据下载完成");
                         break;
                     case FIELD:
                         downLoadListener.onCommonListener(DOWNLOAD_FLAG, "数据下载完成");

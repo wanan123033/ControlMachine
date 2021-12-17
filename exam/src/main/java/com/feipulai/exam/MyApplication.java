@@ -54,8 +54,8 @@ public class MyApplication extends MultiDexApplication {
      * 绑定成功时返回的令牌
      */
     public static String TOKEN = "";
-    public static String ADVANCED_PWD = "fpl2019";
-    public static String ADVANCED_AUTO_PWD = "fairplay.test";
+    public static String ADVANCED_PWD = "fpl12345";
+    public static String ADVANCED_AUTO_PWD = "fpl12345";
 
     public void onCreate() {
         super.onCreate();

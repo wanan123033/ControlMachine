@@ -477,13 +477,15 @@ public class SocketClient {
                         studentInfo.setIdCardNo(studentCodes.get(i));
                         if (!m_strBestScore.isEmpty() && !TextUtils.isEmpty(m_strBestScore.get(i))) {
                             studentInfo.setFaceFeature(m_strBestScore.get(i));
+                            StudentFace studentFace = new StudentFace();
+                            studentFace.setStudentCode(studentCodes.get(i));
+                            studentFace.setFaceFeature(m_strBestScore.get(i));
+                            DBManager.getInstance().insertStudentFace(studentFace);
                             FaceRegisterInfo faceFeature = new FaceRegisterInfo(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT), studentInfo.getStudentCode());
                             registerInfoList.add(faceFeature);
+
                         }
-                        StudentFace studentFace = new StudentFace();
-                        studentFace.setStudentCode(studentCodes.get(i));
-                        studentFace.setFaceFeature(m_strBestScore.get(i));
-                        DBManager.getInstance().insertStudentFace(studentFace);
+
                         GroupItem itemGroup = new GroupItem();
                         Group group = new Group();
                         itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
@@ -506,6 +508,7 @@ public class SocketClient {
                         group.setGroupNo(m_nGrp);
 //                itemGroup.setExamPlaceName(m_strExamSitePlace);
                         itemGroup.setScheduleNo(m_nField + "");
+                        itemGroup.setTrackNo(roadnos.get(i));
                         group.setScheduleNo(m_nField + "");
 //                itemGroup.setSubItemCode("");
                         DBManager.getInstance().insertGroupItem(itemGroup);
@@ -523,6 +526,10 @@ public class SocketClient {
                             FaceRegisterInfo faceFeature = new FaceRegisterInfo(Base64.decode(m_strBestScore.get(i), Base64.DEFAULT), studentInfo.getStudentCode());
                             registerInfoList.add(faceFeature);
                             DBManager.getInstance().updateStudent(studentInfo);
+                            StudentFace studentFace = new StudentFace();
+                            studentFace.setStudentCode(studentCodes.get(i));
+                            studentFace.setFaceFeature(m_strBestScore.get(i));
+                            DBManager.getInstance().insertStudentFace(studentFace);
                         }
                     }
 

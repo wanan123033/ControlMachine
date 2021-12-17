@@ -47,13 +47,20 @@
         <activity android:name=".activity.pullup.pair.PullUpPairActivity" />
         <activity
             android:name=".activity.pullup.check.PullUpCheckActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.pullup.test.PullUpIndividualActivity" />
-        <activity android:name=".activity.pullup.test.PullUpTestActivity" />
+        <activity
+            android:name=".activity.pullup.test.PullUpIndividualActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pullup.test.PullUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.pullup.setting.PullUpSettingActivity" />
         <activity android:name=".activity.pullup.PullUpSelectActivity" />
         <activity android:name=".activity.medicine_ball.MedicineBallSettingActivity" />
-        <activity android:name=".activity.medicine_ball.MedicineBallFreeTestActivity" />
+        <activity
+            android:name=".activity.medicine_ball.MedicineBallFreeTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.vccheck.pair.VcPairActivity" />
         <activity android:name=".activity.situp.pair.SitPullPairActivity" />
         <activity
@@ -85,9 +92,12 @@
         <activity android:name=".activity.jump_rope.pair.JumpRopePairActivity" />
         <activity
             android:name=".activity.jump_rope.check.JumpRopeCheckActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.jump_rope.setting.JumpRopeSettingActivity" />
-        <activity android:name=".activity.jump_rope.test.JumpRopeTestActivity" />
+        <activity
+            android:name=".activity.jump_rope.test.JumpRopeTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.jump_rope.base.result.RadioResultActivity" /> <!-- sit up -->
         <!-- <activity android:name=".activity.situp.BasePairActivity" /> -->
         <!-- <activity android:name=".activity.situp.SitUpCheckActivity" /> -->
@@ -97,21 +107,26 @@
         <activity android:name=".activity.situp.setting.SitUpSettingActivity" />
         <activity
             android:name=".activity.situp.test.SitUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.situp.check.SitUpCheckActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.height_weight.HeightWeightCheckActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" /> <!-- sit reach -->
         <activity
             android:name=".activity.sitreach.SitReachTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.SitReachSelectActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.more.SitReachMoreActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.sitreach.more.pair.SitReachPairActivity"
@@ -122,6 +137,7 @@
         <activity android:name=".activity.sitreach.SitReachFaceIDActivity" /> <!-- stand jump -->
         <activity
             android:name=".activity.standjump.StandJumpTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.standjump.Freedom.StandJumpFreedomActivity"
@@ -130,7 +146,9 @@
             android:name=".activity.standjump.StandJumpSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.standjump.StandJumpSelectActivity" />
-        <activity android:name=".activity.standjump.more.StandJumpMoreActivity" />
+        <activity
+            android:name=".activity.standjump.more.StandJumpMoreActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.standjump.more.StandJumpPairActivity" />
         <activity android:name=".activity.standjump.Freedom.StandJumpRadioFreedomActivity" />
         <activity android:name=".activity.data.DataRetrieveActivity" />
@@ -142,6 +160,7 @@
         <activity android:name=".activity.vccheck.VitalCapacityFaceIDActivity" /> <!-- medicine ball -->
         <activity
             android:name=".activity.medicine_ball.MedicineBallTestActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.medicine_ball.MedicineBallSelectActivity"
@@ -154,24 +173,39 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.medicine_ball.more_device.MedicineBallMoreActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.medicine_ball.MedicineBallFaceIDActivity" />
         <activity android:name=".activity.vccheck.UploadActivity" />
-        <activity android:name=".activity.radio_timer.RunTimerTestActivity" />
+        <activity
+            android:name=".activity.radio_timer.RunTimerTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.radio_timer.RunTimerSettingActivity" />
-        <activity android:name=".activity.vccheck.VitalTestActivity" />
-        <activity android:name=".activity.radio_timer.RunTimerFreeTestActivity" />
+        <activity
+            android:name=".activity.vccheck.VitalTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.radio_timer.RunTimerFreeTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.grip_dynamometer.pair.GripPairActivity" />
-        <activity android:name=".activity.ranger.RangerTestActivity" />
+        <activity
+            android:name=".activity.ranger.RangerTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.ranger.RangerSettingActivity" />
         <activity android:name=".activity.ranger.bluetooth.BluetoothSettingActivity" />
-        <activity android:name=".activity.vision.VisionTestActivity" />
+        <activity
+            android:name=".activity.vision.VisionTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.vision.VisionSettingActivity" />
-        <activity android:name=".activity.vision.Radio.VisionTestActivity" />
+        <activity
+            android:name=".activity.vision.Radio.VisionTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.vision.Radio.VisionCheckActivity" />
         <activity android:name=".activity.vision.Radio.VisionSettingActivity" />
         <activity android:name=".activity.vision.bluetooth.BlueToothListActivity" />
-        <activity android:name=".activity.ranger.RangerPersonTestActivity" />
+        <activity
+            android:name=".activity.ranger.RangerPersonTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
 
@@ -182,8 +216,12 @@
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.sporttime.SportPairActivity" />
         <activity android:name=".activity.sporttime.SportSettingActivity" />
-        <activity android:name=".activity.sporttime.SportInitWayActivity" />
-        <activity android:name=".activity.sporttime.SportTimeActivity" />
+        <activity
+            android:name=".activity.sporttime.SportInitWayActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sporttime.SportTimeActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.vccheck.GripSettingActivity" />
         <activity
             android:name=".activity.radio_timer.RunTimerSelectActivity"
