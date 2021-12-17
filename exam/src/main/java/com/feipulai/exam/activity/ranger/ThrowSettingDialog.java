@@ -94,6 +94,7 @@ public class ThrowSettingDialog extends AlertDialog.Builder {
         });
 
         ArrayAdapter adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_item.setAdapter(adapter);
     }
 

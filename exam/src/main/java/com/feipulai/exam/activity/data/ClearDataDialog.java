@@ -11,10 +11,18 @@ import android.view.Window;
 import android.widget.CheckBox;
 
 import com.feipulai.common.db.ClearDataProcess;
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.config.SharedPrefsConfigs;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,8 +57,24 @@ public class ClearDataDialog{
                 dismissDialog();
                 break;
             case R.id.btn_confirm:
+                clearData();
+
+                break;
+        }
+    }
+
+    private void clearData() {
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
                 if (cb_basic.isChecked()){
                     DBManager.getInstance().clear();
+                    SharedPrefsUtil.putValue(dialog.getContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                    SharedPrefsUtil.putValue(dialog.getContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
+                    SharedPrefsUtil.remove(dialog.getContext(), DownLoadPhotoHeaders.class);
+                    DBManager.getInstance().initDB();
+                    TestConfigs.init(dialog.getContext(), TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
+                    FileUtil.deleteDirectory(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
                 }
                 if (cb_face.isChecked()){
                     DBManager.getInstance().clearFace();
@@ -59,9 +83,24 @@ public class ClearDataDialog{
                     FileUtil.deleteDirectory(MyApplication.PATH_FACE);
                     FileUtil.deleteDirectory(MyApplication.PATH_IMAGE);
                 }
-                break;
-        }
+                dismissDialog();
+                return new DataBaseRespon(true, "", "");
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                Logger.i("数据清空完成");
+                ToastUtils.showShort("数据清空完成");
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
     }
+
     public void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
