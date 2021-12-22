@@ -390,7 +390,11 @@ public class IndividualCheckFragment
             return false;
         }
         final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(getActivity())) {
+        int max = TestConfigs.getMaxTestCount(getActivity());
+        if (studentItem.getExamType() == 2){//补考只有一次
+            max = 1;
+        }
+        if (results != null && results.size() >= max) {
             SystemSetting setting = SettingHelper.getSystemSetting();
             if (setting.isAgainTest() && setting.isResit()) {
                 final Student finalStudent = student;

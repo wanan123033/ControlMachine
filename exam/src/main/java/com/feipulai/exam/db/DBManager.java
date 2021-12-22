@@ -1274,7 +1274,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(studentItem.getItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentItem.getStudentCode()))
                 .where(RoundResultDao.Properties.GroupId.eq(RoundResult.DEAFULT_GROUP_ID))
-//                .where(RoundResultDao.Properties.ExamType.eq(studentItem.getExamType()))
+                .where(RoundResultDao.Properties.ExamType.eq(studentItem.getExamType()))
                 .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
