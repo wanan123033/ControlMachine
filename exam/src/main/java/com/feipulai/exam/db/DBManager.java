@@ -147,6 +147,10 @@ public class DBManager {
             if (items != null && items.size() != 0) {
                 continue;
             }
+            items = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).list();
+            if (items != null && items.size() != 0) {
+                continue;
+            }
             switch (machineCode) {
 
                 case ItemDefault.CODE_TS:
@@ -287,29 +291,30 @@ public class DBManager {
                 .where(StudentDao.Properties.FaceFeature.notEq(""))
                 .where(StudentDao.Properties.FaceFeature.isNotNull()).list();
     }
+
     public List<StudentFace> getStudentFeatures() {
         return studentFaceDao.queryBuilder()
                 .where(StudentFaceDao.Properties.FaceFeature.notEq(""))
                 .where(StudentFaceDao.Properties.FaceFeature.isNotNull()).list();
     }
 
-    public List<Student> queryByItemStudentFeatures() {
+    public List<StudentFace> queryByItemStudentFeatures() {
 
-        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
-        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentFaceDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentFaceDao.Properties.StudentCode.columnName + " IN ( ");
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  ");
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
-        sqlBuf.append(" AND " + StudentDao.Properties.FaceFeature.columnName + " <>'' ");
+        sqlBuf.append(" AND " + StudentFaceDao.Properties.FaceFeature.columnName + " <>'' ");
 
         Logger.i("=====sql1===>" + sqlBuf.toString());
-        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
-        List<Student> students = new ArrayList<>();
+        Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
+        List<StudentFace> students = new ArrayList<>();
         while (c.moveToNext()) {
-            Student student = studentDao.readEntity(c, 0);
+            StudentFace student = studentFaceDao.readEntity(c, 0);
             students.add(student);
         }
         c.close();
@@ -1831,6 +1836,7 @@ public class DBManager {
                 .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
+
     /**
      * 查询对应考生当前项目轮次所有成绩
      *
@@ -2726,7 +2732,6 @@ public class DBManager {
     }
 
     /**
-     *
      * @param itemCode
      * @param studentCode
      * @return
@@ -2736,8 +2741,8 @@ public class DBManager {
                 .where(GroupItemDao.Properties.ItemCode.eq(itemCode))
                 .where(GroupItemDao.Properties.StudentCode.eq(studentCode))
                 .list();
-        for (GroupItem groupItem : groupItems){
-            if (groupItem.getExamType() == StudentItem.EXAM_MAKE){
+        for (GroupItem groupItem : groupItems) {
+            if (groupItem.getExamType() == StudentItem.EXAM_MAKE) {
                 return groupItem;
             }
         }

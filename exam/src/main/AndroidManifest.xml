@@ -46,11 +46,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.RadioTimer.newRadioTimer.RadioDeviceDetailActivity"></activity>
-        <activity android:name=".activity.situp.newSitUp.NewSitUpTestActivity" />
-        <activity android:name=".activity.situp.newSitUp.NewSitUpPairActivity" />
-        <activity android:name=".activity.situp.newSitUp.DeviceChangeActivity" />
-        <activity android:name=".activity.situp.newSitUp.SitUpArmCheckActivity" />
+        <activity
+            android:name=".activity.RadioTimer.newRadioTimer.RadioDeviceDetailActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.newSitUp.NewSitUpTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.newSitUp.NewSitUpPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.newSitUp.DeviceChangeActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.situp.newSitUp.SitUpArmCheckActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.RadioTimer.newRadioTimer.NewRadioGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
@@ -71,25 +81,57 @@
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.data.UpdateAppActivity" />
-        <activity android:name=".activity.basketball.DribbleShootGroupActivity" />
-        <activity android:name=".activity.basketball.BasketBallShootGroupActivity" />
-        <activity android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity" />
-        <activity android:name=".activity.sitreach.more_device.pair.SitReachPairActivity" />
-        <activity android:name=".activity.sitreach.more_device.SitReachMoreActivity" />
+        <activity
+            android:name=".activity.basketball.DribbleShootGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.basketball.BasketBallShootGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sitreach.more_device.pair.SitReachPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sitreach.more_device.SitReachMoreActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.basketball.ShootSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.basketball.DribbleShootActivity" />
-        <activity android:name=".activity.basketball.BasketBallShootActivity" />
-        <activity android:name=".activity.medicineBall.more_device.BallGroupMoreActivity" />
-        <activity android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity" />
-        <activity android:name=".activity.medicineBall.pair.MedicineBallPairActivity" />
-        <activity android:name=".activity.volleyball.more_devices.VolleyBallPairActivity" />
-        <activity android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity" />
-        <activity android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity" />
-        <activity android:name=".activity.sargent_jump.pair.SargentPairActivity" />
-        <activity android:name=".activity.footBall.FootBallGroupActivity" />
-        <activity android:name=".activity.sargent_jump.SargentItemSelectActivity" />
+        <activity
+            android:name=".activity.basketball.DribbleShootActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.basketball.BasketBallShootActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.medicineBall.pair.MedicineBallPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.volleyball.more_devices.VolleyBallPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sargent_jump.pair.SargentPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.footBall.FootBallGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.sargent_jump.SargentItemSelectActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="landscape"
@@ -411,12 +453,14 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.grip.GripMoreActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.grip.GripSettingActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.grip.GripMoreGroupActivity"
+            android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.explain.ExplainActivity"
@@ -465,12 +509,20 @@
             android:name=".activity.sport_timer.SportInitWayActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.jump_rope.setting.JumpRopeCorrespondTestActivity" />
-        <activity android:name=".activity.pushUp.distance.PushUpDistanceActivity" />
+        <activity
+            android:name=".activity.jump_rope.setting.JumpRopeCorrespondTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.pushUp.distance.PushUpDistanceActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.pushUp.distance.PushUpDistanceSettingActivity" />
         <activity android:name=".activity.pushUp.distance.PushUpDistancePairActivity" />
-        <activity android:name=".activity.pushUp.distance.PushUpDistanceTestActivity" />
-        <activity android:name=".activity.basketball.motion.BasketBallMotionTestActivity" />
+        <activity
+            android:name=".activity.pushUp.distance.PushUpDistanceTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:name=".activity.basketball.motion.BasketBallMotionTestActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <activity android:name=".activity.basketball.motion.BasketBallMotionGroupActivity" />
         <activity
             android:name=".activity.data.DataUploadActivity"

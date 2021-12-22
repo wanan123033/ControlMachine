@@ -711,8 +711,6 @@ public class DataManageActivity
 //                });
 //        update_zcp_dialog.create().show();
 //    }
-
-
     public void uploadData(final boolean isUploadAll) {
         DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
             @Override
@@ -1148,11 +1146,15 @@ public class DataManageActivity
             String port = tcpip.substring(tcpip.indexOf(":") + 1);
             TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
                 @Override
-                public void onCommonListener(int no, String string) {
+                public void onCommonListener(int no, final String string) {
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            initAfrCount();
+                            toastSpeak(string);
                             OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+
                         }
                     });
                 }

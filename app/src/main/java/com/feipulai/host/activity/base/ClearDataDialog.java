@@ -7,11 +7,21 @@ import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.FileUtil;
+import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
+
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
+import com.feipulai.host.activity.data.DataManageActivity;
+import com.feipulai.host.activity.data.DownLoadPhotoHeaders;
+import com.feipulai.host.config.SharedPrefsConfigs;
+import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.db.DBManager;
-
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,8 +56,22 @@ public class ClearDataDialog {
                 dismissDialog();
                 break;
             case R.id.btn_confirm:
+                clearData();
+
+                break;
+        }
+    }
+
+    private void clearData() {
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
                 if (cb_basic.isChecked()){
                     DBManager.getInstance().clear();
+                    SharedPrefsUtil.putValue(dialog.getContext(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                    SharedPrefsUtil.remove(dialog.getContext(), DownLoadPhotoHeaders.class);
+                    DBManager.getInstance().initDB();
+                    TestConfigs.init(dialog.getContext(), TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
                 }
                 if (cb_face.isChecked()){
                     DBManager.getInstance().clearFace();
@@ -55,9 +79,24 @@ public class ClearDataDialog {
                 if (cb_topic.isChecked()){
                     FileUtil.deleteDirectory(MyApplication.PATH_IMAGE);
                 }
-                break;
-        }
+                dismissDialog();
+                return new DataBaseRespon(true, "", "");
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                Logger.i("数据清空完成");
+                ToastUtils.showShort("数据清空完成");
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
     }
+
     public void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

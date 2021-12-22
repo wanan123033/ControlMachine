@@ -233,44 +233,33 @@ public class StuSearchEditText extends RelativeLayout {
 
     private void showAddHint() {
 
-//        new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.))
-//                .setContentText(mContext.getString(R.string.addStu_dialog_content))
-//                .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//            @Override
-//            public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                sweetAlertDialog.dismissWithAnimation();
-//                new AddStudentDialog(mContext).showDialog(student, false);
-//            }
-//        }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//            @Override
-//            public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                sweetAlertDialog.dismissWithAnimation();
-//            }
-//        }).show();
+        if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
 
-        if (addDialog == null) {
-            addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
+            if (addDialog == null) {
+                addDialog = new SweetAlertDialog(mContext).setTitleText(mContext.getString(R.string.addStu_dialog_title))
 
-                    .setContentText(mContext.getString(R.string.addStu_dialog_content))
-                    .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            addDialog = null;
-                            new AddStudentDialog(mContext).showDialog(addStudent, false);
-                        }
-                    }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismissWithAnimation();
-                            addDialog = null;
-                        }
-                    });
+                        .setContentText(mContext.getString(R.string.addStu_dialog_content))
+                        .setConfirmText(mContext.getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                addDialog = null;
+                                new AddStudentDialog(mContext).showDialog(addStudent, false);
+                            }
+                        }).setCancelText(mContext.getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                addDialog = null;
+                            }
+                        });
+            }
+            addDialog.setCanceledOnTouchOutside(false);
+            if (!addDialog.isShowing()) {
+                addDialog.show();
+            }
         }
-        addDialog.setCanceledOnTouchOutside(false);
-        if (!addDialog.isShowing()) {
-            addDialog.show();
-        }
+
 
     }
 

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -55,12 +56,15 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
     protected void initData() {
         setting = SharedPrefsUtil.loadFormSource(this, RangerSetting.class);
         ArrayAdapter spTestRoundAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testItems);
+        spTestRoundAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_item.setAdapter(spTestRoundAdapter);
 
         ArrayAdapter spTestNoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testNos);
+        spTestNoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_test_no.setAdapter(spTestNoAdapter);
 
         ArrayAdapter spResultAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, results);
+        spResultAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_result.setAdapter(spResultAdapter);
 
         cbFullSkip.setOnCheckedChangeListener(this);
@@ -84,13 +88,21 @@ public class RangerSettingActivity extends BaseTitleActivity implements Compound
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_throw:
-                ThrowSettingDialog dialog = new ThrowSettingDialog(this,setting);
-                dialog.setItemType(setting.getItemType());
-                dialog.show();
+                if (setting.getItemType() > 4) {
+                    ThrowSettingDialog dialog = new ThrowSettingDialog(this, setting);
+                    dialog.setItemType(setting.getItemType());
+                    dialog.show();
+                }else {
+                    ToastUtils.showLong("请选择投掷类项目");
+                }
                 break;
             case R.id.tv_staJump:
-                JumpSettingDialog dialog1 = new JumpSettingDialog(this,setting);
-                dialog1.show();
+                if (setting.getItemType() >= 2 && setting.getItemType() <= 4) {
+                    JumpSettingDialog dialog1 = new JumpSettingDialog(this, setting);
+                    dialog1.show();
+                }else{
+                    ToastUtils.showLong("请选择跳远类项目");
+                }
                 break;
             case R.id.tv_bluetooth:
 //                BluetoothSettingDialog dialog2 = new BluetoothSettingDialog(this);

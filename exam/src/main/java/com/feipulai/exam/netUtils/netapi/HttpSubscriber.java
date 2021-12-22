@@ -464,7 +464,7 @@ public class HttpSubscriber {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
                             GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0,groupBean.getExamType());
+                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0, groupBean.getExamType());
                             groupItemList.add(groupItem);
                         }
                     }
@@ -558,10 +558,12 @@ public class HttpSubscriber {
                     student.setClassName(studentBean.getClassName());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
-                    StudentFace face = new StudentFace();
-                    face.setStudentCode(studentBean.getStudentCode());
-                    face.setFaceFeature(studentBean.getFaceFeature());
-                    studentFaces.add(face);
+                    if (!TextUtils.isEmpty(studentBean.getFaceFeature())) {
+                        StudentFace face = new StudentFace();
+                        face.setStudentCode(studentBean.getStudentCode());
+                        face.setFaceFeature(studentBean.getFaceFeature());
+                        studentFaces.add(face);
+                    }
                     //                    student.setPortrait(studentBean.getPhotoData());
                     //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
                     if (studentBean.getPhotoData() != null) {
@@ -666,7 +668,7 @@ public class HttpSubscriber {
                         for (StudentBean student : groupBean.getStudentCodeList()) {
                             //String itemCode, int groupType, String sortName, int groupNo, String scheduleNo, String studentCode, int trackNo, int identityMark
                             GroupItem groupItem = new GroupItem(itemCode, groupBean.getGroupType(), groupBean.getSortName(), groupBean.getGroupNo()
-                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0,groupBean.getExamType());
+                                    , groupBean.getScheduleNo(), student.getStudentCode(), student.getTrackNo(), 0, groupBean.getExamType());
                             groupItemList.add(groupItem);
                         }
                     }

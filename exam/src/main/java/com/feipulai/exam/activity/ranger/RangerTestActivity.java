@@ -51,7 +51,6 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
                 }
             }else if (msg.what == SKIP_STU){
                 roundNo = 1;
-                testNo = 1;
                 stuSkip();
             }
         }
@@ -164,7 +163,11 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
 
     @Override
     public void gotoItemSetting() {
-        startActivity(new Intent(this,RangerSettingActivity.class));
+        if (pair.getStudent() == null) {
+            startActivity(new Intent(this, RangerSettingActivity.class));
+        }else {
+            ToastUtils.showLong("正在测试中，不能修改项目设置！");
+        }
     }
 
     @Override
@@ -183,9 +186,8 @@ public class RangerTestActivity extends BaseTestActivity  implements PenalizeDia
     protected void confrim() {
         saveResult(pair);
         updateInitBtnState();
-        result[testNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
+        result[roundNo - 1] = ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
         adapter.setNewData(Arrays.asList(result));
-        testNo++;
         roundNo++;
         if (roundNo > setting.getTestNo()){
             ToastUtils.showLong("测试已完成");

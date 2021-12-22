@@ -126,7 +126,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     /**
      * 当前测试次数位
      */
-    protected int testNo = 1;
     protected int roundNo = 1;
     private LEDManager mLEDManager;
     //清理学生信息
@@ -144,6 +143,8 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     TextView tvAbandon;
     @BindView(R.id.tv_normal)
     TextView tvNormal;
+    private int testNo;
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
@@ -165,7 +166,6 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogUtils.life("BaseTestActivity onCreate");
-        init();
         PrinterManager.getInstance().init();
         if (SettingHelper.getSystemSetting().isRtUpload()) {
             serverIntent = new Intent(this, UploadService.class);
@@ -173,6 +173,11 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+    }
 
     @Nullable
     @Override
@@ -330,7 +335,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         if (roundResultList != null)
             LogUtils.operation("测距检入到学生成绩:"+roundResultList.size()+"----"+roundResultList.toString());
 
-        testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
+        testNo = getRangerSetting().getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
@@ -392,7 +397,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
-
+        testNo = setTestCount();
         roundNo = roundResultList.size() + 1;
         result = null;
         result = new String[setTestCount()];
@@ -761,12 +766,12 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         roundResult.setTestTime(baseStuPair.getTestTime());
         roundResult.setEndTime(baseStuPair.getEndTime());
         roundResult.setRoundNo(roundNo);
-        roundResult.setTestNo(testNo);
+        roundResult.setTestNo(setTestCount());
         roundResult.setExamType(studentItem.getExamType());
         roundResult.setScheduleNo(studentItem.getScheduleNo());
         roundResult.setUpdateState(0);
         roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
-        RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), testNo);
+        RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStuPair.getStudent().getStudentCode(), setTestCount());
         if (bestResult != null) {
             // 原有最好成绩犯规 或者原有最好成绩没有犯规但是现在成绩更好
             if (bestResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && baseStuPair.getResultState() == RoundResult.RESULT_STATE_NORMAL && bestResult.getResult() <= baseStuPair.getResult()) {
@@ -1012,6 +1017,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
 
     public void setScore(RangerResult result){
         this.result[roundNo - 1] = result+"";
+        pair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         calculation(result,getRangerSetting());
     }
 

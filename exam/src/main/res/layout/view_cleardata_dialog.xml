@@ -4,49 +4,52 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
+
     <TextView
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="提示信息"
-        android:textSize="18sp"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginTop="5dp"/>
+        style="@style/txt_black_style"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="数据清空"
+        android:textSize="26sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_btn_bg_color"/>
-        <CheckBox
-            android:id="@+id/cb_topic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:textSize="@dimen/sp_18"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="5dp"
-            android:text="头像信息"/>
+        android:background="@color/gray_btn_bg_color" />
+
+    <CheckBox
+        android:id="@+id/cb_topic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="5dp"
+        android:checked="true"
+        android:text="头像信息"
+        android:textSize="@dimen/sp_18" />
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
-        android:background="@color/gray_btn_bg_color"/>
+        android:background="@color/gray_btn_bg_color" />
 
     <CheckBox
         android:id="@+id/cb_face"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="特征数据"
-        android:textSize="@dimen/sp_18"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:checked="true"/>
+        android:checked="true"
+        android:text="特征数据"
+        android:textSize="@dimen/sp_18" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_btn_bg_color"/>
+        android:background="@color/gray_btn_bg_color" />
 
     <CheckBox
         android:id="@+id/cb_basic"
@@ -55,14 +58,15 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:textSize="@dimen/sp_18"
+        android:checked="true"
         android:text="基础数据"
-        android:checked="true"/>
+        android:textSize="@dimen/sp_18" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_btn_bg_color"/>
+        android:background="@color/gray_btn_bg_color" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"

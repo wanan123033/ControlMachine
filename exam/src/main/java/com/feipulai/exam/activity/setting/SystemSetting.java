@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.text.TextUtils;
 
 import com.feipulai.device.serial.SerialConfigs;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.config.TestConfigs;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -139,8 +140,8 @@ public class SystemSetting {
     private int afrContrast = 3;
     private boolean againTest;  //现场重测
     private boolean isResit;  //现场补考
-    private String againPass;
-    private String resitPass;
+    private String againPass = MyApplication.ADVANCED_PWD;
+    private String resitPass = MyApplication.ADVANCED_PWD;
     private boolean resitPassBool;
     private boolean againPassBool;
     private boolean resultConfirm;
