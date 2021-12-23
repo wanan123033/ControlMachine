@@ -60,7 +60,7 @@ public class TcpDownLoadUtil {
                 break;
             case TRACK:
                 rcPackage.m_strEvent = TestConfigs.sCurrentItem.getItemName();
-//                rcPackage.m_nSex = -1;
+                rcPackage.m_nSex = -1;
                 rcPackage.m_strPackType = "PFPTrack";
 //                rcPackage.m_strPackType = "PFPSporter";
                 break;

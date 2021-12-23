@@ -1106,7 +1106,7 @@ public class DBManager {
      * @param studentItem
      */
     public void insertStudentItem(StudentItem studentItem) {
-        studentItemDao.insertInTx(studentItem);
+        studentItemDao.insertOrReplaceInTx(studentItem);
     }
 
     public List<StudentItem> querystuItemsByMachineItemCode(int machineCode, String itemCode) {
@@ -2929,11 +2929,11 @@ public class DBManager {
     }
 
     public void insertStudentFaces(List<StudentFace> studentFaces) {
-        studentFaceDao.insertInTx(studentFaces);
+        studentFaceDao.insertOrReplaceInTx(studentFaces);
     }
 
     public void insertStudentFace(StudentFace studentFace) {
-        studentFaceDao.insertInTx(studentFace);
+        studentFaceDao.insertOrReplace(studentFace);
     }
 
     public void clearFace() {
