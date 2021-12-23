@@ -13,10 +13,8 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
-
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
-import com.feipulai.host.activity.data.DataManageActivity;
 import com.feipulai.host.activity.data.DownLoadPhotoHeaders;
 import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
@@ -57,7 +55,6 @@ public class ClearDataDialog {
                 break;
             case R.id.btn_confirm:
                 clearData();
-
                 break;
         }
     }

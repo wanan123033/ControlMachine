@@ -1222,6 +1222,11 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
 
     }
 
+    @Override
+    public void onClearFaceDBConfirmed() {
+
+    }
+
     // @Override
     // public void onClearResultsConfirmed() {
     //     DBManager.getInstance().deleteItemResult();
