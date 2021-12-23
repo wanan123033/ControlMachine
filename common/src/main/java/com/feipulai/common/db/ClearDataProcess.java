@@ -22,6 +22,7 @@ public abstract class ClearDataProcess {
 
     // public static final int CLEAR_RESULTS = 0x1;
     public static final int CLEAR_DATABASE = 0x2;
+    public static final int CLEAR_DATABASE_FACE = 0x5;
     public static final int CLEAR_FOR_RESTORE = 0x3;
 
     private Context context;
@@ -77,6 +78,8 @@ public abstract class ClearDataProcess {
 
             case CLEAR_DATABASE:
             case CLEAR_FOR_RESTORE:
+            case CLEAR_DATABASE_FACE:
+            case CLEAR_DATABASE & CLEAR_DATABASE_FACE:
                 showAlertClearDataDialog();
                 break;
         }
@@ -161,6 +164,13 @@ public abstract class ClearDataProcess {
                 case CLEAR_FOR_RESTORE:
                     listener.onRestoreConfirmed();
                     break;
+                case CLEAR_DATABASE_FACE:
+                    listener.onClearFaceDBConfirmed();
+                    break;
+                case (CLEAR_DATABASE_FACE&CLEAR_DATABASE):
+                    listener.onClearDBConfirmed();
+                    listener.onClearFaceDBConfirmed();
+                    break;
             }
         } else {
             DialogUtils.setMShowing(dialog, false);
@@ -178,6 +188,8 @@ public abstract class ClearDataProcess {
          * 确认清除所有数据
          */
         void onClearDBConfirmed();
+
+        void onClearFaceDBConfirmed();
 
         // /**
         //  * 确认清除所有成绩

@@ -1468,6 +1468,11 @@ public class DataManageActivity
 
     }
 
+    @Override
+    public void onClearFaceDBConfirmed() {
+
+    }
+
 //    public void uploadPortrait() {
 //        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();
 //        if (studentList.size() == 0) {
