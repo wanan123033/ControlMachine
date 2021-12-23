@@ -47,6 +47,7 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
 import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,8 +109,8 @@ public class DBManager {
      * 数据库初始化
      */
     public void initDB() {
-//        QueryBuilder.LOG_SQL = true;
-//        QueryBuilder.LOG_VALUES = true;
+        QueryBuilder.LOG_SQL = true;
+        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedWritableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
@@ -147,10 +148,13 @@ public class DBManager {
             if (items != null && items.size() != 0) {
                 continue;
             }
-//            items = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).list();
-//            if (items != null && items.size() != 0) {
-//                continue;
-//            }
+            if (TextUtils.isEmpty(TestConfigs.machineNameMap.get(machineCode))) {
+                Item item = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).limit(1).unique();
+                if (item != null) {
+                    continue;
+                }
+            }
+
             switch (machineCode) {
 
                 case ItemDefault.CODE_TS:

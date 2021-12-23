@@ -451,7 +451,7 @@ public class TestConfigs {
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SHOOT, "篮球投篮");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SPORT_TIMER, "运动计时");
         TestConfigs.machineNameMap.put(ItemDefault.CODE_SGBQS, "双杠臂屈伸");
-
+        TestConfigs.machineNameMap.put(ItemDefault.CODE_FHL, "肺活量");
         TestConfigs.settingActivity.put(ItemDefault.CODE_LDTY, StandJumpSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZWTQQ, SitReachSettingActivity.class);
         TestConfigs.settingActivity.put(ItemDefault.CODE_ZFP, RunTimerSettingActivity.class);
@@ -571,6 +571,7 @@ public class TestConfigs {
         }
         return result;
     }
+
     /**
      * 获取是否满分跳过
      *
@@ -632,6 +633,7 @@ public class TestConfigs {
         }
         return full;
     }
+
     public static int getMaxTestCount() {
         return getMaxTestCount(MyApplication.getInstance());
     }

@@ -156,6 +156,7 @@ public class DataManageActivity
     private AlertDialog.Builder update_zcp_dialog;
     private DownLoadProgressDialog downLoadProgressDialog;
     private MyHandler myHandler = new MyHandler(this);
+    private boolean isDelPhoto, isDelAFR, isDelBase; //文件删除选择
 
     @Override
     protected int setLayoutResID() {
@@ -425,7 +426,15 @@ public class DataManageActivity
     }
 
     private void showClearDialog() {
-        new ClearDataDialog(DataManageActivity.this).showDialog();
+        new ClearDataDialog(DataManageActivity.this, new ClearDataDialog.OnProcessFinishedListener() {
+            @Override
+            public void onClearConfirmed(boolean isDeletePhoto, boolean isDeleteAFR, boolean isDeleteBase) {
+                isDelPhoto = isDeletePhoto;
+                isDelAFR = isDeleteAFR;
+                isDelBase = isDeleteBase;
+                new DBDataCleaner(DataManageActivity.this, ClearDataProcess.CLEAR_DATABASE, DataManageActivity.this).process();
+            }
+        }).showDialog();
     }
 
 
@@ -1425,29 +1434,40 @@ public class DataManageActivity
 
     @Override
     public void onClearDBConfirmed() {
-        DataBaseExecutor.addTask(new DataBaseTask(this, "数据清除中，请稍后。。。.", false) {
+        DataBaseExecutor.addTask(new DataBaseTask(this, "数据清除中，请稍后。。。.", true) {
             @Override
             public DataBaseRespon executeOper() {
-                boolean autoBackup = backupManager.autoBackup();
-                Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
-                DBManager.getInstance().clear();
-                SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
-                SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
-                SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
-                DBManager.getInstance().initDB();
-                TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
-                FileUtil.delete(MyApplication.PATH_IMAGE);//清理图片
-                FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+
+                if (isDelBase) {
+                    boolean autoBackup = backupManager.autoBackup();
+                    Logger.i(autoBackup ? "自动备份成功" : "自动备份失败");
+                    DBManager.getInstance().clear();
+                    SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                    SharedPrefsUtil.putValue(DataManageActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
+                    SharedPrefsUtil.remove(DataManageActivity.this, DownLoadPhotoHeaders.class);
+                    DBManager.getInstance().initDB();
+                    TestConfigs.init(DataManageActivity.this, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), null);
+
+                }
+
+                if (isDelPhoto) {
+                    FileUtil.delete(MyApplication.PATH_IMAGE);//清理图片
+                    FileUtil.mkdirs(MyApplication.PATH_IMAGE);
+                }
+                if (isDelAFR) {
+                    DBManager.getInstance().clearFace();
+                    FaceServer.getInstance().unInit();
+                    FaceServer.getInstance().init(DataManageActivity.this);
+                }
                 FileUtil.delete(MyApplication.PATH_PDF_IMAGE);//清理成绩PDF与图片
                 FileUtil.mkdirs(MyApplication.PATH_PDF_IMAGE);
-                FileUtil.delete(MyApplication.BACKUP_DIR);
-                FileUtil.mkdirs2(MyApplication.BACKUP_DIR);
+//                FileUtil.delete(MyApplication.BACKUP_DIR);
+//                FileUtil.mkdirs2(MyApplication.BACKUP_DIR);
                 FileUtil.delete(FaceServer.ROOT_PATH);
                 FileUtil.mkdirs2(FaceServer.ROOT_PATH);
 
                 Glide.get(DataManageActivity.this).clearDiskCache();
-                FaceServer.getInstance().unInit();
-                FaceServer.getInstance().init(DataManageActivity.this);
+
                 Logger.i("进行数据清空");
 
                 return new DataBaseRespon(true, "", "");
@@ -1468,10 +1488,6 @@ public class DataManageActivity
 
     }
 
-    @Override
-    public void onClearFaceDBConfirmed() {
-
-    }
 
 //    public void uploadPortrait() {
 //        final List<Student> studentList = DBManager.getInstance().getStudentByPortrait();

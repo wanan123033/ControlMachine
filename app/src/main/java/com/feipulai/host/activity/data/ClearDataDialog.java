@@ -1,31 +1,15 @@
-package com.feipulai.exam.activity.data;
+package com.feipulai.host.activity.data;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.CheckBox;
 
-import com.bumptech.glide.Glide;
-import com.feipulai.common.db.ClearDataProcess;
-import com.feipulai.common.db.DataBaseExecutor;
-import com.feipulai.common.db.DataBaseRespon;
-import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.dbutils.BackupManager;
-import com.feipulai.common.utils.FileUtil;
-import com.feipulai.common.utils.SharedPrefsUtil;
-import com.feipulai.common.utils.ToastUtils;
-import com.feipulai.exam.MyApplication;
-import com.feipulai.exam.R;
-import com.feipulai.exam.config.SharedPrefsConfigs;
-import com.feipulai.exam.config.TestConfigs;
-import com.feipulai.exam.db.DBManager;
-import com.orhanobut.logger.Logger;
-import com.ww.fpl.libarcface.faceserver.FaceServer;
+import com.feipulai.host.R;
+import com.feipulai.host.db.DBManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

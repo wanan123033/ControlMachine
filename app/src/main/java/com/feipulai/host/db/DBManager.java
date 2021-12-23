@@ -1,6 +1,7 @@
 package com.feipulai.host.db;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -99,9 +100,11 @@ public class DBManager {
             if (items != null && items.size() != 0) {
                 continue;
             }
-            items = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).list();
-            if (items != null && items.size() != 0) {
-                continue;
+            if (TextUtils.isEmpty(TestConfigs.machineNameMap.get(machineCode))) {
+                Item item = itemDao.queryBuilder().where(ItemDao.Properties.ItemName.eq(TestConfigs.machineNameMap.get(machineCode))).limit(1).unique();
+                if (item != null) {
+                    continue;
+                }
             }
             switch (machineCode) {
                 case ItemDefault.CODE_HW:
@@ -1105,6 +1108,7 @@ public class DBManager {
         LogUtil.logDebugMessage(timeList.toString());
         return null;
     }
+
     public void insertStudentFaces(List<StudentFace> studentFaces) {
         studentFaceDao.insertInTx(studentFaces);
     }
@@ -1120,6 +1124,7 @@ public class DBManager {
     public StudentFace getStudentFeatures(String studentCode) {
         return studentFaceDao.queryBuilder().where(StudentFaceDao.Properties.StudentCode.eq(studentCode)).unique();
     }
+
     public List<StudentFace> getStudentFeatures() {
         return studentFaceDao.queryBuilder().list();
     }
