@@ -109,8 +109,8 @@ public class DBManager {
      * 数据库初始化
      */
     public void initDB() {
-        QueryBuilder.LOG_SQL = true;
-        QueryBuilder.LOG_VALUES = true;
+//        QueryBuilder.LOG_SQL = true;
+//        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedWritableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
