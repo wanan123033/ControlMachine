@@ -63,6 +63,7 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentFace;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.exl.ResultExlWriter;
 import com.feipulai.exam.exl.StuItemExLReader;
@@ -1553,12 +1554,12 @@ public class DataManageActivity
         DataBaseExecutor.addTask(new DataBaseTask(this, "获取考生人脸特征，请稍后...", false) {
             @Override
             public DataBaseRespon executeOper() {
-                return new DataBaseRespon(true, "", DBManager.getInstance().queryStudentFeatures());
+                return new DataBaseRespon(true, "", DBManager.getInstance().getStudentFeatures());
             }
 
             @Override
             public void onExecuteSuccess(DataBaseRespon respon) {
-                final List<Student> studentList = (List<Student>) respon.getObject();
+                final List<StudentFace> studentList = (List<StudentFace>) respon.getObject();
                 if (studentList.size() == 0) {
                     ToastUtils.showShort("当前所有考生无头像信息，请先进行名单下载");
                     return;
@@ -1584,9 +1585,9 @@ public class DataManageActivity
                             for (int i = 0; i < studentList.size(); i++) {
 
 
-                                Student student = studentList.get(i);
+                                StudentFace studentFace = studentList.get(i);
                                 try {
-                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(studentFace.getFaceFeature(), Base64.DEFAULT), studentFace.getStudentCode()));
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

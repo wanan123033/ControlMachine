@@ -485,39 +485,40 @@ public class SocketClient {
                             registerInfoList.add(faceFeature);
 
                         }
+                        if (m_lGrpID != 0) {
+                            GroupItem itemGroup = new GroupItem();
+                            Group group = new Group();
+                            itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
+                            group.setItemCode(TestConfigs.getCurrentItemCode());
+                            if (m_strSort.contains("补")) {
+                                itemGroup.setGroupType(1);
+                                group.setGroupType(1);
+                            } else {
+                                itemGroup.setGroupType(0);
+                                group.setGroupType(0);
+                            }
+                            itemGroup.setSortName(m_strSort);
+                            group.setSortName(m_strSort);
+                            itemGroup.setGroupType(m_nSex);
+                            group.setGroupType(m_nSex);
 
-                        GroupItem itemGroup = new GroupItem();
-                        Group group = new Group();
-                        itemGroup.setItemCode(TestConfigs.getCurrentItemCode());
-                        group.setItemCode(TestConfigs.getCurrentItemCode());
-                        if (m_strSort.contains("补")) {
-                            itemGroup.setGroupType(1);
-                            group.setGroupType(1);
-                        } else {
-                            itemGroup.setGroupType(0);
-                            group.setGroupType(0);
-                        }
-                        itemGroup.setSortName(m_strSort);
-                        group.setSortName(m_strSort);
-                        itemGroup.setGroupType(m_nSex);
-                        group.setGroupType(m_nSex);
-
-                        itemGroup.setStudentCode(studentInfo.getStudentCode());
+                            itemGroup.setStudentCode(studentInfo.getStudentCode());
 //                itemGroup.setItemGroupName(m_strGameEventName);
-                        itemGroup.setGroupNo(m_nGrp);
-                        group.setGroupNo(m_nGrp);
+                            itemGroup.setGroupNo(m_nGrp);
+                            group.setGroupNo(m_nGrp);
 //                itemGroup.setExamPlaceName(m_strExamSitePlace);
-                        itemGroup.setScheduleNo(m_nField + "");
-                        itemGroup.setTrackNo(roadnos.get(i));
-                        group.setScheduleNo(m_nField + "");
+                            itemGroup.setScheduleNo(m_nField + "");
+                            itemGroup.setTrackNo(roadnos.get(i));
+                            group.setScheduleNo(m_nField + "");
 //                itemGroup.setSubItemCode("");
-                        DBManager.getInstance().insertGroupItem(itemGroup);
-                        DBManager.getInstance().insertGroup(group);
+                            DBManager.getInstance().insertGroupItem(itemGroup);
+                            DBManager.getInstance().insertGroup(group);
+                        }
+
                         ItemSchedule itemSchedule = new ItemSchedule();
-                        itemSchedule.setScheduleNo(group.getScheduleNo());
-                        itemSchedule.setItemCode(group.getItemCode());
+                        itemSchedule.setScheduleNo(m_nField + "");
+                        itemSchedule.setItemCode(TestConfigs.getCurrentItemCode());
                         DBManager.getInstance().insertItemSchedule(itemSchedule);
-                        Log.i("SocketClient", "JieXiStudentGroup" + itemGroup.toString());
                         Log.e("TAG", studentInfo.toString());
                         DBManager.getInstance().insertStudent(studentInfo);
                     } else {
@@ -542,9 +543,9 @@ public class SocketClient {
 //                    }
 //                    studentInfos.add(studentInfo);
 
-
-                    studentItem = new StudentItem();
-                    studentItem.setStudentCode(studentInfo.getStudentCode());
+                    if (m_lGrpID == 0) {
+                        studentItem = new StudentItem();
+                        studentItem.setStudentCode(studentInfo.getStudentCode());
 //                    studentItem.setSex(m_nSex);
 //                    studentItem.setS(m_studentNames.get(i));
 //                    studentItem.setExamCode(m_strNotes.get(i));
@@ -553,20 +554,22 @@ public class SocketClient {
 //                    studentItem.(m_nGrp + "");
 //                    studentItem.setRaceNo(m_nLayer);
 //                    studentItem.setBeganTime(m_strBeginTime);
-                    studentItem.setExamType(m_nExamStatus.get(i));
+                        studentItem.setExamType(m_nExamStatus.get(i));
 //                    studentItem.setItemName(m_strEvent);
-                    studentItem.setItemCode(DBManager.getInstance().queryItemByName(m_strEvent).getItemCode());
-                    studentItem.setScheduleNo(m_nField + "");
+                        studentItem.setItemCode(DBManager.getInstance().queryItemByName(m_strEvent).getItemCode());
+                        studentItem.setScheduleNo(m_nField + "");
 //                    studentItem.setItemNameAll(m_strGameEventName);
 //                    studentItem.setExamPlace(m_strExamSitePlace);
-                    studentItem.setStudentCode(studentCodes.get(i));
+                        studentItem.setStudentCode(studentCodes.get(i));
 //                    studentItem.setSubItemCode("");
-                    Log.e("TAG", studentItem.toString());
-                    if ("null".equals(studentItem.getItemCode()) || TextUtils.isEmpty(studentItem.getItemCode())) {
+                        Log.e("TAG", studentItem.toString());
+                        if ("null".equals(studentItem.getItemCode()) || TextUtils.isEmpty(studentItem.getItemCode())) {
 
-                    } else {
-                        DBManager.getInstance().insertStudentItem(studentItem);
+                        } else {
+                            DBManager.getInstance().insertStudentItem(studentItem);
+                        }
                     }
+
                 }
                 FaceServer.getInstance().addFaceList(registerInfoList);
             }
