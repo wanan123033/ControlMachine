@@ -556,7 +556,9 @@ public class SocketClient {
 //                    studentItem.setBeganTime(m_strBeginTime);
                         studentItem.setExamType(m_nExamStatus.get(i));
 //                    studentItem.setItemName(m_strEvent);
-                        studentItem.setItemCode(DBManager.getInstance().queryItemByName(m_strEvent).getItemCode());
+                        Item item = DBManager.getInstance().queryItemByName(m_strEvent);
+                        studentItem.setItemCode(item.getItemCode());
+                        studentItem.setMachineCode(item.getMachineCode());
                         studentItem.setScheduleNo(m_nField + "");
 //                    studentItem.setItemNameAll(m_strGameEventName);
 //                    studentItem.setExamPlace(m_strExamSitePlace);
