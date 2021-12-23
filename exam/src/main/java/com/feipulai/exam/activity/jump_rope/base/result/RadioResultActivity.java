@@ -30,6 +30,8 @@ import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.view.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,6 +187,8 @@ public class RadioResultActivity
                         nomalResultList.add(result);
                     }
                 }
+                Collections.sort(resitResultList, roundResultComparator);
+                Collections.sort(nomalResultList, roundResultComparator);
                 resitResult.put(student,resitResultList);
                 nomalResult.put(student,nomalResultList);
             }
@@ -192,6 +196,12 @@ public class RadioResultActivity
 
     }
 
+    private Comparator<RoundResult> roundResultComparator = Collections.reverseOrder(new Comparator<RoundResult>() {
+        @Override
+        public int compare(RoundResult lhs, RoundResult rhs) {
+            return rhs.getRoundNo()-lhs.getRoundNo();
+        }
+    });
     private void updateGroupState() {
         int isTestComplete = Group.FINISHED;
         Group group = TestCache.getInstance().getGroup();

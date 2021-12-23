@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.jump_rope.base.check;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.feipulai.common.jump_rope.facade.GetStateLedFacade;
@@ -57,7 +58,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         this.context = context;
     }
 
-    List stuPairs;
+    List<BaseStuPair> stuPairs;
 
     @Override
     public void start() {
@@ -197,6 +198,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (StuDevicePair pair : pairs) {
             student = pair.getStudent();
             baseDevice = pair.getBaseDevice();
+
             if (student != null) {
                 if (SettingHelper.getSystemSetting().isInputTest()) {
                     if (addToCache) {
@@ -223,6 +225,15 @@ public abstract class AbstractRadioCheckPresenter<Setting>
                 }
 
             }
+            if (student!=null&&stuPairs!=null){
+                for (BaseStuPair stuPair : stuPairs) {
+                    if (TextUtils.equals(student.getStudentCode(),stuPair.getStudent().getStudentCode())){
+                        pair.setCurrentRoundNo(stuPair.getRoundNo());
+                        break;
+                    }
+                }
+            }
+
         }
         TestCache.getInstance().setTestingPairs(forTestPairs);
         if (addToCache) {

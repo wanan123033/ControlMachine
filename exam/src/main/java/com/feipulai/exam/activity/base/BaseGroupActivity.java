@@ -246,11 +246,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
-                                    stuPairsList.get(position).setTestNo(roundNo);
+                                    stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);
                                     stuAdapter.notifyItemChanged(position);
+                                    refreshStuBaseResult(position);
+
                                 }
                             });
                             dialog.show(getSupportFragmentManager(), "ResitDialog");
@@ -274,17 +276,25 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
-                                    for (int i = 0; i < results.size(); i++) {
-                                        RoundResult result = results.get(i);
-                                        if (result.isDelete()) {
-                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
-                                            stuPairsList.get(position).setRoundNo(roundNo);
-                                            stuPairsList.get(position).setCanTest(true);
-                                            stuPairsList.get(position).setCanCheck(true);
-                                            stuAdapter.notifyItemChanged(position);
-                                            break;
-                                        }
-                                    }
+
+                                    stuPairsList.get(position).setTestNo(1);
+                                    stuPairsList.get(position).setRoundNo(roundNo);
+                                    stuPairsList.get(position).setCanTest(true);
+                                    stuPairsList.get(position).setCanCheck(true);
+                                    showStuInfo(stuPairsList.get(position).getStudent());
+                                    stuAdapter.notifyItemChanged(position);
+                                    refreshStuBaseResult(position);
+//                                    for (int i = 0; i < results.size(); i++) {
+//                                        RoundResult result = results.get(i);
+//                                        if (result.isDelete()) {
+//                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
+//                                            stuPairsList.get(position).setRoundNo(roundNo);
+//                                            stuPairsList.get(position).setCanTest(true);
+//                                            stuPairsList.get(position).setCanCheck(true);
+//                                            stuAdapter.notifyItemChanged(position);
+//                                            break;
+//                                        }
+//                                    }
                                 }
                             });
                             dialog.show(getSupportFragmentManager(), "AgainTestDialog");
@@ -439,7 +449,28 @@ public class BaseGroupActivity extends BaseTitleActivity {
         return DBManager.getInstance().queryGroupRound(stuCode,
                 groupList.get(groupAdapter.getTestPosition()).getId() + "");
     }
+    private void refreshStuBaseResult(int position){
+        RoundResult result = DBManager.getInstance().queryGroupBestScore(
+                stuPairsList.get(position).getStudent().getStudentCode(), groupList.get(groupAdapter.getTestPosition()).getId());
+        if (result != null) {
+            stuPairsList.get(position).setResultState(result.getResultState());
+            stuPairsList.get(position).setResult(result.getResult());
+            if (result.getResultState() != RoundResult.RESULT_STATE_FOUL) {
+                if (stuPairsList.get(position).getStudent().getSex() == 0 && getFullSkip() != null && result.getResult() >= getFullSkip()[0]) {//男子满分跳过
+                    stuPairsList.get(position).setCanTest(false);
+                    stuPairsList.get(position).setCanCheck(false);
+                }
+                if (stuPairsList.get(position).getStudent().getSex() == 1 && getFullSkip() != null && result.getResult() >= getFullSkip()[1]) {//女子满分跳过
+                    stuPairsList.get(position).setCanTest(false);
+                    stuPairsList.get(position).setCanCheck(false);
+                }
+            }
 
+        } else {
+            stuPairsList.get(position).setNotBest(true);
+        }
+        stuAdapter.notifyDataSetChanged();
+    }
     /**
      * 获取可测试的学生
      *

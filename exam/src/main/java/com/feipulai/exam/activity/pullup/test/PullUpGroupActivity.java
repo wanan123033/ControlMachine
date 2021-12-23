@@ -215,6 +215,14 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
             case R.id.tv_start_test:
                 LogUtils.operation("引体向上点击了开始测试");
+                for (StuDevicePair pair : pairs) {
+                    for (BaseStuPair stuPair : stuPairs) {
+                        if (TextUtils.equals(pair.getStudent().getStudentCode(),stuPair.getStudent().getStudentCode())){
+                            pair.setCurrentRoundNo(stuPair.getRoundNo());
+                        }
+                    }
+                }
+
                 prepareForTesting();
                 break;
 

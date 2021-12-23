@@ -18,6 +18,7 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.ScoreAdapter;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
@@ -116,6 +117,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        }
                         DBManager.getInstance().updateRoundResult(roundResult);
                         results.remove(selectPos);
+                        setLastResults();
                         SystemSetting systemSetting = SettingHelper.getSystemSetting();
                         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
@@ -135,6 +137,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                    }
                     DBManager.getInstance().updateRoundResult(roundResult);
                     results.remove(selectPos);
+                    setLastResults();
                     SystemSetting systemSetting = SettingHelper.getSystemSetting();
                     if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
@@ -154,5 +157,38 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
         this.adapter.setselPos(selectPos);
         this.adapter.notifyDataSetChanged();
         Log.e("TAG",roundResult.getId()+"----"+roundResult.getResult()+"-----"+roundResult.getRoundNo());
+    }
+
+    private void setLastResults(){
+        RoundResult lastRount = null;
+        for (RoundResult result : results) {
+            result.setIsLastResult(RoundResult.NOT_LAST_RESULT);
+            if (!result.isDelete()){
+                if (lastRount==null){
+                    lastRount=result;
+                    continue;
+                }
+               switch (TestConfigs.sCurrentItem.getTestType()){
+                   case DBManager.TEST_TYPE_TIME ://项目类型 计时
+                            if (lastRount.getResult()>result.getResult()){
+                                lastRount=result;
+                            }
+                       break;
+                   case  DBManager.TEST_TYPE_COUNT ://项目类型 计数
+                   case  DBManager. TEST_TYPE_DISTANCE ://项目类型 远度
+                   case  DBManager. TEST_TYPE_POWER ://项目类型 力量
+                       if (lastRount.getResult()<result.getResult()){
+                           lastRount=result;
+                       }
+                       break;
+               }
+            }
+        }
+        if (lastRount!=null){
+            lastRount.setIsLastResult(RoundResult.LAST_RESULT);
+            DBManager.getInstance().updateRoundResult(results);
+            DBManager.getInstance().updateRoundResult(lastRount);
+        }
+
     }
 }
