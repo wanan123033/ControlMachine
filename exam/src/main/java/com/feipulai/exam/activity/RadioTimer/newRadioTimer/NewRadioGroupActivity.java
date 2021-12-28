@@ -559,52 +559,31 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     @Override
     public void updateDeviceState(int deviceId, int state) {
-        if (mList.size() == 0)
-            return;
         if (runTimerSetting.getInterceptPoint() != 3) {
             if (deviceId > runNum)
                 return;
+            if (mList.size() == 0)
+                return;
             if (mList.get(deviceId - 1).getConnectState() != state) {
-//                if ( state == 2) {//不处于计时状态
-//                    mList.get(deviceId - 1).setConnectState(2);
-//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                } else if (testState == TestState.UN_STARTED) {
-//                    mList.get(deviceId - 1).setConnectState(state);
-//                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                }
                 mList.get(deviceId - 1).setConnectState(state);
                 mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
+
             }
 
         } else {
             if (deviceId / 2 > runNum)
                 return;
             if (deviceId <= runNum) {
-                if (mList.get(deviceId - 1).getConnectState() != state) {
-//                    if ( state == 2) {//计时状态
-//                        mList.get(deviceId - 1).setConnectState(2);
-//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                    } else if (testState == TestState.UN_STARTED) {
-//                        mList.get(deviceId - 1).setConnectState(state);
-//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                    }
-                    mList.get(deviceId - 1).setConnectState(state);
-                    mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-                }
+                mList.get(deviceId - 1).setConnectState(state);
+                mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
             } else {
                 if (array.get(deviceId - runNum - 1) != state) {
-//                    if ( state == 2) {//即将计时
-//                        array.put(deviceId - runNum - 1, 2);
-//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                    } else if (testState == TestState.UN_STARTED) {
-//                        array.put(deviceId - runNum - 1, state);
-//                        mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
-//                    }
                     array.put(deviceId - runNum - 1, state);
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }
             }
         }
+
 
     }
 
@@ -623,12 +602,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     private void setBeginTime() {
         sportPresent.setRunState(1);
-        if (sportPresent.getSynKeep() > 0) {
-            baseTimer = sportPresent.getSynKeep();
-        } else {
-            baseTimer = sportPresent.getTime();
-            sportPresent.setSynKeep(baseTimer);
-        }
+        baseTimer = sportPresent.getTime();
+//        if (sportPresent.getSynKeep() > 0) {
+//            baseTimer = sportPresent.getSynKeep();
+//        } else {
+//            baseTimer = sportPresent.getTime();
+//            sportPresent.setSynKeep(baseTimer);
+//        }
         FileUtils.log("红外计时开始时间：" + baseTimer);
         testState = TestState.WAIT_RESULT;
         mHandler.sendEmptyMessage(RUN_START);
