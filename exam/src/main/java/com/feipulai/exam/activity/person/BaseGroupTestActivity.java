@@ -335,6 +335,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         updateLastResultLed(DBManager.getInstance().queryGroupBestScore(roundResult.getStudentCode(), group.getId()));
                         //更新考生轮次位置
                         if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+                            if (roundResult.getRoundNo()!=roundNo){
+                                return;
+                            }
                             //考生分组测试的成绩
 //                            List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound(roundResult.getStudentCode(), group.getId() + "");
 //                            roundNo = roundResultList.size() + 1;
@@ -756,7 +759,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     }
                 }
                 int testNo = stuPairsList.get(i).getTestNo() == -1 ? setTestCount() : stuPairsList.get(i).getTestNo();
-                if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < testNo) {
+                if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < setTestCount() ) {
                     if (stuAdapter.getTestPosition() == -1) {
                         stuAdapter.setTestPosition(i);
                         rvTestStu.scrollToPosition(i);
@@ -822,18 +825,18 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     public void setStuPairsData(int index, List<RoundResult> roundResultList) {
         stuPairsList.get(index).setResultState(-99);
-        int testNo = stuPairsList.get(index).getTestNo() == -1 ? setTestCount() : stuPairsList.get(index).getTestNo();
+//        int testNo = stuPairsList.get(index).getTestNo() == -1 ? setTestCount() : stuPairsList.get(index).getTestNo();
         String[] result = new String[TestConfigs.getMaxTestCount()];
         for (int j = 0; j < roundResultList.size(); j++) {
             switch (roundResultList.get(j).getResultState()) {
                 case RoundResult.RESULT_STATE_FOUL:
-                    result[j] = "X";
+                    result[roundResultList.get(j).getRoundNo()-1] = "X";
                     break;
                 case -2:
-                    result[j] = "中退";
+                    result[roundResultList.get(j).getRoundNo()-1] = "中退";
                     break;
                 default:
-                    result[j] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
+                    result[roundResultList.get(j).getRoundNo()-1] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(j).getResult());
                     break;
             }
 
@@ -938,11 +941,19 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (isStop) {
             return;
         }
-        stuPairsList.get(stuAdapter.getTestPosition()).setResult(baseStu.getResult());
-        stuPairsList.get(stuAdapter.getTestPosition()).setResultState(baseStu.getResultState());
-        stuPairsList.get(stuAdapter.getTestPosition()).setFullMark(baseStu.isFullMark());
+        BaseStuPair pair =         stuPairsList.get(stuAdapter.getTestPosition());
+        pair.setResult(baseStu.getResult());
+        pair.setResultState(baseStu.getResultState());
+        pair.setFullMark(baseStu.isFullMark());
         //ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())
-        stuPairsList.get(stuAdapter.getTestPosition()).getTimeResult()[roundNo - 1] = ((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult()));
+        if (pair.getRoundNo() != 0) {
+            pair.getTimeResult()[pair.getRoundNo()  - 1] = ((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult()));
+
+        } else {
+            pair.getTimeResult()[roundNo  - 1] = ((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult()));
+
+        }
+//        pair.getTimeResult()[roundNo - 1] = ((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult()));
 //        stuAdapter.notifyDataSetChanged();
 
         txtStuResult.setText((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult()));

@@ -66,6 +66,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class PushUpGroupActivity extends BaseTitleActivity
         implements PushUpResiltListener.Listener,
@@ -246,6 +247,13 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
             case R.id.tv_start_test:
                 LogUtils.operation("俯卧撑点击了开始测试");
+                for (StuDevicePair pair : pairs) {
+                    for (BaseStuPair stuPair : stuPairs) {
+                        if (TextUtils.equals(pair.getStudent().getStudentCode(),stuPair.getStudent().getStudentCode())){
+                            pair.setCurrentRoundNo(stuPair.getRoundNo());
+                        }
+                    }
+                }
                 prepareForTesting();
                 break;
 
@@ -275,8 +283,22 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
             case R.id.tv_abandon_test:
                 LogUtils.operation("俯卧撑点击了放弃测试");
-                facade.abandonTest();
-                prepareForBegin();
+                new SweetAlertDialog(this,SweetAlertDialog.WARNING_TYPE).setTitleText("警告提示")
+                        .setContentText("是否放弃本轮成绩")
+                        .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        facade.abandonTest();
+                        prepareForBegin();
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
                 break;
             case R.id.tv_device_pair:
                 LogUtils.operation("俯卧撑点击了设备配对");

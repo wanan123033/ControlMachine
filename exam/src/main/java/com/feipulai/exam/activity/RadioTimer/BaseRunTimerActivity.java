@@ -91,6 +91,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SerialDeviceManager.getInstance().setRS232ResiltListener(runTimerListener);
     }
 
     /**

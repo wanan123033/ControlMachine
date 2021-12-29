@@ -47,11 +47,14 @@ import com.feipulai.exam.config.TestConfigs;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.CONNECT_STATE;
+import static com.feipulai.exam.activity.RadioTimer.RunTimerConstant.TIME_RESPONSE;
 import static com.feipulai.exam.config.EventConfigs.CONNECT_SETTING;
 import static com.feipulai.exam.config.EventConfigs.SETTING_SUCCEED;
 
@@ -163,7 +166,15 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
             llSensitivity.setVisibility(View.GONE);
         }
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (runTimerSetting.getConnectType() == 0) {
+            SerialDeviceManager.getInstance().setRS232ResiltListener(runTimerListener);
+        } else {
+            RadioManager.getInstance().setOnRadioArrived(this);
+        }
+    }
     @Nullable
     @Override
     protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
@@ -536,4 +547,24 @@ public class RunTimerSettingActivity extends BaseTitleActivity implements Adapte
         }
 
     }
+
+    private RunTimerImpl runTimerListener = new RunTimerImpl(new RunTimerImpl.RunTimerListener() {
+
+        @Override
+        public void onGetTime(RunTimerResult result) {
+
+
+        }
+
+        @Override
+        public void onConnected(RunTimerConnectState connectState) {
+            EventBus.getDefault().post(new BaseEvent(EventConfigs.SETTING_SUCCEED));
+        }
+
+        @Override
+        public void onTestState(int state) {
+
+        }
+    });
+
 }
