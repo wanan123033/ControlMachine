@@ -261,7 +261,7 @@ public class SportPresent implements SportContract.Presenter {
                 }
                 getDeviceState(result.getDeviceId());
             }
-            sportView.updateDeviceState(result.getDeviceId(), result.getDeviceState()+1);//正常连接
+            sportView.updateDeviceState(result.getDeviceId(), result.getDeviceState() + 1);//正常连接
 
 
         }
@@ -314,9 +314,9 @@ public class SportPresent implements SportContract.Presenter {
 //                sportView.updateDeviceState(result.getDeviceId(), 2);//计时
 //            }
 
-            sportView.updateDeviceState(result.getDeviceId(), result.getDeviceState()+1);
+            sportView.updateDeviceState(result.getDeviceId(), result.getDeviceState() + 1);
 
-            if (result.getDeviceState() == 0){
+            if (result.getDeviceState() == 0) {
                 return;//非计时状态成绩无效
             }
             connectState[result.getDeviceId() - 1] = 1;
@@ -347,14 +347,14 @@ public class SportPresent implements SportContract.Presenter {
         public void onGetDeviceState(int deviceState, int deviceId) {
             if (deviceId == 0 || deviceId > connectState.length)
                 return;
-            if (synKeep == -1){
-                if (deviceState != 1){
+            if (synKeep == -1) {
+                if (deviceState != 1) {
                     setDeviceState(deviceId, 1);
                 }
             }
 
-            if (synKeep!=-1){
-                if (deviceState == 1){
+            if (synKeep != -1) {
+                if (deviceState == 1) {
                     setDeviceState(deviceId, 0);
                 }
             }
@@ -370,7 +370,7 @@ public class SportPresent implements SportContract.Presenter {
 //                sportView.updateDeviceState(deviceId, 1);
 //            }
 
-            sportView.updateDeviceState(deviceId, deviceState+1);
+            sportView.updateDeviceState(deviceId, deviceState + 1);
 
         }
     });
@@ -457,7 +457,6 @@ public class SportPresent implements SportContract.Presenter {
         }
         InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
     }
-
 
 
     public void printResult(Student student, List<String> results, int current, int max, int groupNo) {
@@ -708,8 +707,8 @@ public class SportPresent implements SportContract.Presenter {
      * @param runs
      */
     public void setShowLed(List<RunStudent> runs) {
-//        MyRunnable r = new MyRunnable(runs);
-//        service.submit(r);
+        MyRunnable r = new MyRunnable(runs);
+        service.submit(r);
     }
 
     public void clearLed(int t) {
@@ -750,15 +749,15 @@ public class SportPresent implements SportContract.Presenter {
             e.printStackTrace();
         }
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+        if (!runLed) {
+            return;
+        }
         int y;
         int realSize = runs.size();
-        for (int i = 0; i < realSize; i++) {
-            if (!runLed) {
-                return;
-            }
-            Student student = runs.get(i).getStudent();
-            y = i;
-            if (i <= 3) {
+        if (realSize< 4){
+            for (int i = 0; i < realSize; i++) {
+                Student student = runs.get(i).getStudent();
+                y = i;
                 if (student != null) {
                     String name = getFormatName(student.getStudentName());
                     if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
@@ -768,29 +767,52 @@ public class SportPresent implements SportContract.Presenter {
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
                             0, y, false, true);
                 }
-            } else {
-                try {
-                    Thread.sleep(4000);
-                    mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+            }
+        }else {
+            for (int i = 0; i < realSize; i++) {
+                if (i< 4){
+                    Student student = runs.get(i).getStudent();
+                    y = i;
                     if (student != null) {
                         String name = getFormatName(student.getStudentName());
-                        if (runs.get(i - 3).getMark() != null) {
-                            name = name + runs.get(i - 3).getMark();
+                        if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+                            int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+                            name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
                         }
                         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
                                 0, y, false, true);
                     }
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
+            try {
+                Thread.sleep(4000);
+                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+                for (int i = 0; i < realSize; i++) {
+                    if (i>= 4){
+                        Student student = runs.get(i).getStudent();
+                        y = i;
+                        if (student != null) {
+                            String name = getFormatName(student.getStudentName());
+                            if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+                                int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+                                name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
+                            }
+                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+                                    0, y, false, true);
+                        }
+                    }
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public void showReadyLed(List<RunStudent> runs) {
-//        ShowReady r = new ShowReady(runs);
-//        service.submit(r);
+        ShowReady r = new ShowReady(runs);
+        service.submit(r);
     }
 
     private class ShowReady implements Runnable {
@@ -811,25 +833,47 @@ public class SportPresent implements SportContract.Presenter {
 
     private void showReady(List<RunStudent> runs) {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-        for (int i = 0; i < runs.size(); i++) {
-            if (!showReady) {
-                return;
+        if (!showReady) {
+            return;
+        }
+        if (runs.size() > 4) {
+            for (int i = 0; i < runs.size(); i++) {
+                if (i < 4){
+                    Student student = runs.get(i).getStudent();
+                    if (student != null) {
+                        String studentName = getFormatName(student.getStudentName());
+                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+                                0, i, false, true);
+
+                    }
+                }
             }
-            Student student = runs.get(i).getStudent();
-            if (student != null) {
-                String studentName = getFormatName(student.getStudentName());
-                if (i < 3) {
+            try {
+                Thread.sleep(4000);
+                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+                for (int i = 0; i < runs.size(); i++) {
+                    if (i >= 4){
+                        Student student = runs.get(i).getStudent();
+                        if (student != null) {
+                            String studentName = getFormatName(student.getStudentName());
+                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+                                    0, i, false, true);
+
+                        }
+                    }
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            for (int i = 0; i < runs.size(); i++) {
+                Student student = runs.get(i).getStudent();
+                if (student != null) {
+                    String studentName = getFormatName(student.getStudentName());
                     mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
                             0, i, false, true);
-                } else {
-                    try {
-                        Thread.sleep(4000);
-                        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
-                                0, i - 3, false, true);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
 
                 }
             }
@@ -880,10 +924,10 @@ public class SportPresent implements SportContract.Presenter {
         roundResult.setRoundNo(currentTestTime);
         roundResult.setTestNo(1);
         roundResult.setGroupId(group.getId());
-        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
-        if (group.getExamType() == StudentItem.EXAM_MAKE){
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
+        if (group.getExamType() == StudentItem.EXAM_MAKE) {
             roundResult.setExamType(group.getExamType());
-        }else {
+        } else {
             roundResult.setExamType(groupItem.getExamType());
         }
         roundResult.setScheduleNo(group.getScheduleNo());
