@@ -428,6 +428,22 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
+        List<RoundResult> roundResultAll= DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), studentItem.getExamType());
+        if (roundResultAll.size()>=TestConfigs.getMaxTestCount()){
+            List<Integer> rounds = new ArrayList<>();
+            for (int i = 0; i < roundResultList.size(); i++) {
+                if (roundResultList.size() > 0){  //需要改变轮次
+                    int roundNo = roundResultList.get(i).getRoundNo();
+                    rounds.add(roundNo);
+                }
+            }
+
+            for (int j = 1 ; j <= TestConfigs.getMaxTestCount() ; j++) {
+                if (!rounds.contains(j)) {
+                    pair.setRoundNo(j);
+                }
+            }
+        }
 
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
@@ -494,16 +510,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             testNo = roundResultList.get(0).getTestNo();
         }
 
-        roundNo = roundResultList.size() + 1;
+        roundNo =pair.getRoundNo() !=0?pair.getRoundNo() : roundResultList.size() + 1;
         LogUtils.operation("当前轮次 = " + roundNo);
         result = null;
         result = new String[setTestCount()];
         for (int i = 0; i < roundResultList.size(); i++) {
             if (i < setTestCount()) {
                 if (roundResultList.get(i).getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                    result[i] = "X";
+                    result[roundResultList.get(i).getRoundNo()-1] = "X";
                 } else {
-                    result[i] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
+                    result[roundResultList.get(i).getRoundNo()-1] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
                 }
 
             }
@@ -840,6 +856,19 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 //4秒后清理学生信息
                 clearHandler.sendEmptyMessageDelayed(0, 4000);
                 return ;
+            }
+            boolean isAllTest = true;
+            for (String s : result) {
+                if (TextUtils.isEmpty(s)){
+                    isAllTest=false;
+                }
+            }
+            if (isAllTest){
+                //测试结束学生清除 ，设备设置空闲状态
+                roundNo = 1;
+                //4秒后清理学生信息
+                clearHandler.sendEmptyMessageDelayed(0, 4000);
+                return;
             }
             roundNo++;
             txtStuResult.setText("");

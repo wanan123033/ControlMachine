@@ -246,7 +246,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
-                                    stuPairsList.get(position).setTestNo(1);
+                                    stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
                                     stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);
@@ -277,7 +277,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
 
-                                    stuPairsList.get(position).setTestNo(1);
+                                    stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
                                     stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);
@@ -637,6 +637,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //                    return;
 //                }
                 TestConfigs.baseGroupMap.put("group", groupList.get(groupAdapter.getTestPosition()));
+                TestCache.getInstance().setGroup(groupList.get(groupAdapter.getTestPosition()));
                 pairs.clear();
                 for (BaseStuPair pair : stuPairsList) {
                     if (pair.isCanTest()) {

@@ -1722,7 +1722,15 @@ public class DBManager {
                 .orderDesc(RoundResultDao.Properties.TestNo)
                 .list();
     }
-
+    public List<RoundResult> queryFinallyRountScoreByExamTypeAll(String studentCode, int exemType) {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(RoundResultDao.Properties.ExamType.eq(exemType))
+                .orderDesc(RoundResultDao.Properties.TestNo)
+                .list();
+    }
     /**
      * 查询对应考生当前项目最后一次成绩
      *
