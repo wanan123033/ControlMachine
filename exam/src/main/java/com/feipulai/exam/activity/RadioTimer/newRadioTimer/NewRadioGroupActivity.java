@@ -358,6 +358,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         switch (view.getId()) {
             case R.id.tv_wait_start://等待发令
                 timerKeeper.stopKeepTime();
+                sportPresent.setRunLed(false);
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完
@@ -410,8 +411,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
-                    setBeginTime();
                     playUtils.play(15);
+                    setBeginTime();
+
+
                 }
 
                 break;
@@ -423,7 +426,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             case R.id.tv_fault_back://违规返回
                 testing = false;
                 LogUtils.operation("红外计时点击了违规返回");
-                sportPresent.setDeviceStateStop();
+
                 setView(new boolean[]{true,false,false,false,false,true});
                 timerKeeper.stopKeepTime();
                 for (RunStudent runStudent : mList) {
@@ -436,6 +439,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 testState = TestState.UN_STARTED;
                 currentTestTime--;
                 setIndependent();
+                sportPresent.showReadyLed(mList);
+                sportPresent.setDeviceStateStop();
                 break;
             case R.id.tv_mark_confirm://成绩确认
                 boolean b = true;
@@ -601,6 +606,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     }
 
     private void setBeginTime() {
+        sportPresent.setShowReady(false);
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
 //        if (sportPresent.getSynKeep() > 0) {
@@ -729,13 +735,12 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             switch (msg.what) {
                 case RUN_START:
 
-                    tvWaitStart.setSelected(false);
-                    tvWaitReady.setSelected(false);
-                    tvForceStart.setSelected(false);
-                    tvMarkConfirm.setSelected(true);
+
+                    setView(new boolean[]{false,false,true,false,true,false});
                     tvRunState.setText("计时");
                     break;
                 case RUN_STOP:
+//                    sportPresent.showReadyLed(mList);
                     setView(new boolean[]{true,false,false,false,false,true});
                     tvRunState.setText("空闲");
                     break;
@@ -747,6 +752,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     addTime();
                     break;
                 case RUN_UPDATE_COMPLETE:
+                    setView(new boolean[]{true,false,false,false,false,true});
                     mAdapter.notifyDataSetChanged();
                     break;
                 case RUN_UPDATE_TEXT:

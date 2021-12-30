@@ -168,21 +168,32 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     lastRount=result;
                     continue;
                 }
-               switch (TestConfigs.sCurrentItem.getTestType()){
-                   case DBManager.TEST_TYPE_TIME ://项目类型 计时
+                if (result.getResultState()==RoundResult.RESULT_STATE_NORMAL){
+                    if (lastRount.getResultState()!=RoundResult.RESULT_STATE_NORMAL){
+                        lastRount=result;
+                        continue;
+                    }else if (result.getResultState()!=RoundResult.RESULT_STATE_NORMAL)  {
+                        continue;
+                    }
+                    switch (TestConfigs.sCurrentItem.getTestType()){
+                        case DBManager.TEST_TYPE_TIME ://项目类型 计时
+
                             if (lastRount.getResult()>result.getResult()){
                                 lastRount=result;
                             }
-                       break;
-                   case  DBManager.TEST_TYPE_COUNT ://项目类型 计数
-                   case  DBManager. TEST_TYPE_DISTANCE ://项目类型 远度
-                   case  DBManager. TEST_TYPE_POWER ://项目类型 力量
-                       if (lastRount.getResult()<result.getResult()){
-                           lastRount=result;
-                       }
-                       break;
-               }
+                            break;
+                        case  DBManager.TEST_TYPE_COUNT ://项目类型 计数
+                        case  DBManager. TEST_TYPE_DISTANCE ://项目类型 远度
+                        case  DBManager. TEST_TYPE_POWER ://项目类型 力量
+                            if (lastRount.getResult()<result.getResult()){
+                                lastRount=result;
+                            }
+                            break;
+                    }
+                }
+
             }
+
         }
         if (lastRount!=null){
             lastRount.setIsLastResult(RoundResult.LAST_RESULT);

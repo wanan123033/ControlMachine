@@ -337,14 +337,18 @@ public class SargentTestActivity extends BasePersonTestActivity {
             updateResult(stuPair);
             updateDevice(new BaseDeviceState(BaseDeviceState.STATE_END, 1));
             // 发送结束命令
-            LogUtils.serial("摸高结束测试指令" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP) + "");
-
-            if (sargentSetting.getType() == 1) {
-                RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
-
-            } else {
-                SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // 发送结束命令
+                    LogUtils.normal(SerialConfigs.CMD_SARGENT_JUMP_STOP.length + "---" + StringUtility.bytesToHexString(SerialConfigs.CMD_SARGENT_JUMP_STOP) + "---摸高结束指令");
+                    if (sargentSetting.getType() == 1) {
+                        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+                    } else {
+                        SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
+                    }
+                }
+            },3000);
 
         }
     }

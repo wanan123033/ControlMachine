@@ -202,7 +202,7 @@ public class SportPresent implements SportContract.Presenter {
             setRunState(0);
             setPause(false);
             keepTime = false;
-            Thread.sleep(1000);
+            Thread.sleep(100);
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
             Thread.sleep(100);
             sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -707,8 +707,16 @@ public class SportPresent implements SportContract.Presenter {
      * @param runs
      */
     public void setShowLed(List<RunStudent> runs) {
-        MyRunnable r = new MyRunnable(runs);
-        service.submit(r);
+        if (!runLed) {
+            List<RunStudent> ledRuns = new ArrayList<>();
+            for (RunStudent ledRun : runs) {
+                ledRuns.add(new RunStudent().copeRunStudent(ledRun));
+            }
+
+            MyRunnable r = new MyRunnable(ledRuns);
+            service.submit(r);
+        }
+
     }
 
     public void clearLed(int t) {
@@ -742,77 +750,108 @@ public class SportPresent implements SportContract.Presenter {
 
     private boolean runLed;
 
-    private void runLed(List<RunStudent> runs) {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-        if (!runLed) {
-            return;
-        }
-        int y;
-        int realSize = runs.size();
-        if (realSize< 4){
-            for (int i = 0; i < realSize; i++) {
-                Student student = runs.get(i).getStudent();
-                y = i;
-                if (student != null) {
-                    String name = getFormatName(student.getStudentName());
-                    if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
-                        int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
-                        name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
-                    }
-                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
-                            0, y, false, true);
-                }
-            }
-        }else {
-            for (int i = 0; i < realSize; i++) {
-                if (i< 4){
-                    Student student = runs.get(i).getStudent();
-                    y = i;
-                    if (student != null) {
-                        String name = getFormatName(student.getStudentName());
-                        if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
-                            int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
-                            name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
-                        }
-                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
-                                0, y, false, true);
-                    }
-                }
-            }
-            try {
-                Thread.sleep(4000);
-                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-                for (int i = 0; i < realSize; i++) {
-                    if (i>= 4){
-                        Student student = runs.get(i).getStudent();
-                        y = i;
-                        if (student != null) {
-                            String name = getFormatName(student.getStudentName());
-                            if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
-                                int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
-                                name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
-                            }
-                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
-                                    0, y, false, true);
-                        }
-                    }
-                }
+    public void setRunLed(boolean runLed) {
+        this.runLed = runLed;
+    }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    private void runLed(List<RunStudent> runs) {
+
+//        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+
+        while (runLed) {
+            for (int i = 0; i < runs.size(); i++) {
+                if (!runLed) {
+                    return;
+                }
+                //只显示有学生信息配对好的手柄
+                int currentY = i % 4;
+                boolean clearScreen = i % 4 == 0;
+                boolean updateScreen = i % 4 == 3 || i == runs.size() - 1;
+                Student student = runs.get(i).getStudent();
+                String studentName = getFormatName(student.getStudentName());
+                if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+                    int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+                    studentName = studentName + ResultDisplayUtils.getStrResultForDisplay(ori, false);
+                }
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), studentName,
+                        0, currentY, clearScreen, updateScreen);
+                if (updateScreen) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+
+
+//        int y;
+//        int realSize = runs.size();
+//        if (realSize< 4){
+//            for (int i = 0; i < realSize; i++) {
+//                Student student = runs.get(i).getStudent();
+//                y = i;
+//                if (student != null) {
+//                    String name = getFormatName(student.getStudentName());
+//                    if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+//                        int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+//                        name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
+//                    }
+//                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+//                            0, y, false, true);
+//                }
+//            }
+//        }else {
+//            for (int i = 0; i < realSize; i++) {
+//                if (i< 4){
+//                    Student student = runs.get(i).getStudent();
+//                    y = i;
+//                    if (student != null) {
+//                        String name = getFormatName(student.getStudentName());
+//                        if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+//                            int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+//                            name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
+//                        }
+//                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+//                                0, y, false, true);
+//                    }
+//                }
+//            }
+//            try {
+//                Thread.sleep(4000);
+//                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+//                for (int i = 0; i < realSize; i++) {
+//                    if (i>= 4){
+//                        Student student = runs.get(i).getStudent();
+//                        y = i;
+//                        if (student != null) {
+//                            String name = getFormatName(student.getStudentName());
+//                            if (runs.get(i).getResultList() != null && runs.get(i).getResultList().size() > 0) {
+//                                int ori = runs.get(i).getResultList().get(runs.get(i).getResultList().size() - 1).getOriResult();
+//                                name = name + ResultDisplayUtils.getStrResultForDisplay(ori, false);
+//                            }
+//                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), name,
+//                                    0, y, false, true);
+//                        }
+//                    }
+//                }
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 
     public void showReadyLed(List<RunStudent> runs) {
-        ShowReady r = new ShowReady(runs);
-        service.submit(r);
+        if (!showReady) {
+            List<RunStudent> ledRuns = new ArrayList<>();
+            ledRuns.addAll(runs);
+            ShowReady r = new ShowReady(ledRuns);
+            service.submit(r);
+        }
+
     }
 
     private class ShowReady implements Runnable {
@@ -831,53 +870,80 @@ public class SportPresent implements SportContract.Presenter {
 
     private boolean showReady;
 
+
+    public void setShowReady(boolean showReady) {
+        this.showReady = showReady;
+    }
+
     private void showReady(List<RunStudent> runs) {
-        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-        if (!showReady) {
-            return;
-        }
-        if (runs.size() > 4) {
+//        mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+
+        while (showReady) {
             for (int i = 0; i < runs.size(); i++) {
-                if (i < 4){
-                    Student student = runs.get(i).getStudent();
-                    if (student != null) {
-                        String studentName = getFormatName(student.getStudentName());
-                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
-                                0, i, false, true);
-
-                    }
+                if (!showReady) {
+                    return;
                 }
-            }
-            try {
-                Thread.sleep(4000);
-                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
-                for (int i = 0; i < runs.size(); i++) {
-                    if (i >= 4){
-                        Student student = runs.get(i).getStudent();
-                        if (student != null) {
-                            String studentName = getFormatName(student.getStudentName());
-                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
-                                    0, i, false, true);
-
-                        }
-                    }
-                }
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            for (int i = 0; i < runs.size(); i++) {
+                //只显示有学生信息配对好的手柄
+                int currentY = i % 4;
+                boolean clearScreen = i % 4 == 0;
+                boolean updateScreen = i % 4 == 3 || i == runs.size() - 1;
                 Student student = runs.get(i).getStudent();
-                if (student != null) {
-                    String studentName = getFormatName(student.getStudentName());
-                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
-                            0, i, false, true);
-
+                String studentName = getFormatName(student.getStudentName());
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+                        0, currentY, clearScreen, updateScreen);
+                if (updateScreen) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+
+
+//        if (runs.size() > 4) {
+//            for (int i = 0; i < runs.size(); i++) {
+//                if (i < 4){
+//                    Student student = runs.get(i).getStudent();
+//                    if (student != null) {
+//                        String studentName = getFormatName(student.getStudentName());
+//                        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+//                                0, i, false, true);
+//
+//                    }
+//                }
+//            }
+//            try {
+//                Thread.sleep(4000);
+//                mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
+//                for (int i = 0; i < runs.size(); i++) {
+//                    if (i >= 4){
+//                        Student student = runs.get(i).getStudent();
+//                        if (student != null) {
+//                            String studentName = getFormatName(student.getStudentName());
+//                            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+//                                    0, i, false, true);
+//
+//                        }
+//                    }
+//                }
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//        } else {
+//            for (int i = 0; i < runs.size(); i++) {
+//                Student student = runs.get(i).getStudent();
+//                if (student != null) {
+//                    String studentName = getFormatName(student.getStudentName());
+//                    mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), String.format("%1d %-4s  %s", i + 1, studentName, "准备"),
+//                            0, i, false, true);
+//
+//                }
+//            }
+//        }
     }
 
 

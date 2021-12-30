@@ -23,6 +23,21 @@ public class RunStudent implements Serializable {
         return student;
     }
 
+
+
+    public RunStudent copeRunStudent( RunStudent runStudent) {
+        this.student = runStudent.getStudent();
+        this.runId = runStudent.getRunId();
+        this.mark = runStudent.getMark();
+        this.connectState = runStudent.getConnectState();
+        this.trackNo = runStudent.getTrackNo();
+        this.resultList = runStudent.getResultList();
+        this.originalMark = runStudent.getOriginalMark();
+        this.independentTime = runStudent.getIndependentTime();
+        this.roundNo = runStudent.getRoundNo();
+        this.isDelete = runStudent.isDelete();
+        return this;
+    }
     public void setStudent(Student student) {
         this.student = student;
     }
