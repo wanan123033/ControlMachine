@@ -175,6 +175,7 @@ public class SportPresent implements SportContract.Presenter {
 
     @Override
     public void waitStart() {
+        setRunLed(false);
         try {
             if (!MyApplication.RADIO_TIME_SYNC) {
                 sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), getTime());
@@ -723,6 +724,7 @@ public class SportPresent implements SportContract.Presenter {
         mLEDManager.clearScreen(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId());
         mLEDManager.showString(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId(), "菲普莱体育", 3, 0, false, true);
         mLEDManager.showString(TestConfigs.sCurrentItem.getMachineCode(), SettingHelper.getSystemSetting().getHostId(), t == 0 ? "运动计时" : "红外计时", 4, 1, false, true);
+        setShowReady(false);
     }
 
     public void showLedString(String time) {
@@ -871,7 +873,7 @@ public class SportPresent implements SportContract.Presenter {
     private boolean showReady;
 
 
-    public void setShowReady(boolean showReady) {
+    private void setShowReady(boolean showReady) {
         this.showReady = showReady;
     }
 

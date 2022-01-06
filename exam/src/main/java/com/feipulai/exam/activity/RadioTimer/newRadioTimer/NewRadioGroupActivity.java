@@ -606,7 +606,6 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     }
 
     private void setBeginTime() {
-        sportPresent.setShowReady(false);
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
 //        if (sportPresent.getSynKeep() > 0) {

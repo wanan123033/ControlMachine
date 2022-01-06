@@ -47,5 +47,6 @@ public class EventConfigs {
     public static final int UPLOAD_RESULT_SUCCEED = 21;
     //上传成绩失败
     public static final int UPLOAD_RESULT_FAULT = 22;
+    public static final int FOUL_DIALOG_MISS = 23;
 
 }

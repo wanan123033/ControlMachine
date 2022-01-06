@@ -145,6 +145,9 @@ public class PenalizeDialog {
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.view_txt_cancel:
+                if (resultState == RoundResult.RESULT_STATE_FOUL){
+                    EventBus.getDefault().post(new BaseEvent(EventConfigs.FOUL_DIALOG_MISS));
+                }
                 dismissDialog();
                 break;
             case R.id.view_txt_confirm:
@@ -301,8 +304,10 @@ public class PenalizeDialog {
         selectPosition = -1;
         txtStuCode.setText("");
         txtStuName.setText("");
-        if (dialog != null && dialog.isShowing())
+        if (dialog != null && dialog.isShowing()){
             dialog.dismiss();
+        }
+
     }
 
 

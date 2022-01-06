@@ -131,7 +131,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
             if (result.getOrder() == 1 && runTimerSetting.getInterceptWay() == 0 && !isForce) {
                 if (isBaseTime){
                     baseTimer = result.getResult();
-                    isBaseTime = true;
+                    isBaseTime = false;
                 }
 
             }
@@ -175,7 +175,7 @@ public abstract class BaseRunTimerActivity extends BaseCheckActivity {
                     //算出误差时间
                     if (runTimerSetting.getInterceptWay() == 0) {
                         baseTimer = System.currentTimeMillis() - baseTimer;
-                        isBaseTime = false;
+                        isBaseTime = true;
                     }
                     disposeManager.keepTime();
                     changeState(new boolean[]{false, false, true, false, false});

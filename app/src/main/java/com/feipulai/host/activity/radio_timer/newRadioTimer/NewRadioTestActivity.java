@@ -396,7 +396,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         } else {
             //红外拦截并且有起终点
             if (testState == TestState.DATA_DEALING) {
-                setBeginTime();
+//                setBeginTime();
                 return;
             }
             //假使都是认为发射指令，起点终点不相关

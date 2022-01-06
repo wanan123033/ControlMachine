@@ -117,6 +117,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
     private LedHandler ledHandler = new LedHandler(this);
     private int testType = 0;//0自动 1手动
+    private volatile boolean lockFoul;//在自动下一个时判罚锁定下一个
     /**
      * 开启助跑  0不助跑 1助跑
      */
@@ -290,6 +291,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.INSTALL_RESULT:
             case EventConfigs.UPDATE_RESULT:
+                lockFoul = false;
                 int position = stuAdapter.getTestPosition();
                 if (position == -1){
                     position = stuAdapter.getItemCount() - 1;
@@ -380,6 +382,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         }
 
                     }
+                }
+                break;
+            case EventConfigs.FOUL_DIALOG_MISS:
+                if (lockFoul){
+                    lockFoul = false;
+                    loopTest();
                 }
 
                 break;
@@ -534,6 +542,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 penalizeDialog.setData(1, stuPairsList.get(pos).getStudent(),
                         stuPairsList.get(pos).getTimeResult(), lastStudent, lastResult);
                 penalizeDialog.showDialog(0);
+                lockFoul = true;
                 break;
             case R.id.tv_inBack:
                 penalizeDialog.setGroupId(group.getId());
@@ -923,6 +932,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 continuousTest();
             } else {
                 //循环
+                if (testType == 0 && lockFoul){
+                    return;
+                }
                 loopTest();
             }
         } else {
