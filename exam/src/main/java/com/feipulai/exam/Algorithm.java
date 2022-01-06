@@ -50,7 +50,14 @@ public class Algorithm {
 //        byte[] bytes = new byte[]{00, 0x38, 0x39, (byte) 0x91, 0x5a, 0x20, (byte) 0xff};
 //        System.out.println("======>" + new String(bytes));
 
-        System.out.println("======>" + formatTime2(1635147285883L,"yyyyMMddHHmmss.SSS"));
+//        System.out.println("======>" + formatTime2(1635147285883L,"yyyyMMddHHmmss.SSS"));
+        System.out.println("======>" + formatTime(12580,"ss.SS"));
+        System.out.println("======>" + formatTime(12580,"ss.SS"));
+    }
+    public static String formatTime(long timeMillis, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));//计时时间换算不需要加8
+        return sdf.format(new Date(timeMillis));
     }
     public static String formatTime2(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
