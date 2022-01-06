@@ -18,7 +18,7 @@ android {
         targetSdkVersion 26
         versionCode 2
         // 新版本1.0.1 测试加后面版本
-        versionName "2.0.2.3"
+        versionName "2.0.2"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
@@ -62,7 +62,7 @@ android {
 //            manifestPlaceholders = [APP_NAME: '睿力恒体测'] // 配置马甲包的应用名称
         }
         linnan {//岭南
-            initWith(buildTypes.debug)
+            initWith(buildTypes.release)
             applicationIdSuffix ".linnan"
             // 修改马甲包的applicationId，即在原来的applicationId后加上配置内容
 //            manifestPlaceholders = [APP_NAME: '第一个马甲包'] // 配置马甲包的应用名称
