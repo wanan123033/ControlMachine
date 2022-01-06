@@ -957,7 +957,7 @@ public class DataManageActivity
             @Override
             public void run() {
                 final int totalCount = jpgFiles.length;
-
+                final List<FaceRegisterInfo> faceRegisterInfos = new ArrayList<>();
                 int successCount = 0;
                 runOnUiThread(new Runnable() {
                     @Override
@@ -1014,8 +1014,14 @@ public class DataManageActivity
                     byte[] success = FaceServer.getInstance().registerBgr24Byte(DataManageActivity.this, bgr24, bitmap.getWidth(), bitmap.getHeight(),
                             studentCode);
                     if (student != null && success != null) {
-                        student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
-                        DBManager.getInstance().updateStudent(student);
+//                        student.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
+                        //                        DBManager.getInstance().updateStudent(student);
+
+                        StudentFace studentFace = new StudentFace();
+                        studentFace.setStudentCode(studentCode);
+                        studentFace.setFaceFeature(Base64.encodeToString(success, Base64.DEFAULT));
+                        DBManager.getInstance().insertStudentFace(studentFace);
+                        faceRegisterInfos.add(new FaceRegisterInfo(success, studentCode));
                     }
                     if (success == null) {
                         Log.e("faceRegister", "人脸注册失败" + studentCode);
@@ -1028,6 +1034,7 @@ public class DataManageActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        FaceServer.getInstance().addFaceList(faceRegisterInfos);
                         initAfrCount();
                         progressDialog.dismiss();
                     }

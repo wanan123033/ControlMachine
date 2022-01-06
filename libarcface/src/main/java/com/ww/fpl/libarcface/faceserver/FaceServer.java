@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 人脸库操作类，包含注册和搜索
@@ -153,7 +154,7 @@ public class FaceServer {
      *
      * @param context 上下文对象
      */
-    public void     initFaceList(Context context) {
+    public void initFaceList(Context context) {
         synchronized (this) {
             if (ROOT_PATH == null) {
                 ROOT_PATH = context.getFilesDir().getAbsolutePath();
@@ -186,7 +187,16 @@ public class FaceServer {
 
     public void addFaceList(List<FaceRegisterInfo> faces) {
         if (faceRegisterInfoList != null) {
-            faceRegisterInfoList.addAll(faces);
+            for (FaceRegisterInfo face : faces) {
+                if (faceRegisterInfoList.contains(face)) {
+                    int index = faceRegisterInfoList.indexOf(face);
+                    faceRegisterInfoList.remove(index);
+                    faceRegisterInfoList.add(face);
+                }else{
+                    faceRegisterInfoList.add(face);
+                }
+            }
+//            faceRegisterInfoList.addAll(faces);
         } else {
             faceRegisterInfoList = new ArrayList<>();
             faceRegisterInfoList.addAll(faces);

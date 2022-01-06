@@ -43,6 +43,7 @@ public class SerialDeviceManager {
 
     static {
         machinBaudrate.put(ItemDefault.CODE_HW, 4800);
+        machinBaudrate.put(ItemDefault.CODE_JGCJ, 4800);
         machinBaudrate.put(ItemDefault.CODE_FHL, 9600);
         machinBaudrate.put(ItemDefault.CODE_ZWTQQ, 9600);
         machinBaudrate.put(ItemDefault.CODE_HWSXQ, 9600);

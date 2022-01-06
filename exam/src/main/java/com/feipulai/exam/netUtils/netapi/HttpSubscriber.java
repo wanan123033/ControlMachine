@@ -828,15 +828,15 @@ public class HttpSubscriber {
      * @param uploadResultsList
      */
     public void uploadResultTCP(Activity activity, final List<UploadResults> uploadResultsList) {
-        int pageSum = uploadResultsList.size();
-//        if (uploadResultsList.size() > 50) {
-//            //获取上传分页数目
-//            if (uploadResultsList.size() % 50 == 0) {
-//                pageSum = uploadResultsList.size() / 50;
-//            } else {
-//                pageSum = uploadResultsList.size() / 50 + 1;
-//            }
-//        }
+        int pageSum = 1;
+        if (uploadResultsList.size() > 50) {
+            //获取上传分页数目
+            if (uploadResultsList.size() % 50 == 0) {
+                pageSum = uploadResultsList.size() / 50;
+            } else {
+                pageSum = uploadResultsList.size() / 50 + 1;
+            }
+        }
         sendTcpResult(activity, 0, pageSum, uploadResultsList);
     }
 
@@ -853,9 +853,9 @@ public class HttpSubscriber {
     private void sendTcpResult(final Activity activity, final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
-            uploadData = uploadResultsList.subList(pageNo, uploadResultsList.size());
+            uploadData = uploadResultsList.subList(pageNo * 50, uploadResultsList.size());
         } else {
-            uploadData = uploadResultsList.subList(pageNo, (pageNo + 1));
+            uploadData = uploadResultsList.subList(pageNo * 50, (pageNo + 1) * 50);
         }
 
         LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
