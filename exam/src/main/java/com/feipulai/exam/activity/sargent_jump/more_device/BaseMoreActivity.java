@@ -256,6 +256,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
+
         if (roundResultList != null && roundResultList.size() >= setTestCount()) {
             if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
                 SystemSetting setting = SettingHelper.getSystemSetting();
@@ -345,19 +346,39 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             toastSpeak("当前无设备可添加学生测试");
             return;
         }
-
+        deviceDetails.get(index).setRound(0);
         String[] result = new String[setTestCount()];
         for (int i = 0; i < roundResultList.size(); i++) {
             if (i < setTestCount()) {
                 if (roundResultList.get(i).getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                    result[i] = "X";
+                    result[roundResultList.get(i).getRoundNo()-1] = "X";
                 } else {
-                    result[i] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
+                    result[roundResultList.get(i).getRoundNo()-1] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
                 }
 
             }
         }
-        deviceDetails.get(index).setRound(roundResultList.size() + 1);
+
+        List<RoundResult> roundResultAll= DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), studentItem.getExamType());
+        if (roundResultAll.size()>=TestConfigs.getMaxTestCount()){
+            List<Integer> rounds = new ArrayList<>();
+            for (int i = 0; i < roundResultList.size(); i++) {
+                if (roundResultList.size() > 0){  //需要改变轮次
+                    int roundNo = roundResultList.get(i).getRoundNo();
+                    rounds.add(roundNo);
+                }
+            }
+
+            for (int j = 1 ; j <= TestConfigs.getMaxTestCount() ; j++) {
+                if (!rounds.contains(j)) {
+                    deviceDetails.get(index).setRound(j);
+                }
+            }
+        }
+        deviceDetails.get(index).setRound(deviceDetails.get(index).getRound() !=0?deviceDetails.get(index).getRound()
+                : roundResultList.size() + 1);
+
+
 
         if (SettingHelper.getSystemSetting().getLedMode() == 0) {
             int clertCount = 4 - deviceDetails.size();
@@ -796,6 +817,26 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             }
             int count = detail.getRound();
             if (detail.getRound() < setTestCount()) {
+                boolean isAllTest = true;
+
+                for (String s : timeResult) {
+                    if (TextUtils.isEmpty(s)){
+                        isAllTest=false;
+                    }
+                }
+                if (isAllTest){
+                    if (!isPenalize) {
+                        //4秒后清理学生信息
+                        Message msg = new Message();
+                        msg.what = pair.getBaseDevice().getDeviceId();
+                        msg.obj = detail;
+                        clearHandler.sendMessageDelayed(msg, 4000);
+                        pair.setCanTest(true);
+                        pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                    }
+                    return;
+
+                }
                 detail.setRound(count + 1);
                 toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), count + 1)
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), count + 1));
@@ -1140,6 +1181,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             detail.getStuDevicePair().setTimeResult(new String[setTestCount()]);
             detail.getStuDevicePair().setStudent(null);
             detail.getStuDevicePair().setResult(-999);
+            detail.getStuDevicePair().setRoundNo(0);
             deviceListAdapter.notifyDataSetChanged();
         }
     }

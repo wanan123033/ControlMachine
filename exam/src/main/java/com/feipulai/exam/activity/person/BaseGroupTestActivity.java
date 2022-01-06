@@ -346,7 +346,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                             if (!SettingHelper.getSystemSetting().isIdentityMark()) {
 
                                 //连续测试
-                                if (setTestPattern() == 0) {
+                                if (setTestPattern() ==TestConfigs.GROUP_PATTERN_SUCCESIVE) {
                                     continuousTest();
                                 } else {
                                     //循环
@@ -363,7 +363,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                             lastResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
                                     ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()) : tmp);
                         }
-                        for (BaseStuPair stuPair : stuPairsList) {
+                        for (int i = 0; i < stuPairsList.size(); i++) {
+                            BaseStuPair stuPair= stuPairsList.get(i);
                             if (TextUtils.equals(stuPair.getStudent().getStudentCode(),roundResult.getStudentCode())){
                                 uploadServer(stuPair, roundResult);
                                 if (roundResult.getResultState()==RoundResult.RESULT_STATE_NORMAL){
@@ -377,9 +378,27 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                                 }else{
                                     stuPair.setFullMark(false);
                                 }
+                                stuPair.setTimeResult(lastResult);
+                                if (setTestPattern()==TestConfigs.GROUP_PATTERN_SUCCESIVE){
+                                    if (stuPair.isFullMark()){
+                                        return;
+                                    }
+
+                                    for (int j = 0; j < lastResult.length; j++) {
+                                        if (TextUtils.isEmpty(lastResult[j])){
+                                            roundNo = j;
+                                            stuAdapter.setTestPosition(i);
+                                            rvTestStu.scrollToPosition(i);
+                                            continuousTest();
+                                            return;
+                                        }
+                                    }
+
+                                }
                                 return;
                             }
                         }
+
 
                     }
                 }
@@ -773,6 +792,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                         stuAdapter.setTestPosition(i);
                         rvTestStu.scrollToPosition(i);
                         roundNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1;
+                        toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                                String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                        LogUtils.operation(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                     }
                     if (roundResultList.size() > 0) {
                         setStuPairsData(i, roundResultList);
@@ -793,6 +816,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     stuAdapter.setTestPosition(i);
                     rvTestStu.scrollToPosition(i);
                     roundNo = 1;
+                    toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                            String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                    LogUtils.operation(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                 }
                 if (roundResultList.size() > 0) {
                     setStuPairsData(i, roundResultList);
@@ -808,6 +835,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                             roundNo = i;
                             stuAdapter.setTestPosition(j);
                             rvTestStu.scrollToPosition(j);
+                            toastSpeak(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getSpeakStuName(), roundNo),
+                                    String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+                            LogUtils.operation(String.format(getString(R.string.test_speak_hint), stuPairsList.get(stuAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+
                             break;
                         }
                     }

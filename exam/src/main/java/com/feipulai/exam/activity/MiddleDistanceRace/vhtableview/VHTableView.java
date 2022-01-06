@@ -253,8 +253,11 @@ public class VHTableView extends LinearLayout implements HListViewScrollView.Scr
                 View view = conentAdapter.getTableCellView(row, 0, viewHolder.views[0], ll_firstcolumn);
                 viewHolder.views[0] = view;
             } else {
-                View view = conentAdapter.getTableCellView(row, i, viewHolder.views[i], ll_datagroup);
-                viewHolder.views[i] = view;
+                if (viewHolder.views.length>i){
+                    View view = conentAdapter.getTableCellView(row, i, viewHolder.views[i], ll_datagroup);
+                    viewHolder.views[i] = view;
+                }
+
             }
         }
         return viewHolder;

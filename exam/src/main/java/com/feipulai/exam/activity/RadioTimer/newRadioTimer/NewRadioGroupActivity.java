@@ -62,7 +62,7 @@ import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioCons
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_DEVICE;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
 
-public class NewRadioGroupActivity extends BaseTitleActivity implements SportContract.SportView, TimerTask.TimeUpdateListener {
+public class NewRadioGroupActivity extends BaseTitleActivity implements SportContract.SportView, TimerTask2.TimeUpdateListener {
     @BindView(R.id.rl_control)
     RelativeLayout rlControl;
     @BindView(R.id.rv_timer)
@@ -107,7 +107,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     private RunTimerSetting runTimerSetting;
     private TestState testState;
     private int baseTimer;//初始化时间 用于记录计时器开始计数的时间
-    private TimerTask timerKeeper;
+    private TimerTask2 timerKeeper;
     private SparseArray<Integer> array;//有起终点时各道次终点状态
     private static final String TAG = "NewRadioGroupActivity";
     ExecutorService service = Executors.newFixedThreadPool(2);
@@ -187,7 +187,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
         sportPresent.setContinueRoll(true);
         sportPresent.rollConnect();
         testState = TestState.UN_STARTED;
-        timerKeeper = new TimerTask(this, 100);
+        timerKeeper = new TimerTask2(this, 100);
         timerKeeper.keepTime();
         independent = new int[runNum];
         setIndependent();
@@ -412,8 +412,8 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
                     playUtils.play(15);
-                    setBeginTime();
 
+                    setBeginTime();
 
                 }
 
@@ -606,6 +606,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
     }
 
     private void setBeginTime() {
+        sportPresent.setShowReady(false);
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
 //        if (sportPresent.getSynKeep() > 0) {
@@ -783,8 +784,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
                 testState = TestState.FORCE_START;
-                setBeginTime();
+
                 playUtils.play(15);
+                setBeginTime();
+
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -834,9 +837,9 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 //            }
 //            sportPresent.showLedString(formatTime);
 //        }
-        EventBus.getDefault().post(new BaseEvent(time, RUN_UPDATE_TEXT));
-//        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
-        onTimeIOTaskUpdate(time);
+//        EventBus.getDefault().post(new BaseEvent(time, RUN_UPDATE_TEXT));
+        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+//        onTimeIOTaskUpdate(time);
     }
 
     @Override
@@ -848,7 +851,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     }
 
-
+    @Override
     public void onTimeIOTaskUpdate(int time) {
         if (testState == TestState.WAIT_RESULT) {
             String formatTime;

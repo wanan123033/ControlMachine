@@ -873,7 +873,7 @@ public class SportPresent implements SportContract.Presenter {
     private boolean showReady;
 
 
-    private void setShowReady(boolean showReady) {
+    public void setShowReady(boolean showReady) {
         this.showReady = showReady;
     }
 

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.adapter.PenalizeResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -151,6 +152,10 @@ public class PenalizeDialog {
                 dismissDialog();
                 break;
             case R.id.view_txt_confirm:
+                if (mAdapter.getClick()==-1){
+                    ToastUtils.showShort("请先选择更改轮次成绩");
+                    return;
+                }
                 if (state == 0) {
                     updateResult(lastStudent, resultState);
                 } else {
@@ -321,6 +326,7 @@ public class PenalizeDialog {
         if (null == queryStudent) {
             return;
         }
+
 //        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
 //        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         List<RoundResult> roundResultList = DBManager.getInstance().queryResultsByStudentCode(queryStudent.getStudentCode());

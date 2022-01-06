@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.SystemClock;
 
 import com.feipulai.device.udp.UdpLEDUtil;
+import com.orhanobut.logger.utils.LogUtils;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -250,7 +251,8 @@ public class DateUtil {
                 break;
         }
         if (caculTime < 60 * 1000) {
-            return formatTime(caculTime, "ss" + hundDigital);
+         String time =    formatTime(caculTime, "ss" + hundDigital);
+            return time;
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
             return formatTime(caculTime, "mm:ss" + hundDigital);
         } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内

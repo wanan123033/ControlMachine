@@ -57,7 +57,7 @@ import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioCons
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_TEXT;
 import static com.feipulai.exam.activity.RadioTimer.newRadioTimer.pair.RadioConstant.RUN_UPDATE_VIEW_VISIBLE;
 
-public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView,  TimerTask.TimeUpdateListener {
+public class NewRadioTestActivity extends BaseTitleActivity implements SportContract.SportView,  TimerTask2.TimeUpdateListener {
 
     @BindView(R.id.tv_device_state)
     TextView tvDeviceState;
@@ -115,7 +115,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     private int runNum;
     private int[] independent;
     private SparseArray<Integer> array;//有起终点时各道次终点状态 0异常 1正常 2计时
-    private TimerTask timerTask;
+    private TimerTask2 timerTask;
     private boolean testing;
     @Override
     protected int setLayoutResID() {
@@ -146,7 +146,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         rvTimer2.setAdapter(adapter);
         runTimerSetting = SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class);
         runNum = Integer.parseInt(runTimerSetting.getRunNum());
-        timerTask = new TimerTask(this,100);
+        timerTask = new TimerTask2(this,100);
         timerTask.keepTime();
         maxTestTimes = runTimerSetting.getTestTimes();
         playUtils = SoundPlayUtils.init(this);
@@ -356,6 +356,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     }
 
     private void setBeginTime() {
+        sportPresent.setShowReady(false);
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
 //        if (sportPresent.getSynKeep()>0){
@@ -491,6 +492,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
         switch (view.getId()) {
             case R.id.tv_wait_start:
                 timerTask.stopKeepTime();
+                sportPresent.setRunLed(false);
                 testing = true;
                 LogUtils.operation("红外计时点击了等待发令");
                 boolean flag = false;//标记学生是否全部测试完
@@ -546,7 +548,6 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             case R.id.tv_fault_back:
                 testing = false;
                 timerTask.stopKeepTime();
-                sportPresent.setDeviceStateStop();
                 setView(new boolean[]{true,false,false,false,false,true});
                 for (RunStudent runStudent : mList) {
                     if (runStudent == null) {
@@ -560,6 +561,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 testState = TestState.UN_STARTED;
                 currentTestTime--;
                 setIndependent();
+                sportPresent.showReadyLed(mList);
+                sportPresent.setDeviceStateStop();
                 break;
             case R.id.tv_force_start:
                 if (!isDeviceReady()){
@@ -569,8 +572,9 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 if (testState == TestState.UN_STARTED || testState == TestState.DATA_DEALING) {
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
-                    setBeginTime();
                     playUtils.play(15);
+
+                    setBeginTime();
                 }
                 break;
             case R.id.tv_mark_confirm:
@@ -621,6 +625,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    sportPresent.setShowReady(false);
+                    sportPresent.setRunLed(false);
                     finish();
                 }
             },3000);
@@ -636,8 +642,10 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
                 testState = TestState.FORCE_START;
-                setBeginTime();
                 playUtils.play(15);
+
+                setBeginTime();
+
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
@@ -714,12 +722,12 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //        msg.what = RUN_UPDATE_TEXT;
 //        msg.arg1 = time;
 //        mHandler.sendMessage(msg);
-//        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
-        EventBus.getDefault().post(new BaseEvent(time,RUN_UPDATE_TEXT));
-        onTimeIOTaskUpdate(time);
+        tvTimer.setText(ResultDisplayUtils.getStrResultForDisplay(time, false));
+//        EventBus.getDefault().post(new BaseEvent(time,RUN_UPDATE_TEXT));
+//        onTimeIOTaskUpdate(time);
     }
 
-
+    @Override
     public void onTimeIOTaskUpdate(int time) {
         if (testState == TestState.WAIT_RESULT){
             String formatTime ;

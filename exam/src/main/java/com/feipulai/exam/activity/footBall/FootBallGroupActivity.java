@@ -730,7 +730,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 if (state != TESTING) {
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
-                        toastSpeak("分组考生全部测试完成，请选择下一组");
+                        prepareForFinish();
+//                        toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {
                         if (TextUtils.isEmpty(testDate)) {
                             testDate = DateUtil.getCurrentTime() + "";
@@ -746,7 +747,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
                     if (group.getIsTestComplete() == Group.FINISHED) {
-                        toastSpeak("分组考生全部测试完成，请选择下一组");
+//                        toastSpeak("分组考生全部测试完成，请选择下一组");
+                        prepareForFinish();
                     } else {
                         timerUtil.stop();
                         if (setting.getTestType() == 0) {

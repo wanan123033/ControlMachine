@@ -48,7 +48,18 @@ public class TimerUtil {
                     }
                 });
     }
-
+    public void startTimeIO(long period) {
+        disposable = Observable.interval(0, period, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+//                        Logger.i("accept-------->" + aLong);
+                        if (listener != null)
+                            listener.timer(aLong);
+                    }
+                });
+    }
     public void stop() {
         if (disposable != null) {
             disposable.dispose();

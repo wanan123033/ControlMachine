@@ -1928,7 +1928,10 @@ public class MiddleDistanceRaceForGroupActivity extends MiddleBaseTitleActivity 
                     dbGroupList.setRemark1(startTime + "");//增加发令时刻
                     DBManager.getInstance().updateGroup(dbGroupList);
                 }
+                if (dbGroupList==null){
+                    dbGroupList = DBManager.getInstance().getGroupByNo(timingLists.get(position).getItemCode(), timingLists.get(position).getNo(), timingLists.get(position).getColor());
 
+                }
                 //更新组别
                 RoundResult roundResult;
                 UploadResults uploadResult;
