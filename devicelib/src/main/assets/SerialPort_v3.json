@@ -8,7 +8,7 @@
   },
   {
     "name": "RS232",
-    "serial": "/dev/ttyS3",
+    "serial": "/dev/ttyS4",
     "baud": 115200,
     "type": "serial",
     "versions": 3
