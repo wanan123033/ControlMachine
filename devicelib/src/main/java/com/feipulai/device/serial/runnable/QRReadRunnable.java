@@ -40,6 +40,9 @@ public class QRReadRunnable extends SerialReadRunnable {
             }
             Thread.sleep(1000);
             int size = mInputStream.read(data);
+            if (size < 0) {
+                return;
+            }
             byte[] qrCodeBytes = new byte[size];
             Log.i(TAG, "convert: size: " + size);
             System.arraycopy(data, 0, qrCodeBytes, 0, size);

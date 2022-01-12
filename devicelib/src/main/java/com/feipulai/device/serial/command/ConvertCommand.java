@@ -62,7 +62,7 @@ public class ConvertCommand {
                 result = cmd;
                 break;
             case RS232:
-                if (SerialParams.RS232.getVersions() == 2) {
+                if (SerialParams.RS232.getVersions() == 2||SerialParams.RS232.getVersions() == 3) {
                     // 发到232配置版本2的命令需要转换
                     result = new byte[cmd.length + 7];
                     System.arraycopy(PACKET_HEAD, 0, result, 0, PACKET_HEAD.length);

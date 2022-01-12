@@ -58,7 +58,7 @@ public class StandJumpTestActivity extends BasePersonTestActivity {
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
 //        sendCheck();
 //        cbDeviceState.setVisibility(View.INVISIBLE);
-        llState.setOnClickListener(new View.OnClickListener() {
+        cbDeviceState.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {

@@ -26,7 +26,7 @@ public class SerialDeviceManager {
     public void setRS232ResiltListener(RS232ResiltListener listener) {
         // Log.i("james", "listener===>" + listener == null ? "00" : "11");
         mDeviceListener = listener;
-        if (SerialParams.RS232.getVersions() == 2) {
+        if (SerialParams.RS232.getVersions() == 2||SerialParams.RS232.getVersions() == 3) {
             RadioManager.getInstance().setOnRadio232(new RadioManager.OnRadioR232Listener() {
 
                 @Override
@@ -70,7 +70,7 @@ public class SerialDeviceManager {
             });
         }
 
-        if (SerialParams.RS232.getVersions() == 2) {
+        if (SerialParams.RS232.getVersions() == 2||SerialParams.RS232.getVersions() == 3) {
             byte[] cmdBaudRate = new byte[]{(byte) 0XA5, 0X5A, (byte) 0XB2, 4, 0X00, 8, 0, 1, (byte) 0XFF, (byte) 0XAA, 0X55};
             switch (machinBaudrate.get(MachineCode.machineCode)) {
                 case 4800:

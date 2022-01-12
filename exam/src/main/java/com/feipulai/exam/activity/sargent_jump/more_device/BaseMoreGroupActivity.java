@@ -735,7 +735,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         if (setTestPattern() == 0) {//连续模式
             for (int i = 0; i < pairList.size(); i++) {
                 //  查询学生成绩 当有成绩则添加数据跳过测试
-                pairList.get(i).getTimeResult();
+
                 allotStudent(i);
 
             }
@@ -1102,17 +1102,28 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         //非身份验证模式
         if (!SettingHelper.getSystemSetting().isIdentityMark()) {
             //连续测试
-            if (setTestPattern() == 0) {
+            if (setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
                 int testTimes = deviceDetails.get(deviceIndex).getRound();
-                testTimes++;
                 roundNo = pair.getRoundNo()!=0?pair.getRoundNo(): testTimes + 1;
                 deviceDetails.get(deviceIndex).setRound(roundNo);
-                if (testTimes - 1 < setTestCount()) {
+                if (roundNo - 1 < setTestCount()) {
                     if (pair.isFullMark() && pair.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                         //测试下一个
                         continuousTestNext(deviceIndex);
                     } else {//继续测试同一个
-                        final int ts = testTimes;
+                        //是否为重测，重测直接下一位
+                        boolean isAllTest = true;
+                        for (String s : pair.getTimeResult()) {
+                            if (TextUtils.isEmpty(s)) {
+                                isAllTest = false;
+                            }
+                        }
+                        if (isAllTest) {
+                            //测试下一个
+                            continuousTestNext(deviceIndex);
+                            return;
+                        }
+                        final int ts = roundNo;
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -1264,7 +1275,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                     continue;
 
                 stuPos = i;
-                roundNo = pairList.get(stuPos).getRoundNo()!=0?pairList.get(stuPos).getRoundNo(): roundNo + 1;
+                roundNo = pairList.get(stuPos).getRoundNo()!=0?pairList.get(stuPos).getRoundNo(): getRound(pairList.get(i).getTimeResult())+1;
                 stuHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

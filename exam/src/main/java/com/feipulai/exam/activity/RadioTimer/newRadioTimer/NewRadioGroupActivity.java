@@ -178,7 +178,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 mAdapter.notifyDataSetChanged();
             }
         });
-        setView(new boolean[]{true,false,false,false,false,true});
+        setView(new boolean[]{true, false, false, false, false, true});
         if (runTimerSetting.getInterceptPoint() == 3) {
             sportPresent = new SportPresent(this, (runNum * 2));
         } else {
@@ -246,9 +246,10 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 
     /**
      * 对应机器 等待0、预备1、违规返回2、强启3、成绩确认4、设备详情5。
+     *
      * @param enable
      */
-    private void setView(boolean[]  enable) {
+    private void setView(boolean[] enable) {
         tvWaitStart.setEnabled(enable[0]);
         tvWaitReady.setEnabled(enable[1]);
         tvFaultBack.setEnabled(enable[2]);
@@ -390,7 +391,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 }
                 mAdapter.notifyDataSetChanged();
                 setIndependent();
-                setView(new boolean[]{false,true,true,true,false,false});
+                setView(new boolean[]{false, true, true, true, false, false});
                 if (tvWaitStart.getVisibility() == View.VISIBLE) {
                     playUtils.play(13);//播放各就各位
                 }
@@ -412,8 +413,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
                     playUtils.play(15);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setBeginTime();
+                        }
+                    }, 50);
 
-                    setBeginTime();
 
                 }
 
@@ -421,13 +427,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             case R.id.tv_wait_ready://预备
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
-                setView(new boolean[]{false,false,true,true,false,false});
+                setView(new boolean[]{false, false, true, true, false, false});
                 break;
             case R.id.tv_fault_back://违规返回
                 testing = false;
                 LogUtils.operation("红外计时点击了违规返回");
 
-                setView(new boolean[]{true,false,false,false,false,true});
+                setView(new boolean[]{true, false, false, false, false, true});
                 timerKeeper.stopKeepTime();
                 for (RunStudent runStudent : mList) {
                     runStudent.setMark("");
@@ -736,12 +742,12 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 case RUN_START:
 
 
-                    setView(new boolean[]{false,false,true,false,true,false});
+                    setView(new boolean[]{false, false, true, false, true, false});
                     tvRunState.setText("计时");
                     break;
                 case RUN_STOP:
 //                    sportPresent.showReadyLed(mList);
-                    setView(new boolean[]{true,false,false,false,false,true});
+                    setView(new boolean[]{true, false, false, false, false, true});
                     tvRunState.setText("空闲");
                     break;
                 case RUN_RESULT:
@@ -752,7 +758,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     addTime();
                     break;
                 case RUN_UPDATE_COMPLETE:
-                    setView(new boolean[]{true,false,false,false,false,true});
+                    setView(new boolean[]{true, false, false, false, false, true});
                     mAdapter.notifyDataSetChanged();
                     break;
                 case RUN_UPDATE_TEXT:
@@ -786,7 +792,12 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                 testState = TestState.FORCE_START;
 
                 playUtils.play(15);
-                setBeginTime();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBeginTime();
+                    }
+                }, 50);
 
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
