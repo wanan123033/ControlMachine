@@ -129,6 +129,7 @@ public class PenalizeDialog {
                 turnLast.setVisibility(View.INVISIBLE);
                 if (null == lastStudent) {
                     setDialogDismiss("未找到考生");
+                    return;
                 }
                 mList.clear();
                 mList.addAll(Arrays.asList(lastResult));//上一个
@@ -146,13 +147,13 @@ public class PenalizeDialog {
                 mAdapter.notifyDataSetChanged();
                 break;
             case R.id.view_txt_cancel:
-                if (resultState == RoundResult.RESULT_STATE_FOUL){
+                if (resultState == RoundResult.RESULT_STATE_FOUL) {
                     EventBus.getDefault().post(new BaseEvent(EventConfigs.FOUL_DIALOG_MISS));
                 }
                 dismissDialog();
                 break;
             case R.id.view_txt_confirm:
-                if (mAdapter.getClick()==-1){
+                if (mAdapter.getClick() == -1) {
                     ToastUtils.showShort("请先选择更改轮次成绩");
                     return;
                 }
@@ -198,6 +199,9 @@ public class PenalizeDialog {
         if (lastStudent == null && student == null) {
             setDialogDismiss("未找到考生");
         }
+        if (lastStudent==null){
+            turnLast.setVisibility(View.INVISIBLE);
+        }
         if (selectPosition != -1) {
             mAdapter.setClick(selectPosition);
             mAdapter.notifyItemChanged(selectPosition);
@@ -210,6 +214,7 @@ public class PenalizeDialog {
         this.student = student;
         this.lastStudent = lastStudent;
         this.state = state;
+
         switch (state) {
             case 0:
                 if (null == lastStudent) {
@@ -270,6 +275,7 @@ public class PenalizeDialog {
                 }
                 break;
         }
+
     }
 
     private void setSelect(String[] res) {
@@ -309,7 +315,7 @@ public class PenalizeDialog {
         selectPosition = -1;
         txtStuCode.setText("");
         txtStuName.setText("");
-        if (dialog != null && dialog.isShowing()){
+        if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
 
@@ -334,12 +340,12 @@ public class PenalizeDialog {
         if (resultState != RoundResult.RESULT_STATE_NORMAL && mAdapter.getClick() >= roundResultList.size()) {
             RoundResult roundResult = new RoundResult();
             SystemSetting systemSetting = SettingHelper.getSystemSetting();
-            if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN){
+            if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(queryStudent.getStudentCode());
                 roundResult.setExamType(studentItem.getExamType());
                 roundResult.setScheduleNo(studentItem.getScheduleNo());
-            }else {
-                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(),queryStudent.getStudentCode());
+            } else {
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(), queryStudent.getStudentCode());
                 roundResult.setExamType(groupItem.getExamType());
                 roundResult.setScheduleNo(groupItem.getScheduleNo());
             }
@@ -370,16 +376,16 @@ public class PenalizeDialog {
             DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
             RoundResult r = roundResultList.get(0);
             for (RoundResult roundResult : roundResultList) {
-                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL){
-                    r =  roundResult;
+                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                    r = roundResult;
                 }
             }
             for (RoundResult result : roundResultList) {
-                if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult()>r.getResult()){
+                if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() > r.getResult()) {
                     r = result;
                 }
             }
-            if (r.getResultState() == RoundResult.RESULT_STATE_NORMAL){
+            if (r.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                 r.setIsLastResult(1);
                 DBManager.getInstance().updateRoundResult(r);
             }

@@ -81,7 +81,7 @@ public class DataUploadActivity extends BaseTitleActivity {
     @Override
     protected void initData() {
         setItemInit();
-        resultDateList.addAll(DBManager.getInstance().getResultTimeData(mCurrentItem.getItemCode()));
+        resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode() ));
         resultDateAdapter = new ResultDateAdapter(resultDateList);
         rvResultDate.setLayoutManager(new LinearLayoutManager(this));
         rvResultDate.setAdapter(resultDateAdapter);
@@ -99,6 +99,14 @@ public class DataUploadActivity extends BaseTitleActivity {
         rvStudent.setAdapter(stuAdapter);
         if (resultDateList.size() != 0) {
             getStudentList();
+        }
+    }
+
+    private String getItemCode() {
+        if (TextUtils.isEmpty(mCurrentItem.getItemCode())) {
+            return TestConfigs.DEFAULT_ITEM_CODE;
+        } else {
+            return mCurrentItem.getItemCode();
         }
     }
 
@@ -161,7 +169,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             case R.id.sp_select_items:
                 mCurrentItem = itemList.get(position);
                 resultDateList.clear();
-                resultDateList.addAll(DBManager.getInstance().getResultTimeData(mCurrentItem.getItemCode()));
+                resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode() ));
                 resultDateAdapter.setSelectPosition(0);
                 resultDateAdapter.notifyDataSetChanged();
                 getStudentList();
@@ -179,7 +187,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             @Override
             public DataBaseRespon executeOper() {
 
-                List<Student> studentList = DBManager.getInstance().getResultTimeDataStudent(mCurrentItem.getItemCode(), resultDateList.get(resultDateAdapter.getSelectPosition()));
+                List<Student> studentList = DBManager.getInstance().getResultTimeDataStudent(getItemCode() , resultDateList.get(resultDateAdapter.getSelectPosition()));
                 retrieveBeanList.clear();
                 for (int i = 0; i < studentList.size(); i++) {
                     //获取学生信息
@@ -221,7 +229,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             }
             return "-1000";
         } else {
-            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(mCurrentItem.getItemCode(), studentCode);
+            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode() , studentCode);
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 

@@ -3,83 +3,94 @@
     android:layout_width="560dp"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <TextView
         android:layout_width="550dp"
         android:layout_height="wrap_content"
-        android:text="提示信息"
         android:layout_marginLeft="@dimen/dp_15"
         android:layout_marginTop="8dp"
-        android:textSize="@dimen/sp_18"/>
+        android:gravity="center"
+        android:text="提示信息"
+        android:textSize="30sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
-        android:background="@color/grey_A8"/>
+        android:background="@color/grey_A8" />
+
     <TextView
         android:id="@+id/tv_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="55dp"
-        android:textSize="@dimen/sp_18"
-        android:gravity="center_vertical"
-        android:drawablePadding="8dp"
         android:drawableLeft="@mipmap/icon_ex"
-        android:text="该考生已有成绩,请输入验证密码进行补考?" />
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:text="该考生已有成绩,请输入验证密码进行补考?"
+        android:textSize="@dimen/sp_18" />
+
     <EditText
         android:id="@+id/et_password"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/black_border"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:background="@drawable/black_border" />
+
     <TextView
         android:id="@+id/tv_stu_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:textSize="@dimen/sp_18"
-        android:text="考号_姓名" />
+        android:text="考号_姓名"
+        android:textSize="@dimen/sp_18" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="@dimen/dp_10"
-        android:background="@color/grey_A8"/>
+        android:background="@color/grey_A8" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="@dimen/dp_20">
+        android:layout_marginBottom="@dimen/dp_20"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/tv_cancel"
-            android:layout_width="73dp"
-            android:layout_height="35dp"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/tv_start_test"
-            android:background="@drawable/btn_click_bg_selected"
+            android:background="@drawable/btn_background"
             android:gravity="center"
             android:padding="8dp"
             android:text="否"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
+
         <TextView
             android:id="@+id/tv_commit"
-            android:layout_width="73dp"
-            android:layout_height="35dp"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="105dp"
             android:layout_toLeftOf="@+id/tv_start_test"
-            android:background="@drawable/btn_click_bg_selected"
+            android:background="@drawable/btn_background"
             android:gravity="center"
             android:padding="8dp"
             android:text="是"

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.feipulai.common.utils.NumberEnum;
 import com.feipulai.exam.R;
 
 import java.util.List;
@@ -33,20 +34,8 @@ public class PenalizeResultAdapter extends BaseQuickAdapter<String, BaseViewHold
         } else {
             holder.setText(R.id.tv_result, "");
         }
-        switch (holder.getLayoutPosition()) {
-            case 0:
-                holder.setText(R.id.tv_index, "①");
-                break;
-            case 1:
-                holder.setText(R.id.tv_index, "②");
-                break;
-            case 2:
-                holder.setText(R.id.tv_index, "③");
-                break;
-            case 3:
-                holder.setText(R.id.tv_index, "④");
-                break;
-        }
+        holder.setText(R.id.tv_index, NumberEnum.valueOfTo(holder.getLayoutPosition()+1).getValue());
+
         holder.setBackgroundColor(R.id.ll_content,holder.getLayoutPosition() == click? Color.YELLOW:Color.WHITE);
         holder.addOnClickListener(R.id.ll_content);
 

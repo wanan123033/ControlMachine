@@ -57,16 +57,18 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
         this.results = results;
         this.studentItem = studentItem;
     }
+
     public void setArguments(Student student, List<RoundResult> results, GroupItem groupItem) {
         this.student = student;
         this.results = results;
         this.groupItem = groupItem;
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_resit,container);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.dialog_resit, container);
+        ButterKnife.bind(this, view);
 
 
         return view;
@@ -76,16 +78,20 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         systemSetting = SettingHelper.getSystemSetting();
-        tv_stu_info.setText(student.getStudentCode()+"      "+student.getStudentName());
-        rv_score.setLayoutManager(new GridLayoutManager(getContext(),3));
+        tv_stu_info.setText(student.getStudentCode() + "      " + student.getStudentName());
+        rv_score.setLayoutManager(new GridLayoutManager(getContext(), results.size()));
         adapter = new ScoreAdapter(results);
         rv_score.setAdapter(adapter);
         adapter.setOnItemChildClickListener(this);
-
-        if (systemSetting.getAgainPassBool()){
+        if (results.size() == 1) {
+            selectPos = 0;
+            adapter.setselPos(selectPos);
+            adapter.notifyDataSetChanged();
+        }
+        if (systemSetting.getAgainPassBool()) {
             et_password.setVisibility(View.VISIBLE);
             tv_message.setText("该考生已有成绩,请输入验证密码重新测试?");
-        }else {
+        } else {
             et_password.setVisibility(View.GONE);
             tv_message.setText("该学生已测试完成,是否要重新测试?");
         }
@@ -94,24 +100,25 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
     public void setOnIndividualCheckInListener(ResitDialog.onClickQuitListener listener) {
         this.listener = listener;
     }
-    @OnClick({R.id.tv_cancel,R.id.tv_commit})
-    public void onViewClick(View view){
-        switch (view.getId()){
+
+    @OnClick({R.id.tv_cancel, R.id.tv_commit})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
             case R.id.tv_cancel:
                 listener.onCancel();
                 dismiss();
                 break;
             case R.id.tv_commit:
-                if (selectPos == -1){
-                    Toast.makeText(getContext(),"请选择轮次成绩进行重测",Toast.LENGTH_LONG).show();
+                if (selectPos == -1) {
+                    Toast.makeText(getContext(), "请选择轮次成绩进行重测", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (systemSetting.getAgainPassBool()){
+                if (systemSetting.getAgainPassBool()) {
                     String pass = et_password.getText().toString().trim();
-                    if (pass.equals(systemSetting.getAgainPass())){
+                    if (pass.equals(systemSetting.getAgainPass())) {
                         RoundResult roundResult = results.get(selectPos);
                         roundResult.setIsDelete(true);
-                        Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
+                        Log.e("TAG----", roundResult.getId() + "----" + roundResult.getIsDelete());
 //                        if (roundResult.getIsLastResult() == RoundResult.LAST_RESULT){
 //                            roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                        }
@@ -121,17 +128,17 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                         SystemSetting systemSetting = SettingHelper.getSystemSetting();
                         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
-                        }else {
+                        } else {
                             listener.onCommitGroup(student, groupItem, results, roundResult.getRoundNo());
                         }
                         dismiss();
-                    }else {
-                        Toast.makeText(getContext(),"密码错误",Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "密码错误", Toast.LENGTH_LONG).show();
                     }
-                }else {
+                } else {
                     RoundResult roundResult = results.get(selectPos);
                     roundResult.setIsDelete(true);
-                    Log.e("TAG----",roundResult.getId()+"----"+roundResult.getIsDelete());
+                    Log.e("TAG----", roundResult.getId() + "----" + roundResult.getIsDelete());
 //                    if (roundResult.getIsLastResult() == RoundResult.LAST_RESULT){
 //                        roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                    }
@@ -141,7 +148,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     SystemSetting systemSetting = SettingHelper.getSystemSetting();
                     if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
-                    }else {
+                    } else {
                         listener.onCommitGroup(student, groupItem, results, roundResult.getRoundNo());
                     }
                     dismiss();
@@ -150,43 +157,44 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                 break;
         }
     }
+
     @Override
     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
         this.selectPos = position;
         RoundResult roundResult = results.get(selectPos);
         this.adapter.setselPos(selectPos);
         this.adapter.notifyDataSetChanged();
-        Log.e("TAG",roundResult.getId()+"----"+roundResult.getResult()+"-----"+roundResult.getRoundNo());
+        Log.e("TAG", roundResult.getId() + "----" + roundResult.getResult() + "-----" + roundResult.getRoundNo());
     }
 
-    private void setLastResults(){
+    private void setLastResults() {
         RoundResult lastRount = null;
         for (RoundResult result : results) {
             result.setIsLastResult(RoundResult.NOT_LAST_RESULT);
-            if (!result.isDelete()){
-                if (lastRount==null){
-                    lastRount=result;
+            if (!result.isDelete()) {
+                if (lastRount == null) {
+                    lastRount = result;
                     continue;
                 }
-                if (result.getResultState()==RoundResult.RESULT_STATE_NORMAL){
-                    if (lastRount.getResultState()!=RoundResult.RESULT_STATE_NORMAL){
-                        lastRount=result;
+                if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                    if (lastRount.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                        lastRount = result;
                         continue;
-                    }else if (result.getResultState()!=RoundResult.RESULT_STATE_NORMAL)  {
+                    } else if (result.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
                         continue;
                     }
-                    switch (TestConfigs.sCurrentItem.getTestType()){
-                        case DBManager.TEST_TYPE_TIME ://项目类型 计时
+                    switch (TestConfigs.sCurrentItem.getTestType()) {
+                        case DBManager.TEST_TYPE_TIME://项目类型 计时
 
-                            if (lastRount.getResult()>result.getResult()){
-                                lastRount=result;
+                            if (lastRount.getResult() > result.getResult()) {
+                                lastRount = result;
                             }
                             break;
-                        case  DBManager.TEST_TYPE_COUNT ://项目类型 计数
-                        case  DBManager. TEST_TYPE_DISTANCE ://项目类型 远度
-                        case  DBManager. TEST_TYPE_POWER ://项目类型 力量
-                            if (lastRount.getResult()<result.getResult()){
-                                lastRount=result;
+                        case DBManager.TEST_TYPE_COUNT://项目类型 计数
+                        case DBManager.TEST_TYPE_DISTANCE://项目类型 远度
+                        case DBManager.TEST_TYPE_POWER://项目类型 力量
+                            if (lastRount.getResult() < result.getResult()) {
+                                lastRount = result;
                             }
                             break;
                     }
@@ -195,7 +203,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
             }
 
         }
-        if (lastRount!=null){
+        if (lastRount != null) {
             lastRount.setIsLastResult(RoundResult.LAST_RESULT);
             DBManager.getInstance().updateRoundResult(results);
             DBManager.getInstance().updateRoundResult(lastRount);

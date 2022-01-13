@@ -1927,6 +1927,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
+                .limit(1)
                 .unique();
     }
 
