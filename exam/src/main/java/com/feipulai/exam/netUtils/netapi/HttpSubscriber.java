@@ -127,6 +127,12 @@ public class HttpSubscriber {
      * @param crashMsg
      */
     public void uploadLog(String crashMsg) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, String> parameData = new HashMap<>();
         parameData.put("logLevel", "ERROR");
         parameData.put("errorText", crashMsg);
@@ -160,6 +166,12 @@ public class HttpSubscriber {
      * @param password
      */
     public void login(Context context, String username, String password, OnResultListener listener) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, String> parameData = new HashMap<>();
         parameData.put("username", username + "@" + CommonUtils.getDeviceId(context));
 //        parameData.put("username", username);
@@ -175,6 +187,12 @@ public class HttpSubscriber {
      * 获取考点日程
      */
     public void getScheduleAll() {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Observable<HttpResult<ScheduleBean>> observable = HttpManager.getInstance().getHttpApi().getScheduleAll("bearer " + MyApplication.TOKEN, CommonUtils.encryptQuery(SCHEDULE_BIZ + "", null));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ScheduleBean>(new OnResultListener<ScheduleBean>() {
             @Override
@@ -239,6 +257,12 @@ public class HttpSubscriber {
      * 获取考点考试所有项目
      */
     public void getItemAll(final Context context) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Observable<HttpResult<List<ItemBean>>> observable = HttpManager.getInstance().getHttpApi().getItemAll("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(ITEM_BIZ + "", null));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<List<ItemBean>>(new OnResultListener<List<ItemBean>>() {
@@ -430,6 +454,12 @@ public class HttpSubscriber {
      * 获取分组信息
      */
     public void getItemGroupAll(final String itemCode, final String scheduleNo, int batch, final int examType) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
@@ -503,7 +533,12 @@ public class HttpSubscriber {
      * @param examType
      */
     public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
-
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("batch", batch);
@@ -643,6 +678,12 @@ public class HttpSubscriber {
      * 获取分组信息
      */
     public void getItemGroupInfo(final String itemCode, String scheduleNo, String sortName, String groupNo, String groupType) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, Object> parameData = new HashMap<>();
         parameData.put("examItemCode", itemCode);
         parameData.put("scheduleNo", scheduleNo);
@@ -704,6 +745,12 @@ public class HttpSubscriber {
     public void getRoundResult(String sitCode, final String scheduleNo, final String itemCode, final String studentCode,
                                String groupNo, String sortName, String groupType, final String examStatus,
                                final OnResultListener<RoundScoreBean> onResultListener) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, Object> params = new HashMap<>();
         params.put("sitCode", sitCode);
         params.put("scheduleNo", scheduleNo);
@@ -1027,6 +1074,12 @@ public class HttpSubscriber {
 
     private void setUploadResult(final int pageNo, final int pageSum, final List<UploadResults> uploadResultsList) {
         LogUtils.net("上传成绩信息：" + uploadResultsList.toString());
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         final List<UploadResults> uploadData;
         if (pageNo == pageSum - 1) {
             uploadData = uploadResultsList.subList(pageNo * 20, uploadResultsList.size());
@@ -1093,6 +1146,12 @@ public class HttpSubscriber {
     }
 
     public void getApps(Context context, String version, final OnResultListener listener) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, String> parameData = new HashMap<>();
         parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
         parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
@@ -1131,6 +1190,12 @@ public class HttpSubscriber {
      */
     public void updateApp(String version, String updateSoftwareVersion, String authorizeCode,
                           final OnResultListener listener) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         Map<String, String> parameData = new HashMap<>();
         parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
         parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
@@ -1164,6 +1229,12 @@ public class HttpSubscriber {
     }
 
     public void sendFaceOnline(String studentCode, String base64Face, String base64Feature) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
         HashMap<String, Object> parameData = new HashMap<>();
         parameData.put("photoData", base64Face);
         parameData.put("studentCode", studentCode);

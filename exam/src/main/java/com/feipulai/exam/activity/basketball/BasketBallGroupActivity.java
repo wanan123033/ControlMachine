@@ -440,7 +440,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             //更新页面轮次数据
             machineResultList.add(machineResult);
             BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-            int pResult = result.getResult() + (testResult.getPenalizeNum() * (int)(setting.getPenaltySecond() * 1000.0));
+            int pResult = result.getResult() + (testResult.getPenalizeNum() * (int) (setting.getPenaltySecond() * 1000.0));
             testResult.setSelectMachineResult(machineResult.getResult());
             testResult.setResult(pResult);
             if (testResult.getMachineResultList() == null) {
@@ -668,8 +668,15 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 if (state != TESTING) {
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
+                        if (stuPairAdapter.getTestPosition() == stuPairs.size() - 1) {
+                            if (TextUtils.isEmpty(testDate)) {
+                                testDate = DateUtil.getCurrentTime() + "";
+                            }
+                            onResultConfirmed();
+                        }
                         prepareForFinish();
 //                        toastSpeak("分组考生全部测试完成，请选择下一组");
+
                     } else {
                         if (TextUtils.isEmpty(testDate)) {
                             testDate = DateUtil.getCurrentTime() + "";
@@ -819,7 +826,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         List<RoundResult> results = DBManager.getInstance().queryGroupRound(student.getStudentCode(), group.getId() + "");
         TestCache.getInstance().getResults().put(student, results);
         //补考只考一次
-        if (studentItem!=null&&studentItem.getExamType() == 2) {
+        if (studentItem != null && studentItem.getExamType() == 2) {
             continuousTestNext();
         }
     }
@@ -851,7 +858,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 }
             }
             LogUtils.operation("判罚后成绩判罚数:" + penalizeNum);
-            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * (int)(setting.getPenaltySecond() * 1000.0));
+            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * (int) (setting.getPenaltySecond() * 1000.0));
             testResult.setResult(result);
 
             resultAdapter.notifyDataSetChanged();

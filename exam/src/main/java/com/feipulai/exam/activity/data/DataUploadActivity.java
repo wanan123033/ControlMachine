@@ -81,7 +81,7 @@ public class DataUploadActivity extends BaseTitleActivity {
     @Override
     protected void initData() {
         setItemInit();
-        resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode() ));
+        resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode()));
         resultDateAdapter = new ResultDateAdapter(resultDateList);
         rvResultDate.setLayoutManager(new LinearLayoutManager(this));
         rvResultDate.setAdapter(resultDateAdapter);
@@ -148,7 +148,8 @@ public class DataUploadActivity extends BaseTitleActivity {
                 if (studentCode.size() == 0) {
                     ToastUtils.showShort("无数据可以上传");
                 } else {
-                    ServerMessage.baseUploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                    getStudentData(studentCode);
+//                    ServerMessage.baseUploadResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
 //                    //tcp
 //                    if (SettingHelper.getSystemSetting().isTCP()) {
 //                        ServerMessage.uploadTCPResult(this, DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
@@ -169,7 +170,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             case R.id.sp_select_items:
                 mCurrentItem = itemList.get(position);
                 resultDateList.clear();
-                resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode() ));
+                resultDateList.addAll(DBManager.getInstance().getResultTimeData(getItemCode()));
                 resultDateAdapter.setSelectPosition(0);
                 resultDateAdapter.notifyDataSetChanged();
                 getStudentList();
@@ -187,7 +188,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             @Override
             public DataBaseRespon executeOper() {
 
-                List<Student> studentList = DBManager.getInstance().getResultTimeDataStudent(getItemCode() , resultDateList.get(resultDateAdapter.getSelectPosition()));
+                List<Student> studentList = DBManager.getInstance().getResultTimeDataStudent(getItemCode(), resultDateList.get(resultDateAdapter.getSelectPosition()));
                 retrieveBeanList.clear();
                 for (int i = 0; i < studentList.size(); i++) {
                     //获取学生信息
@@ -229,7 +230,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             }
             return "-1000";
         } else {
-            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode() , studentCode);
+            RoundResult result = DBManager.getInstance().queryResultsByStudentCodeIsLastResult(getItemCode(), studentCode);
             return result != null ? (result.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : result.getResult()) + "" : "-1000";
         }
 
@@ -243,7 +244,7 @@ public class DataUploadActivity extends BaseTitleActivity {
     });
 
     private void uploadResultAll(final boolean isUploadAll) {
-        DataBaseExecutor.addTask(new DataBaseTask(this, "成绩上传中，请稍后...", false) {
+        DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), false) {
             @Override
             public DataBaseRespon executeOper() {
                 List<UploadResults> uploadResultsList = new ArrayList<>();
@@ -274,5 +275,30 @@ public class DataUploadActivity extends BaseTitleActivity {
 
             }
         });
+    }
+
+    private void getStudentData(final List<String> studentCode) {
+        DataBaseExecutor.addTask(new DataBaseTask(this, getString(R.string.loading_hint), false) {
+            @Override
+            public DataBaseRespon executeOper() {
+
+
+                return new DataBaseRespon(true, "", DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                List<UploadResults> results = (List<UploadResults>) respon.getObject();
+                Log.e("UploadResults", "---------" + results.size());
+                ServerMessage.baseUploadResult(DataUploadActivity.this, results);
+
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
     }
 }

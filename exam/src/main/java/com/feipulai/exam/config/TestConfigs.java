@@ -386,7 +386,7 @@ public class TestConfigs {
         selectActivity.add(ItemDefault.CODE_ZQYQ);
         selectActivity.add(ItemDefault.CODE_ZWTQQ);
         selectActivity.add(ItemDefault.CODE_ZFP);
-        selectActivity.add(ItemDefault.CODE_YWQZ);
+//        selectActivity.add(ItemDefault.CODE_YWQZ);
 
 
         // 每个项目对应的个人检录Activity
@@ -397,7 +397,7 @@ public class TestConfigs {
         TestConfigs.proActivity.put(ItemDefault.CODE_HWSXQ, MedicineBallSelectActivity.class);
 
         TestConfigs.proActivity.put(ItemDefault.CODE_TS, JumpRopeCheckActivity.class);
-        TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpPatternSelectActivity.class);
+        TestConfigs.proActivity.put(ItemDefault.CODE_YWQZ, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_SGBQS, SitUpCheckActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_YTXS, PullUpSelectActivity.class);
         TestConfigs.proActivity.put(ItemDefault.CODE_PQ, VolleyballPatternSelectActivity.class);

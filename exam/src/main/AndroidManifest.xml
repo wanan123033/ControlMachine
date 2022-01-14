@@ -47,18 +47,23 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.newRadioTimer.RadioDeviceDetailActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.newSitUp.NewSitUpTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.newSitUp.NewSitUpPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.newSitUp.DeviceChangeActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.newSitUp.SitUpArmCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
@@ -77,59 +82,77 @@
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.newRadioTimer.PreTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".activity.data.UpdateAppActivity" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.DribbleShootGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketBallShootGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.more_device.SitReachMoreGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.more_device.pair.SitReachPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.more_device.SitReachMoreActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.ShootSettingActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.DribbleShootActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketBallShootActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.more_device.BallGroupMoreActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.more_device.MedicineBallMoreActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.pair.MedicineBallPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.more_devices.VolleyBallPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.more_device.SargentTestGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.more_device.SargentMoreTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.pair.SargentPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.footBall.FootBallGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.SargentItemSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
         <activity
@@ -146,6 +169,7 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
+            android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|keyboard">
             <intent-filter>
                 <action android:name="com.feipulai.exam.MainActivity" />
@@ -153,191 +177,244 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.print.PrintPreviewActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.LEDSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.setting.SettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.account.AccountActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.account.AccountSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.MachineSelectActivity"
             android:configChanges="keyboardHidden|keyboard" /> <!-- <activity android:name=".activity.ItemSelectActivity" /> -->
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.setting.AdvancedSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.DataRetrieveActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.DataManageActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name="com.feipulai.common.dbutils.FileSelectActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.MedicineBallTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.MedicineBallGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.DataDisplayActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.MedicineBallSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.RunTimerActivityTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.RunTimerSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.RunTimerActivityGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.RadioTimer.RunTimerSelectActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.StandJumpSelectActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.more.StandJumpPairActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.more.StandJumpMoreActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.more.StandJumpGroupMoreActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.StandJumpTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.StandJumpSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.standjump.StandJumpGroupTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.SitReachTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" /> <!-- jump rope -->
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.pair.JumpRopePairActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.check.JumpRopeCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.test.JumpRopeTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.setting.JumpRopeSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.base.result.RadioResultActivity"
             android:configChanges="keyboardHidden|keyboard" /> <!-- sit up -->
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.pair.SitUpPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.check.SitUpCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.check.SitUpPatternSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.setting.SitUpSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.situp.test.SitUpTestActivity"
             android:configChanges="keyboardHidden|keyboard" /> <!-- pull up -->
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.PullUpSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.pair.PullUpPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.check.PullUpCheckActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.setting.PullUpSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.test.PullUpTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity5
             android:name=".activity.pullup.test.PullUpIndividualActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.test.PullAndSitUpIndividualActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.pair.PullSitUpPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pullup.test.PullUpGroupActivity"
             android:configChanges="keyboardHidden|keyboard" /> <!-- volleyball -->
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.VolleyBallSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.VolleyBallGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.VolleyballPatternSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.SitReachGroupTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.SitReachSelectActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sitreach.SitReachSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.LoginActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.base.BaseGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.setting.CorrespondTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
 
@@ -349,182 +426,235 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.SargentTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.SargentGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sargent_jump.SargentSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.SubItemsSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.PushUpIndividualActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.PushUpSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.test.PushUpTestActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.check.PushUpCheckActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.pair.PushUpPairActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.PushUpGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.PushPatternSelectActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketballIndividualActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketBallSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketBallGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.footBall.FootballIndividualActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.footBall.FootBallSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.MiddleDistanceRace.MiddleRaceSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity"
-            android:configChanges="keyboardHidden" /> <!-- <activity android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" /> -->
-        <activity
+            android:configChanges="keyboardHidden" /> <!--  <activity
+            android:screenOrientation="landscape" android:name=".activity.volleyball.pair.VolleyBallMorePairActivity" /> -->
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.more_devices.VolleyBallMoreGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.footBall.FootBallItemSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.BasketBallSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.pair.BasketBallPairActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.more_devices.VolleyBallMoreTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.medicineBall.MedicineBallSelectActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.volleyball.VolleyBallIndividualActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.setting.MonitoringBindActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.grip.pair.GripPairActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.grip.GripMoreActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.grip.GripSettingActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.grip.GripMoreGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.explain.ExplainActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".utils.bluetooth.BlueToothListActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.ThermometerSearchActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerMoreActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.ranger.bluetooth.BluetoothSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.setting.PrintSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sport_timer.SportSettingActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sport_timer.SportTimerActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sport_timer.SportTimerGroupActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sport_timer.pair.SportPairActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.sport_timer.SportInitWayActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.jump_rope.setting.JumpRopeCorrespondTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.distance.PushUpDistanceActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity android:name=".activity.pushUp.distance.PushUpDistanceSettingActivity" />
-        <activity android:name=".activity.pushUp.distance.PushUpDistancePairActivity" />
-        <activity
+         <activity
+            android:screenOrientation="landscape" android:name=".activity.pushUp.distance.PushUpDistanceSettingActivity" />
+         <activity
+            android:screenOrientation="landscape" android:name=".activity.pushUp.distance.PushUpDistancePairActivity" />
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.pushUp.distance.PushUpDistanceTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.basketball.motion.BasketBallMotionTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-        <activity android:name=".activity.basketball.motion.BasketBallMotionGroupActivity" />
-        <activity
+         <activity
+            android:screenOrientation="landscape" android:name=".activity.basketball.motion.BasketBallMotionGroupActivity" />
+         <activity
+            android:screenOrientation="landscape"
             android:name=".activity.data.DataUploadActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />

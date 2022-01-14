@@ -730,6 +730,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 if (state != TESTING) {
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
+                        if (stuPairAdapter.getTestPosition() == stuPairs.size() - 1) {
+                            if (TextUtils.isEmpty(testDate)) {
+                                testDate = DateUtil.getCurrentTime() + "";
+                            }
+                            onResultConfirmed();
+                        }
                         prepareForFinish();
 //                        toastSpeak("分组考生全部测试完成，请选择下一组");
                     } else {

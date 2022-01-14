@@ -20,6 +20,7 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.netUtils.HttpManager;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +42,7 @@ public class ServerMessage {
      * @param context
      */
     public static void downloadData(final Context context, final int examType, final String downTime) {
+
         itemList = null;
         final HttpSubscriber subscriber = new HttpSubscriber();
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
@@ -125,6 +127,7 @@ public class ServerMessage {
      * @param uploadResultsList
      */
     public static void uploadResult(final Context context, final List<UploadResults> uploadResultsList) {
+
 //        Logger.i("uploadResult==>" + uploadResultsList.toString());
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
@@ -189,6 +192,7 @@ public class ServerMessage {
      * @param uploadResultsList
      */
     private static void uploadZCPResult(final Context context, final String itemName, final List<UploadResults> uploadResultsList) {
+
         if (SettingHelper.getSystemSetting().isTCP()) {
             uploadTCPResult(context, uploadResultsList);
             if (!SettingHelper.getSystemSetting().isTCPSimultaneous()) {
@@ -270,6 +274,7 @@ public class ServerMessage {
      */
     public static void uploadResult(final List<UploadResults> uploadResultsList) {
 //        Logger.i("自动上传成绩:" + uploadResultsList.toString());
+
         if (uploadResultsList == null || uploadResultsList.size() == 0) {
             ToastUtils.showShort("没有需要上传的成绩");
             return;
