@@ -31,9 +31,9 @@ public class NewProtocolLinker extends SitPullLinker {
             // 0频段接收到的结果,肯定是设备的开机广播
             if (frequency == TARGET_FREQUENCY && deviceId == currentDeviceId && hostId == deviceHostId) {
                 onNewDeviceConnect();
-                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
-                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
-                }
+//                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+//                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
+//                }
             } else {
                 if (machineCode == ItemDefault.CODE_SPORT_TIMER){
                     listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);

@@ -249,7 +249,15 @@
                     android:textColor="@color/white"
                     android:textSize="18dp" />
             </LinearLayout>
-
+            <Button
+                android:id="@+id/btn_connect"
+                android:layout_width="110dp"
+                android:layout_height="45dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_background"
+                android:text="通信质量测试"
+                />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

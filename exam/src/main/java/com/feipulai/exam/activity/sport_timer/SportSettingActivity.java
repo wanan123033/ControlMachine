@@ -21,6 +21,7 @@ import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.CorrespondTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.sport_timer.bean.SportTimerSetting;
@@ -180,7 +181,7 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
         return builder.setTitle("项目设置");
     }
 
-    @OnClick({R.id.tv_init_way, R.id.tv_pair, R.id.btn_sync_time})
+    @OnClick({R.id.tv_init_way, R.id.tv_pair, R.id.btn_sync_time,R.id.btn_connect})
     public void onViewClicked(View view) {
         switch (view.getId()) {
 
@@ -207,6 +208,9 @@ public class SportSettingActivity extends BaseTitleActivity implements AdapterVi
 //                        }
 //                    }
 //                },500);
+                break;
+            case R.id.btn_connect:
+                startActivity(new Intent(this, CorrespondTestActivity.class));
                 break;
         }
     }
