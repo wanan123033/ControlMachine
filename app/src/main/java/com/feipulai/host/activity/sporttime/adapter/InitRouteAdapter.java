@@ -29,7 +29,7 @@ public class InitRouteAdapter extends BaseQuickAdapter<InitRoute, InitRouteAdapt
 
     @Override
     protected void convert(ViewHolder helper, InitRoute item) {
-        helper.setText(R.id.tv_device_id,item.getIndex()+"");
+        helper.setText(R.id.tv_device_id,helper.getAdapterPosition()+1+"");
         helper.setText(R.id.tv_stu_info,(item.getDeviceName()));
         if (selectPosition == helper.getLayoutPosition()) {
             helper.viewContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_CB));

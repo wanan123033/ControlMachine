@@ -438,6 +438,8 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
      */
     private void presetResult(Student student, int testNo) {
         testResults.clear();
+        if (null == student)
+            return;
         for (int i = 0; i < testNum; i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             if (roundResult == null) {
@@ -465,6 +467,10 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 startActivity(new Intent(this, SportPairActivity.class));
                 break;
             case R.id.txt_waiting:
+                if (pair.getStudent()== null){
+                    ToastUtils.showShort("当前学生为空");
+                    return;
+                }
                 LogUtils.operation("等待计时");
                 Logger.i("运动计时测试次数"+roundNo);
                 if (roundNo > testNum) {
@@ -473,6 +479,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 }
                 if (testState == TestState.UN_STARTED && cbDeviceState.isChecked() && pair.getStudent() != null) {
                     sportPresent.waitStart();
+                    testState = TestState.WAIT_RESULT;
                 } else {
                     ToastUtils.showShort("当前设备不可用或当前学生为空");
                 }
@@ -532,6 +539,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 timerTask.stopKeepTime();
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
+                    testState = TestState.RESULT_CONFIRM;
                     setTxtEnable(true);
                     receiveTime = 0;
                 }
@@ -663,6 +671,9 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
     @Override
     public void updateDeviceState(final int deviceId, final int state) {
+        if (deviceId > deviceStates.size()){
+            return;
+        }
         if (deviceStates.get(deviceId - 1).getDeviceState() != state) {
             deviceStates.get(deviceId - 1).setDeviceState(state);
         }
@@ -817,7 +828,9 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                     sportPresent.setRunState(1);
                     testState = TestState.WAIT_RESULT;
                     setTxtEnable(false);
-                    testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                    if (testResults.size() > 0){
+                        testResults.get(roundNo - 1).setTestTime(System.currentTimeMillis() + "");
+                    }
                     receiveTime = 0;
                     txtDeviceStatus.setText("计时");
                     break;

@@ -369,6 +369,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 if (testState == TestState.UN_STARTED && cbDeviceState.isChecked()) {
                     sportPresent.waitStart();
+                    testState = TestState.WAIT_RESULT;
                 } else {
                     toastSpeak("当前设备不可用或当前学生为空");
                 }
@@ -390,6 +391,7 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 timerTask.stopKeepTime();
                 if (testState == TestState.WAIT_RESULT) {
                     sportPresent.setDeviceStateStop();
+                    testState = TestState.RESULT_CONFIRM;
                     setTxtEnable(true);
                 }
                 resultAdapter.notifyDataSetChanged();
