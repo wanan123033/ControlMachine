@@ -60,7 +60,7 @@ public class SportPresent implements SportContract.Presenter {
     //    private volatile int[] timeState;
     private LEDManager mLEDManager;
     //    private ScheduledExecutorService checkService;
-    private ExecutorService service = Executors.newFixedThreadPool(3);
+    private ExecutorService service = Executors.newCachedThreadPool();
     //    private volatile boolean[] syncTime;//与子机同步时间是否结束
     public boolean keepTime;//是否开始计时
     private boolean pause;//暂停

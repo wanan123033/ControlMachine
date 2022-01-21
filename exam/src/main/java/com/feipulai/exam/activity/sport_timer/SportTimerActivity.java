@@ -559,6 +559,7 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 LogUtils.operation("成绩确认");
 //                resultMap.put(roundNo,partResultList);
                 if (testState == TestState.RESULT_CONFIRM) {
+                    sportPresent.clearLed(0);
                     tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
                     tvDelete.setEnabled(false);
@@ -754,7 +755,6 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     protected void onStop() {
         super.onStop();
         sportPresent.setContinueRoll(false);
-        timerTask.release();
     }
 
     public void showAFR() {
