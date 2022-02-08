@@ -262,8 +262,21 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
 
         setTxtEnable(false);
         testState = TestState.UN_STARTED;
-        timerTask = new TimerTask(this,100);
-        timerTask.keepTime();
+        myRunnable = new MyRunnable();
+        new Thread(myRunnable).start();
+    }
+
+    private MyRunnable myRunnable;
+    private class MyRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            timerTask = new TimerTask(SportTimerActivity.this,100);
+            timerTask.keepTime();
+            sportPresent = new SportPresent(SportTimerActivity.this, setting.getDeviceCount());
+            sportPresent.rollConnect();
+            sportPresent.setContinueRoll(true);
+        }
     }
 
     private void setTxtEnable(boolean enable) {
@@ -288,14 +301,13 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
     @Override
     protected void onResume() {
         super.onResume();
-        sportPresent = new SportPresent(this, setting.getDeviceCount());
-        sportPresent.rollConnect();
         int frequency = SettingHelper.getSystemSetting().getUseChannel();
         RadioChannelCommand command = new RadioChannelCommand(frequency);
         LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
         RadioManager.getInstance().sendCommand(new ConvertCommand(command));
-        sportPresent.setContinueRoll(true);
-
+        if (sportPresent!=null){
+            sportPresent.setContinueRoll(true);
+        }
         setPartResult();
     }
 
