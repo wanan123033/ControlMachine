@@ -297,6 +297,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                     position = stuAdapter.getItemCount() - 1;
                 }
                 BaseStuPair baseStuPair = stuPairsList.get(position);
+
                 if (null != baseStuPair) {
                     RoundResult roundResult = (RoundResult) baseEvent.getData();
                     if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
@@ -403,14 +404,16 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                                             return;
                                         }
                                     }
-
                                 }
                                 return;
                             }
                         }
-
-
                     }
+                }
+                SystemSetting setting = SettingHelper.getSystemSetting();
+                RoundResult roundResult = (RoundResult) baseEvent.getData();
+                if (setting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP && roundResult.getRoundNo() == roundNo){
+                    finish();
                 }
                 break;
             case EventConfigs.FOUL_DIALOG_MISS:
@@ -1090,6 +1093,11 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
             continuousTest();
         }
 
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        //循环模式下的分组检入 需要关闭当前页面重新检录
+        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
+            finish();
+        }
     }
 
     private void uploadServer(@NonNull BaseStuPair baseStuPair, RoundResult roundResult) {

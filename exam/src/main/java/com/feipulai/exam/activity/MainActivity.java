@@ -58,11 +58,17 @@ import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
+import com.feipulai.exam.tcp.FileUtils;
 import com.feipulai.exam.view.BatteryView;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -177,8 +183,6 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 //        }
 //        roundResults.get(2).setResultState(2);
 //        DBManager.getInstance().insertRoundResults(roundResults);
-
-
     }
 
     @Override

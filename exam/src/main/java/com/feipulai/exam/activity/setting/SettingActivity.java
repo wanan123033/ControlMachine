@@ -144,11 +144,15 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     LinearLayout llPrintTool;
     @BindView(R.id.txt_host_hint)
     TextView txtHostHint;
+    @BindView(R.id.rl_group_check)
+    RelativeLayout rl_group_check;
 
     @BindView(R.id.sp_afr)
     Spinner spAfr;
     @BindView(R.id.ll_afr)
     LinearLayout llAfr;
+    @BindView(R.id.sw_group_check)
+    CheckBox sw_group_check;
 
     @BindView(R.id.ll_device_version)
     LinearLayout llDeviceVersion;
@@ -224,9 +228,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         mSwAutoScore.setChecked(systemSetting.isAutoScore());
         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
             spPattern.setSelection(0);
+            rl_group_check.setVisibility(View.GONE);
         } else {
             spPattern.setSelection(1);
             llPrintTool.setVisibility(View.VISIBLE);
+            rl_group_check.setVisibility(View.VISIBLE);
             spPrintTool.setSelection(systemSetting.getPrintTool());
             if (systemSetting.getPrintTool() == 1) {
                 btnPrintSetting.setVisibility(View.VISIBLE);
@@ -266,7 +272,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
         editCustomChannel.setText(systemSetting.getChannel() + "");
         cbCustomChannel.setChecked(systemSetting.isCustomChannel());
-
+        sw_group_check.setChecked(systemSetting.isGroupCheck());
         cbMonitoring.setChecked(systemSetting.isBindMonitoring());
         cbThermometer.setChecked(systemSetting.isStartThermometer());
         cbIsTcp.setChecked(systemSetting.isTCP());
@@ -333,9 +339,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 if (position == SystemSetting.PERSON_PATTERN) {
                     systemSetting.setTestPattern(SystemSetting.PERSON_PATTERN);
                     llPrintTool.setVisibility(View.GONE);
+                    rl_group_check.setVisibility(View.GONE);
                 } else {
                     systemSetting.setTestPattern(SystemSetting.GROUP_PATTERN);
                     llPrintTool.setVisibility(View.VISIBLE);
+                    rl_group_check.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.sp_qr_length:
@@ -416,7 +424,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_account_setting,
             R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern
-            , R.id.btn_voice_setting, R.id.cb_tcp_simultaneous})
+            , R.id.btn_voice_setting, R.id.cb_tcp_simultaneous,R.id.sw_group_check})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tcp_test:
@@ -522,6 +530,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 break;
             case R.id.btn_voice_setting://发令语音
                 IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
+                break;
+            case R.id.sw_group_check:  //分组检录
+                systemSetting.setGroupCheck(sw_group_check.isChecked());
                 break;
         }
 

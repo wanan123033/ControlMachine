@@ -256,10 +256,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         List<StuDevicePair> pairList = new ArrayList<>(1);
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
-        SystemSetting setting = SettingHelper.getSystemSetting();
         StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentCode());
         //判断是否开启补考需要加上是否已完成本次补考,并将学生改为已补考
-        if (studentItem != null && (setting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
+        if (studentItem != null && (systemSetting.isResit() || studentItem.getMakeUpType() == 1) && !stuPairs.get(stuPairAdapter.getTestPosition()).isResit()) {
             stuPairs.get(stuPairAdapter.getTestPosition()).setResit(true);
         }
         int isTestComplete = group.getIsTestComplete();
@@ -288,6 +287,10 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             if (nextPos != -1) {
                 switchToPosition(nextPosition());
             }
+        }
+        //循环模式下的分组检入 需要关闭当前页面重新检录
+        if (systemSetting.isGroupCheck() &&  setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP){
+            finish();
         }
         // List<Student> tmpList = new ArrayList<>(1);
         // tmpList.add(student);

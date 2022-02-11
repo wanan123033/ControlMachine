@@ -2859,6 +2859,13 @@ public class DBManager {
                 .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .limit(1).unique();
     }
+    public StudentThermometer getThermometer(GroupItem groupItem) {
+        return thermometerDao.queryBuilder().where(StudentThermometerDao.Properties.StudentCode.eq(groupItem.getStudentCode()))
+                .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(StudentThermometerDao.Properties.ExamType.eq(groupItem.getExamType()))
+                .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .limit(1).unique();
+    }
 
 
     public List<StudentThermometer> getItemThermometerList() {

@@ -1235,6 +1235,12 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     continuousTest();
                 } else {
                     //循环
+                    SystemSetting systemSetting = SettingHelper.getSystemSetting();
+                    //循环模式下的分组检入 需要关闭当前页面重新检录
+                    if (systemSetting.isGroupCheck()){
+                        finish();
+                        return;
+                    }
                     loopTestNext();
                 }
             }

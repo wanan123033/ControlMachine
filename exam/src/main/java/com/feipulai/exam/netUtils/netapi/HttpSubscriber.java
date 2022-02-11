@@ -1,5 +1,4 @@
 package com.feipulai.exam.netUtils.netapi;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,7 +74,6 @@ import io.reactivex.Observable;
 import io.reactivex.observers.DefaultObserver;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-
 
 /**
  * Created by zzs on  2018/12/29
@@ -442,12 +440,15 @@ public class HttpSubscriber {
 
     // 获取学生信息
     public void getItemStudent(final String lastDownLoadTime, final String itemCode, int batch, final int examType) {
-        getItemStudent(itemCode, batch, examType, lastDownLoadTime, new String[]{});
+        getItemStudent(null,itemCode, batch, examType, lastDownLoadTime, new String[]{});
     }
 
     // 获取学生信息
     public void getItemStudent(final String itemCode, int batch, final int examType) {
-        getItemStudent(itemCode, batch, examType, "0", new String[]{});
+        getItemStudent(null,itemCode, batch, examType, "0", new String[]{});
+    }
+    public void getItemStudent(String lastDownLoadTime, final String itemCode, int batch, int examType,String scheduleNo) {
+        getItemStudent(scheduleNo,itemCode, batch, examType, lastDownLoadTime, new String[]{});
     }
 
     /**
@@ -532,7 +533,7 @@ public class HttpSubscriber {
      * @param batch
      * @param examType
      */
-    public void getItemStudent(final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
+    public void getItemStudent(String scheduleNo,final String itemCode, int batch, final int examType, final String lastDownLoadTime, final String... studentCode) {
         if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
             HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
             HttpManager.DEFAULT_READ_TIMEOUT = 20;
@@ -545,6 +546,9 @@ public class HttpSubscriber {
         parameData.put("examType", examType);
         if (studentCode != null && studentCode.length != 0) {
             parameData.put("studentCodeList", studentCode);
+        }
+        if (!TextUtils.isEmpty(scheduleNo)){
+            parameData.put("scheduleNo", scheduleNo);
         }
         Observable<HttpResult<BatchBean<List<StudentBean>>>> observable = HttpManager.getInstance().getHttpApi().getStudent("bearer " + MyApplication.TOKEN,
                 CommonUtils.encryptQuery(STUDENT_BIZ + "", lastDownLoadTime, parameData));
@@ -652,7 +656,7 @@ public class HttpSubscriber {
                     onRequestEndListener.onRequestData(studentList);
                 }
                 if (result.getBatch() < result.getBatchTotal()) {
-                    getItemStudent(itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
+                    getItemStudent(null,itemCode, result.getBatch() + 1, examType, lastDownLoadTime, studentCode);
                 } else {
 
                     if (onRequestEndListener != null)

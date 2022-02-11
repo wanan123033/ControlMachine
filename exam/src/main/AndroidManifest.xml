@@ -658,6 +658,8 @@
             android:name=".activity.data.DataUploadActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.data.DataDownLoadActivity" />
+        <activity android:name=".activity.base.BaseGroupCheckActivity" />
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

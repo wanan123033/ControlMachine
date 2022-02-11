@@ -631,7 +631,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
-
+                if (systemSetting.isGroupCheck()){
+                    Intent intent = new Intent(this,BaseGroupCheckActivity.class);
+                    intent.putExtra(BaseGroupCheckActivity.GROUP_INFO,groupList.get(groupAdapter.getTestPosition()));
+                    startActivity(intent);
+                    return;
+                }
 //                if (groupList.get(groupAdapter.getTestPosition()).getIsTestComplete() == 1) {
 //                    ToastUtils.showShort("该组测试完，请选择下一组");
 //                    return;

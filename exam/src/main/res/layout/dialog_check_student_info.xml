@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="550dp"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="5dp"
+        android:text="提示信息"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv_title"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" />
+
+    <ImageView
+        android:id="@+id/iv_portrait"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/tv_title"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="55dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/icon_head_photo" />
+    <LinearLayout
+        android:id="@+id/ll_studentCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/iv_portrait"
+        android:layout_toRightOf="@id/iv_portrait"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="考号："
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tv_studentCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_studentName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_portrait"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_15"
+        android:layout_below="@id/ll_studentCode"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓名："
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tv_studentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_studentTrank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_portrait"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_15"
+        android:layout_below="@id/ll_studentName"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="道次："
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tv_studentTrank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_pair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginBottom="@dimen/dp_15"
+        android:background="@color/colorAccent"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="8dp"
+        android:text="确认检录"
+        android:textColor="@color/white"
+        android:textSize="24sp" />
+</RelativeLayout>

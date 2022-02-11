@@ -13,6 +13,7 @@ public class TCPConst {
 	public static final int SENDCHECK = -6;
 	public static final int FIELD = -7;//田赛
 	public static final int SPORTS = -8;
+	public static final int PHOTO  = -9;
 	public static final int HEAD_LEN = (20 + 28);
 	public static final int MAX_HIGHT_NUM = 30;   //高度增加最大个数
 	public static final int MAX_FIELD_EVENT = 100;  //一个单元显示项目数目

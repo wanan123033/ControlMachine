@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import static com.feipulai.exam.tcp.TCPConst.EVENT;
 import static com.feipulai.exam.tcp.TCPConst.FIELD;
 import static com.feipulai.exam.tcp.TCPConst.GAME;
+import static com.feipulai.exam.tcp.TCPConst.PHOTO;
 import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 import static com.feipulai.exam.tcp.TCPConst.SORT;
 import static com.feipulai.exam.tcp.TCPConst.SPORTS;
@@ -42,7 +43,13 @@ public class TcpDownLoadUtil {
         this.downLoadListener = listener;
     }
 
-    public void getTcp(int type, String itemName) {
+    /**
+     * TCP下载   0  下载全部   1只下载项目日程
+     * @param type
+     * @param itemName
+     * @param downType
+     */
+    public void getTcp(int type, String itemName, final int downType) {
         ResultPackage rcPackage = new ResultPackage();
         rcPackage.m_strSort = "";
         switch (type) {
@@ -59,7 +66,7 @@ public class TcpDownLoadUtil {
                 rcPackage.m_strPackType = "PFPEvent";
                 break;
             case TRACK:
-                rcPackage.m_strEvent = TestConfigs.sCurrentItem.getItemName();
+                rcPackage.m_strEvent = itemName;
                 rcPackage.m_nSex = -1;
                 rcPackage.m_strPackType = "PFPTrack";
 //                rcPackage.m_strPackType = "PFPSporter";
@@ -71,6 +78,11 @@ public class TcpDownLoadUtil {
                 break;
             case SPORTS:
                 rcPackage.m_strPackType = "PFPSporter";//无项目分组分道等信息，只有考生信息
+                break;
+            case PHOTO:
+                rcPackage.m_strPackType = "PFPPhoto";
+//                rcPackage.m_strEvent = itemName;
+//                rcPackage.m_strAllEventName = TestConfigs.getCurrentItemCode();
                 break;
             default:
                 break;
@@ -84,7 +96,7 @@ public class TcpDownLoadUtil {
             public void Receive(String info) {
                 switch (Integer.parseInt(info)) {
                     case SCHEDULE:
-                        getTcp(EVENT, "");
+                        getTcp(EVENT, "",downType);
                         break;
                     case EVENT:
                         int initState = TestConfigs.init(mContext, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
@@ -96,13 +108,23 @@ public class TcpDownLoadUtil {
                                     downLoadListener.onCommonListener(DOWNLOAD_FLAG, "当前考点无此项目，请重新选择项目");
                                     return;
                                 }else{
-                                    getTcp(TRACK, null);
+                                    if (downType == 0) {
+                                        getTcp(TRACK, null, downType);
+                                    }else {
+                                        ToastUtils.showShort("下载完成");
+                                        downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
+                                    }
                                 }
 
                             }
                         });
                         if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
-                            getTcp(TRACK, null);
+                            if (downType == 0) {
+                                getTcp(TRACK, null, downType);
+                            }else {
+                                ToastUtils.showShort("下载完成");
+                                downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
+                            }
                         } else {
                             ToastUtils.showShort("当前考点无此项目，请重新选择项目");
                             downLoadListener.onCommonListener(DOWNLOAD_FLAG, "当前考点无此项目，请重新选择项目");

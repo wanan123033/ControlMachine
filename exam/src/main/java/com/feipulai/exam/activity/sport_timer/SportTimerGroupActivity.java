@@ -507,6 +507,11 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                         continuousTestNext();
                     }
                 }
+                SystemSetting systemSetting = SettingHelper.getSystemSetting();
+                //循环模式下的分组检入 需要关闭当前页面重新检录
+                if (systemSetting.isGroupCheck() && setting.getGroupType() == 0){
+                    finish();
+                }
                 break;
             case R.id.txt_finish_test:
                 if (testState == TestState.UN_STARTED) {

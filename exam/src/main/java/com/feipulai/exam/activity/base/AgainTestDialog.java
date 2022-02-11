@@ -153,7 +153,6 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     }
                     dismiss();
                 }
-
                 break;
         }
     }

@@ -145,6 +145,7 @@ public class SystemSetting {
     private boolean resitPassBool;
     private boolean againPassBool;
     private boolean resultConfirm;
+    private boolean isGroupCheck;
 
     public int getAfrContrast() {
         return afrContrast;
@@ -538,5 +539,13 @@ public class SystemSetting {
 
     public void setResultConfirm(boolean resultConfirm) {
         this.resultConfirm = resultConfirm;
+    }
+
+    public boolean isGroupCheck() {
+        return isGroupCheck;
+    }
+
+    public void setGroupCheck(boolean groupCheck) {
+        this.isGroupCheck = groupCheck;
     }
 }

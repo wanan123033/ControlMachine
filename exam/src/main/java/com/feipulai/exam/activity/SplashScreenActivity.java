@@ -113,8 +113,6 @@ public class SplashScreenActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     private void gotoMain() {

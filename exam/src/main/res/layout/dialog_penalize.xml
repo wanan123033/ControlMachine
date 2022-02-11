@@ -16,15 +16,15 @@
         android:gravity="center"
         android:background="#41C7db"
         android:layout_marginBottom="20dp"/>
+
     <TextView
         android:id="@+id/turn_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@mipmap/turn_left"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:visibility="invisible"
-        />
+        android:drawableLeft="@mipmap/turn_left"
+        android:visibility="invisible" />
     <TextView
         android:id="@+id/turn_next"
         android:layout_width="wrap_content"
