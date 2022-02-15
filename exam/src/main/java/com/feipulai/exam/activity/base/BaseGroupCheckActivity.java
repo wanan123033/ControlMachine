@@ -48,6 +48,7 @@ import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.entity.StudentThermometer;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.ResultDisplayUtils;
@@ -327,7 +328,8 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
         TestCache.getInstance().setGroup(group);
         List<BaseStuPair> pairs = new ArrayList<>();
         List<RoundResult> results = getResults(student.getStudentCode());
-        if (results.size() >= TestConfigs.getMaxTestCount()){
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
+        if (results.size() >= TestConfigs.getMaxTestCount() && groupItem.getExamType() != StudentItem.EXAM_MAKE){
             InteractUtils.toastSpeak(this,"该人已测试完成");
             return;
         }
