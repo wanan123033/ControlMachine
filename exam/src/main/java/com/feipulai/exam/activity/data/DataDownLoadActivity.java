@@ -4,6 +4,7 @@ import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 import static com.feipulai.exam.tcp.TCPConst.TRACK;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -15,9 +16,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feipulai.common.db.DataBaseExecutor;
+import com.feipulai.common.db.DataBaseRespon;
+import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
+import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -66,6 +72,10 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
     TextView tv_tcp;
     @BindView(R.id.tv_down_up)
     TextView tv_down_up;
+    @BindView(R.id.tv_sum)
+    TextView tv_sum;
+    @BindView(R.id.tv_face)
+    TextView tv_face;
 
 
     private SystemSetting setting;
@@ -79,6 +89,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     private Schedule currentSchedule;
     private Item currentItem;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_data_download;
@@ -99,13 +110,16 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
         sp_schedule.setOnItemSelectedListener(this);
         sp_item.setOnItemSelectedListener(this);
-
-        et_sever_ip.setText(setting.getServerIp());
-
+        if (tv_down_up.getVisibility() == View.VISIBLE){
+            et_sever_ip.setText(setting.getServerIp());
+        }else {
+            et_sever_ip.setText(setting.getTcpIp());
+        }
+        initAfrCount();
 
     }
 
-    @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,R.id.tv_http,R.id.tv_tcp})
+    @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,R.id.tv_http,R.id.tv_tcp,R.id.tv_back})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_http:
@@ -113,12 +127,14 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 tv_http.setTextColor(getResources().getColor(R.color.white));
                 tv_tcp.setTextColor(getResources().getColor(R.color.white_grey));
                 tv_down_up.setVisibility(View.VISIBLE);
+                et_sever_ip.setText(setting.getServerIp());
                 break;
             case R.id.tv_tcp:
                 downType = 1;
                 tv_http.setTextColor(getResources().getColor(R.color.white_grey));
                 tv_tcp.setTextColor(getResources().getColor(R.color.white));
                 tv_down_up.setVisibility(View.GONE);
+                et_sever_ip.setText(setting.getTcpIp());
                 break;
             case R.id.btn_default:
                 et_sever_ip.setText(TestConfigs.DEFAULT_IP_ADDRESS);
@@ -155,6 +171,9 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 }else {
                     dataDownload(setting.getTcpIp(),2);
                 }
+                break;
+            case R.id.tv_back:
+                finish();
                 break;
         }
     }
@@ -353,6 +372,44 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+    @Override
+    public void onEventMainThread(BaseEvent baseEvent) {
+        super.onEventMainThread(baseEvent);
+        if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_SUCCEED) {
+            OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+            ToastUtils.showShort("数据下载完成");
+            initAfrCount();
+        } else if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_FAULT) {
+            OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+        } else if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+    }
+    private void initAfrCount() {
+
+        DataBaseExecutor.addTask(new DataBaseTask() {
+            @Override
+            public DataBaseRespon executeOper() {
+                int stuCount = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0).size();
+                int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
+
+                return new DataBaseRespon(true, stuCount + "", afrCount);
+            }
+
+            @Override
+            public void onExecuteSuccess(DataBaseRespon respon) {
+                tv_sum.setText("考生数量:"+Integer.valueOf(respon.getInfo()));
+                tv_face.setText("考生特征:"+respon.getObject());
+            }
+
+            @Override
+            public void onExecuteFail(DataBaseRespon respon) {
+
+            }
+        });
+
 
     }
 }
