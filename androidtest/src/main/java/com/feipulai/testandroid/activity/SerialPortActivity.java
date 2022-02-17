@@ -13,6 +13,7 @@ import com.feipulai.testandroid.R;
 import com.feipulai.testandroid.comn.Device;
 import com.feipulai.testandroid.comn.SerialPortManager;
 import com.feipulai.testandroid.utils.AllCapTransformationMethod;
+import com.feipulai.testandroid.utils.ByteUtil;
 import com.feipulai.testandroid.utils.ToastUtil;
 
 
@@ -67,7 +68,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
 
         // 设备
 //        mDevices = serialPortFinder.getAllDevicesPath();
-        mDevices = new String[]{"/dev/ttysWK3", "/dev/ttysWK0", "/dev/ttyS2"};
+        mDevices = new String[]{"/dev/ttysWK3", "/dev/ttysWK0", "/dev/ttyS1", "/dev/ttyS2", "/dev/ttyS3", "/dev/ttyS4"};
         if (mDevices.length == 0) {
             mDevices = new String[]{
                     getString(R.string.no_serial_device)
@@ -75,7 +76,7 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
         }
         // 波特率
 //        mBaudrates = getResources().getStringArray(R.array.baudrates);
-        mBaudrates = new String[]{"9600", "115200"};
+        mBaudrates = new String[]{"4800","9600", "115200"};
 
 //        mDeviceIndex = PrefHelper.getDefault().getInt(PreferenceKeys.SERIAL_PORT_DEVICES, 0);
 //        mDeviceIndex = mDeviceIndex >= mDevices.length ? mDevices.length - 1 : mDeviceIndex;
@@ -125,8 +126,17 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
             ToastUtil.showOne(this, "无效数据");
             return;
         }
+        byte[] bytes = new byte[]{0x5A, 0x33, 0x34, 0x30, 0x39, 0x33, 0x03, 0x0d, 0x0a};
+        SerialPortManager.instance().sendCommand(ByteUtil.bytes2HexStr(bytes));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        bytes = new byte[]{ 0x43, 0x30, 0x36, 0x37, 0x03, 0x0d, 0x0a};
+        SerialPortManager.instance().sendCommand(ByteUtil.bytes2HexStr(bytes));
 
-        SerialPortManager.instance().sendCommand(text);
+//        SerialPortManager.instance().sendCommand(text);
     }
 
     /**
@@ -145,6 +155,9 @@ public class SerialPortActivity extends BaseActivity implements AdapterView.OnIt
             mOpened = SerialPortManager.instance().open(mDevice) != null;
             if (mOpened) {
                 ToastUtil.showOne(this, "成功打开串口");
+
+                byte[] cmdBaudRate = new byte[]{(byte) 0XA5, 0X5A, (byte) 0XB2, 4, 0x04, 8, 0, 1, (byte) 0XFF, (byte) 0XAA, 0X55};
+                SerialPortManager.instance().sendCommand(ByteUtil.bytes2HexStr(cmdBaudRate));
             } else {
                 ToastUtil.showOne(this, "打开串口失败");
             }
