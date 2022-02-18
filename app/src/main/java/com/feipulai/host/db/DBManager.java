@@ -1110,11 +1110,11 @@ public class DBManager {
     }
 
     public void insertStudentFaces(List<StudentFace> studentFaces) {
-        studentFaceDao.insertInTx(studentFaces);
+        studentFaceDao.insertOrReplaceInTx(studentFaces);
     }
 
     public void insertStudentFace(StudentFace studentFace) {
-        studentFaceDao.insertInTx(studentFace);
+        studentFaceDao.insertOrReplaceInTx(studentFace);
     }
 
     public void clearFace() {

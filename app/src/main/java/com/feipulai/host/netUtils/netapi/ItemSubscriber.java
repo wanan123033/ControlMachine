@@ -231,6 +231,7 @@ public class ItemSubscriber {
                 final List<Student> studentList = new ArrayList<>();
                 final List<StudentItem> studentItemList = new ArrayList<>();
                 List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+                List<StudentFace> studentFaces = new ArrayList<>();
 //                //TODO 头像保存数据库导致数据过大OOM， 保存成图片保存固定位置使用
 //                savePortrait(result.getDataInfo());
                 for (StudentBean studentBean : result.getDataInfo()) {
@@ -250,10 +251,13 @@ public class ItemSubscriber {
                     student.setMajorName(studentBean.getSubject());
                     student.setStudentName(studentBean.getStudentName());
                     student.setStudentCode(studentBean.getStudentCode());
-                    StudentFace studentFace = new StudentFace();
-                    studentFace.setStudentCode(studentBean.getStudentCode());
-                    studentFace.setFaceFeature(studentBean.getFaceFeature());
-                    DBManager.getInstance().insertStudentFace(studentFace);
+                    if (!TextUtils.isEmpty(studentBean.getFaceFeature())) {
+                        StudentFace face = new StudentFace();
+                        face.setStudentCode(studentBean.getStudentCode());
+                        face.setFaceFeature(studentBean.getFaceFeature());
+                        studentFaces.add(face);
+                    }
+
 //                    student.setPortrait(studentBean.getPhotoData());
 //
 //                    if (studentBean.getPhotoData() != null) {
@@ -277,6 +281,7 @@ public class ItemSubscriber {
                 }
                 DBManager.getInstance().insertStudentList(studentList);
                 DBManager.getInstance().insertStuItemList(studentItemList);
+                DBManager.getInstance().insertStudentFaces(studentFaces);
                 if (onRequestEndListener != null) {
                     onRequestEndListener.onRequestData(studentList);
                 }
