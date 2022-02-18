@@ -76,6 +76,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
     TextView tv_sum;
     @BindView(R.id.tv_face)
     TextView tv_face;
+    @BindView(R.id.tv_disconnected)
+    TextView tv_disconnected;
 
 
     private SystemSetting setting;
@@ -112,11 +114,24 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
         sp_item.setOnItemSelectedListener(this);
         if (tv_down_up.getVisibility() == View.VISIBLE){
             et_sever_ip.setText(setting.getServerIp());
+            tv_disconnected.setText("HTTP服务器");
         }else {
             et_sever_ip.setText(setting.getTcpIp());
+            tv_disconnected.setText("TCP服务器");
         }
         initAfrCount();
 
+        List<Schedule> schedules = DBManager.getInstance().getAllSchedules();
+        scheduleList.clear();
+        scheduleList.add(new Schedule("-2", "全部日程", ""));
+        scheduleList.addAll(schedules);
+        scheduleAdapter.notifyDataSetChanged();
+
+        itemList.clear();
+        itemList.add(TestConfigs.sCurrentItem);
+        itemAdapter.notifyDataSetChanged();
+        currentItem = itemList.get(0);
+        currentSchedule = scheduleList.get(0);
     }
 
     @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,R.id.tv_http,R.id.tv_tcp,R.id.tv_back})
@@ -128,6 +143,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 tv_tcp.setTextColor(getResources().getColor(R.color.white_grey));
                 tv_down_up.setVisibility(View.VISIBLE);
                 et_sever_ip.setText(setting.getServerIp());
+                tv_disconnected.setText("HTTP服务器");
                 break;
             case R.id.tv_tcp:
                 downType = 1;
@@ -135,6 +151,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 tv_tcp.setTextColor(getResources().getColor(R.color.white));
                 tv_down_up.setVisibility(View.GONE);
                 et_sever_ip.setText(setting.getTcpIp());
+                tv_disconnected.setText("TCP服务器");
                 break;
             case R.id.btn_default:
                 et_sever_ip.setText(TestConfigs.DEFAULT_IP_ADDRESS);
@@ -211,11 +228,14 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             @Override
             public void onSuccess(int bizType) {
                 OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+                ToastUtils.showShort("数据下载成功！");
+                initAfrCount();
             }
 
             @Override
             public void onFault(int bizType) {
                 OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+                ToastUtils.showShort("数据下载失败！");
             }
 
             @Override
@@ -238,26 +258,32 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             public void onSuccess(int bizType) {
                 switch (bizType) {
                     case HttpSubscriber.SCHEDULE_BIZ://日程
-                        subscriber.getItemAll(getApplicationContext());
+                        subscriber.getItemAll(DataDownLoadActivity.this);
                         break;
                     case HttpSubscriber.ITEM_BIZ://项目
-                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                            itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
-                        }
-                        List<Schedule> schedules = DBManager.getInstance().getAllSchedules();
-                        List<Item> items = DBManager.getInstance().dumpAllItems();
-                        scheduleList.clear();
-                        scheduleList.add(new Schedule("-2", "全部日程", ""));
-                        scheduleList.addAll(schedules);
-                        scheduleAdapter.notifyDataSetChanged();
+                        if (TestConfigs.sCurrentItem != null) {
+                            if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                                itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+                            }
+                            List<Schedule> schedules = DBManager.getInstance().getAllSchedules();
+                            scheduleList.clear();
+                            scheduleList.add(new Schedule("-2", "全部日程", ""));
+                            scheduleList.addAll(schedules);
+                            scheduleAdapter.notifyDataSetChanged();
 
-                        itemList.clear();
-                        itemList.add(new Item("-99", "全部项目"));
-                        itemList.addAll(items);
-                        itemAdapter.notifyDataSetChanged();
-                        OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
-                        currentItem = itemList.get(0);
-                        currentSchedule = scheduleList.get(0);
+                            itemList.clear();
+//                            itemList.add(new Item("-99", "全部项目"));
+//                            itemList.addAll(items);
+
+                            itemList.add(TestConfigs.sCurrentItem);
+                            itemAdapter.notifyDataSetChanged();
+                            OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+                            currentItem = itemList.get(0);
+                            currentSchedule = scheduleList.get(0);
+                            ToastUtils.showShort("日程，项目下载完成");
+                        }else {
+                            ToastUtils.showShort("项目选择错误，请重新选择项目！");
+                        }
                         break;
                 }
             }
@@ -288,6 +314,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             return;
         }
         if (tcpip.contains(":")) {
+            OperateProgressBar.showLoadingUi(this);
             String ip = tcpip.substring(0, tcpip.indexOf(":"));
             String port = tcpip.substring(tcpip.indexOf(":") + 1);
             TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {

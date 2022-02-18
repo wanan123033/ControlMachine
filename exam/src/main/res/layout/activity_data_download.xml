@@ -206,6 +206,12 @@
                     android:text="下载更新"
                     android:textColor="@color/white" />
             </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_10"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -374,7 +380,8 @@
                 android:layout_toRightOf="@id/tv_sum"
                 android:layout_marginLeft="@dimen/dp_20"
                 android:textSize="18sp"
-                android:text="考生头像：XXXX" />
+                android:text="考生头像：XXXX"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_face"
