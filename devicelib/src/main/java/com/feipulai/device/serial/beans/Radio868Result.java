@@ -9,6 +9,8 @@ import com.feipulai.device.serial.SerialConfigs;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
+import java.util.Arrays;
+
 import static com.feipulai.device.serial.SerialConfigs.JUMPROPE_RESPONSE;
 
 /**
@@ -400,7 +402,11 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
             case ItemDefault.CODE_ZFP:
-                if ((data[0] & 0xff) == 0xAA && data.length == data[1] && (data[data[1]-1]& 0xff) == 0x0d) {
+                if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d) {
+                    if (data[1] < data.length) {
+                        data = Arrays.copyOf(data, data[1]);
+                    }
+
                     setResult(new SportResult(data));
                     switch (data[7]) {
                         case 20://子机配对

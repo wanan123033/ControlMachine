@@ -41,6 +41,10 @@ public class Item {
     public Item(String itemName) {
         this.itemName = itemName;
     }
+    public Item(String itemCode,String itemName){
+        this.itemCode = itemCode;
+        this.itemName = itemName;
+    }
 
     @Generated(hash = 1887604558)
     public Item(Long id, String itemCode, int machineCode, @NotNull String itemName, int minValue,

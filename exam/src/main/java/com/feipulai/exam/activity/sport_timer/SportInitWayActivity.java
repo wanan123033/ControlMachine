@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.SharedPrefsUtil;
+import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
@@ -71,6 +72,10 @@ public class SportInitWayActivity extends BaseTitleActivity {
         initDeviceAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (selectRoute == 0 && TextUtils.isEmpty(initRoutes.get(selectRoute).getDeviceName())){
+                    ToastUtils.showShort("路线1只能是1号子机");
+                    return;
+                }
                 selectRoute++;
                 if (selectRoute >= initRoutes.size()) {
                     InitRoute initRoute = new InitRoute();
@@ -81,6 +86,8 @@ public class SportInitWayActivity extends BaseTitleActivity {
                 routeAdapter.setSelectPosition(selectRoute);
                 initRoutes.get(selectRoute - 1).setDeviceName(devices.get(position));
                 routeAdapter.notifyDataSetChanged();
+                tvRemove.setEnabled(true);
+                tvConfirm.setEnabled(true);
             }
         });
 
@@ -105,6 +112,10 @@ public class SportInitWayActivity extends BaseTitleActivity {
         routeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (position == 0){
+                    ToastUtils.showShort("路线1只能是1号子机");
+                    return;
+                }
                 selectRoute = position;
                 routeAdapter.setSelectPosition(selectRoute);
                 routeAdapter.notifyDataSetChanged();
@@ -138,11 +149,16 @@ public class SportInitWayActivity extends BaseTitleActivity {
                 }
                 break;
             case R.id.tv_change:
-                initRoutes.get(selectRoute).setDeviceName("");
-                routeAdapter.notifyDataSetChanged();
+                if (selectRoute > 0){
+                    initRoutes.get(selectRoute).setDeviceName("");
+                    tvRemove.setEnabled(false);
+                    tvConfirm.setEnabled(false);
+                    routeAdapter.notifyDataSetChanged();
+                }
+
                 break;
             case R.id.tv_remove:
-                if (selectRoute>0 ){
+                if (selectRoute>1 ){
                     initRoutes.remove(selectRoute);
                     selectRoute--;
                 }

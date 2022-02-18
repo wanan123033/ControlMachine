@@ -829,6 +829,12 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         if (studentItem != null && studentItem.getExamType() == 2) {
             continuousTestNext();
         }
+
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        //循环模式下的分组检入 需要关闭当前页面重新检录
+        if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
+            finish();
+        }
     }
 
     /**

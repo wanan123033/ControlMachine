@@ -1,5 +1,8 @@
 package com.feipulai.exam.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -15,7 +18,7 @@ import org.greenrobot.greendao.annotation.NotNull;
         @Index(value = "scheduleNo ASC,groupType ASC,sortName ASC,groupNo ASC,itemCode ASC", unique = true)
 })
 
-public class Group {
+public class Group implements Parcelable {
 
     public static final int NOT_TEST = 0;
     public static final int NOT_FINISHED = 2;
@@ -85,7 +88,39 @@ public Group() {
 }
 
 
-public Long getId() {
+    protected Group(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        groupType = in.readInt();
+        sortName = in.readString();
+        groupNo = in.readInt();
+        scheduleNo = in.readString();
+        examType = in.readInt();
+        isTestComplete = in.readInt();
+        itemCode = in.readString();
+        colorGroupName = in.readString();
+        colorId = in.readString();
+        remark1 = in.readString();
+        remark2 = in.readString();
+        remark3 = in.readString();
+    }
+
+    public static final Creator<Group> CREATOR = new Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
+
+    public Long getId() {
     return this.id;
 }
 
@@ -215,4 +250,30 @@ public void setRemark3(String remark3) {
 }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeInt(groupType);
+        dest.writeString(sortName);
+        dest.writeInt(groupNo);
+        dest.writeString(scheduleNo);
+        dest.writeInt(examType);
+        dest.writeInt(isTestComplete);
+        dest.writeString(itemCode);
+        dest.writeString(colorGroupName);
+        dest.writeString(colorId);
+        dest.writeString(remark1);
+        dest.writeString(remark2);
+        dest.writeString(remark3);
+    }
 }

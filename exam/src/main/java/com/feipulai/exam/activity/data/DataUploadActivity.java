@@ -201,7 +201,6 @@ public class DataUploadActivity extends BaseTitleActivity {
 
             @Override
             public void onExecuteSuccess(DataBaseRespon respon) {
-
                 stuAdapter.notifyDataSetChanged();
             }
 

@@ -55,7 +55,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:background="@color/colorAccent"
-
                     android:drawablePadding="6dp"
                     android:gravity="center"
                     android:paddingLeft="8dp"

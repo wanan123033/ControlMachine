@@ -35,6 +35,7 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
         if (null == setting) {
             setting = new SitReachSetting();
         }
+        setFaultEnable(setting.isPenalize());
         resultUpdate = new boolean[setting.getTestDeviceCount()];
         deviceState = new int[setting.getTestDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {

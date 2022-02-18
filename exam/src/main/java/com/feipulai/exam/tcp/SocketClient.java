@@ -21,9 +21,15 @@ import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentFace;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.utils.ZipUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.model.FaceRegisterInfo;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -43,6 +50,7 @@ import static com.feipulai.exam.tcp.TCPConst.EVENT;
 import static com.feipulai.exam.tcp.TCPConst.FIELD;
 import static com.feipulai.exam.tcp.TCPConst.FPPICCARD;
 import static com.feipulai.exam.tcp.TCPConst.GAME;
+import static com.feipulai.exam.tcp.TCPConst.PHOTO;
 import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 import static com.feipulai.exam.tcp.TCPConst.SENDCHECK;
 import static com.feipulai.exam.tcp.TCPConst.SORT;
@@ -65,6 +73,7 @@ public class SocketClient {
     private ArrayList<Schedule> schedules = new ArrayList<>();
     private ArrayList<Item> itemInfos = new ArrayList<>();
 
+
     public interface CallBackSocketTCP {
         public void Receive(String info);
 
@@ -83,7 +92,7 @@ public class SocketClient {
                 super.run();
                 try {
                     socketTcp = new Socket();
-                    socketTcp.connect(new InetSocketAddress(tcpIp, tcpPort), 5000);
+                    socketTcp.connect(new InetSocketAddress(tcpIp, tcpPort), 12000);
                     socketTcp.setSoTimeout(8000);
                     sendData(data);
                     flag = true;
@@ -104,8 +113,8 @@ public class SocketClient {
                             flag = false;
                             call.Receive("");
                         } else {
-
-                            int info = receiveData(type);
+                            InputStream inputStream = socketTcp.getInputStream();
+                            int info = receiveData(type,inputStream);
                             call.Receive(String.valueOf(info));
                         }
 //                        int info = receiveData(type);
@@ -176,8 +185,8 @@ public class SocketClient {
         return 0;
     }
 
-    public int receiveData(int ntype) throws IOException {
-        InputStream inputStream = socketTcp.getInputStream();
+    public int receiveData(int ntype,InputStream inputStream) throws IOException {
+//        InputStream inputStream = socketTcp.getInputStream();
         while (flag) {
             //验证固定长度的包头
             byte[] head = new byte[20];
@@ -218,7 +227,15 @@ public class SocketClient {
             Log.i(TAG, "currentTimeMillis" + System.currentTimeMillis());
             Log.i(TAG, "timestr" + timestr);
             Log.i(TAG, "datalen" + (datalen - 58 - 20));
+            if (ntype == PHOTO && datalen == 78){
+                byte[] footer = new byte[20];
+                inputStream.read(footer);
+                String strfooter = new String(head, "GBK");
+                Log.e("TAG","包尾："+strfooter);
+                continue;
+            }
             byte[] data = new byte[datalen - 58 - 20];
+
             //非常重要---等待输入流中的数据完整
             while (inputStream.available() < data.length) {
                 try {
@@ -251,6 +268,12 @@ public class SocketClient {
                 case SPORTS:
                     JieXiStudent(result);
                     break;
+                case PHOTO:
+                    JieXiPhoto(result,inputStream);
+                    break;
+            }
+            if (ntype == PHOTO){
+                return returnFlag;
             }
 //            try {
 //                Thread.sleep(1000);
@@ -300,6 +323,77 @@ public class SocketClient {
             }
         }
         return returnFlag;
+    }
+    //[, , 0, 2, PFPPhoto, , 0, , 立定跳远, 14891662, 500, 0, F1_ITEM_11, 6, 1, , 0, , 0, 0, 0, , 0, null, null, null, null, null, null, null, null, null, null]
+    private void JieXiPhoto(String[] result, InputStream inputStream) {
+        try {
+            byte[] end = new byte[20];
+            inputStream.read(end);
+            String endStr = new String(end, "GB2312");
+            Log.i(TAG, "endStr: " + endStr.substring(1, endStr.length() - 1));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        Log.e("TAG","文件流数据："+Arrays.toString(result));
+        int m_nLayer = Integer.parseInt(result[9]);   //压缩包文件长度
+        int m_nAllProp = Integer.parseInt(result[13]);//总压缩包数
+        int m_nAllNum = Integer.parseInt(result[14]);   //当前第几个包
+        int m_nGrp = Integer.parseInt(result[10]);//一个压缩包的头像个数
+        Log.e("TAG","m_nLayer="+m_nLayer+",m_nAllProp="+m_nAllProp+",m_nAllNum="+m_nAllNum+",m_nGrp="+m_nGrp);
+        try {
+            byte[] buffer = new byte[m_nLayer];
+            int ireadlen = 0;
+            while (ireadlen < m_nLayer) {
+                int ilen = inputStream.read(buffer,ireadlen, m_nLayer - ireadlen);
+                ireadlen += ilen;
+            }
+//            Log.e("TAG",i+"-----------");
+            Date date = new Date();
+            File file = new File(MyApplication.PATH_IMAGE+date.getTime()+".zip");
+            if (!file.exists()){
+                file.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fos);
+            bufferedOutputStream.write(buffer);
+            bufferedOutputStream.flush();
+            bufferedOutputStream.close();
+            if (m_nAllNum != m_nAllProp){
+//                byte[] head = new byte[2048];
+//                inputStream.read(head);
+//                String strHead = new String(head, "GBK");
+//                Log.e("TAG","第二包："+strHead);
+                ZipUtils.unzipFile(file,file.getParentFile());
+                receiveData(PHOTO,inputStream);
+
+            }else {
+                flag = false;
+                File topicFile = new File(MyApplication.PATH_IMAGE+"photodown/");
+                File[] files = topicFile.listFiles();
+                for (File topic : files){
+                    File destFile = new File(MyApplication.PATH_IMAGE,topic.getName());
+                    if (!destFile.exists()){
+                        destFile.createNewFile();
+                    }
+                    FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+                    BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
+                    FileInputStream fis = new FileInputStream(topic);
+                    byte[] bytes = new byte[4096];
+                    int length = 0;
+                    while((length = fis.read(bytes)) != -1){
+                        bos.write(bytes,0,length);
+                        bos.flush();
+                    }
+                    bos.close();
+                    fis.close();
+                    topic.deleteOnExit();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private void JieXiSend(String[] result) {

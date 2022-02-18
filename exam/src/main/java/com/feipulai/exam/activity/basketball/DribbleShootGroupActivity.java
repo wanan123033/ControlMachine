@@ -788,7 +788,11 @@ public class DribbleShootGroupActivity extends BaseTitleActivity implements Base
         if (groupItem!=null&&groupItem.getExamType() == StudentItem.EXAM_MAKE){
             continuousTestNext();
         }
-
+        SystemSetting systemSetting = SettingHelper.getSystemSetting();
+        //循环模式下的分组检入 需要关闭当前页面重新检录
+        if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
+            finish();
+        }
     }
 
     /**

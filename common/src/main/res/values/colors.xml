@@ -22,6 +22,7 @@
     <color name="green">#59BBFF</color>
     <color name="huise">#999999</color>
     <color name="grey_border">#BFBFBF</color>
+    <color name="white_grey">#BFC8CF</color>
 
     <color name="black_semi_transparent">#B2000000</color>
     <color name="half_black">#808080</color>

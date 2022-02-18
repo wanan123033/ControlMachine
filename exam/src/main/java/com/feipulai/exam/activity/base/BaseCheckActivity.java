@@ -82,12 +82,13 @@ public abstract class BaseCheckActivity
         extends BaseTitleActivity
         implements CheckDeviceOpener.OnCheckDeviceArrived, BaseAFRFragment.onAFRCompareListener, OnResultListener<RoundScoreBean>, IndividualCheckFragment.OnIndividualCheckInListener, ResitDialog.onClickQuitListener {
 
+
     public MyHandler mHandler = new MyHandler(this);
     private boolean isOpenDevice = true;
-    private static final int STUDENT_CODE = 0x0;
-    private static final int ID_CARD_NO = 0x1;
-    private static final int CHECK_IN = 0x0;
-    private static final int CHECK_THERMOMETER = 0x1;
+    public static final int STUDENT_CODE = 0x0;
+    public static final int ID_CARD_NO = 0x1;
+    public static final int CHECK_IN = 0x0;
+    public static final int CHECK_THERMOMETER = 0x1;
     private Student mStudent;
     protected StudentItem mStudentItem;
     private List<RoundResult> mResults;
@@ -95,8 +96,8 @@ public abstract class BaseCheckActivity
     protected FrameLayout afrFrameLayout;
     protected BaseAFRFragment afrFragment;
     private BlueBindBean blueBindBean;
-    private volatile boolean isStartThermometer = false;
-    private SweetAlertDialog thermometerDialog;
+    protected volatile boolean isStartThermometer = false;
+    protected SweetAlertDialog thermometerDialog;
     private SweetAlertDialog thermometerOpenDialog;
 
     public void setOpenDevice(boolean openDevice) {
@@ -338,7 +339,7 @@ public abstract class BaseCheckActivity
 
     // 可能在子线程运行
     // 返回是否需要新增考生
-    private boolean checkQulification(String code, int flag) {
+    public boolean checkQulification(String code, int flag) {
         Student student = null;
         boolean canTemporaryAdd = SettingHelper.getSystemSetting().isTemporaryAddStu();
         switch (flag) {
@@ -569,7 +570,7 @@ public abstract class BaseCheckActivity
 
     }
 
-    private void sendCheckHandlerMessage(Student mStudent) {
+    public void sendCheckHandlerMessage(Student mStudent) {
         Message msg = Message.obtain();
         msg.what = CHECK_IN;
         msg.obj = mStudent;
@@ -599,7 +600,84 @@ public abstract class BaseCheckActivity
         onIndividualCheckIn(student, studentItem, results);
         setRoundNo(student, roundNo);
     }
+    public void handleMessage(Message msg){
+        switch (msg.what) {
+            case CHECK_IN:
+                if (SettingHelper.getSystemSetting().isStartThermometer()) {
+                    StudentThermometer thermometer = DBManager.getInstance().getThermometer(mStudentItem);
+                    if (thermometer == null) {
+                        showThermometerDialog();
+                    } else {
+                        if (mStudent != null) {
+                            LogUtils.operation("检入考生：" + mStudent.toString());
+                            onCheckIn(mStudent);
+                        }
+                    }
 
+                } else {
+                    if (mStudent != null) {
+                        LogUtils.operation("检入考生：" + mStudent.toString());
+                        onCheckIn(mStudent);
+                    }
+
+                }
+
+                break;
+            case CHECK_THERMOMETER:
+
+                byte[] value = (byte[]) msg.obj;
+                LogUtil.logDebugMessage("蓝牙返回数据===》" + isStartThermometer);
+                if (isStartThermometer == true) {
+                    LogUtil.logDebugMessage("蓝牙返回数据校验===》" + StringChineseUtil.byteToString(value));
+                    if (value.length < 3) {
+                        //|| value[1] + value[2] != value[3]
+                        toastSpeak("体温枪异常，请再次测量体温");
+                        return;
+                    }
+
+                    String getThermometer = Long.parseLong(String.format("%02X", value[1]) + String.format("%02X", value[2]), 16) + "";
+                    if (getThermometer.length() < 3) {
+                        toastSpeak("请规范使用体温枪重新测量");
+                        return;
+                    }
+                    String thermometer = getThermometer.substring(0, 2) + "." + getThermometer.substring(2);
+                    LogUtil.logDebugMessage("蓝牙返回数据===》" + thermometer);
+                    isStartThermometer = false;
+                    String contentText = mStudent.getStudentName() + ":" + thermometer + "℃";
+                    //添加体温记录
+                    StudentThermometer studentThermometer = new StudentThermometer();
+                    studentThermometer.setStudentCode(mStudent.getStudentCode());
+                    studentThermometer.setExamType(mStudentItem.getExamType());
+                    studentThermometer.setThermometer(Double.valueOf(thermometer));
+                    studentThermometer.setItemCode(TestConfigs.getCurrentItemCode());
+                    studentThermometer.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                    studentThermometer.setMeasureTime(DateUtil.getCurrentTime() + "");
+                    DBManager.getInstance().insterThermometer(studentThermometer);
+
+                    thermometerDialog.showCancelButton(false)
+                            .setTitleText("测量完成")
+                            .setContentText(contentText).changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    toastSpeak(mStudent.getSpeakStuName() + thermometer + "℃");
+//
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            thermometerDialog.dismissWithAnimation();
+                        }
+                    }, 2000);
+
+                    if (mStudent != null) {
+                        LogUtils.operation("检入考生：" + mStudent.toString());
+                        onCheckIn(mStudent);
+                    }
+
+
+                }
+
+
+                break;
+        }
+    }
 
     private static class MyHandler extends Handler {
 
@@ -615,86 +693,11 @@ public abstract class BaseCheckActivity
             if (activity == null) {
                 return;
             }
-            switch (msg.what) {
-                case CHECK_IN:
-                    if (SettingHelper.getSystemSetting().isStartThermometer()) {
-                        StudentThermometer thermometer = DBManager.getInstance().getThermometer(activity.mStudentItem);
-                        if (thermometer == null) {
-                            activity.showThermometerDialog();
-                        } else {
-                            if (activity.mStudent != null) {
-                                LogUtils.operation("检入考生：" + activity.mStudent.toString());
-                                activity.onCheckIn(activity.mStudent);
-                            }
-                        }
-
-                    } else {
-                        if (activity.mStudent != null) {
-                            LogUtils.operation("检入考生：" + activity.mStudent.toString());
-                            activity.onCheckIn(activity.mStudent);
-                        }
-
-                    }
-
-                    break;
-                case CHECK_THERMOMETER:
-
-                    byte[] value = (byte[]) msg.obj;
-                    LogUtil.logDebugMessage("蓝牙返回数据===》" + activity.isStartThermometer);
-                    if (activity.isStartThermometer == true) {
-                        LogUtil.logDebugMessage("蓝牙返回数据校验===》" + StringChineseUtil.byteToString(value));
-                        if (value.length < 3) {
-                            //|| value[1] + value[2] != value[3]
-                            activity.toastSpeak("体温枪异常，请再次测量体温");
-                            return;
-                        }
-
-                        String getThermometer = Long.parseLong(String.format("%02X", value[1]) + String.format("%02X", value[2]), 16) + "";
-                        if (getThermometer.length() < 3) {
-                            activity.toastSpeak("请规范使用体温枪重新测量");
-                            return;
-                        }
-                        String thermometer = getThermometer.substring(0, 2) + "." + getThermometer.substring(2);
-                        LogUtil.logDebugMessage("蓝牙返回数据===》" + thermometer);
-                        activity.isStartThermometer = false;
-                        String contentText = activity.mStudent.getStudentName() + ":" + thermometer + "℃";
-                        //添加体温记录
-                        StudentThermometer studentThermometer = new StudentThermometer();
-                        studentThermometer.setStudentCode(activity.mStudent.getStudentCode());
-                        studentThermometer.setExamType(activity.mStudentItem.getExamType());
-                        studentThermometer.setThermometer(Double.valueOf(thermometer));
-                        studentThermometer.setItemCode(TestConfigs.getCurrentItemCode());
-                        studentThermometer.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-                        studentThermometer.setMeasureTime(DateUtil.getCurrentTime() + "");
-                        DBManager.getInstance().insterThermometer(studentThermometer);
-
-                        activity.thermometerDialog.showCancelButton(false)
-                                .setTitleText("测量完成")
-                                .setContentText(contentText).changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                        activity.toastSpeak(activity.mStudent.getSpeakStuName() + thermometer + "℃");
-//
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.thermometerDialog.dismissWithAnimation();
-                            }
-                        }, 2000);
-
-                        if (activity.mStudent != null) {
-                            LogUtils.operation("检入考生：" + activity.mStudent.toString());
-                            activity.onCheckIn(activity.mStudent);
-                        }
-
-
-                    }
-
-
-                    break;
-            }
+            activity.handleMessage(msg);
         }
     }
 
-    private void showAddHint(final Student student) {
+    protected void showAddHint(final Student student) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -717,7 +720,7 @@ public abstract class BaseCheckActivity
         });
     }
 
-    private void showThermometerDialog() {
+    protected void showThermometerDialog() {
         isStartThermometer = true;
         thermometerDialog = new SweetAlertDialog(BaseCheckActivity.this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.thermometer_dialog_title))

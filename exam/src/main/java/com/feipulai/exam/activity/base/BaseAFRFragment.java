@@ -925,7 +925,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getItemStudent(TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL,"", studentCode);
+        itemSubscriber.getItemStudent(null,TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL,"", studentCode);
     }
 
     private onAFRCompareListener compareListener;

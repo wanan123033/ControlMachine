@@ -52,6 +52,7 @@ import com.feipulai.exam.activity.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.adapter.IndexTypeAdapter;
 import com.feipulai.exam.bean.SoftApp;
 import com.feipulai.exam.bean.TypeListBean;
@@ -122,6 +123,7 @@ import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Headers;
 
+import static com.feipulai.exam.tcp.TCPConst.PHOTO;
 import static com.feipulai.exam.tcp.TCPConst.SCHEDULE;
 
 public class DataManageActivity
@@ -158,6 +160,7 @@ public class DataManageActivity
     private DownLoadProgressDialog downLoadProgressDialog;
     private MyHandler myHandler = new MyHandler(this);
     private boolean isDelPhoto, isDelAFR, isDelBase; //文件删除选择
+    private SystemSetting setting;
 
     @Override
     protected int setLayoutResID() {
@@ -166,7 +169,7 @@ public class DataManageActivity
 
     @Override
     protected void initData() {
-
+        setting = SettingHelper.getSystemSetting();
         backupManager = new BackupManager(this, DBManager.DB_NAME, BackupManager.TYPE_EXAM);
 
         File file = Environment.getExternalStorageDirectory();
@@ -305,7 +308,8 @@ public class DataManageActivity
                         LogUtils.operation("用户点击了名单下载...");
 //                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
 //                        ServerMessage.downloadData(DataManageActivity.this);
-                        showDownloadDataDialog();
+//                        showDownloadDataDialog();
+                        startActivity(new Intent(DataManageActivity.this,DataDownLoadActivity.class));
                         break;
                     case 3://头像导入
                         LogUtils.operation("用户点击了头像导入...");
@@ -317,7 +321,8 @@ public class DataManageActivity
                         LogUtils.operation("用户点击了头像下载...");
 //                        ToastUtils.showShort("功能未开放，敬请期待");
 //                        uploadPortrait();
-                        showDownLoadPhotoDialog();
+//                        showDownLoadPhotoDialog();
+                        showDownLoadTopicDialog();
                         break;
                     case 5://删除头像
                         //TODO 测试使用
@@ -443,6 +448,35 @@ public class DataManageActivity
     private Headers saveHeaders;
     private DownLoadPhotoHeaders photoHeaders;
     private DownloadUtils downloadUtils = new DownloadUtils();
+
+    private void showDownLoadTopicDialog(){
+        String[] itemList = new String[]{"HTTP下载","TCP下载"};
+        new AlertDialog.Builder(this)
+                .setTitle("头像下载")
+                .setItems(itemList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            showDownLoadPhotoDialog();
+                        }else {
+                            tcpDownLoadPhoto();
+                        }
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    private void tcpDownLoadPhoto() {
+        String[] tcpIp = setting.getTcpIp().split(":");
+        OperateProgressBar.showLoadingUi(this,"头像下载");
+        TcpDownLoadUtil tcp = new TcpDownLoadUtil(getApplicationContext(), tcpIp[0], tcpIp[1], new CommonListener() {
+            @Override
+            public void onCommonListener(int no, String string) {
+                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+            }
+        });
+        tcp.getTcp(PHOTO,TestConfigs.sCurrentItem.getItemName(),0);
+    }
 
     private void showDownLoadPhotoDialog() {
         selectWhich = 0;
@@ -1176,7 +1210,7 @@ public class DataManageActivity
                     });
                 }
             });
-            tcpDownLoad.getTcp(SCHEDULE, "");
+            tcpDownLoad.getTcp(SCHEDULE, "",0);
         } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();

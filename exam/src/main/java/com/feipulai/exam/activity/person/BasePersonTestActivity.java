@@ -301,7 +301,6 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
                 updateResultLed(((iRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ? ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()) : tmp));
-                roundNo++;
                 if (roundNo < setTestCount()) {
 
                     roundNo++;

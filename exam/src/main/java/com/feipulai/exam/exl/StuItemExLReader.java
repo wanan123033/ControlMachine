@@ -318,12 +318,14 @@ public class StuItemExLReader extends ExlReader {
 
         }
         // 现在就可以确定新项目代码了
-
+        List<Schedule> scheduleList = new ArrayList<>();
         List<Student> stuList = new LinkedList<>();
         List<StudentItem> stuItemList = new LinkedList<>();
+        List<ItemSchedule> itemScheduleList = new ArrayList<>();
         Logger.i(TestConfigs.df.format(new Date()) + "==》exel读取的考生：" + result.toString());
+        String scheduleTime = "";
         for (Object o : result) {
-            ExelReadBean bean = (ExelReadBean) o;
+            ExelGroupReadBean bean = (ExelGroupReadBean) o;
             Student student = new Student();
             student.setStudentCode(bean.getStudentCode());
             student.setStudentName(bean.getStudentName());
@@ -346,13 +348,33 @@ public class StuItemExLReader extends ExlReader {
             studentItem.setScheduleNo(bean.getSessionNo());
             studentItem.setStudentType(0);
             stuItemList.add(studentItem);
+            Schedule schedule = new Schedule();
+            if (TextUtils.isEmpty(bean.getScheduleTime())) {
+                if (TextUtils.isEmpty(scheduleTime)) {
+                    scheduleTime = DateUtil.getCurrentTime() + "";
+                }
+                schedule.setBeginTime(scheduleTime);
+            } else {
+                schedule.setBeginTime(DateUtil.getTimeMillis(bean.getScheduleTime(), "yyyyMMddHHmmss") + "");
+            }
+
+            schedule.setScheduleNo(bean.getSessionNo());
+            scheduleList.add(schedule);
+
+            ItemSchedule itemSchedule = new ItemSchedule();
+            itemSchedule.setScheduleNo(bean.getSessionNo());
+            itemSchedule.setItemCode(mItemCode);
+            itemScheduleList.add(itemSchedule);
         }
 
         // 插入学生信息
         DBManager.getInstance().insertStudentList(stuList);
         // 插入学生项目信息
         DBManager.getInstance().insertStuItemList(stuItemList);
-
+        //插入日程
+        DBManager.getInstance().insertSchedulesList(scheduleList);
+        //插入项目日程
+        DBManager.getInstance().insertItemSchedulesList(itemScheduleList);
         return true;
     }
 

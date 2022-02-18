@@ -8,6 +8,7 @@ import com.feipulai.device.tcp.PackageHeadInfo;
 import com.feipulai.device.tcp.TCPConst;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
+import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
@@ -90,6 +91,9 @@ public class TCPResultPackage {
             strBody = "test";
         } else {
             Item resultItem = DBManager.getInstance().queryItemByCode(uploadResults.get(0).getExamItemCode());
+            if (resultItem == null) {
+                resultItem = TestConfigs.sCurrentItem;
+            }
             //客户端
             sb.append(m_strClientName);
             sb.append(target);
@@ -148,13 +152,25 @@ public class TCPResultPackage {
             }
 
             Schedule schedule = DBManager.getInstance().getSchedulesByNo(uploadResults.get(0).getSiteScheduleNo());
-            //场次
-            sb.append(schedule.getScheduleNo());
-            sb.append(target);
+            if (schedule == null) {
+                //场次
+                sb.append("");
+                sb.append(target);
+                //开始时间
+                sb.append("");
+                sb.append(target);
+            } else {
+                //场次
+                sb.append(schedule.getScheduleNo());
+                sb.append(target);
+                //开始时间
+                sb.append(schedule.getBeginTime());
+                sb.append(target);
+            }
 
-            //开始时间
-            sb.append(schedule.getBeginTime());
-            sb.append(target);
+
+
+
 
             //考生人数
             sb.append(uploadResults.size());
