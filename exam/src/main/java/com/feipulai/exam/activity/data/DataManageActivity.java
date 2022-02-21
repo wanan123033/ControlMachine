@@ -113,6 +113,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -309,7 +310,7 @@ public class DataManageActivity
 //                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "正在下载最新数据...");
 //                        ServerMessage.downloadData(DataManageActivity.this);
 //                        showDownloadDataDialog();
-                        startActivity(new Intent(DataManageActivity.this,DataDownLoadActivity.class));
+                        startActivity(new Intent(DataManageActivity.this, DataDownLoadActivity.class));
                         break;
                     case 3://头像导入
                         LogUtils.operation("用户点击了头像导入...");
@@ -449,16 +450,16 @@ public class DataManageActivity
     private DownLoadPhotoHeaders photoHeaders;
     private DownloadUtils downloadUtils = new DownloadUtils();
 
-    private void showDownLoadTopicDialog(){
-        String[] itemList = new String[]{"HTTP下载","TCP下载"};
+    private void showDownLoadTopicDialog() {
+        String[] itemList = new String[]{"HTTP下载", "TCP下载"};
         new AlertDialog.Builder(this)
                 .setTitle("头像下载")
                 .setItems(itemList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0){
+                        if (which == 0) {
                             showDownLoadPhotoDialog();
-                        }else {
+                        } else {
                             tcpDownLoadPhoto();
                         }
                         dialog.dismiss();
@@ -467,15 +468,52 @@ public class DataManageActivity
     }
 
     private void tcpDownLoadPhoto() {
+
         String[] tcpIp = setting.getTcpIp().split(":");
-        OperateProgressBar.showLoadingUi(this,"头像下载");
-        TcpDownLoadUtil tcp = new TcpDownLoadUtil(getApplicationContext(), tcpIp[0], tcpIp[1], new CommonListener() {
+        OperateProgressBar.showLoadingUi(this, "头像下载");
+        final TcpDownLoadUtil tcp = new TcpDownLoadUtil(getApplicationContext(), tcpIp[0], tcpIp[1], new CommonListener() {
             @Override
-            public void onCommonListener(int no, String string) {
-                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+            public void onCommonListener(final int no, final String string) {
+
+                //[, , 0, 2, PFPPhoto, , 0, , 立定跳远, 14891662, 500, 0, F1_ITEM_11, 6, 1, , 0, , 0, 0, 0, , 0, null, null, null, null, null, null, null, null, null, null]
+
+//                toastSpeak(string);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (no == TcpDownLoadUtil.DOWNLOAD_FLAG) {
+                            toastSpeak(string);
+                        } else {
+                            String[] receiveArray = string.split(",");
+                            int m_nAllProp = Integer.parseInt(receiveArray[13].trim());//总压缩包数
+                            int m_nAllNum = Integer.parseInt(receiveArray[14].trim());   //当前第几个包
+
+                            downLoadProgressDialog.setMaxProgress(m_nAllProp);
+                            downLoadProgressDialog.setProgress(m_nAllNum);
+                            if (m_nAllNum == m_nAllProp) {
+                                downLoadProgressDialog.dismissDialog();
+                                toastSpeak("头像下载完成");
+                            } else {
+                                if (m_nAllNum == 1) {
+                                    downLoadProgressDialog.showDialog();
+                                }
+                            }
+                        }
+
+                        OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                    }
+                });
+
             }
         });
-        tcp.getTcp(PHOTO,TestConfigs.sCurrentItem.getItemName(),0);
+        tcp.getTcpPhoto();
+        downLoadProgressDialog = new DownLoadProgressDialog(this);
+        downLoadProgressDialog.setCancelClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tcp.downStop();
+            }
+        });
     }
 
     private void showDownLoadPhotoDialog() {
@@ -1210,7 +1248,7 @@ public class DataManageActivity
                     });
                 }
             });
-            tcpDownLoad.getTcp(SCHEDULE, "",0);
+            tcpDownLoad.getTcp(SCHEDULE, "", 0);
         } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();

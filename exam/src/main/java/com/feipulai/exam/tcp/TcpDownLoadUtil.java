@@ -33,8 +33,10 @@ public class TcpDownLoadUtil {
     private String tcpIp;
     private String tcpPort;
     private CommonListener downLoadListener;
-
+    //当前连接
+    private SocketClient socketClient;
     public static final int DOWNLOAD_FLAG = 2;
+    public static final int DOWNLOAD_SUCCEED = 1;
 
     public TcpDownLoadUtil(Context context, String tcpIp, String tcpPort, CommonListener listener) {
         mContext = context;
@@ -45,6 +47,7 @@ public class TcpDownLoadUtil {
 
     /**
      * TCP下载   0  下载全部   1只下载项目日程
+     *
      * @param type
      * @param itemName
      * @param downType
@@ -73,7 +76,7 @@ public class TcpDownLoadUtil {
                 break;
             case FIELD:
                 // rcPackage.m_strEvent = "1000米";
-                 rcPackage.m_nSex = -1;
+                rcPackage.m_nSex = -1;
                 rcPackage.m_strPackType = "PFPField";
                 break;
             case SPORTS:
@@ -96,10 +99,10 @@ public class TcpDownLoadUtil {
             public void Receive(String info) {
                 switch (Integer.parseInt(info)) {
                     case SCHEDULE:
-                        getTcp(EVENT, "",downType);
+                        getTcp(EVENT, "", downType);
                         break;
                     case EVENT:
-                        
+
                         int initState = TestConfigs.init(mContext, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -108,10 +111,10 @@ public class TcpDownLoadUtil {
                                     ToastUtils.showShort("当前考点无此项目，请重新选择项目");
                                     downLoadListener.onCommonListener(DOWNLOAD_FLAG, "当前考点无此项目，请重新选择项目");
                                     return;
-                                }else{
+                                } else {
                                     if (downType == 0) {
                                         getTcp(TRACK, TestConfigs.sCurrentItem.getItemName(), downType);
-                                    }else {
+                                    } else {
                                         ToastUtils.showShort("下载完成");
                                         downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
                                     }
@@ -122,7 +125,7 @@ public class TcpDownLoadUtil {
                         if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                             if (downType == 0) {
                                 getTcp(TRACK, null, downType);
-                            }else {
+                            } else {
                                 ToastUtils.showShort("下载完成");
                                 downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
                             }
@@ -155,5 +158,39 @@ public class TcpDownLoadUtil {
                 Log.i("isConnect", "" + state);
             }
         });
+    }
+
+    /**
+     *
+     */
+    public void getTcpPhoto() {
+        ResultPackage rcPackage = new ResultPackage();
+        rcPackage.m_strSort = "";
+
+        rcPackage.m_strPackType = "PFPPhoto";
+        rcPackage.m_nEventType = String.valueOf(TCPConst.enumEvent.EventAllData.getIndex());
+        String data = rcPackage.EncodePackage(new PackageHeadInfo(), false, TCPConst.enumCodeType.CodeGB2312.getIndex());
+        Log.i("data---", data);
+        socketClient = new SocketClient();
+        socketClient.getTCPConnect(tcpIp, Integer.parseInt(tcpPort), data, PHOTO, new SocketClient.CallBackSocketTCP() {
+            @Override
+            public void Receive(String info) {
+                downLoadListener.onCommonListener(DOWNLOAD_SUCCEED, info);
+            }
+
+            @Override
+            public void isConnect(boolean state) {
+                if (!state) {
+                    downLoadListener.onCommonListener(DOWNLOAD_FLAG, "连接服务器失败");
+                }
+                Log.i("isConnect", "" + state);
+            }
+        });
+    }
+
+    public void downStop() {
+        if (socketClient != null) {
+            socketClient.setFlag(false);
+        }
     }
 }

@@ -51,14 +51,23 @@ public class StandJumpGroupMoreActivity extends BaseMoreGroupActivity implements
 
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
+        for (int i = 1; i <= jumpSetting.getTestDeviceCount(); i++) {
+            int testPoints = jumpSetting.getTestPointsArray()[i - 1];
+            int scope = jumpSetting.getPointsScopeArray()[i - 1];
+            if (scope > 0) {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, scope - 42);
+            } else {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, (testPoints * 100 + 50 - 8) - 42);
+            }
 
+        }
     }
 
     @Override
     public void toStart(int pos) {
         int deviceId = deviceDetails.get(pos).getStuDevicePair().getBaseDevice().getDeviceId();
         Student student = deviceDetails.get(pos).getStuDevicePair().getStudent();
-        LogUtils.operation("立定跳远开始测试:设备ID="+deviceId+",考生="+student.toString());
+        LogUtils.operation("立定跳远开始测试:设备ID=" + deviceId + ",考生=" + student.toString());
         StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), deviceId);
         try {
             Thread.sleep(100);

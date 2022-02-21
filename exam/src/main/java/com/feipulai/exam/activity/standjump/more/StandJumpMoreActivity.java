@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.standjump.more;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
@@ -58,14 +59,27 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
-        boolean isUser=false;
+        boolean isUser = false;
         for (DeviceDetail detail : deviceDetails) {
-            if (detail.getStuDevicePair().getStudent()!=null){
-                isUser=true;
+            if (detail.getStuDevicePair().getStudent() != null) {
+                isUser = true;
             }
         }
-        if (!isUser){
+        if (!isUser) {
             updateAdapterTestCount();
+        }
+
+        for (int i = 1; i <= standJumpSetting.getTestDeviceCount(); i++) {
+
+            int testPoints = standJumpSetting.getTestPointsArray()[i - 1];
+            int scope = standJumpSetting.getPointsScopeArray()[i - 1];
+            if (scope > 0) {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, scope - 42);
+            } else {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, (testPoints * 100 + 50 - 8) - 42);
+            }
+
+
         }
     }
 
@@ -117,8 +131,8 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     public void stuSkip(int pos) {
         super.stuSkip(pos);
         LogUtil.logDebugMessage("stuSkip");
-        StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), pos+1);
-        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), pos+1);
+        StandJumpManager.endTest(SettingHelper.getSystemSetting().getHostId(), pos + 1);
+        StandJumpManager.setLeisure(SettingHelper.getSystemSetting().getHostId(), pos + 1);
     }
 
     @Override
@@ -213,6 +227,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         facade = null;
         RadioManager.getInstance().setOnRadioArrived(null);
     }
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
 

@@ -52,6 +52,16 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
         facade.resume();
         RadioManager.getInstance().setOnRadioArrived(facade);
         setNextClickStart(false);
+        for (int i = 1; i <= standJumpSetting.getTestDeviceCount(); i++) {
+            int testPoints = standJumpSetting.getTestPointsArray()[i - 1];
+            int scope = standJumpSetting.getPointsScopeArray()[i - 1];
+            if (scope > 0) {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, scope - 42);
+            } else {
+                StandJumpManager.setPoints(SettingHelper.getSystemSetting().getHostId(), i, (testPoints * 100 + 50 - 8) - 42);
+            }
+
+        }
     }
 
 
@@ -80,7 +90,7 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
     }
 
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
