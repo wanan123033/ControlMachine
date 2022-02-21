@@ -221,6 +221,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             @Override
             public void inputResult(String result, int state) {
                 BasketballResult deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
+                if(deviceResult == null){
+                    pairs.get(position()).setDeviceResult(new BasketballResult());
+                    deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
+                }
                 deviceResult.setSecond(Integer.valueOf(result));
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
                 tvResult.setText(displayResult);
@@ -1238,6 +1242,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     SystemSetting systemSetting = SettingHelper.getSystemSetting();
                     //循环模式下的分组检入 需要关闭当前页面重新检录
                     if (systemSetting.isGroupCheck()){
+                        finish();
+                        return;
+                    }
+                    if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
                         finish();
                         return;
                     }

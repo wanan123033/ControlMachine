@@ -738,6 +738,9 @@ public class BasketBallShootGroupActivity extends BaseTitleActivity implements B
         if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
             finish();
         }
+        if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
+            finish();
+        }
     }
 
     /**

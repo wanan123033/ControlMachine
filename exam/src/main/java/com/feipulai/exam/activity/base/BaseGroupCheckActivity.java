@@ -113,7 +113,15 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
         }else if (systemSetting.getCheckTool() == 4){  //人脸识别
             iv_mode.setVisibility(View.GONE);
             tv_camera.setVisibility(View.VISIBLE);
+
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (systemSetting.getCheckTool() == 4)
+            showAFR();
     }
 
     @OnClick(R.id.txt_search)
@@ -455,5 +463,39 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
             }
         }
         pair.setTimeResult(result);
+    }
+
+    @Override
+    public void compareStu(final Student student) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (student != null)
+                    afrFrameLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(),student.getStudentCode());
+        if (groupItem == null){
+            InteractUtils.toastSpeak(this, "无此项目");
+            return;
+        }
+        List<Student> studentList = DBManager.getInstance().getStudentsByGroup(group);
+        boolean isGroupStudent = false;
+        for (Student groupStudent : studentList){
+            if (groupStudent.getStudentCode().equals(student.getStudentCode())){
+                isGroupStudent = true;
+                break;
+            }
+        }
+        if (!isGroupStudent) {
+            InteractUtils.toastSpeak(this, "该考生不在该分组！");
+            return;
+        }
+        onCheckIn(student);
     }
 }

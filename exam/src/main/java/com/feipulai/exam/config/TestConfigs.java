@@ -1,5 +1,6 @@
 package com.feipulai.exam.config;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
@@ -260,21 +261,28 @@ public class TestConfigs {
         }
         sCurrentItem = null;
         // 不止一个,弹框让用户选择
-        new ItemDecideDialogBuilder(context, itemList, "请选择测试项目(该项会被应用至当前机器所有已测成绩)", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sCurrentItem = itemList.get(which);
-                String newItemCode = itemList.get(which).getItemCode();
-                MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
-                SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
-                SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
-                dialog.dismiss();
-                if (listener != null) {
-                    listener.onClick(dialog, which);
-
+        if (context instanceof Activity) {
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new ItemDecideDialogBuilder(context, itemList, "请选择测试项目(该项会被应用至当前机器所有已测成绩)", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sCurrentItem = itemList.get(which);
+                            String newItemCode = itemList.get(which).getItemCode();
+                            MachineItemCodeUtil.fillDefaultItemCode(studentItems, roundResults, machineResults, newItemCode);
+                            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, machineCode);
+                            SharedPrefsUtil.putValue(context, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, newItemCode);
+                            dialog.dismiss();
+                            if (listener != null) {
+                                listener.onClick(dialog, which);
+                            }
+                        }
+                    }).show();
                 }
-            }
-        }).show();
+            });
+
+        }
         return INIT_MULTI_ITEM_CODE;
     }
 

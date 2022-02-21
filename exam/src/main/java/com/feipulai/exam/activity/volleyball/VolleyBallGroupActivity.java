@@ -292,6 +292,9 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         if (systemSetting.isGroupCheck() &&  setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP){
             finish();
         }
+        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1){
+            finish();
+        }
         // List<Student> tmpList = new ArrayList<>(1);
         // tmpList.add(student);
         // Map<Student, List<RoundResult>> tmpMap = new HashMap<>(2);

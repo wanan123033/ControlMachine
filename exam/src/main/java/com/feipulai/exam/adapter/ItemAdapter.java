@@ -58,9 +58,9 @@ public class ItemAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         Item schedule = itemList.get(position);
-        if (TextUtils.equals(schedule.getItemCode(), "-99")) {//数据查询使用
+        if (schedule != null && TextUtils.equals(schedule.getItemCode(), "-99")) {//数据查询使用
             holder.txtSchedule.setText("全部项目");
-        } else {
+        } else if (schedule != null){
             holder.txtSchedule.setText(schedule.getItemName());
         }
 

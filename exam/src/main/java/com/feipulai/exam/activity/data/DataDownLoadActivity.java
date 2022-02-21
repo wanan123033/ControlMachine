@@ -121,17 +121,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
         }
         initAfrCount();
 
-        List<Schedule> schedules = DBManager.getInstance().getAllSchedules();
-        scheduleList.clear();
-        scheduleList.add(new Schedule("-2", "全部日程", ""));
-        scheduleList.addAll(schedules);
-        scheduleAdapter.notifyDataSetChanged();
+        initScheduleItem();
 
-        itemList.clear();
-        itemList.add(TestConfigs.sCurrentItem);
-        itemAdapter.notifyDataSetChanged();
-        currentItem = itemList.get(0);
-        currentSchedule = scheduleList.get(0);
     }
 
     @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,R.id.tv_http,R.id.tv_tcp,R.id.tv_back})
@@ -261,25 +252,13 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                         subscriber.getItemAll(DataDownLoadActivity.this);
                         break;
                     case HttpSubscriber.ITEM_BIZ://项目
+                        OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
+                        itemList.clear();
                         if (TestConfigs.sCurrentItem != null) {
                             if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
                                 itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
                             }
-                            List<Schedule> schedules = DBManager.getInstance().getAllSchedules();
-                            scheduleList.clear();
-                            scheduleList.add(new Schedule("-2", "全部日程", ""));
-                            scheduleList.addAll(schedules);
-                            scheduleAdapter.notifyDataSetChanged();
-
-                            itemList.clear();
-//                            itemList.add(new Item("-99", "全部项目"));
-//                            itemList.addAll(items);
-
-                            itemList.add(TestConfigs.sCurrentItem);
-                            itemAdapter.notifyDataSetChanged();
-                            OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
-                            currentItem = itemList.get(0);
-                            currentSchedule = scheduleList.get(0);
+                            initScheduleItem();
                             ToastUtils.showShort("日程，项目下载完成");
                         }else {
                             ToastUtils.showShort("项目选择错误，请重新选择项目！");
@@ -307,7 +286,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
      * @param tcpip
      * @param downType
      */
-    public void dataDownload(String tcpip,int downType) {
+    public void dataDownload(String tcpip, final int downType) {
         if (TextUtils.isEmpty(tcpip)) {
             OperateProgressBar.removeLoadingUiIfExist(this);
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
@@ -317,7 +296,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             OperateProgressBar.showLoadingUi(this);
             String ip = tcpip.substring(0, tcpip.indexOf(":"));
             String port = tcpip.substring(tcpip.indexOf(":") + 1);
-            TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(MyApplication.getInstance(), ip, port, new CommonListener() {
+            TcpDownLoadUtil tcpDownLoad = new TcpDownLoadUtil(DataDownLoadActivity.this, ip, port, new CommonListener() {
                 @Override
                 public void onCommonListener(int no, final String string) {
 
@@ -326,7 +305,10 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                         public void run() {
                             toastSpeak(string);
                             OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
-
+                            initAfrCount();
+                            if (downType == 0 || downType == 1){
+                                initScheduleItem();
+                            }
                         }
                     });
                 }
@@ -353,6 +335,20 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
             return;
         }
+    }
+
+    private void initScheduleItem() {
+        List<Schedule> schedules = DBManager.getInstance().getSchedules();
+        scheduleList.clear();
+        scheduleList.add(new Schedule("-2", "全部日程", ""));
+        scheduleList.addAll(schedules);
+        scheduleAdapter.notifyDataSetChanged();
+
+        itemList.clear();
+        itemList.add(TestConfigs.sCurrentItem);
+        itemAdapter.notifyDataSetChanged();
+        currentItem = itemList.get(0);
+        currentSchedule = scheduleList.get(0);
     }
 
     @Override

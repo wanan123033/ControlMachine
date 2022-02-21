@@ -388,6 +388,7 @@ public class SocketClient {
                     bos.close();
                     fis.close();
                     topic.deleteOnExit();
+
                 }
             }
         }catch (Exception e){

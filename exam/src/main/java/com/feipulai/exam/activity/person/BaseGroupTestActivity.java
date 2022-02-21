@@ -1098,6 +1098,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
             finish();
         }
+        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
+            finish();
+        }
     }
 
     private void uploadServer(@NonNull BaseStuPair baseStuPair, RoundResult roundResult) {

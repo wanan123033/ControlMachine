@@ -365,6 +365,9 @@ public class PushUpGroupActivity extends BaseTitleActivity
         if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP){
             finish();
         }
+        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1){
+            finish();
+        }
     }
 
     private void switchToPosition(int position) {

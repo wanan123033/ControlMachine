@@ -317,39 +317,29 @@ public class HttpSubscriber {
                     item.setUnit(itemBean.getResultUnit());
                     itemList.add(item);
                 }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                    boolean initState = TestConfigs.initZCP(itemList);
-                    if (initState) {
-                        DBManager.getInstance().insertItems(itemList);
-                        if (onRequestEndListener != null) {
-                            onRequestEndListener.onSuccess(ITEM_BIZ);
-                        }
-                    } else {
-                        if (onRequestEndListener != null) {
-                            onRequestEndListener.onFault(ITEM_BIZ);
-                        }
-                    }
-                    return;
-                }
-                DBManager.getInstance().insertItems(itemList);
-                List<Item> items = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
-                //更新当前项目信息
-                if (TestConfigs.sCurrentItem.getItemCode() == null) {
-                    if (items.size() == 1) {
-                        //当返回项目没有当前项目，不进行下载
-                        if (TextUtils.isEmpty(items.get(0).getItemCode())) {
-                            EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
-                            ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                if(TestConfigs.sCurrentItem != null)
+                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                        boolean initState = TestConfigs.initZCP(itemList);
+                        if (initState) {
+                            DBManager.getInstance().insertItems(itemList);
+                            if (onRequestEndListener != null) {
+                                onRequestEndListener.onSuccess(ITEM_BIZ);
+                            }
+                        } else {
                             if (onRequestEndListener != null) {
                                 onRequestEndListener.onFault(ITEM_BIZ);
                             }
-                            return;
                         }
+                        return;
                     }
-                    int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                DBManager.getInstance().insertItems(itemList);
+                if(TestConfigs.sCurrentItem != null) {
+                    List<Item> items = DBManager.getInstance().queryItemsByMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                    //更新当前项目信息
+                    if (TestConfigs.sCurrentItem.getItemCode() == null) {
+                        if (items.size() == 1) {
+                            //当返回项目没有当前项目，不进行下载
+                            if (TextUtils.isEmpty(items.get(0).getItemCode())) {
                                 EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
                                 ToastUtils.showShort("当前考点无此项目，请重新选择项目");
                                 if (onRequestEndListener != null) {
@@ -357,24 +347,39 @@ public class HttpSubscriber {
                                 }
                                 return;
                             }
-                            if (onRequestEndListener != null)
+                        }
+                        int initState = TestConfigs.init(context, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+                                    EventBus.getDefault().post(new BaseEvent(EventConfigs.DATA_DOWNLOAD_FAULT));
+                                    ToastUtils.showShort("当前考点无此项目，请重新选择项目");
+                                    if (onRequestEndListener != null) {
+                                        onRequestEndListener.onFault(ITEM_BIZ);
+                                    }
+                                    return;
+                                }
+                                if (onRequestEndListener != null)
+                                    onRequestEndListener.onSuccess(ITEM_BIZ);
+                            }
+                        });
+                        if (onRequestEndListener != null) {
+                            if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                                 onRequestEndListener.onSuccess(ITEM_BIZ);
+                            } else {
+                                onRequestEndListener.onFault(ITEM_BIZ);
+                            }
                         }
-                    });
-                    if (onRequestEndListener != null) {
-                        if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+
+
+                    } else {
+                        if (onRequestEndListener != null)
                             onRequestEndListener.onSuccess(ITEM_BIZ);
-                        } else {
-                            onRequestEndListener.onFault(ITEM_BIZ);
-                        }
                     }
-
-
-                } else {
+                }else {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(ITEM_BIZ);
                 }
-
             }
 
             @Override

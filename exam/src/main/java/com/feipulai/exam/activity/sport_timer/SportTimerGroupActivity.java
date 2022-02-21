@@ -509,7 +509,10 @@ public class SportTimerGroupActivity extends BaseTitleActivity implements SportC
                 }
                 SystemSetting systemSetting = SettingHelper.getSystemSetting();
                 //循环模式下的分组检入 需要关闭当前页面重新检录
-                if (systemSetting.isGroupCheck() && setting.getGroupType() == 0){
+                if (systemSetting.isGroupCheck() && setting.getGroupType() == 1){
+                    finish();
+                }
+                if (systemSetting.isGroupCheck() && setting.getGroupType() == 0 && TestConfigs.getMaxTestCount() == roundNo){
                     finish();
                 }
                 break;

@@ -72,7 +72,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class BasketBallGroupActivity extends BaseTitleActivity implements BasketBallListener.BasketBallResponseListener, TimerUtil.TimerAccepListener, BaseQuickAdapter.OnItemClickListener {
 
-
     @BindView(R.id.rv_testing_pairs)
     RecyclerView rvTestingPairs;
     @BindView(R.id.tv_group_name)
@@ -208,17 +207,22 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
             @Override
             public void inputResult(String result, int state) {
-                BasketballResult deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
-                deviceResult.setSecond(Integer.valueOf(result));
-                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
-                tvResult.setText(displayResult);
-                addRoundResult(deviceResult);
-                resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(deviceResult.getResult());
-                resultList.get(resultAdapter.getSelectPosition()).setResult(deviceResult.getResult());
-                resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
-                resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
-                resultAdapter.notifyDataSetChanged();
-                editResultDialog.dismissDialog();
+                    BasketballResult deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
+                    if(deviceResult == null){
+                        pairs.get(position()).setDeviceResult(new BasketballResult());
+                        deviceResult = (BasketballResult) pairs.get(position()).getDeviceResult();
+                    }
+                    deviceResult.setSecond(Integer.valueOf(result));
+                    String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
+                    tvResult.setText(displayResult);
+                    addRoundResult(deviceResult);
+                    resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(deviceResult.getResult());
+                    resultList.get(resultAdapter.getSelectPosition()).setResult(deviceResult.getResult());
+                    resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
+                    resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
+                    resultAdapter.notifyDataSetChanged();
+                    editResultDialog.dismissDialog();
+
             }
         });
     }
@@ -802,6 +806,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         }
         roundResult.setScheduleNo(group.getScheduleNo());
         roundResult.setResultState(RoundResult.RESULT_STATE_NORMAL);
+
         roundResult.setTestTime(testDate);
         roundResult.setEndTime(System.currentTimeMillis() + "");
         roundResult.setGroupId(group.getId());
@@ -833,6 +838,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         //循环模式下的分组检入 需要关闭当前页面重新检录
         if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
+            finish();
+        }
+
+        if (systemSetting.isGroupCheck() && setting.getTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
             finish();
         }
     }

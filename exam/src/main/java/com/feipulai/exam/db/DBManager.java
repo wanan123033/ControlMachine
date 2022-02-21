@@ -1434,6 +1434,9 @@ public class DBManager {
      * @param roundResult
      */
     public void insertRoundResult(RoundResult roundResult) {
+        if (TextUtils.isEmpty(roundResult.getTestTime())){
+            roundResult.setTestTime(System.currentTimeMillis()+"");
+        }
         String encryptData = roundResult.getStudentCode() + "," + roundResult.getItemCode() + "," + roundResult.getExamType()
                 + "," + roundResult.getResult() + "," + roundResult.getResultState() + "," + roundResult.getTestTime();
         roundResult.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));

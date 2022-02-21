@@ -220,6 +220,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             @Override
             public void inputResult(String result, int state) {
                 BasketballResult deviceResult = (BasketballResult) pairs.get(0).getDeviceResult();
+                if(deviceResult == null){
+                    pairs.get(0).setDeviceResult(new BasketballResult());
+                    deviceResult = (BasketballResult) pairs.get(0).getDeviceResult();
+                }
                 deviceResult.setSecond(Integer.valueOf(result));
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult);

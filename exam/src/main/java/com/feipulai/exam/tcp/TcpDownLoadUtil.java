@@ -99,6 +99,7 @@ public class TcpDownLoadUtil {
                         getTcp(EVENT, "",downType);
                         break;
                     case EVENT:
+                        
                         int initState = TestConfigs.init(mContext, TestConfigs.sCurrentItem.getMachineCode(), TestConfigs.sCurrentItem.getItemCode(), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -109,7 +110,7 @@ public class TcpDownLoadUtil {
                                     return;
                                 }else{
                                     if (downType == 0) {
-                                        getTcp(TRACK, null, downType);
+                                        getTcp(TRACK, TestConfigs.sCurrentItem.getItemName(), downType);
                                     }else {
                                         ToastUtils.showShort("下载完成");
                                         downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
