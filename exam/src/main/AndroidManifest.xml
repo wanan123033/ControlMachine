@@ -360,7 +360,7 @@
             android:screenOrientation="landscape"
             android:name=".activity.pullup.test.PullUpTestActivity"
             android:configChanges="keyboardHidden|keyboard" />
-         <activity5
+         <activity
             android:name=".activity.pullup.test.PullUpIndividualActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape" />
