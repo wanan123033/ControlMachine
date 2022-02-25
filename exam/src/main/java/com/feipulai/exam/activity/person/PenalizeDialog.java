@@ -199,7 +199,7 @@ public class PenalizeDialog {
         if (lastStudent == null && student == null) {
             setDialogDismiss("未找到考生");
         }
-        if (lastStudent==null){
+        if (lastStudent == null) {
             turnLast.setVisibility(View.INVISIBLE);
         }
         if (selectPosition != -1) {
@@ -366,6 +366,9 @@ public class PenalizeDialog {
             roundResult.setResultState(resultState);
             roundResult.setTestTime(System.currentTimeMillis() + "");
             roundResult.setEndTime(System.currentTimeMillis() + "");
+            if (roundResult.getRoundNo() == 1) {
+                roundResult.setIsLastResult(1);
+            }
             roundResultList.add(roundResult);
             DBManager.getInstance().insertRoundResult(roundResult);
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
@@ -375,20 +378,18 @@ public class PenalizeDialog {
             roundResultList.get(mAdapter.getClick()).setIsLastResult(0);
             DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
             RoundResult r = roundResultList.get(0);
-            for (RoundResult roundResult : roundResultList) {
-                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                    r = roundResult;
-                }
-            }
+
             for (RoundResult result : roundResultList) {
-                if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() > r.getResult()) {
+                if (r.getResultState()!=RoundResult.RESULT_STATE_NORMAL ){
+                    if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL){
+                        r = result;
+                    }
+                }else if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() > r.getResult()) {
                     r = result;
                 }
             }
-            if (r.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                r.setIsLastResult(1);
-                DBManager.getInstance().updateRoundResult(r);
-            }
+            r.setIsLastResult(1);
+            DBManager.getInstance().updateRoundResult(r);
             LogUtils.operation("判定为：" + tvTitle.getText().toString() + roundResultList.get(mAdapter.getClick()).toString());
             EventBus.getDefault().post(new BaseEvent(roundResultList.get(mAdapter.getClick()), EventConfigs.UPDATE_RESULT));
         }

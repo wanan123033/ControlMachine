@@ -114,8 +114,8 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
     private int currentTestTime = 0;
     private SoundPlayUtils playUtils;
     private String startTime;
-    private FrameLayout afrFrameLayout;
-    private BaseAFRFragment afrFragment;
+//    private FrameLayout afrFrameLayout;
+//    private BaseAFRFragment afrFragment;
 
     @Override
     protected int setLayoutResID() {
@@ -202,12 +202,12 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         getToolbar().getLeftView(0).setOnClickListener(backListener);
         getToolbar().getLeftView(1).setOnClickListener(backListener);
 
-        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
-            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
-            afrFragment = new BaseAFRFragment();
-            afrFragment.setCompareListener(this);
-            initAFR();
-        }
+//        if (SettingHelper.getSystemSetting().getCheckTool() == 4 && setAFRFrameLayoutResID() != 0) {
+//            afrFrameLayout = findViewById(setAFRFrameLayoutResID());
+//            afrFragment = new BaseAFRFragment();
+//            afrFragment.setCompareListener(this);
+//            initAFR();
+//        }
     }
 
     View.OnClickListener backListener = new View.OnClickListener() {
@@ -630,31 +630,31 @@ public class RunTimerActivityTestActivity extends BaseRunTimerActivity {
         return R.id.frame_camera;
     }
 
-    @Override
-    public void compareStu(final Student student) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                if (student == null) {
-                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "该考生不存在");
-                    return;
-                }else{
-                    afrFrameLayout.setVisibility(View.GONE);
-                }
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-                if (studentItem == null) {
-                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "无此项目");
-                    return;
-                }
-                LogUtils.operation("检入考生：" + student.toString());
-                // 可以直接检录
-                checkInUIThread(student,studentItem);
-            }
-        });
-
-
-    }
+//    @Override
+//    public void compareStu(final Student student) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                if (student == null) {
+//                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "该考生不存在");
+//                    return;
+//                }else{
+//                    afrFrameLayout.setVisibility(View.GONE);
+//                }
+//                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+//                if (studentItem == null) {
+//                    InteractUtils.toastSpeak(RunTimerActivityTestActivity.this, "无此项目");
+//                    return;
+//                }
+//                LogUtils.operation("检入考生：" + student.toString());
+//                // 可以直接检录
+//                checkInUIThread(student,studentItem);
+//            }
+//        });
+//
+//
+//    }
     @Override
     public void setRoundNo(Student student, int roundNo) {
         for (RunStudent runStudent : mList){

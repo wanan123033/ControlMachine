@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -43,6 +45,7 @@ import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -89,8 +92,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     RecyclerView rvTestResult;
     @BindView(R.id.cb_device_state)
     public CheckBox cbDeviceState;
-    @BindView(R.id.ll_state)
-    public LinearLayout llState;
+    //    @BindView(R.id.ll_state)
+//    public LinearLayout llState;
     @BindView(R.id.txt_test_result)
     TextView txtStuResult;
     @BindView(R.id.txt_start_test)
@@ -115,6 +118,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
     TextView tvAbandon;
     @BindView(R.id.tv_normal)
     TextView tvNormal;
+    @BindView(R.id.tv_resurvey)
+    TextView tvResurvey;
     //    @BindView(R.id.tv_penalizeFoul)
 //    TextView tv_penalizeFoul;
     //    @BindView(R.id.txt_stu_fault)
@@ -220,7 +225,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         PrinterManager.getInstance().init();
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, setTestCount());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvTestResult.setLayoutManager(layoutManager);
         result = new String[setTestCount()];
         lastResult = new String[setTestCount()];
@@ -229,10 +234,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         adapter = new BasePersonTestResultAdapter(resultList);
         //给RecyclerView设置适配器
         rvTestResult.setAdapter(adapter);
-
         etInputText.setData(lvResults, this);
-
-        pair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_FREE));
+        //默认断开，获取设备回复更新状态
+        pair.setBaseDevice(new BaseDeviceState(BaseDeviceState.STATE_ERROR));
         refreshDevice();
         editResultDialog = new EditResultDialog(this);
         editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
@@ -247,7 +251,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             }
         });
         penalizeDialog = new PenalizeDialog(this, setTestCount());
-        setBackGround(false);
+
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                adapter.setSelectPosition(i);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        setBtnEnabled(false, false, false);
     }
 
 
@@ -281,18 +293,11 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         switch (baseEvent.getTagInt()) {
             case EventConfigs.INSTALL_RESULT:
                 RoundResult iRoundResult = (RoundResult) baseEvent.getData();
-                String tmp = "";
-                if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                    tmp = "X";
-                } else if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_WAIVE) {
-                    tmp = "放弃";
-                } else if (iRoundResult.getResultState() == RoundResult.RESULT_STATE_BACK) {
-                    tmp = "中退";
-                }
+                String tmp = RoundResult.resultStateStr(iRoundResult.getResultState(), iRoundResult.getResult());
+
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), iRoundResult.getStudentCode())) {
                     String[] timeResult = result;
-                    timeResult[penalizeDialog.getSelectPosition()] = ((iRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ?
-                            ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()) : tmp);
+                    timeResult[penalizeDialog.getSelectPosition()] = tmp;
                     pair.setTimeResult(timeResult);
                 }
                 StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
@@ -301,12 +306,14 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 resultList.addAll(Arrays.asList(result));
                 adapter.notifyDataSetChanged();
                 updateResultLed(((iRoundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) ? ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()) : tmp));
+
                 if (roundNo < setTestCount()) {
 
                     roundNo++;
                     txtStuResult.setText("");
                     toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                             , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+
                     Message msg = new Message();
                     msg.obj = pair;
                     ledHandler.sendMessageDelayed(msg, 2000);
@@ -317,15 +324,16 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
 
                 }
+                adapter.setIndexPostion(roundNo - 1);
                 adapter.notifyDataSetChanged();
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                     String[] timeResult = result;
+                    tmp = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
 
-                    timeResult[penalizeDialog.getSelectPosition()] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
-                            ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult()));
+                    timeResult[penalizeDialog.getSelectPosition()] = tmp;
                     pair.setTimeResult(timeResult);
                 }
                 resultList.clear();
@@ -334,7 +342,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 StudentItem stuI = DBManager.getInstance().queryStuItemByStuCode(pair.getStudent().getStudentCode());
                 uploadServer(pair, stuI, roundResult);
                 if (roundResult.getRoundNo() == roundNo) {
-                    updateResultLed(((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(roundResult.getResult())));
+                    tmp = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
+
+                    updateResultLed(tmp);
                 }
                 updateLastResultLed(DBManager.getInstance().queryLastRountScoreByExamType(roundResult.getStudentCode(), mStudentItem.getExamType(), TestConfigs.getCurrentItemCode()));
                 List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(roundResult.getStudentCode(), roundResult.getExamType());
@@ -350,6 +360,8 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     txtStuResult.setText("");
                     toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                             , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                    adapter.setIndexPostion(roundNo - 1);
+                    adapter.notifyDataSetChanged();
                     Message msg = new Message();
                     msg.obj = pair;
                     ledHandler.sendMessageDelayed(msg, 2000);
@@ -424,12 +436,13 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 return;
             }
         }
+        pair.getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+        final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), mStudentItem.getExamType());
 
-        final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-        final List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
-        List<RoundResult> roundResultAll = DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), studentItem.getExamType());
+        List<RoundResult> roundResultAll = DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), mStudentItem.getExamType());
         if (roundResultAll.size() >= TestConfigs.getMaxTestCount()) {
             List<Integer> rounds = new ArrayList<>();
             for (int i = 0; i < roundResultList.size(); i++) {
@@ -442,67 +455,27 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             for (int j = 1; j <= TestConfigs.getMaxTestCount(); j++) {
                 if (!rounds.contains(j)) {
                     pair.setRoundNo(j);
+                    break;
                 }
             }
         }
 
-        if (roundResultList != null && roundResultList.size() >= setTestCount()) {
-            if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
-                SystemSetting setting = SettingHelper.getSystemSetting();
-                if (setting.isAgainTest() && setting.isResit()) {
-                    final Student finalStudent = student;
-                    new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
-                            .setCancelText("重测")
-                            .setConfirmText("补考")
-                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    AgainTestDialog dialog = new AgainTestDialog();
-                                    dialog.setArguments(finalStudent, roundResultList, studentItem);
-                                    dialog.setOnIndividualCheckInListener(BasePersonTestActivity.this);
-                                    dialog.show(getSupportFragmentManager(), "AgainTestDialog");
-                                    sweetAlertDialog.dismissWithAnimation();
-                                }
-                            })
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    ResitDialog dialog = new ResitDialog();
-                                    dialog.setArguments(finalStudent, roundResultList, studentItem);
-                                    dialog.setOnIndividualCheckInListener(BasePersonTestActivity.this);
-                                    dialog.show(getSupportFragmentManager(), "ResitDialog");
-                                    sweetAlertDialog.dismissWithAnimation();
-                                }
-                            }).show();
-                }
-                if (setting.isAgainTest()) {
-                    AgainTestDialog dialog = new AgainTestDialog();
-                    dialog.setArguments(student, roundResultList, studentItem);
-                    dialog.setOnIndividualCheckInListener(this);
-                    dialog.show(getSupportFragmentManager(), "AgainTestDialog");
-                    return;
-                }
-                if (setting.isResit()) {
-                    ResitDialog dialog = new ResitDialog();
-                    dialog.setArguments(student, roundResultList, studentItem);
-                    dialog.setOnIndividualCheckInListener(this);
-                    dialog.show(getSupportFragmentManager(), "ResitDialog");
-                    return;
-                } else {
-                    InteractUtils.toastSpeak(this, "该考生已测试");
-                }
-
-            }
-            return;
-        } else if (roundResultList != null) {
-            for (RoundResult roundResult : roundResultList) {
-                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && isResultFullReturn(student.getSex(), roundResult.getResult())) {
-                    toastSpeak("满分");
-                    LogUtils.operation("该学生已满分跳过测试:" + roundResult.getStudentCode());
-                    return;
-                }
-            }
-        }
+//        if (roundResultList != null && roundResultList.size() >= setTestCount()) {
+//            if (roundResultList != null && roundResultList.size() >= TestConfigs.getMaxTestCount(this)) {
+//                resitOrAgainTest(student, roundResultList);
+//
+//            }
+//            return;
+//        } else if (roundResultList != null) {
+//            for (RoundResult roundResult : roundResultList) {
+//                if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL && isResultFullReturn(student.getSex(), roundResult.getResult())) {
+//                    toastSpeak("满分");
+//                    LogUtils.operation("该学生已满分跳过测试:" + roundResult.getStudentCode());
+//                    resitOrAgainTest(student, roundResultList);
+//                    return;
+//                }
+//            }
+//        }
         //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
         if (roundResultList.size() == 0) {
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
@@ -517,23 +490,78 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         result = new String[setTestCount()];
         for (int i = 0; i < roundResultList.size(); i++) {
             if (i < setTestCount()) {
+                String tmp;
                 if (roundResultList.get(i).getResultState() == RoundResult.RESULT_STATE_FOUL) {
-                    result[roundResultList.get(i).getRoundNo() - 1] = "X";
+                    tmp = "X";
+                } else if (roundResultList.get(i).getResultState() == RoundResult.RESULT_STATE_WAIVE) {
+                    tmp = "放弃";
+                } else if (roundResultList.get(i).getResultState() == RoundResult.RESULT_STATE_BACK) {
+                    tmp = "中退";
                 } else {
-                    result[roundResultList.get(i).getRoundNo() - 1] = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
+                    tmp = ResultDisplayUtils.getStrResultForDisplay(roundResultList.get(i).getResult());
                 }
+                result[roundResultList.get(i).getRoundNo() - 1] = tmp;
 
             }
         }
         resultList.clear();
         resultList.addAll(Arrays.asList(result));
+        adapter.setIndexPostion(roundNo - 1);
+        adapter.setSelectPosition(roundNo - 1);
         adapter.notifyDataSetChanged();
         addStudent(student);
-        setBackGround(true);
+        setBtnEnabled(true, true, true);
+    }
+
+    private void resitOrAgainTest(Student student, final List<RoundResult> roundResultList) {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        if (setting.isAgainTest() && setting.isResit()) {
+            final Student finalStudent = student;
+            new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
+                    .setCancelText("重测")
+                    .setConfirmText("补考")
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            AgainTestDialog dialog = new AgainTestDialog();
+                            dialog.setArguments(finalStudent, roundResultList, mStudentItem);
+                            dialog.setOnIndividualCheckInListener(BasePersonTestActivity.this);
+                            dialog.show(getSupportFragmentManager(), "AgainTestDialog");
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            ResitDialog dialog = new ResitDialog();
+                            dialog.setArguments(finalStudent, roundResultList, mStudentItem);
+                            dialog.setOnIndividualCheckInListener(BasePersonTestActivity.this);
+                            dialog.show(getSupportFragmentManager(), "ResitDialog");
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+        }
+        if (setting.isAgainTest()) {
+            AgainTestDialog dialog = new AgainTestDialog();
+            dialog.setArguments(student, roundResultList, mStudentItem);
+            dialog.setOnIndividualCheckInListener(this);
+            dialog.show(getSupportFragmentManager(), "AgainTestDialog");
+            return;
+        }
+        if (setting.isResit()) {
+            ResitDialog dialog = new ResitDialog();
+            dialog.setArguments(student, roundResultList, mStudentItem);
+            dialog.setOnIndividualCheckInListener(this);
+            dialog.show(getSupportFragmentManager(), "ResitDialog");
+            return;
+        } else {
+            InteractUtils.toastSpeak(this, "该考生已测试");
+        }
     }
 
     @OnClick({R.id.txt_stu_skip, R.id.txt_start_test, R.id.txt_led_setting, R.id.img_AFR, R.id.txt_test_result,
-            R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})//R.id.tv_penalizeFoul,
+            R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_resurvey})
+//R.id.tv_penalizeFoul,
 //R.id.txt_stu_fault
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -623,6 +651,57 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
                 penalizeDialog.showDialog(3);
                 break;
+            case R.id.tv_resurvey:
+                if (pair.getStudent() == null) {
+                    return;
+                }
+                AgainTestDialog dialog = new AgainTestDialog();
+                RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(pair.getStudent().getStudentCode(), testNo, (adapter.getSelectPosition() + 1));
+                if (roundResult == null) {
+                    toastSpeak("当前轮次无成绩，请进行测试");
+                    return;
+                }
+                List<RoundResult> results = new ArrayList<>();
+                results.add(roundResult);
+                dialog.setArguments(pair.getStudent(), results, mStudentItem);
+                dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int updateRoundNo) {
+                        LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo+ "轮成绩");
+
+                        result[updateRoundNo-1] = "";
+                        pair.setTimeResult(result);
+                        resultList.clear();
+                        resultList.addAll(Arrays.asList(result));
+                        //设置测试轮次
+                        pair.setRoundNo(updateRoundNo);
+                        roundNo = updateRoundNo;
+                        adapter.setIndexPostion(roundNo - 1);
+                        adapter.notifyDataSetChanged();
+                        toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                                , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                        setShowLed(pair);
+                        if (testType == 0) {
+                            pair.setTestTime(DateUtil.getCurrentTime() + "");
+                            sendTestCommand(pair);
+                        }
+                        setBtnEnabled(true, true, true);
+                    }
+
+                    @Override
+                    public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
+
+                    }
+                });
+                dialog.show(getSupportFragmentManager(), "AgainTestDialog");
+
+
+                break;
         }
     }
 
@@ -710,13 +789,15 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             setBaseHeight(0);
         }
         if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
-//            roundNo = 1;
+//        roundNo = 1;
             pair.setResult(0);
             pair.setStudent(student);
             refreshTxtStu(student);
             txtStuResult.setText("");
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+            adapter.setIndexPostion(roundNo - 1);
+            adapter.notifyDataSetChanged();
             if (testType == 0) {
                 pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
@@ -777,6 +858,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 Logger.i("stuSkip:" + pair.getStudent().toString());
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
+                pair.setRoundNo(0);
                 clearHandler.sendEmptyMessageDelayed(0, 0);
                 stuSkip();
                 mLEDManager.resetLEDScreen(SettingHelper.getSystemSetting().getHostId(), TestConfigs.machineNameMap.get(TestConfigs.sCurrentItem.getMachineCode()));
@@ -837,6 +919,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         saveResult(pair);
         printResult(pair);
         broadResult(pair);
+        if (mStudentItem.getExamType() == StudentItem.EXAM_MAKE) {
+            clearHandler.sendEmptyMessageDelayed(0, 4000);
+            return;
+        }
         //TODO  当轮次大于等于测试次数时自动跳过
         if (roundNo > setTestCount()) {
             roundNo = 1;
@@ -851,6 +937,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (isShowPenalizeFoul() == View.VISIBLE) {
                     toastSpeak("是否需要判罚,否则请选择跳过");
                     return;
+                }
+                if (pair.isFullMark()){
+                    toastSpeak("满分");
                 }
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
@@ -871,7 +960,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 clearHandler.sendEmptyMessageDelayed(0, 4000);
                 return;
             }
-            roundNo++;
+            roundNo = getRound(result);
             txtStuResult.setText("");
             toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
                     , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
@@ -880,6 +969,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             msg.obj = pair;
             ledHandler.sendMessageDelayed(msg, 2000);
             pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+
+            adapter.setIndexPostion(roundNo - 1);
+            adapter.notifyDataSetChanged();
+
             if (testType != 1) {
                 pair.setTestTime(DateUtil.getCurrentTime() + "");
                 sendTestCommand(pair);
@@ -897,6 +990,20 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         }
 
+    }
+
+    /**
+     * 获取测试次数
+     */
+    private int getRound(String[] timeResult) {
+        int j = 0;
+        for (int i = 0; i < timeResult.length; i++) {
+            if (TextUtils.isEmpty(timeResult[i])) {
+                return ++i;
+            }
+            j++;
+        }
+        return ++j;
     }
 
     boolean clicked = false;
@@ -962,7 +1069,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (pair.getRoundNo() != 0) {
             roundResult.setRoundNo(pair.getRoundNo());
             pair.setRoundNo(0);
-            roundResult.setResultTestState(1);
+            roundResult.setResultTestState(RoundResult.RESULT_RESURVEY_STATE);
         } else {
             roundResult.setRoundNo(roundNo);
             roundResult.setResultTestState(0);
@@ -1003,9 +1110,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         LogUtils.operation("保存成绩:" + roundResult.toString());
         uploadServer(baseStuPair, studentItem, roundResult);
 
-        if (studentItem.getExamType() == 2) {
-            clearHandler.sendEmptyMessageDelayed(0, 4000);
-        }
+
     }
 
     private void uploadServer(@NonNull BaseStuPair baseStuPair, StudentItem studentItem, RoundResult roundResult) {
@@ -1217,18 +1322,21 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         activity.result = new String[activity.setTestCount()];
         activity.resultList.clear();
         activity.resultList.addAll(Arrays.asList(activity.result));
+        activity.adapter.setIndexPostion(-1);
+        activity.adapter.setSelectPosition(-1);
         activity.adapter.notifyDataSetChanged();
-        activity.setBackGround(false);
+        activity.setBtnEnabled(false, false, false);
+//        activity.setBackGround(false);
     }
 
-    private void setBackGround(boolean enable) {
-        tvInBack.setEnabled(enable);
-        tvAbandon.setEnabled(enable);
-        tvInBack.setBackground(enable ? getResources().getDrawable(R.drawable.btn_blue) :
-                getResources().getDrawable(R.drawable.btn_gray));
-        tvAbandon.setBackground(enable ? getResources().getDrawable(R.drawable.btn_blue) :
-                getResources().getDrawable(R.drawable.btn_gray));
-    }
+//    private void setBackGround(boolean enable) {
+//        tvInBack.setEnabled(enable);
+//        tvAbandon.setEnabled(enable);
+//        tvInBack.setBackground(enable ? getResources().getDrawable(R.drawable.btn_blue) :
+//                getResources().getDrawable(R.drawable.btn_gray));
+//        tvAbandon.setBackground(enable ? getResources().getDrawable(R.drawable.btn_blue) :
+//                getResources().getDrawable(R.drawable.btn_gray));
+//    }
 
     @Override
     public void setRoundNo(Student student, int roundNo) {
@@ -1236,5 +1344,19 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         if (student1 != null && student1.getStudentCode().equals(student.getStudentCode())) {
             pair.setRoundNo(roundNo);
         }
+    }
+
+    public void setBtnEnabled(boolean inBack, boolean abandon, boolean resurvey) {
+
+        tvInBack.setEnabled(inBack);
+        tvAbandon.setEnabled(abandon);
+        if (systemSetting.isAgainTest()) {
+            tvResurvey.setEnabled(resurvey);
+            tvResurvey.setVisibility(View.VISIBLE);
+        } else {
+            tvResurvey.setVisibility(View.GONE);
+        }
+
+
     }
 }

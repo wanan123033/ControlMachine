@@ -260,7 +260,7 @@ public class InteractUtils {
             if (pair.getCurrentRoundNo() != 0){
                 roundResult.setRoundNo(pair.getCurrentRoundNo());
                 pair.setCurrentRoundNo(0);
-                roundResult.setResultTestState(1);
+                roundResult.setResultTestState(RoundResult.RESULT_RESURVEY_STATE);
                 List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
                 if (stuPairs != null){
                     for (BaseStuPair pp : stuPairs){

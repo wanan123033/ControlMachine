@@ -4,7 +4,9 @@ import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.Student;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -94,6 +96,14 @@ public class BaseStuPair implements Serializable {
 
     public void setTimeResult(String[] timeResult) {
         this.timeResult = timeResult;
+        if (selectResultList == null) {
+            List<SelectResult> list = new ArrayList<>();
+            SelectResult.copeList(list, timeResult);
+            selectResultList = list;
+        } else {
+            SelectResult.copeList(selectResultList, timeResult);
+        }
+
     }
 
     public boolean isFullMark() {
@@ -165,7 +175,6 @@ public class BaseStuPair implements Serializable {
                 ", 考生=" + student +
                 '}';
     }
-
 
 
     public void setDevicePairState(boolean devicePairState) {
@@ -247,5 +256,16 @@ public class BaseStuPair implements Serializable {
 
     public void setAgain(boolean again) {
         isAgain = again;
+    }
+
+    //分组选择成绩定位用
+    private List<SelectResult> selectResultList;
+
+    public List<SelectResult> getSelectResultList() {
+        return selectResultList;
+    }
+
+    public void setSelectResultList(List<SelectResult> selectResultList) {
+        this.selectResultList = selectResultList;
     }
 }

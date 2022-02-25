@@ -40,18 +40,25 @@ public class SitReachMoreActivity extends BaseMoreActivity {
     private SitReachManager manager;
     private static final String TAG = "SitReachMoreActivity";
     private boolean backFlag = false;//推杆返回
-    private boolean [] resultUpdate  ;//成绩更新
+    private boolean[] resultUpdate;//成绩更新
     private final static int DISCONNECT_TIME = 3;
     @Override
-    protected void initData() {
+    protected void initViews() {
         setting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
         if (null == setting) {
             setting = new SitReachSetting();
         }
+        super.initViews();
+    }
+
+    @Override
+    protected void initData() {
+
         super.initData();
         manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         resultUpdate = new boolean[setting.getTestDeviceCount()];
         setFaultEnable(setting.isPenalize());
+        setNextClickStart(false);
     }
 
     @Override
@@ -116,7 +123,14 @@ public class SitReachMoreActivity extends BaseMoreActivity {
 
     @Override
     public boolean isResultFullReturn(int sex, int result) {
-        return setting.isFullReturn();
+        if (setting.isFullReturn()) {
+            if (sex == Student.MALE) {
+                return result >= setting.getManFull() * 10;
+            } else {
+                return result >= setting.getWomenFull() * 10;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -130,7 +144,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("坐位体前屈开始测试:index="+index+",pair="+pair.toString());
+        LogUtils.operation("坐位体前屈开始测试:index=" + index + ",pair=" + pair.toString());
         pair.setTestTime(DateUtil.getCurrentTime() + "");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
@@ -155,7 +169,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         manager.setEmpty(deviceId, SettingHelper.getSystemSetting().getHostId());
     }
 
-    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair,R.id.img_AFR})
+    @OnClick({R.id.txt_led_setting, R.id.tv_device_pair, R.id.img_AFR})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_led_setting:
@@ -197,7 +211,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
                     break;
                 case GET_RESULT:
                     SitReachWirelessResult result = (SitReachWirelessResult) msg.obj;
-                    setTxtEnable(result.getDeviceId(),false);
+                    setTxtEnable(result.getDeviceId(), false);
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             onResultArrived(result.getCapacity(), detail.getStuDevicePair());
@@ -219,25 +233,36 @@ public class SitReachMoreActivity extends BaseMoreActivity {
             deviceState[result.getDeviceId() - 1] = DISCONNECT_TIME;//联机正常
             if (result.getState() == 4) {//测试结束
                 sendStop(result.getDeviceId());
-                if (result.getCapacity() > -200 && result.getCapacity() < 700 && resultUpdate[result.getDeviceId()-1]) {
+                if (result.getCapacity() > -200 && result.getCapacity() < 700 && resultUpdate[result.getDeviceId() - 1]) {
                     Message msg = mHandler.obtainMessage();
                     msg.obj = result;
                     msg.what = GET_RESULT;
                     mHandler.sendMessage(msg);
-                    resultUpdate[result.getDeviceId()-1] = false;
-                }else {
+                    resultUpdate[result.getDeviceId() - 1] = false;
+                    sendFree(result.getDeviceId());
+                } else {
 //                    toastSpeak("数据错误请重测");
                 }
                 backFlag = true;
             }
             if (backFlag && result.getState() == 1) {
-                sendFree(result.getDeviceId());
+//                sendFree(result.getDeviceId());
                 backFlag = false;
-                resultUpdate[result.getDeviceId()-1] = true;//标记可以下次测试
+                resultUpdate[result.getDeviceId() - 1] = true;//标记可以下次测试
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setTxtEnable(result.getDeviceId(),true);
+                        for (DeviceDetail detail : deviceDetails) {
+                            if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
+                                if (detail.getStuDevicePair().getStudent()!=null){
+                                    sendTestCommand(detail.getStuDevicePair(), result.getDeviceId() - 1);
+                                }
+
+                                break;
+                            }
+
+                        }
+                        setTxtEnable(result.getDeviceId(), true);
                     }
                 });
 
@@ -279,6 +304,7 @@ public class SitReachMoreActivity extends BaseMoreActivity {
         LogUtils.life("SitReachMoreActivity onDestroy");
         RadioManager.getInstance().setOnRadioArrived(null);
     }
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
     }

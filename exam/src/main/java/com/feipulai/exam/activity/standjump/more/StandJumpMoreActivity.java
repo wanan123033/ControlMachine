@@ -35,12 +35,16 @@ public class StandJumpMoreActivity extends BaseMoreActivity implements StandJump
 
     private StandJumpRadioFacade facade;
     private StandJumpSetting standJumpSetting;
-
     @Override
-    protected void initData() {
+    protected void initViews() {
         standJumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
         if (standJumpSetting == null)
             standJumpSetting = new StandJumpSetting();
+        super.initViews();
+    }
+    @Override
+    protected void initData() {
+
         super.initData();
         setFaultEnable(standJumpSetting.isPenalizeFoul());
         setNextClickStart(false);

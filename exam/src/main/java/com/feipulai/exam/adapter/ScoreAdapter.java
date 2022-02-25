@@ -38,7 +38,7 @@ public class ScoreAdapter extends BaseQuickAdapter<RoundResult, ScoreAdapter.Sco
         if (item.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
             helper.setText(R.id.tv_result, NumberEnum.valueOfTo(item.getRoundNo()).getValue() + "  " + ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
         } else {
-            helper.setText(R.id.tv_result, ResultDisplayUtils.setResultState(item.getResultState()));
+            helper.setText(R.id.tv_result, NumberEnum.valueOfTo(item.getRoundNo()).getValue() + "  " + ResultDisplayUtils.setResultState(item.getResultState()));
         }
         if (helper.getAdapterPosition() == selPos) {
             helper.setBackgroundColor(R.id.tv_result, Color.YELLOW);

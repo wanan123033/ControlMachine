@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_stu_detail"
+    android:layout_width="240dp"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/iv_portrait"
+        android:layout_width="150dp"
+        android:layout_height="190dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/icon_head_photo" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:id="@+id/txtCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="学号："
+            android:textColor="@color/black_10"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_studentCode"
+            android:layout_width="match_parent"
+            android:layout_height="27dp"
+            android:layout_toRightOf="@+id/txtCode"
+            android:paddingLeft="5dp"
+            android:textColor="@color/black_10"
+            android:textSize="18sp" />
+
+        <View
+            style="@style/divider_black_horizontal_style"
+            android:layout_alignBottom="@+id/tv_studentCode"
+            android:layout_toRightOf="@+id/txtCode" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:id="@+id/txtName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓名："
+            android:textColor="@color/black_10"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_studentName"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_toRightOf="@+id/txtName"
+            android:paddingLeft="5dp"
+            android:textColor="@color/black_10"
+            android:textSize="18sp" />
+
+        <View
+            style="@style/divider_black_horizontal_style"
+            android:layout_alignBottom="@+id/tv_studentName"
+            android:layout_toRightOf="@+id/txtName" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:id="@+id/txtSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓别："
+            android:textColor="@color/black_10"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_toRightOf="@+id/txtSex"
+            android:paddingLeft="5dp"
+            android:textColor="@color/grey_A8"
+            android:textSize="18sp" />
+
+        <View
+            style="@style/divider_black_horizontal_style"
+            android:layout_alignBottom="@+id/tv_gender"
+            android:layout_toRightOf="@+id/txtSex" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成绩："
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_grade"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:background="@drawable/edit_search_bg"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_grade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+</LinearLayout>

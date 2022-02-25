@@ -48,6 +48,7 @@
                     android:textColor="@color/white"
                     android:textSize="20dp"
                     android:visibility="gone" />
+
                 <ImageView
                     android:id="@+id/img_AFR"
                     android:layout_width="60dp"
@@ -73,12 +74,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
+                    android:layout_marginRight="20dp"
                     android:button="@null"
                     android:clickable="false"
-                    android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
+                    android:drawablePadding="15dp"
                     android:enabled="false"
                     android:text="近红外"
                     android:textColor="@color/white"
@@ -88,14 +89,14 @@
                     android:id="@+id/cb_far"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_below="@id/cb_near"
-                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
                     android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginRight="20dp"
                     android:button="@null"
                     android:clickable="false"
-                    android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
+                    android:drawablePadding="15dp"
                     android:enabled="false"
                     android:text="远红外"
                     android:textColor="@color/white"
@@ -105,14 +106,14 @@
                     android:id="@+id/cb_led"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_below="@id/cb_far"
-                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
                     android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginRight="20dp"
                     android:button="@null"
                     android:clickable="false"
-                    android:drawablePadding="15dp"
                     android:drawableRight="@drawable/cb_device_state"
+                    android:drawablePadding="15dp"
                     android:enabled="false"
                     android:text="显示屏"
                     android:textColor="@color/white"
@@ -139,6 +140,7 @@
                     android:textColor="@color/white"
                     android:textSize="18dp" />
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -150,7 +152,8 @@
                         android:id="@+id/tv_punish_add"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="判罚 +"
@@ -161,19 +164,33 @@
                         android:id="@+id/tv_punish_subtract"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:layout_toRightOf="@+id/tv_punish_add"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="判罚 -"
+
                         android:textColor="@color/white"
                         android:textSize="18dp" />
 
+                    <TextView
+                        android:id="@+id/tv_resurvey"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/btn_background"
+                        android:gravity="center"
+                        android:text="重测"
+                        android:textColor="@color/white"
+                        android:textSize="18dp"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tv_foul"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="犯规"
@@ -184,7 +201,7 @@
                         android:id="@+id/tv_inBack"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="中退"
@@ -195,7 +212,7 @@
                         android:id="@+id/tv_abandon"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="放弃"
@@ -206,7 +223,7 @@
                         android:id="@+id/tv_normal"
                         android:layout_width="100dp"
                         android:layout_height="40dp"
-                        android:layout_margin="10dp"
+                        android:layout_margin="8dp"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
                         android:text="正常"
@@ -368,8 +385,8 @@
                         android:id="@+id/txt_finish_test"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_marginBottom="@dimen/dp_10"
                         android:layout_marginTop="@dimen/dp_10"
+                        android:layout_marginBottom="@dimen/dp_10"
                         android:layout_weight="1"
                         android:background="@drawable/btn_background"
                         android:gravity="center"
@@ -391,18 +408,19 @@
             android:background="@drawable/bg_white_radius_10"
             android:divider="@color/sbc_header_text"
             android:dividerHeight="1dp"
-            android:paddingBottom="@dimen/dp_10"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:paddingTop="@dimen/dp_10"
+            android:paddingRight="20dp"
+            android:paddingBottom="@dimen/dp_10"
             android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/frame_camera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="40dp"
             android:background="@color/black"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

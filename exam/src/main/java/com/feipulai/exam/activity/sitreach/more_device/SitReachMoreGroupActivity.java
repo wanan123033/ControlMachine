@@ -46,6 +46,7 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
         manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         getState();
         RadioManager.getInstance().setOnRadioArrived(sitReachRadio);
+        setNextClickStart(false);
     }
 
     private void getState() {
@@ -163,19 +164,23 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
                     msg.what = GET_RESULT;
                     mHandler.sendMessage(msg);
                     resultUpdate[result.getDeviceId()-1] = false;
+                    sendFree(result.getDeviceId());
                 }else {
 //                    toastSpeak("数据错误请重测");
                 }
                 backFlag = true;
             }
             if (backFlag && result.getState() == 1) {
-                sendFree(result.getDeviceId());
+//                sendFree(result.getDeviceId());
+
                 backFlag = false;
                 resultUpdate[result.getDeviceId()-1] = true;//标记可以下次测试
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        toStart(result.getDeviceId()-1);
                         setTxtEnable(result.getDeviceId(),true);
+
                     }
                 });
 

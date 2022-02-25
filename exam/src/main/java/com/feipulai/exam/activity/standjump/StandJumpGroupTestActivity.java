@@ -67,7 +67,7 @@ public class StandJumpGroupTestActivity extends BaseGroupTestActivity {
 //        SerialDeviceManager.getInstance().setRS232ResiltListener(standResiltListener);
 //        sendCheck();
 
-        llState.setOnClickListener(new View.OnClickListener() {
+        cbDeviceState.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getTestPair() == null || getTestPair().getBaseDevice().getState() == BaseDeviceState.STATE_ERROR) {

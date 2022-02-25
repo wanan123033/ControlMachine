@@ -27,7 +27,9 @@ import com.feipulai.device.serial.beans.Basketball868Result;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
@@ -48,6 +50,7 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
@@ -98,6 +101,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     CheckBox cbFar;
     @BindView(R.id.cb_led)
     CheckBox cbLed;
+    @BindView(R.id.tv_resurvey)
+    TextView tvResurvey;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_FREE = 0x0;
     private static final int WAIT_CHECK_IN = 0x1;
@@ -199,6 +204,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             cbNear.setVisibility(View.VISIBLE);
             cbFar.setVisibility(View.GONE);
             cbLed.setVisibility(View.VISIBLE);
+        }
+        if (SettingHelper.getSystemSetting().isAgainTest()) {
+            tvResurvey.setVisibility(View.VISIBLE);
         }
         fristCheckTest();
 
@@ -565,7 +573,8 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
     }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
-            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.tv_result})
+            , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test,
+            R.id.tv_result,  R.id.tv_resurvey})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
@@ -739,9 +748,60 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                 }
 
                 break;
+            case R.id.tv_resurvey:
+                showResurvey();
+                break;
         }
     }
+    private void showResurvey(){
+        if (stuPairAdapter.getTestPosition()==-1){
+            return;
+        }
+        final int resultSelectPosition =resultAdapter.getSelectPosition();
+        Student student = pairs.get(stuPairAdapter.getTestPosition()).getStudent();
 
+        AgainTestDialog dialog = new AgainTestDialog();
+        RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId().toString(), (resultSelectPosition+ 1));
+        if (roundResult == null) {
+            toastSpeak("当前轮次无成绩，请进行测试");
+            return;
+        }
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
+        List<RoundResult> results = new ArrayList<>();
+        results.add(roundResult);
+        dialog.setArguments(student, results, groupItem);
+        dialog.setOnIndividualCheckInListener(new ResitDialog.onClickQuitListener() {
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int updateRoundNo) {
+
+            }
+
+            @Override
+            public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int updateRoundNo) {
+                LogUtils.operation(student.getStudentCode() + "重测第" + roundNo + "轮成绩");
+                resultList.remove(resultSelectPosition);
+                resultList.add(resultSelectPosition, new BasketBallTestResult(updateRoundNo, null, 0, -999, 0, -999));
+                //清除机器成绩
+                DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), 1, updateRoundNo, group.getId());
+
+                //设置测试轮次
+                pairs.get(stuPairAdapter.getTestPosition()).setCurrentRoundNo(updateRoundNo);
+                roundNo = updateRoundNo;
+                resultAdapter.notifyDataSetChanged();
+                prepareForBegin();
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
+
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "AgainTestDialog");
+
+    }
     private void showPrintDialog() {
         String[] printType = new String[]{"个人", "整组"};
         new AlertDialog.Builder(this).setTitle("选择成绩打印类型")
@@ -795,6 +855,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         if (pairs.get(position()).getCurrentRoundNo() != 0) {
             roundResult.setRoundNo(pairs.get(position()).getCurrentRoundNo());
             pairs.get(position()).setCurrentRoundNo(0);
+            roundResult.setResultTestState(RoundResult.RESULT_RESURVEY_STATE);
         } else {
             roundResult.setRoundNo(roundNo);
         }

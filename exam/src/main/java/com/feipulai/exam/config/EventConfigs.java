@@ -49,4 +49,5 @@ public class EventConfigs {
     public static final int UPLOAD_RESULT_FAULT = 22;
     public static final int FOUL_DIALOG_MISS = 23;
 
+    public static final int AUTO_ADD_RESULT = 24;
 }

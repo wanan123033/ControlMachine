@@ -15,6 +15,7 @@ import com.feipulai.exam.activity.LEDSettingActivity;
 import com.feipulai.exam.activity.grip.pair.GripPairActivity;
 import com.feipulai.exam.activity.person.BaseDeviceState;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.sargent_jump.SargentSetting;
 import com.feipulai.exam.activity.sargent_jump.more_device.BaseMoreActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.DeviceDetail;
@@ -43,12 +44,17 @@ public class GripMoreActivity extends BaseMoreActivity {
     public void setRoundNo(Student student, int roundNo) {
 
     }
-
     @Override
-    protected void initData() {
+    protected void initViews() {
         setting = SharedPrefsUtil.loadFormSource(this, GripSetting.class);
         if (setting == null)
             setting = new GripSetting();
+        super.initViews();
+    }
+
+    @Override
+    protected void initData() {
+
         super.initData();
         getState();
     }

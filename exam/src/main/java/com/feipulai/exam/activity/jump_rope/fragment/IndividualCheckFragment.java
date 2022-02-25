@@ -35,6 +35,7 @@ import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.AgainTestDialog;
+import com.feipulai.exam.activity.base.BaseCheckActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.jump_rope.view.StuSearchEditText;
@@ -102,8 +103,8 @@ public class IndividualCheckFragment
 
     private MyHandler mHandler = new MyHandler(this);
 
-    private static final int STUDENT_CODE = 0x0;
-    private static final int ID_CARD_NO = 0x1;
+    public static final int STUDENT_CODE = 0x0;
+    public static final int ID_CARD_NO = 0x1;
 
     private Student mStudent;
     private StudentItem mStudentItem;
@@ -363,7 +364,7 @@ public class IndividualCheckFragment
 
     // 可能在子线程运行
     // 返回是否需要新增考生
-    private boolean checkQulification(String code, int flag) {
+    public boolean checkQulification(String code, int flag) {
         Student student = null;
         boolean canTemporaryAdd = SettingHelper.getSystemSetting().isTemporaryAddStu();
         switch (flag) {
@@ -395,50 +396,21 @@ public class IndividualCheckFragment
             max = 1;
         }
         if (results != null && results.size() >= max) {
-            SystemSetting setting = SettingHelper.getSystemSetting();
-            if (setting.isAgainTest() && setting.isResit()) {
-                final Student finalStudent = student;
-                new SweetAlertDialog(getContext()).setContentText("需要重测还是补考呢?")
-                        .setCancelText("重测")
-                        .setConfirmText("补考")
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                AgainTestDialog dialog = new AgainTestDialog();
-                                dialog.setArguments(finalStudent, results, studentItem);
-                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
-                                dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
-                                sweetAlertDialog.dismissWithAnimation();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                ResitDialog dialog = new ResitDialog();
-                                dialog.setArguments(finalStudent, results, studentItem);
-                                dialog.setOnIndividualCheckInListener(onClickQuitListener);
-                                dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
-                                sweetAlertDialog.dismissWithAnimation();
-                            }
-                        }).show();
-                return false;
-            }
-            if (setting.isAgainTest()) {
-                AgainTestDialog dialog = new AgainTestDialog();
-                dialog.setArguments(student, results, studentItem);
-                dialog.setOnIndividualCheckInListener(onClickQuitListener);
-                dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
-                return false;
-            }
-            if (setting.isResit()) {
-                ResitDialog dialog = new ResitDialog();
-                dialog.setArguments(student, results, studentItem);
-                dialog.setOnIndividualCheckInListener(onClickQuitListener);
-                dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
-            } else {
-                InteractUtils.toastSpeak(getActivity(), "该考生已测试");
-            }
+            showDialog(student,studentItem,results);
             return false;
+        }else{
+            int fullSkip[] = TestConfigs.getFullSkip();
+            if (fullSkip != null) {
+                for (RoundResult result : results) {
+                    if (student.getSex() == 0 && result.getResult() >= TestConfigs.getFullSkip()[0]) {//男子满分跳过
+                        showDialog(student, studentItem, results);
+                        return false;
+                    } else if (student.getSex() == 1 && result.getResult() >= TestConfigs.getFullSkip()[1]) {//女子满分跳过
+                        showDialog(student, studentItem, results);
+                        return false;
+                    }
+                }
+            }
         }
         mStudent = student;
         mStudentItem = studentItem;
@@ -448,7 +420,49 @@ public class IndividualCheckFragment
         checkInUIThread(student, studentItem);
         return false;
     }
-
+    private void showDialog(final Student student, final StudentItem studentItem, final List<RoundResult> results) {
+        SystemSetting setting = SettingHelper.getSystemSetting();
+        if (setting.isAgainTest() && setting.isResit()) {
+            final Student finalStudent = student;
+            new SweetAlertDialog(getContext()).setContentText("需要重测还是补考呢?")
+                    .setCancelText("重测")
+                    .setConfirmText("补考")
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            AgainTestDialog dialog = new AgainTestDialog();
+                            dialog.setArguments(finalStudent, results, studentItem);
+                            dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                            dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            ResitDialog dialog = new ResitDialog();
+                            dialog.setArguments(finalStudent, results, studentItem);
+                            dialog.setOnIndividualCheckInListener(onClickQuitListener);
+                            dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    }).show();
+        }
+        if (setting.isAgainTest()) {
+            AgainTestDialog dialog = new AgainTestDialog();
+            dialog.setArguments(student, results, studentItem);
+            dialog.setOnIndividualCheckInListener(onClickQuitListener);
+            dialog.show(getActivity().getSupportFragmentManager(), "AgainTestDialog");
+        }
+        if (setting.isResit()) {
+            ResitDialog dialog = new ResitDialog();
+            dialog.setArguments(student, results, studentItem);
+            dialog.setOnIndividualCheckInListener(onClickQuitListener);
+            dialog.show(getActivity().getSupportFragmentManager(), "ResitDialog");
+        } else {
+            InteractUtils.toastSpeak(getActivity(), "该考生已测试");
+        }
+    }
     @Override
     public void onResponseTime(String responseTime) {
 

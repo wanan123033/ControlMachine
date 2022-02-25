@@ -45,16 +45,15 @@ public class MedicineBallMoreActivity extends BaseMoreActivity {
     private final int SEND_EMPTY = 1;
     private int beginPoint;
     private boolean using;
-
     @Override
-    protected void initData() {
+    protected void initViews() {
         setting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (null == setting) {
             setting = new MedicineBallSetting();
         }
-        super.initData();
-
+        super.initViews();
     }
+
 
     @Override
     protected void onResume() {

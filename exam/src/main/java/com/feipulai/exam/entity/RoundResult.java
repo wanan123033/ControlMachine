@@ -1,5 +1,7 @@
 package com.feipulai.exam.entity;
 
+import com.feipulai.exam.utils.ResultDisplayUtils;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -25,6 +27,7 @@ public class RoundResult implements Serializable {
     public static final int RESULT_STATE_FOUL = 2;
     public static final int RESULT_STATE_BACK = 3;
     public static final int RESULT_STATE_WAIVE = 4;
+    public static final int RESULT_RESURVEY_STATE = 1;
     private static final long serialVersionUID = -433841840345102180L;
     @Id(autoincrement = true)
     private Long id;//项目轮次成绩ID
@@ -65,6 +68,7 @@ public class RoundResult implements Serializable {
     private int roundTestState;//轮次测试标识 0 正常 1重测 （标识本轮成绩是否设置为重测）
     private int resultTestState;//轮次成绩测试标识  0 正常 1重测
     private boolean isDelete = false;//数据是否为删除状态：true 本条数据为弃用，默认为false
+    private boolean isAutoAdd;
     private String remark1;
     private String remark2;
     private String remark3;//保存校验信息  studentCode+ 项目+ 考试类型+ 成绩 + 测试时间
@@ -74,42 +78,6 @@ public class RoundResult implements Serializable {
 
     @Generated(hash = 1393632943)
     public RoundResult() {
-    }
-
-    @Generated(hash = 1790186008)
-    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
-                       int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
-                       int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
-                       int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
-                       String mtEquipment, int roundTestState, int resultTestState, boolean isDelete,
-                       String remark1, String remark2, String remark3) {
-        this.id = id;
-        this.studentCode = studentCode;
-        this.itemCode = itemCode;
-        this.machineCode = machineCode;
-        this.roundNo = roundNo;
-        this.testNo = testNo;
-        this.machineResult = machineResult;
-        this.penaltyNum = penaltyNum;
-        this.result = result;
-        this.resultState = resultState;
-        this.isLastResult = isLastResult;
-        this.examType = examType;
-        this.testTime = testTime;
-        this.printTime = printTime;
-        this.endTime = endTime;
-        this.stumbleCount = stumbleCount;
-        this.updateState = updateState;
-        this.cycleResult = cycleResult;
-        this.groupId = groupId;
-        this.scheduleNo = scheduleNo;
-        this.mtEquipment = mtEquipment;
-        this.roundTestState = roundTestState;
-        this.resultTestState = resultTestState;
-        this.isDelete = isDelete;
-        this.remark1 = remark1;
-        this.remark2 = remark2;
-        this.remark3 = remark3;
     }
 
     public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
@@ -138,6 +106,43 @@ public class RoundResult implements Serializable {
         this.groupId = groupId;
         this.scheduleNo = scheduleNo;
         this.mtEquipment = mtEquipment;
+        this.remark1 = remark1;
+        this.remark2 = remark2;
+        this.remark3 = remark3;
+    }
+
+    @Generated(hash = 217532724)
+    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
+            int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
+            int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
+            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
+            String mtEquipment, int roundTestState, int resultTestState, boolean isDelete, boolean isAutoAdd,
+            String remark1, String remark2, String remark3) {
+        this.id = id;
+        this.studentCode = studentCode;
+        this.itemCode = itemCode;
+        this.machineCode = machineCode;
+        this.roundNo = roundNo;
+        this.testNo = testNo;
+        this.machineResult = machineResult;
+        this.penaltyNum = penaltyNum;
+        this.result = result;
+        this.resultState = resultState;
+        this.isLastResult = isLastResult;
+        this.examType = examType;
+        this.testTime = testTime;
+        this.printTime = printTime;
+        this.endTime = endTime;
+        this.stumbleCount = stumbleCount;
+        this.updateState = updateState;
+        this.cycleResult = cycleResult;
+        this.groupId = groupId;
+        this.scheduleNo = scheduleNo;
+        this.mtEquipment = mtEquipment;
+        this.roundTestState = roundTestState;
+        this.resultTestState = resultTestState;
+        this.isDelete = isDelete;
+        this.isAutoAdd = isAutoAdd;
         this.remark1 = remark1;
         this.remark2 = remark2;
         this.remark3 = remark3;
@@ -362,6 +367,15 @@ public class RoundResult implements Serializable {
         this.printTime = printTime;
     }
 
+
+    public boolean isAutoAdd() {
+        return isAutoAdd;
+    }
+
+    public void setAutoAdd(boolean autoAdd) {
+        isAutoAdd = autoAdd;
+    }
+
     @Override
     public String toString() {
         return "考生成绩{" +
@@ -395,5 +409,27 @@ public class RoundResult implements Serializable {
 
     public void setIsDelete(boolean isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public static String resultStateStr(int resultState, int result) {
+        String tmp = "";
+        if (resultState == RoundResult.RESULT_STATE_FOUL) {
+            tmp = "X";
+        } else if (resultState == RoundResult.RESULT_STATE_WAIVE) {
+            tmp = "放弃";
+        } else if (resultState == RoundResult.RESULT_STATE_BACK) {
+            tmp = "中退";
+        } else {
+            tmp = ResultDisplayUtils.getStrResultForDisplay(result, false);
+        }
+        return tmp;
+    }
+
+    public boolean getIsAutoAdd() {
+        return this.isAutoAdd;
+    }
+
+    public void setIsAutoAdd(boolean isAutoAdd) {
+        this.isAutoAdd = isAutoAdd;
     }
 }

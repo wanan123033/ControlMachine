@@ -1723,6 +1723,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.ExamType.eq(exemType))
                 .orderDesc(RoundResultDao.Properties.TestNo)
+                .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
     public List<RoundResult> queryFinallyRountScoreByExamTypeAll(String studentCode, int exemType) {

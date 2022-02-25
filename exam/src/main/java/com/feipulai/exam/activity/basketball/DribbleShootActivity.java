@@ -33,6 +33,7 @@ import com.feipulai.exam.activity.basketball.adapter.ShootResultAdapter;
 import com.feipulai.exam.activity.basketball.result.BasketBallResult;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
+import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.BaseEvent;
@@ -200,25 +201,29 @@ public class DribbleShootActivity extends BaseShootActivity implements BaseAFRFr
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
+                if (student != null) {
 
-                if (student == null) {
-                    InteractUtils.toastSpeak(DribbleShootActivity.this, "该考生不存在");
-                    return;
-                }else{
                     afrFrameLayout.setVisibility(View.GONE);
                 }
-                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-                if (studentItem == null) {
-                    InteractUtils.toastSpeak(DribbleShootActivity.this, "无此项目");
-                    return;
-                }
-                List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-                if (results != null && results.size() >= TestConfigs.getMaxTestCount(DribbleShootActivity.this)) {
-                    InteractUtils.toastSpeak(DribbleShootActivity.this, "该考生已测试");
-                    return;
-                }
-                // 可以直接检录
-                onIndividualCheckIn(student, studentItem, results);
+//                if (student == null) {
+//                    InteractUtils.toastSpeak(DribbleShootActivity.this, "该考生不存在");
+//                    return;
+//                }else{
+//                    afrFrameLayout.setVisibility(View.GONE);
+//                }
+//                StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+//                if (studentItem == null) {
+//                    InteractUtils.toastSpeak(DribbleShootActivity.this, "无此项目");
+//                    return;
+//                }
+//                List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+//                if (results != null && results.size() >= TestConfigs.getMaxTestCount(DribbleShootActivity.this)) {
+//                    InteractUtils.toastSpeak(DribbleShootActivity.this, "该考生已测试");
+//                    return;
+//                }
+//                // 可以直接检录
+//                onIndividualCheckIn(student, studentItem, results);
             }
         });
 

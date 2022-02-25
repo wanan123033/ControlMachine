@@ -642,24 +642,28 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
+                if (student != null) {
 
-                if (student == null) {
-                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生不存在");
-                    return;
-                } else {
                     afrFrameLayout.setVisibility(View.GONE);
                 }
-                final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
-                if (studentItem == null) {
-                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "无此项目");
-                    return;
-                }
-                final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-                if (results != null && results.size() >= TestConfigs.getMaxTestCount(PullUpIndividualActivity.this)) {
-                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生已测试");
-                    return;
-                }
-                onIndividualCheckIn(student, studentItem, results);
+//                if (student == null) {
+//                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生不存在");
+//                    return;
+//                } else {
+//                    afrFrameLayout.setVisibility(View.GONE);
+//                }
+//                final StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
+//                if (studentItem == null) {
+//                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "无此项目");
+//                    return;
+//                }
+//                final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
+//                if (results != null && results.size() >= TestConfigs.getMaxTestCount(PullUpIndividualActivity.this)) {
+//                    InteractUtils.toastSpeak(PullUpIndividualActivity.this, "该考生已测试");
+//                    return;
+//                }
+//                onIndividualCheckIn(student, studentItem, results);
             }
         });
 

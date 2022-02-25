@@ -25,6 +25,7 @@ import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
+import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.WaitDialog;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
@@ -78,10 +79,9 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
         updateDevice(new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1));
         runUp = sargentSetting.getRunUp();
         // 0 显示 原地起跳 1 隐藏 助跑
-        setBaseHeightVisible(runUp);
-        if (runUp == 0) {
-            setBaseHeight(0);
-        }
+        tvBaseHeight.setVisibility(runUp == 0 ? View.VISIBLE : View.GONE);
+        tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(runUp));
+
 
         sendEmpty();
 
@@ -284,10 +284,10 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
 
                     cmd[8] = (byte) (frequency);
                     cmd[13] = (byte) (sum(cmd) & 0xff);
-                    LogUtils.serial( "摸高设置参数指令" + StringUtility.bytesToHexString(cmd) + "---");
+                    LogUtils.serial("摸高设置参数指令" + StringUtility.bytesToHexString(cmd) + "---");
                     RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
                     RadioChannelCommand command = new RadioChannelCommand(frequency);
-                    LogUtils.serial( "摸高切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
+                    LogUtils.serial("摸高切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
                     RadioManager.getInstance().sendCommand(new ConvertCommand(command));
                     currentFrequency = frequency;
                 case MATCH_SUCCESS:
@@ -310,7 +310,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                         //标记原始高度
                         if (testState == TestState.WAIT_RESULT) {
                             baseHeight = result.getScore();
-                            setBaseHeight(baseHeight);
+                            tvBaseHeight.setText("原始高度" + ResultDisplayUtils.getStrResultForDisplay(baseHeight * 10));
                         }
 
                     } else {
@@ -376,7 +376,7 @@ public class SargentGroupActivity extends BaseGroupTestActivity {
                         SerialDeviceManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RS232, SerialConfigs.CMD_SARGENT_JUMP_STOP));
                     }
                 }
-            },3000);
+            }, 3000);
 //            testState = TestState.UN_STARTED;
         }
     }

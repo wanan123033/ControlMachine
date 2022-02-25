@@ -1,110 +1,178 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="horizontal">
+    android:background="@color/white">
 
-    <include
-        layout="@layout/stu_info_layout"
-        android:layout_width="250dp"
-        android:layout_height="match_parent" />
+    <LinearLayout
+        android:id="@+id/ll_seach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_10">
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="15dp"
+            android:src="@mipmap/icon_test_logo" />
+
+        <com.feipulai.exam.view.StuSearchEditText
+            android:id="@+id/et_input_text"
+            android:layout_width="360dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="3dp" />
+
+        <TextView
+            android:id="@+id/btn_scan"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="搜索"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/img_AFR"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@drawable/btn_bg_green"
+            android:gravity="center"
+            android:padding="5dp"
+            android:src="@mipmap/icon_afr"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/txt_led_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_toLeftOf="@+id/tv_start_test"
+            android:background="@color/colorAccent"
+            android:drawableLeft="@mipmap/icon_led_setting"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="外接屏幕"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tv_device_pair"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="设备配对"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <View
-        android:layout_width="8dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ll_seach"
         android:background="@color/grey_light" />
 
+    <RelativeLayout
+        android:id="@+id/rlStuContent"
+        android:layout_width="650dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_seach"
+        android:layout_marginTop="4dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/llStuIno"
+                layout="@layout/stu_info_layout2"
+                android:layout_width="240dp"
+                android:layout_height="match_parent" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_test_result"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="25dp"
+                android:layout_toRightOf="@+id/llStuIno"
+                android:background="@color/white"
+                android:overScrollMode="never" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cb_device_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/dp_10"
+            android:button="@null"
+            android:checked="false"
+            android:clickable="false"
+            android:drawableLeft="@drawable/cb_device_state"
+            android:drawablePadding="10dp"
+            android:text="设备状态"
+            android:textColor="@color/black_10"
+            android:textSize="20dp" />
+
+        <FrameLayout
+            android:id="@+id/frame_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_seach"
+        android:layout_toRightOf="@+id/rlStuContent"
+        android:background="@color/grey_light" />
 
 
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/ll_seach"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="128dp"
-                android:layout_height="38dp"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/icon_test_logo" />
-
-            <com.feipulai.exam.view.StuSearchEditText
-                android:id="@+id/et_input_text"
-                android:layout_width="360dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="3dp" />
-
-            <TextView
-                android:id="@+id/btn_scan"
-                android:layout_width="80dp"
-                android:layout_height="35dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@color/colorAccent"
-                android:gravity="center"
-                android:text="搜索"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/img_AFR"
-                android:layout_width="60dp"
-                android:layout_height="35dp"
-                android:layout_marginLeft="20dp"
-                android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@drawable/btn_bg_green"
-                android:gravity="center"
-                android:padding="5dp"
-                android:src="@mipmap/icon_afr"
-                android:textColor="@color/white"
-                android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/txt_led_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_toLeftOf="@+id/tv_start_test"
-                android:background="@color/colorAccent"
-                android:drawableLeft="@mipmap/icon_led_setting"
-                android:drawablePadding="6dp"
-                android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:text="外接屏幕"
-                android:textColor="@color/white"
-                android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/tv_device_pair"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:background="@color/colorAccent"
-                android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:text="设备配对"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                android:visibility="gone" />
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_seach"
+        android:layout_toRightOf="@+id/view">
 
 
         <RelativeLayout
             android:id="@+id/rl_test_result"
-            android:layout_width="match_parent"
-            android:layout_height="276dp"
-            android:layout_below="@+id/ll_seach"
-            android:background="#313131">
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/dp_10">
 
             <TextView
                 android:id="@+id/txt_test_result"
@@ -115,7 +183,8 @@
                 android:background="@mipmap/icon_test_result_bg"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="61sp" />
+                android:textSize="61sp"
+                android:visibility="gone" />
             <!--<TextView
                 android:id="@+id/tv_penalizeFoul"
                 android:layout_width="wrap_content"
@@ -132,192 +201,151 @@
                 android:paddingRight="@dimen/dp_15"
                 android:textColor="@color/white"
                 android:textSize="22sp" />-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="30dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/tv_foul"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="犯规"
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/tv_inBack"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="中退"
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/tv_abandon"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="放弃"
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/tv_normal"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="正常"
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@mipmap/icon_device_bg"
-                android:gravity="right">
-
-                <LinearLayout
-                    android:id="@+id/ll_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:padding="10dp">
-
-                    <CheckBox
-                        android:id="@+id/cb_device_state"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/dp_10"
-                        android:button="@null"
-                        android:checked="true"
-                        android:clickable="false"
-                        android:drawableLeft="@drawable/cb_device_state"
-                        android:drawablePadding="10dp"
-                        android:enabled="false"
-                        android:paddingLeft="35dp"
-                        android:text="设备状态"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </LinearLayout>
-
             <TextView
                 android:id="@+id/tv_base_height"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="15dp"
                 android:text="原始高度: 厘米"
+                android:textColor="@color/black_10"
+                android:textSize="18sp"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/tv_foul"
+                android:layout_width="135dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/tv_base_height"
+                android:layout_margin="12dp"
+                android:background="@drawable/selector_blue_grey_press"
+                android:gravity="center"
+                android:text="犯规"
                 android:textColor="@color/white"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:textSize="22dp" />
+
+            <TextView
+                android:id="@+id/tv_normal"
+                android:layout_width="135dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/tv_base_height"
+                android:layout_margin="12dp"
+                android:layout_toRightOf="@+id/tv_foul"
+                android:background="@drawable/selector_blue_grey_press"
+                android:gravity="center"
+                android:text="正常"
+                android:textColor="@color/white"
+                android:textSize="22dp" />
+
+            <TextView
+                android:id="@+id/tv_inBack"
+                android:layout_width="135dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/tv_foul"
+                android:layout_margin="12dp"
+                android:background="@drawable/selector_blue_grey_press"
+                android:gravity="center"
+                android:text="中退"
+                android:textColor="@color/white"
+                android:textSize="22dp" />
+
+            <TextView
+                android:id="@+id/tv_abandon"
+                android:layout_width="135dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/tv_normal"
+                android:layout_margin="12dp"
+                android:layout_toRightOf="@+id/tv_inBack"
+                android:background="@drawable/selector_blue_grey_press"
+                android:gravity="center"
+                android:text="放弃"
+                android:textColor="@color/white"
+                android:textSize="22dp" />
+
+            <TextView
+                android:id="@+id/tv_resurvey"
+                android:layout_width="135dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/tv_abandon"
+                android:layout_margin="12dp"
+                android:background="@drawable/selector_blue_grey_press"
+                android:gravity="center"
+                android:text="重测"
+                android:textColor="@color/white"
+                android:textSize="22dp" />
+
 
         </RelativeLayout>
 
-        <RelativeLayout
+
+        <LinearLayout
+            android:id="@+id/view_skip"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="180dp"
             android:layout_below="@+id/rl_test_result"
-            android:background="#797979">
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingRight="@dimen/dp_15">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_test_result"
-                android:layout_width="579dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:background="@color/white"
-                android:overScrollMode="never" />
-
-
-            <LinearLayout
-                android:id="@+id/view_skip"
+            <TextView
+                android:id="@+id/txt_start_test"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/rv_test_result"
+                android:layout_margin="@dimen/dp_15"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@drawable/btn_background"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:padding="15dp">
-                <TextView
-                    android:id="@+id/txt_start_test"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/sp_12"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="开始"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:visibility="gone" />
+                android:text="开始"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:visibility="invisible" />
 
-                <TextView
-                    android:id="@+id/txt_stu_skip"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_background"
-                    android:gravity="center"
-                    android:text="跳过"
-                    android:textColor="@color/white"
-                    android:textSize="22sp" />
+            <TextView
+                android:id="@+id/txt_stu_skip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/dp_15"
+                android:layout_weight="1"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:text="跳过"
 
-                <!--<TextView
-                    android:id="@+id/txt_stu_fault"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_bg_blue"
-                    android:gravity="center"
-                    android:text="犯规"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:visibility="gone" />-->
-            </LinearLayout>
-        </RelativeLayout>
+                android:textColor="@color/white"
+                android:textSize="30sp" />
 
+            <!--<TextView
+                android:id="@+id/txt_stu_fault"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_bg_blue"
+                android:gravity="center"
+                android:text="犯规"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:visibility="gone" />-->
+        </LinearLayout>
 
-        <ListView
-            android:id="@+id/lv_results"
-            android:layout_width="321dp"
-            android:layout_height="260dp"
-            android:layout_marginLeft="160dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/bg_white_radius_10"
-            android:divider="@color/sbc_header_text"
-            android:dividerHeight="1dp"
-            android:paddingBottom="@dimen/dp_10"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="@dimen/dp_10"
-            android:visibility="gone"
-            />
-
-        <FrameLayout
-            android:id="@+id/frame_camera"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/ll_seach"
-            android:background="@color/black"
-            android:visibility="gone"/>
     </RelativeLayout>
-</LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_results"
+        android:layout_width="360dp"
+        android:layout_height="260dp"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/bg_white_radius_10"
+        android:divider="@color/sbc_header_text"
+        android:dividerHeight="1dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingRight="20dp"
+        android:paddingBottom="@dimen/dp_10"
+        android:visibility="gone" />
+
+
+</RelativeLayout>
 

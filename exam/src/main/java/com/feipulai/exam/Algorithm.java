@@ -6,7 +6,9 @@ import com.feipulai.exam.utils.EncryptUtil;
 import com.orhanobut.logger.Logger;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 
@@ -53,6 +55,15 @@ public class Algorithm {
 //        System.out.println("======>" + formatTime2(1635147285883L,"yyyyMMddHHmmss.SSS"));
         System.out.println("======>" + formatTime(12580,"ss.SS"));
         System.out.println("======>" + formatTime(12580,"ss.SS"));
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        System.out.println("======>" + list.toString());
+        list.remove(1);
+        System.out.println("======>" + list.toString());
+        list.add(1,"2");
+        System.out.println("======>" + list.toString());
     }
     public static String formatTime(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);

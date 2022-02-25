@@ -103,11 +103,11 @@ public class ResitDialog extends DialogFragment{
                         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             studentItem.setExamType(StudentItem.EXAM_MAKE);
                             DBManager.getInstance().updateStudentItem(studentItem);
-                            listener.onCommitPattern(student, studentItem, new ArrayList<RoundResult>(), results.size()+1);
+                            listener.onCommitPattern(student, studentItem, new ArrayList<RoundResult>(), 1);
                         }else {
                             groupItem.setExamType(StudentItem.EXAM_MAKE);
                             DBManager.getInstance().updateGroupItem(groupItem);
-                            listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), results.size()+1);
+                            listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), 1);
                         }
                         dismiss();
                     }else {
@@ -118,11 +118,11 @@ public class ResitDialog extends DialogFragment{
                         studentItem.setExamType(StudentItem.EXAM_MAKE);
                         DBManager.getInstance().updateStudentItem(studentItem);
 
-                        listener.onCommitPattern(student, studentItem,  new ArrayList<RoundResult>(), results.size()+1);
+                        listener.onCommitPattern(student, studentItem,  new ArrayList<RoundResult>(), 1);
                     }else {
                         groupItem.setExamType(StudentItem.EXAM_MAKE);
                         DBManager.getInstance().updateGroupItem(groupItem);
-                        listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), results.size()+1);
+                        listener.onCommitGroup(student, groupItem,  new ArrayList<RoundResult>(), 1);
                     }
                     dismiss();
                 }

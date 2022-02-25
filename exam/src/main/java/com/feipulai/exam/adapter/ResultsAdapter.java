@@ -23,7 +23,7 @@ public class ResultsAdapter extends BaseQuickAdapter<RoundResult,BaseViewHolder>
 
     @Override
     protected void convert(BaseViewHolder helper, RoundResult item) {
-        helper.setText(R.id.tv_result, InteractUtils.getDisplayResult(item));
+        helper.setText(R.id.tv_result,RoundResult.resultStateStr(item.getResultState(),item.getResult()) );
         helper.setText(R.id.tv_index, String.format("第%s次:", toChineseIndex(helper.getAdapterPosition())));
     }
 

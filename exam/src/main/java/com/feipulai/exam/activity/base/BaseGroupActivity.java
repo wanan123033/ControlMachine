@@ -74,6 +74,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.utils.ResultDisplayUtils;
+import com.feipulai.exam.view.AdvancedDialog;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -222,7 +223,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 if (stuPairsList.size() > 0) {
                     showStuInfo(stuPairsList.get(position).getStudent());
                 }
-                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(groupList.get(groupAdapter.getTestPosition()),stuPairsList.get(position).getStudent().getStudentCode());
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(groupList.get(groupAdapter.getTestPosition()), stuPairsList.get(position).getStudent().getStudentCode());
                 List<RoundResult> results = getResults(stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
                 if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
@@ -341,6 +342,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 getGroupList(scheduleText);
             }
 
+        }else if (baseEvent.getTagInt()==EventConfigs.AUTO_ADD_RESULT){
+            scoreUpload();
         }
     }
 
@@ -350,11 +353,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
         for (BaseStuPair pair : stuPairsList) {
             pair.setCanTest(checkBox.isChecked());
         }
-        if (checkBox.isChecked()){
+        if (checkBox.isChecked()) {
             getCanTestStates(stuPairsList);
         }
         stuAdapter.notifyDataSetChanged();
     }
+
     /**
      * 获取日程
      */
@@ -406,7 +410,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         stuPairsList.clear();
         List<Map<String, Object>> dbStudentList = DBManager.getInstance().getStudenByStuItemAndGroup(group);
         for (Map<String, Object> map : dbStudentList) {
-            BaseStuPair baseStuPair = new BaseStuPair((Student) map.get("student"), new BaseDeviceState(BaseDeviceState.STATE_FREE));
+            BaseStuPair baseStuPair = new BaseStuPair((Student) map.get("student"), new BaseDeviceState(BaseDeviceState.STATE_ERROR));
             baseStuPair.setTrackNo((Integer) map.get("trackNo"));
             stuPairsList.add(baseStuPair);
         }
@@ -449,7 +453,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
         return DBManager.getInstance().queryGroupRound(stuCode,
                 groupList.get(groupAdapter.getTestPosition()).getId() + "");
     }
-    private void refreshStuBaseResult(int position){
+
+    private void refreshStuBaseResult(int position) {
         RoundResult result = DBManager.getInstance().queryGroupBestScore(
                 stuPairsList.get(position).getStudent().getStudentCode(), groupList.get(groupAdapter.getTestPosition()).getId());
         if (result != null) {
@@ -471,6 +476,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
         }
         stuAdapter.notifyDataSetChanged();
     }
+
     /**
      * 获取可测试的学生
      *
@@ -631,9 +637,9 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 }
                 if (groupList.size() <= groupAdapter.getTestPosition())
                     return;
-                if (systemSetting.isGroupCheck()){
-                    Intent intent = new Intent(this,BaseGroupCheckActivity.class);
-                    intent.putExtra(BaseGroupCheckActivity.GROUP_INFO,groupList.get(groupAdapter.getTestPosition()));
+                if (systemSetting.isGroupCheck()) {
+                    Intent intent = new Intent(this, BaseGroupCheckActivity.class);
+                    intent.putExtra(BaseGroupCheckActivity.GROUP_INFO, groupList.get(groupAdapter.getTestPosition()));
                     startActivity(intent);
                     return;
                 }
@@ -651,20 +657,21 @@ public class BaseGroupActivity extends BaseTitleActivity {
                         setStuPairsData(pair, results);
                         // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
                         TestConfigs.baseGroupMap.put(student, results);
-                        List<RoundResult> roundResultList= DBManager.getInstance().queryGroupRoundAll
-                                (student.getStudentCode(),groupList.get(groupAdapter.getTestPosition()).getId() + "");
-                        if (roundResultList.size()>=TestConfigs.getMaxTestCount()){
+                        List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRoundAll
+                                (student.getStudentCode(), groupList.get(groupAdapter.getTestPosition()).getId() + "");
+                        if (roundResultList.size() >= TestConfigs.getMaxTestCount()) {
                             List<Integer> rounds = new ArrayList<>();
                             for (int i = 0; i < results.size(); i++) {
-                                if (results.size() > 0){  //需要改变轮次
+                                if (results.size() > 0) {  //需要改变轮次
                                     int roundNo = results.get(i).getRoundNo();
                                     rounds.add(roundNo);
                                 }
                             }
 
-                            for (int j = 1 ; j <= TestConfigs.getMaxTestCount() ; j++) {
+                            for (int j = 1; j <= TestConfigs.getMaxTestCount(); j++) {
                                 if (!rounds.contains(j)) {
                                     pair.setRoundNo(j);
+                                    break;
                                 }
                             }
                         }
@@ -739,11 +746,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     startActivity(new Intent(this, NewRadioGroupActivity.class));
                     return;
                 }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ
-                        && SharedPrefsUtil.loadFormSource(this, SitUpSetting.class).getTestType() == 1) {
-                    startActivity(new Intent(this, SitUpArmCheckActivity.class));
-                    return;
-                }
+//                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ
+//                        && SharedPrefsUtil.loadFormSource(this, SitUpSetting.class).getTestType() == 1) {
+//                    startActivity(new Intent(this, SitUpArmCheckActivity.class));
+//                    return;
+//                }
                 startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
                 break;
 
@@ -780,13 +787,15 @@ public class BaseGroupActivity extends BaseTitleActivity {
         }
     }
 
+    List<UploadResults> uploadResultsList = new ArrayList<>();
+
     /**
      * 分组成绩上传
      */
     private void scoreUpload() {
         List<BaseStuPair> data = stuAdapter.getData();
-
-        List<UploadResults> uploadResultsList = new ArrayList<>();
+        uploadResultsList.clear();
+        List<BaseStuPair> stuNoResultList = new ArrayList<>();
         for (BaseStuPair stuPair : data) {
             List<RoundResult> roundResultList = getResults(stuPair.getStudent().getStudentCode());
 
@@ -795,11 +804,20 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 UploadResults uploadResults = new UploadResults(currentResult.getScheduleNo(), TestConfigs.getCurrentItemCode(),
                         currentResult.getStudentCode(), currentResult.getTestNo() + "", groupList.get(groupAdapter.getTestPosition()), RoundResultBean.beanCope(roundResultList));
                 uploadResultsList.add(uploadResults);
+            } else {
+                stuNoResultList.add(stuPair);
             }
 //            ServerMessage.uploadResult(uploadResultsList);
 
         }
-        ServerMessage.baseUploadResult(this, uploadResultsList);
+        if (stuNoResultList.size() > 0) {
+            AdvancedDialog advancedDialog = new AdvancedDialog();
+            advancedDialog.setArguments(stuNoResultList,groupList.get(groupAdapter.getTestPosition()).getId());
+            advancedDialog.show(getSupportFragmentManager(),"AdvancedDialog");
+        } else {
+            ServerMessage.baseUploadResult(this, uploadResultsList);
+        }
+
     }
 
     /**

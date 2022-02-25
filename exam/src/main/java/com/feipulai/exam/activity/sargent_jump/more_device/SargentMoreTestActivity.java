@@ -50,11 +50,17 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     public int runUp;
 
     @Override
-    protected void initData() {
+    protected void initViews() {
         sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
         if (null == sargentSetting) {
             sargentSetting = new SargentSetting();
         }
+        super.initViews();
+    }
+
+    @Override
+    protected void initData() {
+
         super.initData();
         setFaultEnable(sargentSetting.isPenalize());
     }

@@ -142,10 +142,19 @@ public class SystemSetting {
     private boolean isResit;  //现场补考
     private String againPass = MyApplication.ADVANCED_PWD;
     private String resitPass = MyApplication.ADVANCED_PWD;
-    private boolean resitPassBool;
-    private boolean againPassBool;
-    private boolean resultConfirm;
-    private boolean isGroupCheck;
+    private boolean resitPassBool;//补考密码开关
+    private boolean againPassBool;//重测密码开关
+    private boolean resultConfirm;  //成绩确认
+    private boolean isGroupCheck;//分组检入
+    private boolean isStuConfirm;//考生成绩确定（确认考生所有轮次，未测成绩添加放弃）
+
+    public boolean isStuConfirm() {
+        return isStuConfirm;
+    }
+
+    public void setStuConfirm(boolean stuConfirm) {
+        isStuConfirm = stuConfirm;
+    }
 
     public int getAfrContrast() {
         return afrContrast;
