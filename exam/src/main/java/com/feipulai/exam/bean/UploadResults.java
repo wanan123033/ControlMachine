@@ -72,24 +72,25 @@ public class UploadResults implements Serializable {
             this.groupNo = group.getGroupNo() + "";
             this.groupType = group.getGroupType();
             this.sortName = group.getSortName();
+            this.groupId = group.getId();
         }
 
         this.roundResultList = roundResultList;
         RoundResult lastResult;
-        Item item=DBManager.getInstance().queryItemByCode(itemCode);
-        if (item != null){
+        Item item = DBManager.getInstance().queryItemByCode(itemCode);
+        if (item != null) {
             if (item.getLastResultMode() == 1) {
                 //最后
-                lastResult = DBManager.getInstance().queryBestFinallyScore(item,studentCode, Integer.valueOf(testNum));
+                lastResult = DBManager.getInstance().queryBestFinallyScore(item, studentCode, Integer.valueOf(testNum));
             } else {
                 //最好的
-                lastResult = DBManager.getInstance().queryBestScore(item,studentCode, Integer.valueOf(testNum));
+                lastResult = DBManager.getInstance().queryBestScore(item, studentCode, Integer.valueOf(testNum));
             }
             if (lastResult != null) {
                 this.result = lastResult.getResult();
                 this.resultStatus = lastResult.getResultState();
                 this.testTime = lastResult.getTestTime();
-                this.examState=lastResult.getExamType();
+                this.examState = lastResult.getExamType();
             }
         }
 

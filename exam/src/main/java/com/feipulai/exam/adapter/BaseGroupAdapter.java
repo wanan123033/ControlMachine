@@ -18,7 +18,6 @@ import java.util.List;
  * Created by pengjf on 2018/11/20.
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
-@Deprecated
 public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHolder> {
 
     private OnPopItemClickListener itemClickListener;
@@ -38,8 +37,14 @@ public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHold
             helper.setText(R.id.tv_num, item.getTrackNo() + "");
             helper.setText(R.id.tv_stuCode, item.getStudent().getStudentCode());
             helper.setText(R.id.tv_stuName, item.getStudent().getStudentName());
-            helper.setText(R.id.tv_stuMark, item.getResultState() ==  RoundResult.RESULT_STATE_FOUL?"X" : item.isNotBest()?" 未测":ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
-           helper.setChecked(R.id.rb_can_test,item.isCanTest());
+            if (item.isNotBest()) {
+                helper.setText(R.id.tv_stuMark, " 未测");
+            }else{
+                helper.setText(R.id.tv_stuMark, RoundResult.resultStateStr(item.getResultState(),item.getResult()));
+
+            }
+//            helper.setText(R.id.tv_stuMark, item.getResultState() == RoundResult.RESULT_STATE_FOUL ? "X" : item.isNotBest() ? " 未测" : ResultDisplayUtils.getStrResultForDisplay(item.getResult()));
+            helper.setChecked(R.id.rb_can_test, item.isCanTest());
 
             CheckBox checkBox = helper.getView(R.id.rb_can_test);
             checkBox.setEnabled(item.isCanCheck());//是否可以选中
@@ -47,7 +52,7 @@ public class BaseGroupAdapter extends BaseQuickAdapter<BaseStuPair, BaseViewHold
             helper.setOnCheckedChangeListener(R.id.rb_can_test, new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.e("TAG","----------");
+                    Log.e("TAG", "----------");
                     if (itemClickListener != null) {
                         itemClickListener.itemClick(helper.getAdapterPosition(), isChecked);
                     }

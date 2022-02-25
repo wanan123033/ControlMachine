@@ -10,6 +10,8 @@ import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
+import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.Item;
 import com.feipulai.exam.entity.Schedule;
 import com.feipulai.exam.entity.Student;
@@ -169,9 +171,6 @@ public class TCPResultPackage {
             }
 
 
-
-
-
             //考生人数
             sb.append(uploadResults.size());
             sb.append(target);
@@ -234,10 +233,18 @@ public class TCPResultPackage {
                 //名次
                 sb.append(0);//考试无
                 sb.append(target);
+                if (TextUtils.isEmpty(uploadResults.get(0).getGroupNo())) {
+                    //道次
+                    sb.append(0);//考试无
+                    sb.append(target);
+                } else {
+                    Group group = DBManager.getInstance().queryGroupById(uploadResults.get(i).getGroupId());
+                    GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, uploadResults.get(i).getStudentCode());
+                    //道次
+                    sb.append(groupItem.getTrackNo());//考试无
+                    sb.append(target);
+                }
 
-                //道次
-                sb.append(0);//考试无
-                sb.append(target);
 
                 //考生考号
                 sb.append(uploadResults.get(i).getStudentCode());
@@ -263,8 +270,8 @@ public class TCPResultPackage {
                 sb.append(uploadResults.get(i).getExamState());
                 sb.append(target);
 
-                //测试次数
-                sb.append(uploadResults.get(i).getTestNum());
+                //测试次数 (成绩数量)TODO 与中考确定传参是否是次数
+                sb.append(examRoundResult.size());
                 sb.append(target);
 
 
