@@ -35,7 +35,6 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
         if (null == setting) {
             setting = new SitReachSetting();
         }
-        setFaultEnable(setting.isPenalize());
         resultUpdate = new boolean[setting.getTestDeviceCount()];
         deviceState = new int[setting.getTestDeviceCount()];
         for (int i = 0; i < deviceState.length; i++) {
@@ -43,6 +42,9 @@ public class SitReachMoreGroupActivity extends BaseMoreGroupActivity {
             resultUpdate[i] = true;
         }
         super.initData();
+        setFaultEnable(setting.isPenalize());
+
+
         manager = new SitReachManager(SitReachManager.PROJECT_CODE_SIT_REACH);
         getState();
         RadioManager.getInstance().setOnRadioArrived(sitReachRadio);
