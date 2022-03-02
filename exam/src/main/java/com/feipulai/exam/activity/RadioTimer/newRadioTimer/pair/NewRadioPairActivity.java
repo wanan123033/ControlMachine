@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -33,7 +33,8 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     public LinearLayout beginningPoint;
     @BindView(R.id.ll_ending_point)
     public LinearLayout endingPoint;
-
+    @BindView(R.id.tv_force_start)
+    TextView tvForceStart;
     public RadioPairAdapter mAdapter;
     public RadioPairAdapter mEndAdapter;
     private RadioTimerPairPresenter presenter;
@@ -47,6 +48,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
     private final int START_POINT = 0;
     private final int END_POINT = 1;
     private int selectPoint = 0;
+    private boolean matchStart;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_new_radio_pair;
@@ -101,6 +103,15 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void updateSpecificItem(int position, int point) {
+        if (matchStart){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvForceStart.setText("抢测配对√");
+                }
+            });
+            return;
+        }
         LogUtils.all("正在匹配position:" + position + "point:" + point);
         Message msg = Message.obtain();
         msg.what = UPDATE_SPECIFIC_ITEM;
@@ -111,6 +122,7 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void select(int position, int point) {
+        matchStart = false;
         int oldSelectPosition;
         if (selectPoint != point){
             if (point == START_POINT){
@@ -145,11 +157,12 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 
     @Override
     public void onItemClick(int position, int point) {
+        matchStart = false;
         LogUtils.all("更改了设备position:" + position + "point:" + point);
         presenter.changeFocusPosition(position, point);
     }
 
-    @OnClick({R.id.sw_auto_pair})//,R.id.btn_helper,R.id.btn_end_helper
+    @OnClick({R.id.sw_auto_pair,R.id.tv_force_start})//,R.id.btn_helper,R.id.btn_end_helper
     public void btnOnClick(View v) {
         switch (v.getId()) {
             case R.id.sw_auto_pair:
@@ -182,6 +195,15 @@ public class NewRadioPairActivity extends BaseTitleActivity implements RadioCont
 //                    mAdapter.notifyDataSetChanged();
 //                }
 //                break;
+            case R.id.tv_force_start:
+                if (mEndAdapter !=null ){
+                    mEndAdapter.setSelected(-1);
+                    mEndAdapter.notifyDataSetChanged();
+                }
+                matchStart = true;
+                presenter.setPair(90);
+
+                break;
         }
     }
 

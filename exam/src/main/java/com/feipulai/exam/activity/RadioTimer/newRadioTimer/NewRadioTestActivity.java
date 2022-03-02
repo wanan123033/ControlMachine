@@ -375,6 +375,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
     }
 
     private void setBeginTime() {
+        sportPresent.setForceStart();
         sportPresent.setShowReady(false);
         sportPresent.setRunState(1);
         baseTimer = sportPresent.getTime();
@@ -592,8 +593,8 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     LogUtils.operation("红外计时点击了开始");
                     testState = TestState.FORCE_START;
                     playUtils.play(15);
-
                     setBeginTime();
+
                 }
                 break;
             case R.id.tv_mark_confirm:

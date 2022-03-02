@@ -57,6 +57,10 @@ public class RadioTimerPairPresenter implements RadioContract.Presenter,
 
     }
 
+    public void setPair(int deviceId){
+        linker.startPair(deviceId);
+    }
+
     public void setPoint(int point) {
         this.point = point;
     }

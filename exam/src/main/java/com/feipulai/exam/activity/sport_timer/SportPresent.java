@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.sport_timer;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
@@ -437,6 +438,11 @@ public class SportPresent implements SportContract.Presenter {
         this.pause = pause;
     }
 
+    public void setForceStart(){
+        sportTimerManger.setForceStart(SettingHelper.getSystemSetting().getHostId(),1);
+        SystemClock.sleep(100);
+        sportTimerManger.setForceStart(SettingHelper.getSystemSetting().getHostId(),2);
+    }
 
     /**
      * @param students
