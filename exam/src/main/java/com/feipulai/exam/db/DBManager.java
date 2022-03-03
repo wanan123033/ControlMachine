@@ -1196,6 +1196,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
+                .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
 
@@ -1523,7 +1524,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(item.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(item.getItemCode()))
                 .where(RoundResultDao.Properties.TestNo.eq(testNo))
-                .orderDesc(RoundResultDao.Properties.RoundNo)
+                .orderAsc(RoundResultDao.Properties.RoundNo)
                 .limit(1)
                 .unique();
     }

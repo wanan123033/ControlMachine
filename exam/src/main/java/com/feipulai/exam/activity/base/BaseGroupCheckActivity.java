@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.ScannerGunManager;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -41,6 +42,8 @@ import com.feipulai.exam.activity.standjump.StandJumpSetting;
 import com.feipulai.exam.activity.standjump.more.StandJumpGroupMoreActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallGroupActivity;
 import com.feipulai.exam.activity.volleyball.VolleyBallSetting;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.StudentCache;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
@@ -56,6 +59,8 @@ import com.feipulai.exam.utils.StringChineseUtil;
 import com.feipulai.exam.view.OperateProgressBar;
 import com.orhanobut.logger.utils.LogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +68,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class BaseGroupCheckActivity extends BaseCheckActivity{
+public class BaseGroupCheckActivity extends BaseCheckActivity {
     public static final String GROUP_INFO = "GROUP_INFO";
     private SystemSetting systemSetting;
 
@@ -94,23 +99,23 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
 
         group = getIntent().getParcelableExtra(GROUP_INFO);
         systemSetting = SettingHelper.getSystemSetting();
-        if (systemSetting.getCheckTool() == 0){ //条形码二维码
+        if (systemSetting.getCheckTool() == 0) { //条形码二维码
             iv_mode.setImageResource(R.mipmap.check_code);
             iv_mode.setVisibility(View.VISIBLE);
             tv_camera.setVisibility(View.GONE);
-        }else if (systemSetting.getCheckTool() == 1){ //身份证
+        } else if (systemSetting.getCheckTool() == 1) { //身份证
             iv_mode.setImageResource(R.mipmap.check_id);
             iv_mode.setVisibility(View.VISIBLE);
             tv_camera.setVisibility(View.GONE);
-        }else if (systemSetting.getCheckTool() == 2){ //IC卡
+        } else if (systemSetting.getCheckTool() == 2) { //IC卡
             iv_mode.setImageResource(R.mipmap.check_ic);
             iv_mode.setVisibility(View.VISIBLE);
             tv_camera.setVisibility(View.GONE);
-        }else if (systemSetting.getCheckTool() == 3){ //外接扫描枪
+        } else if (systemSetting.getCheckTool() == 3) { //外接扫描枪
             iv_mode.setImageResource(R.mipmap.check_gun);
             iv_mode.setVisibility(View.VISIBLE);
             tv_camera.setVisibility(View.GONE);
-        }else if (systemSetting.getCheckTool() == 4){  //人脸识别
+        } else if (systemSetting.getCheckTool() == 4) {  //人脸识别
             iv_mode.setVisibility(View.GONE);
             tv_camera.setVisibility(View.VISIBLE);
 
@@ -120,30 +125,44 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
+            @Override
+            public void onResult(String code) {
+                LogUtils.operation("扫描结果：" + code);
+                boolean needAdd = checkQulification(code, STUDENT_CODE);
+
+            }
+        });
         if (systemSetting.getCheckTool() == 4)
             showAFR();
     }
 
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.STOP_GROUP_LED));
+
+    }
+
     @OnClick(R.id.txt_search)
-    public void onClick(View view){
+    public void onClick(View view) {
         final CheckStudentInfoDialog dialog = new CheckStudentInfoDialog(this);
         String studentCode = et_input_text.getText().toString().trim();
-        if (TextUtils.isEmpty(studentCode)){
+        if (TextUtils.isEmpty(studentCode)) {
             ToastUtils.showLong("请输入考号！");
             return;
         }
         Student student = DBManager.getInstance().queryStudentByIDCode(studentCode);
-        if (student == null){
+        if (student == null) {
             student = DBManager.getInstance().queryStudentByStuCode(studentCode);
         }
-        if(student == null){
+        if (student == null) {
             InteractUtils.toastSpeak(this, "查无此人！");
             return;
         }
         List<Student> studentList = DBManager.getInstance().getStudentsByGroup(group);
         boolean isGroupStudent = false;
-        for (Student groupStudent : studentList){
-            if (groupStudent.getStudentCode().equals(student.getStudentCode())){
+        for (Student groupStudent : studentList) {
+            if (groupStudent.getStudentCode().equals(student.getStudentCode())) {
                 isGroupStudent = true;
                 break;
             }
@@ -156,12 +175,12 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
             dialog.setOnCheckInListener(new CheckStudentInfoDialog.onCheckInListener() {
                 @Override
                 public void onCheck(Student student) {
-                    checkQulification(student.getStudentCode(),0);
+                    checkQulification(student.getStudentCode(), 0);
                     dialog.dismissDialog();
                 }
             });
             dialog.show();
-        }else {
+        } else {
             InteractUtils.toastSpeak(this, "该考生不在该分组！");
             return;
         }
@@ -179,53 +198,10 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
                 break;
         }
         final GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, code);
-//        final List<RoundResult> results = DBManager.getInstance().queryGroupRound(code,group.getId()+"");
-//        if (results != null && results.size() >= TestConfigs.getMaxTestCount()) {
-//            SystemSetting setting = SettingHelper.getSystemSetting();
-//            if (setting.isAgainTest() && setting.isResit()) {
-//                final Student finalStudent = student;
-//                new SweetAlertDialog(this).setContentText("需要重测还是补考呢?")
-//                        .setCancelText("重测")
-//                        .setConfirmText("补考")
-//                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                            @Override
-//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                                AgainTestDialog dialog = new AgainTestDialog();
-//                                dialog.setArguments(finalStudent, results, groupItem);
-//                                dialog.setOnIndividualCheckInListener(BaseGroupCheckActivity.this);
-//                                dialog.show(getSupportFragmentManager(), "AgainTestDialog");
-//                                sweetAlertDialog.dismissWithAnimation();
-//                            }
-//                        })
-//                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                            @Override
-//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                                ResitDialog dialog = new ResitDialog();
-//                                dialog.setArguments(finalStudent, results, groupItem);
-//                                dialog.setOnIndividualCheckInListener(BaseGroupCheckActivity.this);
-//                                dialog.show(getSupportFragmentManager(), "ResitDialog");
-//                                sweetAlertDialog.dismissWithAnimation();
-//                            }
-//                        }).show();
-//                return false;
-//            }
-//            if (setting.isAgainTest()) {
-//                AgainTestDialog dialog = new AgainTestDialog();
-//                dialog.setArguments(student, results, groupItem);
-//                dialog.setOnIndividualCheckInListener(this);
-//                dialog.show(getSupportFragmentManager(), "AgainTestDialog");
-//                return false;
-//            }
-//            if (setting.isResit()) {
-//                ResitDialog dialog = new ResitDialog();
-//                dialog.setArguments(student, results, groupItem);
-//                dialog.setOnIndividualCheckInListener(this);
-//                dialog.show(getSupportFragmentManager(), "ResitDialog");
-//            } else {
-//                InteractUtils.toastSpeak(this, "该考生已测试");
-//                return false;
-//            }
-//        }
+        if (groupItem == null) {
+            toastSpeak("分组查无此人");
+            return false;
+        }
         this.student = student;
         this.groupItem = groupItem;
         checkInUIThread(student, groupItem);
@@ -255,15 +231,15 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
             case CHECK_IN:
                 if (SettingHelper.getSystemSetting().isStartThermometer()) {
                     StudentThermometer thermometer = DBManager.getInstance().getThermometer(groupItem);
-                    if (thermometer == null){
+                    if (thermometer == null) {
                         showThermometerDialog();
-                    }else {
-                        if (student != null){
+                    } else {
+                        if (student != null) {
                             LogUtils.operation("检入考生：" + student.toString());
                             onCheckIn(student);
                         }
                     }
-                }else {
+                } else {
                     if (student != null) {
                         LogUtils.operation("检入考生：" + student.toString());
                         onCheckIn(student);
@@ -331,33 +307,35 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
     @Override
     public void onCheckIn(Student student) {
         //TODO 跳转测试页面测试
-        Log.e("BaseGroupCheckActivity","学生信息："+student.toString());
+        et_input_text.setText("");
+        Log.e("BaseGroupCheckActivity", "学生信息：" + student.toString());
         TestConfigs.baseGroupMap.put("group", group);
         TestCache.getInstance().setGroup(group);
         List<BaseStuPair> pairs = new ArrayList<>();
         List<RoundResult> results = getResults(student.getStudentCode());
-        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
-        if (results.size() >= TestConfigs.getMaxTestCount() && groupItem.getExamType() != StudentItem.EXAM_MAKE){
-            InteractUtils.toastSpeak(this,"该人已测试完成");
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
+        if (results.size() >= TestConfigs.getMaxTestCount() && groupItem.getExamType() != StudentItem.EXAM_MAKE) {
+            InteractUtils.toastSpeak(this, "该人已测试完成");
             return;
         }
         BaseStuPair pair = new BaseStuPair();
         pair.setCanCheck(true);
         pair.setCanTest(true);
         pair.setStudent(student);
+        pair.setTrackNo(groupItem.getTrackNo());
         setStuPairsData(pair, results);
         TestConfigs.baseGroupMap.put(student, results);
-        List<RoundResult> roundResultList= DBManager.getInstance().queryGroupRoundAll
-                (student.getStudentCode(),group.getId() + "");
-        if (roundResultList.size()>=TestConfigs.getMaxTestCount()){
+        List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRoundAll
+                (student.getStudentCode(), group.getId() + "");
+        if (roundResultList.size() >= TestConfigs.getMaxTestCount()) {
             List<Integer> rounds = new ArrayList<>();
             for (int i = 0; i < results.size(); i++) {
-                if (results.size() > 0){  //需要改变轮次
+                if (results.size() > 0) {  //需要改变轮次
                     int roundNo = results.get(i).getRoundNo();
                     rounds.add(roundNo);
                 }
             }
-            for (int j = 1 ; j <= TestConfigs.getMaxTestCount() ; j++) {
+            for (int j = 1; j <= TestConfigs.getMaxTestCount(); j++) {
                 if (!rounds.contains(j)) {
                     pair.setRoundNo(j);
                 }
@@ -433,11 +411,13 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
     public void setRoundNo(Student student, int roundNo) {
 
     }
+
     // 获取学生成绩列表
     private List<RoundResult> getResults(String stuCode) {
         return DBManager.getInstance().queryGroupRound(stuCode,
                 group.getId() + "");
     }
+
     public void setStuPairsData(BaseStuPair pair, List<RoundResult> roundResultList) {
 
         String[] result = new String[TestConfigs.getMaxTestCount()];
@@ -479,15 +459,15 @@ public class BaseGroupCheckActivity extends BaseCheckActivity{
             InteractUtils.toastSpeak(this, "该考生不存在");
             return;
         }
-        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(),student.getStudentCode());
-        if (groupItem == null){
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(), student.getStudentCode());
+        if (groupItem == null) {
             InteractUtils.toastSpeak(this, "无此项目");
             return;
         }
         List<Student> studentList = DBManager.getInstance().getStudentsByGroup(group);
         boolean isGroupStudent = false;
-        for (Student groupStudent : studentList){
-            if (groupStudent.getStudentCode().equals(student.getStudentCode())){
+        for (Student groupStudent : studentList) {
+            if (groupStudent.getStudentCode().equals(student.getStudentCode())) {
                 isGroupStudent = true;
                 break;
             }

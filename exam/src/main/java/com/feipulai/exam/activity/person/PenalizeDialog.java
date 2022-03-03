@@ -337,7 +337,23 @@ public class PenalizeDialog {
 //        List<RoundResult> roundResultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
         List<RoundResult> roundResultList = DBManager.getInstance().queryResultsByStudentCode(queryStudent.getStudentCode());
         //如果是空值判罚应该增加一个值 包含groupId?
-        if (resultState != RoundResult.RESULT_STATE_NORMAL && mAdapter.getClick() >= roundResultList.size()) {
+        int testNo = 1;
+
+        RoundResult dbRoundResult;
+        if (groupId != -1) {
+            dbRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), getGroupId() + "", mAdapter.getClick() + 1);
+        } else {
+            if (roundResultList.size() == 0) {
+                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+                testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
+            } else {
+                testNo = roundResultList.get(0).getTestNo();
+            }
+            dbRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
+                    testNo, mAdapter.getClick() + 1);
+        }
+
+        if (resultState != RoundResult.RESULT_STATE_NORMAL && dbRoundResult == null) {
             RoundResult roundResult = new RoundResult();
             SystemSetting systemSetting = SettingHelper.getSystemSetting();
             if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
@@ -353,13 +369,13 @@ public class PenalizeDialog {
             roundResult.setStudentCode(queryStudent.getStudentCode());
             roundResult.setItemCode(TestConfigs.getCurrentItemCode());
             roundResult.setMachineResult(0);
-            roundResult.setTestNo(1);
+            roundResult.setTestNo(testNo);
             roundResult.setUpdateState(0);
             roundResult.setMtEquipment(SettingHelper.getSystemSetting().getBindDeviceName());
             if (getGroupId() != -1) {
                 roundResult.setGroupId(getGroupId());
             }
-            roundResult.setRoundNo(roundResultList.size() + 1);
+            roundResult.setRoundNo(mAdapter.getClick() + 1);
             roundResult.setIsLastResult(0);
             roundResult.setUpdateState(0);
             roundResult.setResult(0);
@@ -374,24 +390,33 @@ public class PenalizeDialog {
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
             LogUtils.operation("新增判罚：" + roundResult.toString());
         } else if (null != roundResultList && roundResultList.size() > mAdapter.getClick()) {
-            roundResultList.get(mAdapter.getClick()).setResultState(resultState);
-            roundResultList.get(mAdapter.getClick()).setIsLastResult(0);
-            DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
+            RoundResult updateResult = null;
+            for (RoundResult roundResult : roundResultList) {
+                if (roundResult.getRoundNo() - 1 == mAdapter.getClick()) {
+                    updateResult = roundResult;
+                    roundResult.setResultState(resultState);
+                    roundResult.setIsLastResult(0);
+                    DBManager.getInstance().updateRoundResult(roundResult);
+                }
+            }
+//            roundResultList.get(mAdapter.getClick()).setResultState(resultState);
+//            roundResultList.get(mAdapter.getClick()).setIsLastResult(0);
+//            DBManager.getInstance().updateRoundResult(roundResultList.get(mAdapter.getClick()));
             RoundResult r = roundResultList.get(0);
 
             for (RoundResult result : roundResultList) {
-                if (r.getResultState()!=RoundResult.RESULT_STATE_NORMAL ){
-                    if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL){
+                if (r.getResultState() != RoundResult.RESULT_STATE_NORMAL) {
+                    if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
                         r = result;
                     }
-                }else if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() > r.getResult()) {
+                } else if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() > r.getResult()) {
                     r = result;
                 }
             }
             r.setIsLastResult(1);
             DBManager.getInstance().updateRoundResult(r);
             LogUtils.operation("判定为：" + tvTitle.getText().toString() + roundResultList.get(mAdapter.getClick()).toString());
-            EventBus.getDefault().post(new BaseEvent(roundResultList.get(mAdapter.getClick()), EventConfigs.UPDATE_RESULT));
+            EventBus.getDefault().post(new BaseEvent(updateResult, EventConfigs.UPDATE_RESULT));
         }
 
     }

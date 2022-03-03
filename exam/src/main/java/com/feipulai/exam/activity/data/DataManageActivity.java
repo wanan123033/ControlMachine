@@ -1248,7 +1248,7 @@ public class DataManageActivity
                     });
                 }
             });
-            tcpDownLoad.getTcp(SCHEDULE, "", 0);
+            tcpDownLoad.getTcp(SCHEDULE, "",0, 0);
         } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();

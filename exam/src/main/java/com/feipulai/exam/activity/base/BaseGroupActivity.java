@@ -1,16 +1,23 @@
 package com.feipulai.exam.activity.base;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,6 +32,8 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
+import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioGroupActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
@@ -77,6 +86,7 @@ import com.feipulai.exam.utils.ResultDisplayUtils;
 import com.feipulai.exam.view.AdvancedDialog;
 import com.feipulai.exam.view.CommonPopupWindow;
 import com.orhanobut.logger.utils.LogUtils;
+import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,6 +97,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+
+import static com.feipulai.exam.config.SharedPrefsConfigs.MACHINE_SERVER_PORT;
+import static com.feipulai.exam.config.SharedPrefsConfigs.MIDDLE_RACE;
 
 public class BaseGroupActivity extends BaseTitleActivity {
 
@@ -135,6 +148,11 @@ public class BaseGroupActivity extends BaseTitleActivity {
     private ResultsAdapter resultsAdapter;
     private boolean isBack;
     private SystemSetting systemSetting;
+    private EasyPopup mServePop;
+    private String server_Port;
+    private int currentPort;
+    private Intent bindIntent;
+    private boolean isBind = false;
 
     @Override
     protected int setLayoutResID() {
@@ -150,6 +168,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
         } else {
             mLEDManager = new LEDManager();
         }
+        server_Port = SharedPrefsUtil.getValue(this, MIDDLE_RACE, MACHINE_SERVER_PORT, "4040");
+        initConnectPop();
     }
 
     @Nullable
@@ -162,7 +182,17 @@ public class BaseGroupActivity extends BaseTitleActivity {
             title = TestConfigs.machineNameMap.get(machineCode) + SettingHelper.getSystemSetting().getHostId() + "号机-" + SettingHelper.getSystemSetting().getTestName();
         }
 
-        return builder.setTitle(title).addRightText("项目设置", new View.OnClickListener() {
+        return builder.setTitle(title).addRightText("服务连接", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mServePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+            }
+        }).addRightImage(R.mipmap.ic_serve_connect, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mServePop.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+            }
+        }).addRightText("项目设置", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gotoItemSetting();
@@ -285,17 +315,6 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                     showStuInfo(stuPairsList.get(position).getStudent());
                                     stuAdapter.notifyItemChanged(position);
                                     refreshStuBaseResult(position);
-//                                    for (int i = 0; i < results.size(); i++) {
-//                                        RoundResult result = results.get(i);
-//                                        if (result.isDelete()) {
-//                                            stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
-//                                            stuPairsList.get(position).setRoundNo(roundNo);
-//                                            stuPairsList.get(position).setCanTest(true);
-//                                            stuPairsList.get(position).setCanCheck(true);
-//                                            stuAdapter.notifyItemChanged(position);
-//                                            break;
-//                                        }
-//                                    }
                                 }
                             });
                             dialog.show(getSupportFragmentManager(), "AgainTestDialog");
@@ -308,9 +327,59 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
     }
 
+    /**
+     * 连接设备
+     */
+    private void initConnectPop() {
+        mServePop = EasyPopup.create()
+                .setContentView(this, R.layout.pop_word_group_serve)
+                .setBackgroundDimEnable(true)
+                .setDimValue(0.5f)
+                //是否允许点击PopupWindow之外的地方消失
+                .setFocusAndOutsideEnable(true)
+                .apply();
+
+        Button btnStart = mServePop.findViewById(R.id.btn_start_server);
+
+        final EditText serverPort = mServePop.findViewById(R.id.et_server_port);
+
+        serverPort.setText(server_Port);
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(serverPort.getText())) {
+                    ToastUtils.showShort("请先设置端口");
+                    return;
+                }
+                currentPort = Integer.parseInt(serverPort.getText().toString());
+                //当端口改变重启服务端
+                if (!server_Port.equals(serverPort.getText().toString())) {
+                    myBinder.stopWork();
+                    myBinder.startWork(currentPort);
+                }
+
+                if (myTcpService != null && myTcpService.isWork) {
+                    ToastUtils.showShort("当前服务已开启");
+                    return;
+                }
+                bindTcpService();
+                //存储当前开启服务的时间，间隔12小时每次进入当前activity自动打开服务，超过之后需要点击按钮开启服务
+//                SharedPrefsUtil.putValue(mContext, MyTcpService.SERVICE_CONNECT, MyTcpService.SERVICE_CONNECT, System.currentTimeMillis());
+            }
+        });
+        mServePop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                SharedPrefsUtil.putValue(BaseGroupActivity.this, MIDDLE_RACE, MACHINE_SERVER_PORT, serverPort.getText().toString());
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unBindService();
     }
 
     @Override
@@ -342,8 +411,14 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 getGroupList(scheduleText);
             }
 
-        }else if (baseEvent.getTagInt()==EventConfigs.AUTO_ADD_RESULT){
+        } else if (baseEvent.getTagInt() == EventConfigs.AUTO_ADD_RESULT) {
             scoreUpload();
+        } else if (baseEvent.getTagInt() == EventConfigs.STOP_GROUP_LED) {
+            if (ledThread != null) {
+                ledThread.interrupt();
+                ledThread.finish();
+                ledThread = null;
+            }
         }
     }
 
@@ -810,10 +885,10 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //            ServerMessage.uploadResult(uploadResultsList);
 
         }
-        if (stuNoResultList.size() > 0) {
+        if (SettingHelper.getSystemSetting().isStuConfirm()&&stuNoResultList.size() > 0) {
             AdvancedDialog advancedDialog = new AdvancedDialog();
-            advancedDialog.setArguments(stuNoResultList,groupList.get(groupAdapter.getTestPosition()).getId());
-            advancedDialog.show(getSupportFragmentManager(),"AdvancedDialog");
+            advancedDialog.setArguments(stuNoResultList, groupList.get(groupAdapter.getTestPosition()).getId());
+            advancedDialog.show(getSupportFragmentManager(), "AdvancedDialog");
         } else {
             ServerMessage.baseUploadResult(this, uploadResultsList);
         }
@@ -980,5 +1055,78 @@ public class BaseGroupActivity extends BaseTitleActivity {
         }
 
     }
+
+    private MyTcpService.Work myBinder;
+    private MyTcpService myTcpService;
+
+    private void bindTcpService() {
+        bindIntent = new Intent(BaseGroupActivity.this, MyTcpService.class);
+
+        startService(bindIntent);
+        isBind = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
+    }
+
+    public void unBindService() {
+        if (isBind && serviceConnection != null) {
+            unbindService(serviceConnection);
+            myTcpService.unRegisterCallBack(callBack);
+            if (myBinder != null) {
+                myBinder.stopWork();
+            }
+        }
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder = (MyTcpService.Work) service;
+            myTcpService = myBinder.getMyService();
+
+            myTcpService.registerCallBack(callBack);
+
+            if (myBinder != null && !myTcpService.isWork) {
+                myBinder.startWork(currentPort);
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            if (myTcpService != null) {
+                myTcpService.unRegisterCallBack(callBack);
+            }
+        }
+    };
+
+    private MyTcpService.CallBack callBack = new MyTcpService.CallBack() {
+        @Override
+        public void postMessage(final ServiceTcpBean message) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    ToastUtils.showLong("接收到上道终端发送的分组数据");
+
+
+                     if (scheduleList.size() == 0) {
+                        updateSchedules();
+                    } else {
+                        getGroupList(scheduleText);
+                    }
+
+                }
+            });
+        }
+
+        @Override
+        public void postConnectMessage(final String info) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showShort(info);
+                }
+            });
+        }
+    };
 
 }

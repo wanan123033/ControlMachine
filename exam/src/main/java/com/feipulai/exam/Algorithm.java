@@ -7,6 +7,7 @@ import com.orhanobut.logger.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -53,23 +54,24 @@ public class Algorithm {
 //        System.out.println("======>" + new String(bytes));
 
 //        System.out.println("======>" + formatTime2(1635147285883L,"yyyyMMddHHmmss.SSS"));
-        System.out.println("======>" + formatTime(12580,"ss.SS"));
-        System.out.println("======>" + formatTime(12580,"ss.SS"));
+        System.out.println("======>" + formatTime(12580, "ss.SS"));
+        System.out.println("======>" + formatTime(12580, "ss.SS"));
         List<String> list = new ArrayList<>();
         list.add("1");
         list.add("2");
         list.add("3");
-        System.out.println("======>" + list.toString());
-        list.remove(1);
-        System.out.println("======>" + list.toString());
-        list.add(1,"2");
-        System.out.println("======>" + list.toString());
+
+        String[] resultArray = new String[list.size()];
+        list.toArray(resultArray);
+        System.out.println("======>" + Arrays.toString(resultArray));
     }
+
     public static String formatTime(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));//计时时间换算不需要加8
         return sdf.format(new Date(timeMillis));
     }
+
     public static String formatTime2(long timeMillis, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));//时钟时间换算需要加8

@@ -425,9 +425,9 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
                 }
                 SystemSetting setting = SettingHelper.getSystemSetting();
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
-                if (setting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP && roundResult.getRoundNo() == roundNo){
-                    finish();
-                }
+//                if (setting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP && roundResult.getRoundNo() == roundNo){
+//                    finish();
+//                }
                 break;
             case EventConfigs.FOUL_DIALOG_MISS:
                 if (lockFoul) {
@@ -1141,12 +1141,12 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         //循环模式下的分组检入 需要关闭当前页面重新检录
-        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
-            finish();
-        }
-        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
-            finish();
-        }
+//        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_LOOP){
+//            finish();
+//        }
+//        if (systemSetting.isGroupCheck() && setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == roundNo){
+//            finish();
+//        }
     }
 
     /**

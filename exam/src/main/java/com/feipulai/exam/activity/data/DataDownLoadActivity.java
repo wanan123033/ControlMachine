@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -25,6 +26,7 @@ import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.baseToolbar.StatusBarUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.device.tcp.SendTcpClientThread;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
@@ -78,7 +80,10 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
     TextView tv_face;
     @BindView(R.id.tv_disconnected)
     TextView tv_disconnected;
-
+    @BindView(R.id.txt_test)
+    TextView txt_test;
+    @BindView(R.id.txt_login)
+    TextView txt_login;
 
     private SystemSetting setting;
     private int examType = StudentItem.EXAM_NORMAL;
@@ -125,7 +130,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     }
 
-    @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,R.id.tv_http,R.id.tv_tcp,R.id.tv_back})
+    @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,
+            R.id.tv_http,R.id.tv_tcp,R.id.tv_back,R.id.txt_test})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.tv_http:
@@ -135,6 +141,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 tv_down_up.setVisibility(View.VISIBLE);
                 et_sever_ip.setText(setting.getServerIp());
                 tv_disconnected.setText("HTTP服务器");
+                txt_login.setVisibility(View.VISIBLE);
+                txt_test.setVisibility(View.GONE);
                 break;
             case R.id.tv_tcp:
                 downType = 1;
@@ -143,6 +151,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 tv_down_up.setVisibility(View.GONE);
                 et_sever_ip.setText(setting.getTcpIp());
                 tv_disconnected.setText("TCP服务器");
+                txt_login.setVisibility(View.GONE);
+                txt_test.setVisibility(View.VISIBLE);
                 break;
             case R.id.btn_default:
                 et_sever_ip.setText(TestConfigs.DEFAULT_IP_ADDRESS);
@@ -183,8 +193,70 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             case R.id.tv_back:
                 finish();
                 break;
+            case R.id.txt_test:
+                testTcpConnect();
+                break;
         }
     }
+
+    private SendTcpClientThread tcpClientThread;
+
+    private void testTcpConnect() {
+        if (tcpClientThread == null) {
+            String ipStr = null;
+            String portStr = null;
+            try {
+                String tcpIp = SettingHelper.getSystemSetting().getTcpIp();
+                ipStr = tcpIp.split(":")[0];
+                portStr = tcpIp.split(":")[1];
+            } catch (Exception e) {
+                ToastUtils.showShort("请输入正确的TCP地址");
+                return;
+            }
+
+            tcpClientThread = new SendTcpClientThread(ipStr, Integer.parseInt(portStr), new SendTcpClientThread.SendTcpListener() {
+                @Override
+                public void onMsgReceive(String text) {
+
+                }
+
+                @Override
+                public void onSendFail(final String msg) {
+
+                }
+
+                @Override
+                public void onConnectFlag(boolean isConnect) {
+                    Log.e("onConnectFlag", "---------" + isConnect);
+                    if (isConnect) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接成功");
+                            }
+                        });
+
+                    } else {
+                        tcpClientThread.exit = true;
+                        tcpClientThread = null;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtils.showShort("服务器连接失败");
+                            }
+                        });
+
+                    }
+                }
+            });
+            tcpClientThread.start();
+        } else {
+            if (tcpClientThread.isInterrupted()) {
+                tcpClientThread.start();
+            }
+        }
+    }
+
     private void gotoLogin() {
         String url = et_sever_ip.getText().toString().trim() + "/app/";
         if (!url.startsWith("http")) {//修改IP
@@ -314,10 +386,12 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 }
             });
             if (downType == 0 || downType == 1) {
-                tcpDownLoad.getTcp(SCHEDULE, "", downType);
+                tcpDownLoad.getTcp(SCHEDULE, "", 0,downType);
             }else {
+                String scheduleNo=sp_schedule.getSelectedItemPosition()==0?"0":scheduleList.get(sp_schedule.getSelectedItemPosition()).getScheduleNo();
+
                 if (!currentItem.getItemCode().equals("-99")) {
-                    tcpDownLoad.getTcp(TRACK, currentItem.getItemName(), 0);
+                        tcpDownLoad.getTcp(TRACK, currentItem.getItemName(), Integer.valueOf(scheduleNo),0);
                 }else {
                     final List<Item> items = new ArrayList<>();
                     if (currentItem.getItemCode().equals("-99")){
@@ -326,7 +400,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                         items.add(currentItem);
                     }
                     for (Item item : items){
-                        tcpDownLoad.getTcp(TRACK, item.getItemName(), 0);
+                        tcpDownLoad.getTcp(TRACK, item.getItemName(), Integer.valueOf( scheduleNo),0);
                     }
                 }
             }

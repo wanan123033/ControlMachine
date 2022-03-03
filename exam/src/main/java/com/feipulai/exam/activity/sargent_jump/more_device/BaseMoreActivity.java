@@ -692,37 +692,40 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
                             @Override
                             public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int updateRoundNo) {
-                                LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo + "轮成绩");
-                                String[] result = pair.getTimeResult();
-                                result[updateRoundNo - 1] = "";
-                                pair.setTimeResult(result);
-                                oneView.setResultData(pair);
-                                oneView.indexResult(updateRoundNo - 1);
-                                //设置测试轮次
-                                pair.setRoundNo(updateRoundNo);
-                                deviceDetails.get(0).setRound(updateRoundNo);
-                                toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), updateRoundNo)
-                                        , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), updateRoundNo));
-                                setShowLed(pair, 0);
-                                if (!isNextClickStart) {
-                                    if (deviceDetails.size() == 1) {
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
-                                                pair.setResult(-999);
-                                                deviceListAdapter.notifyDataSetChanged();
-                                            }
-                                        }, 3000);
-                                        pair.setTestTime(DateUtil.getCurrentTime() + "");
-                                        sendTestCommand(pair, 0);
-                                    } else {
-                                        pair.setTestTime(DateUtil.getCurrentTime() + "");
-                                        sendTestCommand(pair, 0);
-                                    }
+                                if (pair.getStudent()!=null){
+                                    LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo + "轮成绩");
+                                    String[] result = pair.getTimeResult();
+                                    result[updateRoundNo - 1] = "";
+                                    pair.setTimeResult(result);
+                                    oneView.setResultData(pair);
+                                    oneView.indexResult(updateRoundNo - 1);
+                                    //设置测试轮次
+                                    pair.setRoundNo(updateRoundNo);
+                                    deviceDetails.get(0).setRound(updateRoundNo);
+                                    toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), updateRoundNo)
+                                            , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), updateRoundNo));
+                                    setShowLed(pair, 0);
+                                    if (!isNextClickStart) {
+                                        if (deviceDetails.size() == 1) {
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
+                                                    pair.setResult(-999);
+                                                    deviceListAdapter.notifyDataSetChanged();
+                                                }
+                                            }, 3000);
+                                            pair.setTestTime(DateUtil.getCurrentTime() + "");
+                                            sendTestCommand(pair, 0);
+                                        } else {
+                                            pair.setTestTime(DateUtil.getCurrentTime() + "");
+                                            sendTestCommand(pair, 0);
+                                        }
 
+                                    }
+                                    oneView.setBtnEnabled(true, true, true);
                                 }
-                                oneView.setBtnEnabled(true, true, true);
+
                             }
 
                             @Override
@@ -1268,6 +1271,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
 
     public void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
+            if (setDeviceCount() == 1) {
+                 oneView.refreshDeviceState(deviceDetails.get(index).getStuDevicePair().getBaseDevice());
+            }
             deviceListAdapter.notifyItemChanged(index);
         }
     }

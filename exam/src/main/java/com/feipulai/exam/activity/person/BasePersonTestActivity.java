@@ -672,25 +672,28 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
                     @Override
                     public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int updateRoundNo) {
-                        LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo+ "轮成绩");
+                        if (pair.getStudent()!=null){
+                            LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo+ "轮成绩");
 
-                        result[updateRoundNo-1] = "";
-                        pair.setTimeResult(result);
-                        resultList.clear();
-                        resultList.addAll(Arrays.asList(result));
-                        //设置测试轮次
-                        pair.setRoundNo(updateRoundNo);
-                        roundNo = updateRoundNo;
-                        adapter.setIndexPostion(roundNo - 1);
-                        adapter.notifyDataSetChanged();
-                        toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
-                                , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
-                        setShowLed(pair);
-                        if (testType == 0) {
-                            pair.setTestTime(DateUtil.getCurrentTime() + "");
-                            sendTestCommand(pair);
+                            result[updateRoundNo-1] = "";
+                            pair.setTimeResult(result);
+                            resultList.clear();
+                            resultList.addAll(Arrays.asList(result));
+                            //设置测试轮次
+                            pair.setRoundNo(updateRoundNo);
+                            roundNo = updateRoundNo;
+                            adapter.setIndexPostion(roundNo - 1);
+                            adapter.notifyDataSetChanged();
+                            toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), roundNo)
+                                    , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), roundNo));
+                            setShowLed(pair);
+                            if (testType == 0) {
+                                pair.setTestTime(DateUtil.getCurrentTime() + "");
+                                sendTestCommand(pair);
+                            }
+                            setBtnEnabled(true, true, true);
                         }
-                        setBtnEnabled(true, true, true);
+
                     }
 
                     @Override

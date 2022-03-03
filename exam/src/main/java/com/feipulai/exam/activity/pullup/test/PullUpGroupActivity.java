@@ -37,6 +37,7 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.person.BaseStuPair;
+import com.feipulai.exam.activity.person.adapter.BaseGroupTestStuAdapter;
 import com.feipulai.exam.activity.person.adapter.BasePersonTestResultAdapter;
 import com.feipulai.exam.activity.pullup.setting.PullUpSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -63,11 +64,13 @@ import com.orhanobut.logger.utils.LogUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class PullUpGroupActivity extends BaseTitleActivity
         implements PullUpTestFacade.Listener,
@@ -114,11 +117,13 @@ public class PullUpGroupActivity extends BaseTitleActivity
     private String testDate;
     private SystemSetting systemSetting;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
-    private VolleyBallGroupStuAdapter stuPairAdapter;
+    //    private VolleyBallGroupStuAdapter stuPairAdapter;
+    private BaseGroupTestStuAdapter stuPairAdapter;
     private Group group;
     private WaitDialog changBadDialog;
     private EditResultDialog editResultDialog;
     private List<BaseStuPair> stuPairs;
+    private int roundNo;
 
     @Override
     protected int setLayoutResID() {
@@ -145,14 +150,16 @@ public class PullUpGroupActivity extends BaseTitleActivity
         CheckUtils.groupCheck(pairs);
 
         rvTestingPairs.setLayoutManager(new LinearLayoutManager(this));
-        stuPairAdapter = new VolleyBallGroupStuAdapter(pairs);
+        stuPairAdapter = new BaseGroupTestStuAdapter(stuPairs);
+        stuPairAdapter.setTestPosition(0);
         rvTestingPairs.setAdapter(stuPairAdapter);
-
+        initStuResult();
         facade = new PullUpTestFacade(SettingHelper.getSystemSetting().getHostId(), this);
-        stuPairAdapter.setOnItemClickListener(this);
+//        stuPairAdapter.setOnItemClickListener(this);
 
 //        prepareForBegin();
         locationTestStu();
+//        getTestStudent(group);
         editResultDialog = new EditResultDialog(this);
         editResultDialog.setListener(new EditResultDialog.OnInputResultListener() {
 
@@ -166,6 +173,140 @@ public class PullUpGroupActivity extends BaseTitleActivity
         });
     }
 
+    private void initStuResult() {
+        for (int i = 0; i < stuPairs.size(); i++) {
+
+            //  查询学生成绩 当有成绩则添加数据跳过测试
+            List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+                    (stuPairs.get(i).getStudent().getStudentCode(), group.getId() + "");
+
+            setStuPairsData(i, roundResultList);
+        }
+        stuPairAdapter.notifyDataSetChanged();
+    }
+
+//    /**
+//     * 获取测试学生
+//     */
+//    private void getTestStudent(Group group) {
+//
+//        roundNo = 1;
+////        stuPairs.clear();
+//        stuPairAdapter.setTestPosition(-1);
+////        stuPairs.addAll((List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu"));
+//        for (BaseStuPair stuPair : stuPairs) {
+//            int testNo = stuPair.getTestNo() == -1 ? TestConfigs.getMaxTestCount() : stuPair.getTestNo();
+//            stuPair.setTimeResult(new String[testNo]);
+//        }
+//
+//
+//        if (setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+//            for (int i = 0; i < stuPairs.size(); i++) {
+//
+//                //  查询学生成绩 当有成绩则添加数据跳过测试
+//                List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+//                        (stuPairs.get(i).getStudent().getStudentCode(), group.getId() + "");
+//                SystemSetting setting = SettingHelper.getSystemSetting();
+//                StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(i).getStudent().getStudentCode());
+//                //判断是否开启补考需要加上是否已完成本次补考，不然一直会停留在这个人上面测试
+//                if (studentItem != null) {
+//                    if ((setting.isResit() || studentItem.getMakeUpType() == StudentItem.EXAM_DELAYED) && !stuPairs.get(i).isResit()) {
+//                        roundResultList.clear();
+//                    }
+//                }
+//                if (roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount()) {
+//                    if (stuPairAdapter.getTestPosition() == -1) {
+//                        stuPairAdapter.setTestPosition(i);
+//                        rvTestingPairs.scrollToPosition(i);
+//                        stuPairAdapter.notifyDataSetChanged();
+//                        roundNo = stuPairs.get(i).getRoundNo() != 0 ? stuPairs.get(i).getRoundNo()
+//                                : (roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.size() + 1);
+//                        stuPairs.get(i).setRoundNo(roundNo);
+//                        pairs.get(i).setCurrentRoundNo(roundNo);
+//                        stuPairAdapter.indexStuTestResult(i, roundNo - 1);
+//                        stuPairAdapter.indexStuTestResultSelect(i, roundNo - 1);
+//                        prepareForBegin();
+//
+//                    }
+//                    if (roundResultList.size() > 0) {
+//                        setStuPairsData(i, roundResultList);
+//                    }
+//                } else {
+//
+//                    setStuPairsData(i, roundResultList);
+//                }
+//
+//
+//            }
+//        } else {//循环测试 获取轮次成绩
+//            for (int i = 0; i < stuPairs.size(); i++) {
+//                //  查询学生成绩 当有成绩则添加数据跳过测试
+//                List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
+//                        (stuPairs.get(i).getStudent().getStudentCode(), group.getId() + "");
+//                if ((roundResultList == null || roundResultList.size() == 0) && stuPairAdapter.getTestPosition() == -1) {
+//                    stuPairAdapter.setTestPosition(i);
+//                    rvTestingPairs.scrollToPosition(i);
+//                    stuPairAdapter.notifyDataSetChanged();
+//                    roundNo = 1;
+//                    stuPairs.get(i).setRoundNo(roundNo);
+//                    pairs.get(i).setCurrentRoundNo(roundNo);
+//                    stuPairAdapter.indexStuTestResult(i, roundNo - 1);
+//                    stuPairAdapter.indexStuTestResultSelect(i, roundNo - 1);
+//                    prepareForBegin();
+//                   LogUtils.operation(String.format(getString(R.string.test_speak_hint), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+//
+//                }
+//                if (roundResultList.size() > 0) {
+//                    setStuPairsData(i, roundResultList);
+//                }
+//            }
+//            if (stuPairAdapter.getTestPosition() == -1) {
+//                //循环测试轮次 判断考生轮次是否有成绩 定位当前测试轮次和考生位置
+//                //判断当前考生是不是补考类型
+////                int testNo = stuPairsList.get(stuAdapter.getTestPosition()).getTestNo() == -1 ? setTestCount() : stuPairsList.get(stuAdapter.getTestPosition()).getTestNo();
+//                for (int i = roundNo; i <=TestConfigs.getMaxTestCount(); i++) {
+//                    for (int j = 0; j < stuPairs.size(); j++) {
+//                        if (TextUtils.isEmpty(stuPairs.get(j).getTimeResult()[i - 1]) && stuPairAdapter.getTestPosition() == -1) {
+//                            roundNo = i;
+//                            stuPairs.get(i).setRoundNo(roundNo);
+//                            pairs.get(i).setCurrentRoundNo(roundNo);
+//                            stuPairAdapter.setTestPosition(j);
+//                            rvTestingPairs.scrollToPosition(j);
+//                            stuPairAdapter.notifyDataSetChanged();
+//                            stuPairAdapter.indexStuTestResult(j, roundNo - 1);
+////                            stuAdapter.indexStuTestResultSelect(i, roundNo - 1);
+//                            prepareForBegin();
+//                               LogUtils.operation(String.format(getString(R.string.test_speak_hint), stuPairs.get(stuPairAdapter.getTestPosition()).getStudent().getStudentName(), roundNo));
+//
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }
+//        stuPairAdapter.notifyDataSetChanged();
+//
+//    }
+
+    /**
+     * 设置位置考生已测成绩
+     *
+     * @param index
+     * @param roundResultList
+     */
+    public void setStuPairsData(int index, List<RoundResult> roundResultList) {
+        stuPairs.get(index).setResultState(-99);
+//        int testNo = stuPairsList.get(index).getTestNo() == -1 ? setTestCount() : stuPairsList.get(index).getTestNo();
+        String[] result = new String[TestConfigs.getMaxTestCount()];
+
+        for (int j = 0; j < roundResultList.size(); j++) {
+            result[roundResultList.get(j).getRoundNo() - 1] = RoundResult.resultStateStr(roundResultList.get(j).getResultState(), roundResultList.get(j).getResult());
+
+
+        }
+        stuPairs.get(index).setTimeResult(result);
+    }
 
     private void locationTestStu() {
         if (setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {//连续
@@ -180,7 +321,9 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     roundResultList.clear();
                 }
                 if ((roundResultList == null || roundResultList.size() == 0 || roundResultList.size() < TestConfigs.getMaxTestCount(this))) {
+                    isAllTest(roundResultList, pair.getStudent());
                     switchToPosition(i);
+
                     return;
                 }
             }
@@ -191,6 +334,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                             (pair.getStudent().getStudentCode(), group.getId() + "");
                     if ((roundResultList.size() < (i + 1))) {
+                        isAllTest(roundResultList, pair.getStudent());
                         switchToPosition(j);
                         return;
                     }
@@ -217,7 +361,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 LogUtils.operation("引体向上点击了开始测试");
                 for (StuDevicePair pair : pairs) {
                     for (BaseStuPair stuPair : stuPairs) {
-                        if (TextUtils.equals(pair.getStudent().getStudentCode(),stuPair.getStudent().getStudentCode())){
+                        if (TextUtils.equals(pair.getStudent().getStudentCode(), stuPair.getStudent().getStudentCode())) {
                             pair.setCurrentRoundNo(stuPair.getRoundNo());
                         }
                     }
@@ -230,7 +374,13 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 LogUtils.operation("引体向上点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
-                prepareForConfirmResult();
+                if (setting.isPenalize()) {
+                    prepareForConfirmResult();
+                } else {
+                    tvResult.setText("");
+                    InteractUtils.saveResults(pairs, testDate);
+                    onResultConfirmed();
+                }
                 break;
 
             case R.id.tv_print:
@@ -252,8 +402,22 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
             case R.id.tv_abandon_test:
                 LogUtils.operation("引体向上点击了放弃测试");
-                facade.abandonTest();
-                prepareForBegin();
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
+                        .setContentText("是否放弃本轮成绩？")
+                        .setConfirmText( getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        facade.abandonTest();
+                        prepareForBegin();
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).setCancelText( getString(com.feipulai.common.R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
                 break;
 
             case R.id.tv_pair:
@@ -297,17 +461,17 @@ public class PullUpGroupActivity extends BaseTitleActivity
         }
 
         dispatch(isAllTest);
-        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group,student.getStudentCode());
+        GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(group, student.getStudentCode());
         if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
             if (nextPosition() != -1)
                 switchToPosition(nextPosition());
         }
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         //循环模式下的分组检入 需要关闭当前页面重新检录
-        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP){
+        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP) {
             finish();
         }
-        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1){
+        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1) {
             finish();
         }
     }
@@ -317,6 +481,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         stuPairAdapter.setTestPosition(position);
         stuPairAdapter.notifyItemChanged(oldPosition);
         stuPairAdapter.notifyItemChanged(position);
+        stuPairAdapter.indexStuTestResult(position, pairs.get(position).getCurrentRoundNo() - 1);
         prepareForBegin();
     }
 
@@ -386,11 +551,34 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     private boolean hasRemains(List<RoundResult> roundResults) {
+
+        String[] resultArray = new String[TestConfigs.getMaxTestCount()];
+        if (roundResults != null) {
+            for (RoundResult result : roundResults) {
+                resultArray[result.getRoundNo() - 1] = RoundResult.resultStateStr(result.getResultState(), result.getResult());
+            }
+        }
+        stuPairs.get(stuPairAdapter.getTestPosition()).setTimeResult(resultArray);
+
+
+        boolean isAllTest = true;
+        for (int i = 0; i < resultArray.length; i++) {
+            if (TextUtils.isEmpty(resultArray[i])) {
+                isAllTest = false;
+                pairs.get(stuPairAdapter.getTestPosition()).setCurrentRoundNo(i + 1);
+                break;
+            }
+        }
+        if (isAllTest) {
+            return false;
+        }
+
+
         return roundResults.size() < TestConfigs.getMaxTestCount(this);
     }
 
     private void prepareView(boolean tvPrintEnable, boolean tvStartTestEnable, boolean tvAbandonTestEnable,
-                             boolean tvConfirmEnable, boolean tvStopTestEnable, boolean tvPunishEnable) {
+                             boolean tvConfirmEnable, boolean tvStopTestEnable, boolean tvPunishEnable,boolean tvCountEnable) {
         tvPrint.setVisibility(tvPrintEnable ? View.VISIBLE : View.GONE);
 
         tvStartTest.setVisibility(tvStartTestEnable ? View.VISIBLE : View.GONE);
@@ -399,7 +587,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
         tvStopTest.setVisibility(tvStopTestEnable ? View.VISIBLE : View.GONE);
         tvPunish.setVisibility(tvPunishEnable ? View.VISIBLE : View.GONE);
-
+        tvTimeCount.setVisibility(tvCountEnable ? View.VISIBLE : View.GONE);
         setAdapter();
     }
 
@@ -428,7 +616,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         prepareView(true,
                 results == null || results.size() < TestConfigs.getMaxTestCount(this),
                 false, false, false,
-                false);
+                false,false);
 
         displayCheckedInLED();
 
@@ -445,7 +633,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
         prepareView(false, false,
                 true, false, false,
-                false);
+                false,true);
 
         tvResult.setText("准备");
         testDate = System.currentTimeMillis() + "";
@@ -457,7 +645,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         state = WAIT_CONFIRM;
         prepareView(false, false,
                 false, true, false,
-                setting.isPenalize());
+                setting.isPenalize(),false);
     }
 
     @Override
@@ -507,7 +695,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
             public void run() {
                 prepareView(false, false,
                         true, false, true,
-                        false);
+                        false,false);
             }
         });
     }

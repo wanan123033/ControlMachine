@@ -709,12 +709,39 @@ public class SocketClient {
             int m_nProperty = Integer.parseInt(result[11]);
             Log.i("项目属性: ", "--->" + Arrays.toString(result));
             int m_nItemCode = Integer.parseInt(result[13]);
+            Log.i("项目: ", m_strEvent);
             if (m_nEventType.equals("2")) {
+                int carryMode = Integer.parseInt(result[18]);
+                Log.i("进位方式: ", "carryMode:" + carryMode);
+
+                int digital = Integer.parseInt(result[19]);
+                Log.i("小数位数: ", "digital:" + digital);
+
+                int testNum = Integer.parseInt(result[14]);
+                Log.i("测试次数: ", "testNum:" + testNum);
+                String unit = result[15];
                 Item itemInfo = new Item();
                 itemInfo.setItemName(m_strEvent);
                 itemInfo.setMachineCode(m_nItemCode);
                 itemInfo.setItemCode(result[12]);
                 itemInfo.setTestType(m_nProperty);
+                itemInfo.setUnit(unit);
+//                0.不去舍，1.四舍五入 2.舍位 3.非零进取
+//                0四舍五入 1非零取整 2非零进位
+                switch (carryMode) {
+                    case 0:
+                        itemInfo.setCarryMode(1);
+                        break;
+                    case 1:
+                        itemInfo.setCarryMode(2);
+                        break;
+                    case 2:
+                        itemInfo.setCarryMode(3);
+                        break;
+
+                }
+                itemInfo.setDigital(digital);
+                itemInfo.setTestNum(testNum);
                 itemInfos.add(itemInfo);
 
             }

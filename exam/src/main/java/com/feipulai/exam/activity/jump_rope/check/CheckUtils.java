@@ -65,6 +65,9 @@ public class CheckUtils {
         List<StuDevicePair> pairs = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             StuDevicePair pair = new StuDevicePair();
+            if (pairss.get(i).getRoundNo()!=0){
+                pair.setCurrentRoundNo(pairss.get(i).getRoundNo());
+            }
             pair.setBaseDevice(createBaseDeviceState(i + 1));
             pairs.add(pair);
         }

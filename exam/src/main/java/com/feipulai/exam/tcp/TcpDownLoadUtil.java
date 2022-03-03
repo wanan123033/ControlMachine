@@ -52,7 +52,7 @@ public class TcpDownLoadUtil {
      * @param itemName
      * @param downType
      */
-    public void getTcp(int type, String itemName, final int downType) {
+    public void getTcp(int type, String itemName,int scheduleNo, final int downType) {
         ResultPackage rcPackage = new ResultPackage();
         rcPackage.m_strSort = "";
         switch (type) {
@@ -72,6 +72,9 @@ public class TcpDownLoadUtil {
                 rcPackage.m_strEvent = itemName;
                 rcPackage.m_nSex = -1;
                 rcPackage.m_strPackType = "PFPTrack";
+                if (scheduleNo!=0){
+                    rcPackage.m_nField=scheduleNo;
+                }
 //                rcPackage.m_strPackType = "PFPSporter";
                 break;
             case FIELD:
@@ -99,7 +102,7 @@ public class TcpDownLoadUtil {
             public void Receive(String info) {
                 switch (Integer.parseInt(info)) {
                     case SCHEDULE:
-                        getTcp(EVENT, "", downType);
+                        getTcp(EVENT, "",0, downType);
                         break;
                     case EVENT:
 
@@ -113,7 +116,7 @@ public class TcpDownLoadUtil {
                                     return;
                                 } else {
                                     if (downType == 0) {
-                                        getTcp(TRACK, TestConfigs.sCurrentItem.getItemName(), downType);
+                                        getTcp(TRACK, TestConfigs.sCurrentItem.getItemName(),0, downType);
                                     } else {
                                         ToastUtils.showShort("下载完成");
                                         downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");
@@ -124,7 +127,7 @@ public class TcpDownLoadUtil {
                         });
                         if (initState == TestConfigs.INIT_SUCCESS && !TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
                             if (downType == 0) {
-                                getTcp(TRACK, null, downType);
+                                getTcp(TRACK, null,0, downType);
                             } else {
                                 ToastUtils.showShort("下载完成");
                                 downLoadListener.onCommonListener(DOWNLOAD_FLAG, "下载完成");

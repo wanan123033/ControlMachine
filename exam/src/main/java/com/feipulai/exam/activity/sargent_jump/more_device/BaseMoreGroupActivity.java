@@ -233,6 +233,19 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
                         stuPair.setTimeResult(timeResult);
                         oneView.notifyDataSetChanged();
+
+                        if (roundResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                            stuPair.setFullMark(false);
+                            if (stuPair.getStudent().getSex() == 0 && TestConfigs.getFullSkip() != null && roundResult.getResult() >= TestConfigs.getFullSkip()[0]) {//男子满分跳过
+                                stuPair.setFullMark(true);
+                            }
+                            if (stuPair.getStudent().getSex() == 1 && TestConfigs.getFullSkip() != null && roundResult.getResult() >= TestConfigs.getFullSkip()[1]) {//女子满分跳过
+                                stuPair.setFullMark(true);
+                            }
+                        } else {
+                            stuPair.setFullMark(false);
+                        }
+
                         break;
                     }
                 }
@@ -357,6 +370,10 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
      */
     public void refreshDevice(int index) {
         if (deviceDetails.get(index).getStuDevicePair().getBaseDevice() != null) {
+            if (setTestDeviceCount() == 1) {
+                pairList.get(0).getBaseDevice().setState(deviceDetails.get(index).getStuDevicePair().getBaseDevice().getState());
+                oneView.notifyDataSetChanged();
+            }
             deviceListAdapter.notifyItemChanged(index);
         }
     }
@@ -464,7 +481,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         break;
                     case R.id.txt_start_test://开始
                         LogUtils.operation("点击了开始...");
-                        if (pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
+                        if (deviceDetails.get(0).getStuDevicePair().getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
                             if (deviceDetails.get(0).getStuDevicePair().getStudent() == null) {
                                 toastSpeak("当前无设备可用");
                                 return;
@@ -1288,8 +1305,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
         String[] timeResult = deviceDetails.get(deviceIndex).getStuDevicePair().getTimeResult();
         for (int i = 0; i < timeResult.length; i++) {
             if (TextUtils.isEmpty(timeResult[i])) {
-                timeResult[i] = (pair.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
-                        ResultDisplayUtils.getStrResultForDisplay(pair.getResult());
+                timeResult[i] = RoundResult.resultStateStr(pair.getResultState(), pair.getResult());
                 break;
             }
         }
