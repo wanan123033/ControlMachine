@@ -1,5 +1,6 @@
 package com.feipulai.exam.entity;
 
+import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.utils.ResultDisplayUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -68,6 +69,7 @@ public class RoundResult implements Serializable {
     private int roundTestState;//轮次测试标识 0 正常 1重测 （标识本轮成绩是否设置为重测）
     private int resultTestState;//轮次成绩测试标识  0 正常 1重测
     private boolean isDelete = false;//数据是否为删除状态：true 本条数据为弃用，默认为false
+    private String userInfo = SettingHelper.getSystemSetting().getUserName();
     private boolean isAutoAdd;
     private String remark1;
     private String remark2;
@@ -111,13 +113,13 @@ public class RoundResult implements Serializable {
         this.remark3 = remark3;
     }
 
-    @Generated(hash = 217532724)
-    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode,
-            int roundNo, int testNo, int machineResult, int penaltyNum, int result, int resultState,
-            int isLastResult, int examType, @NotNull String testTime, String printTime, String endTime,
-            int stumbleCount, int updateState, byte[] cycleResult, Long groupId, String scheduleNo,
-            String mtEquipment, int roundTestState, int resultTestState, boolean isDelete, boolean isAutoAdd,
-            String remark1, String remark2, String remark3) {
+    @Generated(hash = 1369846559)
+    public RoundResult(Long id, @NotNull String studentCode, @NotNull String itemCode, int machineCode, int roundNo,
+            int testNo, int machineResult, int penaltyNum, int result, int resultState, int isLastResult, int examType,
+            @NotNull String testTime, String printTime, String endTime, int stumbleCount, int updateState,
+            byte[] cycleResult, Long groupId, String scheduleNo, String mtEquipment, int roundTestState,
+            int resultTestState, boolean isDelete, String userInfo, boolean isAutoAdd, String remark1, String remark2,
+            String remark3) {
         this.id = id;
         this.studentCode = studentCode;
         this.itemCode = itemCode;
@@ -142,6 +144,7 @@ public class RoundResult implements Serializable {
         this.roundTestState = roundTestState;
         this.resultTestState = resultTestState;
         this.isDelete = isDelete;
+        this.userInfo = userInfo;
         this.isAutoAdd = isAutoAdd;
         this.remark1 = remark1;
         this.remark2 = remark2;
@@ -374,6 +377,14 @@ public class RoundResult implements Serializable {
 
     public void setAutoAdd(boolean autoAdd) {
         isAutoAdd = autoAdd;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(String userInfo) {
+        this.userInfo = userInfo;
     }
 
     @Override

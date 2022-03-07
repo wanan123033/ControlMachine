@@ -331,6 +331,11 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 }
             }
         }
+        //是否全部为计时状态
+        if (isDeviceReady() && !sportPresent.isPause() && testState == TestState.DATA_DEALING) {
+            sportPresent.stopRun();
+
+        }
 
 
     }
@@ -556,13 +561,15 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
 //                    testState = TestState.DATA_DEALING;
 //                    sportPresent.waitStart();
 //                }
-                sportPresent.showReadyLed(mList);
+                sportPresent.waitLed();
+//                sportPresent.showReadyLed(mList);
                 sportPresent.waitStart();
 
                 break;
             case R.id.tv_wait_ready:
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
+                sportPresent.readyLed();
                 setView(new boolean[]{false, false, true, true, false, false});
                 break;
             case R.id.tv_fault_back:
@@ -576,6 +583,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                     runStudent.setMark("");
                     runStudent.setOriginalMark(0);
                     runStudent.getResultList().clear();
+                    runStudent.setConnectState(0);
                 }
                 adapter.notifyDataSetChanged();
                 testState = TestState.UN_STARTED;
@@ -586,6 +594,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
                 break;
             case R.id.tv_force_start:
                 if (!isDeviceReady()) {
+                    sportPresent.stopRun();
                     alertConfirm();
                     return;
                 }
@@ -671,6 +680,7 @@ public class NewRadioTestActivity extends BaseTitleActivity implements SportCont
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
+                sportPresent.setPause(true);
             }
         }).show();
     }

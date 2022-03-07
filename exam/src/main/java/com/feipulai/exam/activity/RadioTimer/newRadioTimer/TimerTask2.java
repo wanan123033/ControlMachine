@@ -26,7 +26,6 @@ public class TimerTask2 {
         timerUtil = new TimerUtil(new TimerUtil.TimerAccepListener() {
             @Override
             public void timer(Long time) {
-                LogUtil.logDebugMessage(""+(time.intValue() * period));
                 timeUpdateListener.onTimeTaskUpdate(time.intValue() * period);
             }
         });

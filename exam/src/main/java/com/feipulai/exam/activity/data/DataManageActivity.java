@@ -184,6 +184,12 @@ public class DataManageActivity
 //        }
 
         initGridView();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initAfrCount();
     }
 

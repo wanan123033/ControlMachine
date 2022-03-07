@@ -401,11 +401,13 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
 //                if (runTimerSetting.getInterceptWay() == 0 && runTimerSetting.getInterceptPoint() != 2) {//红外拦截&&触发方式必须有起点
                 testState = TestState.DATA_DEALING;//预处理
                 sportPresent.waitStart();
-                sportPresent.showReadyLed(mList);
+                sportPresent.waitLed();
+//                sportPresent.showReadyLed(mList);
 //                }
                 break;
             case R.id.tv_force_start://强制启动
                 if (!isDeviceReady()) {
+                    sportPresent.stopRun();
                     alertConfirm();
                     return;
                 }
@@ -427,6 +429,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             case R.id.tv_wait_ready://预备
                 LogUtils.operation("红外计时点击了预备");
                 playUtils.play(14);
+                sportPresent.readyLed();
                 setView(new boolean[]{false, false, true, true, false, false});
                 break;
             case R.id.tv_fault_back://违规返回
@@ -593,6 +596,11 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
                     mHandler.sendEmptyMessage(RUN_UPDATE_DEVICE);
                 }
             }
+        }
+        //是否全部为计时状态
+        if (isDeviceReady() && !sportPresent.isPause() && testState == TestState.DATA_DEALING) {
+            sportPresent.stopRun();
+            sportPresent.waitLed();
         }
 
 
@@ -805,6 +813,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
+                sportPresent.setPause(true);
             }
         }).show();
     }

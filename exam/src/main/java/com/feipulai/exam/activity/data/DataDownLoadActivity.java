@@ -112,15 +112,15 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
         scheduleAdapter = new ScheduleAdapter(this, scheduleList);
         sp_schedule.setAdapter(scheduleAdapter);
         itemList = new ArrayList<>();
-        itemAdapter = new ItemAdapter(this,itemList);
+        itemAdapter = new ItemAdapter(this, itemList);
         sp_item.setAdapter(itemAdapter);
 
         sp_schedule.setOnItemSelectedListener(this);
         sp_item.setOnItemSelectedListener(this);
-        if (tv_down_up.getVisibility() == View.VISIBLE){
+        if (tv_down_up.getVisibility() == View.VISIBLE) {
             et_sever_ip.setText(setting.getServerIp());
             tv_disconnected.setText("HTTP服务器");
-        }else {
+        } else {
             et_sever_ip.setText(setting.getTcpIp());
             tv_disconnected.setText("TCP服务器");
         }
@@ -130,10 +130,10 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     }
 
-    @OnClick({R.id.btn_default,R.id.txt_login,R.id.tv_down_whole,R.id.tv_down_up,R.id.tv_down_one,R.id.tv_down,
-            R.id.tv_http,R.id.tv_tcp,R.id.tv_back,R.id.txt_test})
-    public void onClick(View view){
-        switch (view.getId()){
+    @OnClick({R.id.btn_default, R.id.txt_login, R.id.tv_down_whole, R.id.tv_down_up, R.id.tv_down_one, R.id.tv_down,
+            R.id.tv_http, R.id.tv_tcp, R.id.tv_back, R.id.txt_test})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.tv_http:
                 downType = 0;
                 tv_http.setTextColor(getResources().getColor(R.color.white));
@@ -165,8 +165,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 if (downType == 0) {
                     OperateProgressBar.showLoadingUi(DataDownLoadActivity.this, "正在下载数据...");
                     ServerMessage.downloadData(DataDownLoadActivity.this, examType, "");
-                }else {
-                    dataDownload(setting.getTcpIp(),0);
+                } else {
+                    dataDownload(setting.getTcpIp(), 0);
                 }
                 break;
             case R.id.tv_down_up:
@@ -177,17 +177,17 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 }
                 break;
             case R.id.tv_down_one:
-                if (downType == 0){
+                if (downType == 0) {
                     downScheduleAll();
-                }else {
-                    dataDownload(setting.getTcpIp(),1);
+                } else {
+                    dataDownload(setting.getTcpIp(), 1);
                 }
                 break;
             case R.id.tv_down:
                 if (downType == 0) {
                     downStudentGroup();
-                }else {
-                    dataDownload(setting.getTcpIp(),2);
+                } else {
+                    dataDownload(setting.getTcpIp(), 2);
                 }
                 break;
             case R.id.tv_back:
@@ -270,20 +270,22 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
         HttpManager.resetManager();
         startActivity(new Intent(this, LoginActivity.class));
     }
+
     private int position;
+
     private void downStudentGroup() {
-        OperateProgressBar.showLoadingUi(this,"数据下载中...");
+        OperateProgressBar.showLoadingUi(this, "数据下载中...");
         String lastTime = SharedPrefsUtil.getValue(DataDownLoadActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, "");
         String scheduleNo = null;
-        if (currentSchedule.getScheduleNo().equals("-2")){  // 全部日程
+        if (currentSchedule.getScheduleNo().equals("-2")) {  // 全部日程
             scheduleNo = "";
-        }else {
+        } else {
             scheduleNo = currentSchedule.getScheduleNo();
         }
         final List<Item> items = new ArrayList<>();
-        if (currentItem.getItemCode().equals("-99")){
+        if (currentItem.getItemCode().equals("-99")) {
             items.addAll(DBManager.getInstance().dumpAllItems());
-        }else {
+        } else {
             items.add(currentItem);
         }
         final String finalScheduleNo = scheduleNo;
@@ -307,15 +309,15 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             }
         });
 
-        for (Item item : items){
-            subscriber.getItemStudent(lastTime,item.getItemCode(),1,examType,scheduleNo);
+        for (Item item : items) {
+            subscriber.getItemStudent(lastTime, item.getItemCode(), 1, examType, scheduleNo);
             subscriber.getItemGroupAll(item.getItemCode(), "", 1, examType);
         }
 
     }
 
     private void downScheduleAll() {
-        OperateProgressBar.showLoadingUi(this,"数据下载中...");
+        OperateProgressBar.showLoadingUi(this, "数据下载中...");
         subscriber.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
@@ -332,7 +334,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                             }
                             initScheduleItem();
                             ToastUtils.showShort("日程，项目下载完成");
-                        }else {
+                        } else {
                             ToastUtils.showShort("项目选择错误，请重新选择项目！");
                         }
                         break;
@@ -355,6 +357,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     /**
      * TCP 下载数据   0 下载全部 1只下载日程跟项目   2 下载学生
+     *
      * @param tcpip
      * @param downType
      */
@@ -378,29 +381,32 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                             toastSpeak(string);
                             OperateProgressBar.removeLoadingUiIfExist(DataDownLoadActivity.this);
                             initAfrCount();
-                            if (downType == 0 || downType == 1){
+                            if (downType == 0 || downType == 1) {
                                 initScheduleItem();
                             }
                         }
                     });
                 }
             });
-            if (downType == 0 || downType == 1) {
-                tcpDownLoad.getTcp(SCHEDULE, "", 0,downType);
-            }else {
-                String scheduleNo=sp_schedule.getSelectedItemPosition()==0?"0":scheduleList.get(sp_schedule.getSelectedItemPosition()).getScheduleNo();
+            if (downType == 0) {
+                tcpDownLoad.getTcp(SCHEDULE, "", 0, examType, downType);
+            } else if (downType == 1) {
+                tcpDownLoad.getTcp(SCHEDULE, "", 0, downType);
+
+            } else {
+                String scheduleNo = sp_schedule.getSelectedItemPosition() == 0 ? "0" : scheduleList.get(sp_schedule.getSelectedItemPosition()).getScheduleNo();
 
                 if (!currentItem.getItemCode().equals("-99")) {
-                        tcpDownLoad.getTcp(TRACK, currentItem.getItemName(), Integer.valueOf(scheduleNo),0);
-                }else {
+                    tcpDownLoad.getTcp(TRACK, currentItem.getItemName(), Integer.valueOf(scheduleNo), examType, 0);
+                } else {
                     final List<Item> items = new ArrayList<>();
-                    if (currentItem.getItemCode().equals("-99")){
+                    if (currentItem.getItemCode().equals("-99")) {
                         items.addAll(DBManager.getInstance().dumpAllItems());
-                    }else {
+                    } else {
                         items.add(currentItem);
                     }
-                    for (Item item : items){
-                        tcpDownLoad.getTcp(TRACK, item.getItemName(), Integer.valueOf( scheduleNo),0);
+                    for (Item item : items) {
+                        tcpDownLoad.getTcp(TRACK, item.getItemName(), Integer.valueOf(scheduleNo), examType, 0);
                     }
                 }
             }
@@ -427,11 +433,11 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        if (checkedId == R.id.rb_nomal){
+        if (checkedId == R.id.rb_nomal) {
             examType = StudentItem.EXAM_NORMAL;
-        }else if (checkedId == R.id.rb_deferred){
+        } else if (checkedId == R.id.rb_deferred) {
             examType = StudentItem.EXAM_DELAYED;
-        }else if (checkedId == R.id.rb_resit){
+        } else if (checkedId == R.id.rb_resit) {
             examType = StudentItem.EXAM_MAKE;
         }
     }
@@ -450,14 +456,14 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
     public void afterTextChanged(Editable s) {
         if (downType == 0) {
             setting.setServerIp(et_sever_ip.getText().toString().trim());
-        }else {
+        } else {
             setting.setTcpIp(et_sever_ip.getText().toString().trim());
         }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()){
+        switch (parent.getId()) {
             case R.id.sp_schedule:
                 currentSchedule = scheduleList.get(position);
                 break;
@@ -471,6 +477,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
@@ -484,6 +491,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             startActivity(new Intent(this, LoginActivity.class));
         }
     }
+
     private void initAfrCount() {
 
         DataBaseExecutor.addTask(new DataBaseTask() {
@@ -497,8 +505,8 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
 
             @Override
             public void onExecuteSuccess(DataBaseRespon respon) {
-                tv_sum.setText("考生数量:"+Integer.valueOf(respon.getInfo()));
-                tv_face.setText("考生特征:"+respon.getObject());
+                tv_sum.setText("考生数量:" + Integer.valueOf(respon.getInfo()));
+                tv_face.setText("考生特征:" + respon.getObject());
             }
 
             @Override
