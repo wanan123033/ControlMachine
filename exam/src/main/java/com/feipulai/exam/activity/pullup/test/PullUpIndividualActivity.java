@@ -146,7 +146,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     protected void initData() {
         systemSetting = SettingHelper.getSystemSetting();
         setting = SharedPrefsUtil.loadFormSource(this, PullUpSetting.class);
-
+        lastResult = new String[setting.getTestNo()];
         TestCache.getInstance().clear();
 
         StuDevicePair pair = new StuDevicePair();
@@ -451,7 +451,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
             case R.id.tv_abandon_test:
                 new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
                         .setContentText("是否放弃本轮成绩？")
-                        .setConfirmText( getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         facade.abandonTest();
@@ -459,7 +459,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                         prepareForBegin();
                         sweetAlertDialog.dismissWithAnimation();
                     }
-                }).setCancelText( getString(com.feipulai.common.R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                }).setCancelText(getString(com.feipulai.common.R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();

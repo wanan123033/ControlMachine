@@ -424,47 +424,38 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 break;
             case R.id.tv_foul:
                 penalizeDialog.setGroupId(group.getId());
-                if (pairs.get(0).getStudent() == null) {
-                    penalizeDialog.setData(0, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                } else {
-                    penalizeDialog.setData(1, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                }
+
+                penalizeDialog.setData(1, pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent(), resultArray, lastStudent, lastResult);
+
                 penalizeDialog.showDialog(0);
                 break;
             case R.id.tv_inBack:
                 penalizeDialog.setGroupId(group.getId());
-                if (pairs.get(0).getStudent() == null) {
 
-                    penalizeDialog.setData(0, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                } else {
-                    penalizeDialog.setData(1, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                }
+                penalizeDialog.setData(1, pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent(), resultArray, lastStudent, lastResult);
+
                 penalizeDialog.showDialog(1);
                 break;
             case R.id.tv_abandon:
                 penalizeDialog.setGroupId(group.getId());
-                if (pairs.get(0).getStudent() == null) {
-                    penalizeDialog.setData(0, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                } else {
-                    penalizeDialog.setData(1, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                }
+
+                penalizeDialog.setData(1, pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent(), resultArray, lastStudent, lastResult);
+
                 penalizeDialog.showDialog(2);
                 break;
             case R.id.tv_normal:
                 penalizeDialog.setGroupId(group.getId());
-                if (null == pairs.get(0).getStudent()) {
-                    penalizeDialog.setData(0, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                } else {
-                    penalizeDialog.setData(1, pairs.get(0).getStudent(), resultArray, lastStudent, lastResult);
-                }
+
+                penalizeDialog.setData(1, pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent(), resultArray, lastStudent, lastResult);
+
                 penalizeDialog.showDialog(3);
                 break;
             case R.id.tv_resurvey:
                 if (pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent() == null) {
                     return;
                 }
-                Student student=pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent();
-                 AgainTestDialog dialog = new AgainTestDialog();
+                Student student = pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent();
+                AgainTestDialog dialog = new AgainTestDialog();
                 RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId().toString(), stuPairAdapter.getSaveSeletePosition() + 1);
 
                 if (roundResult == null) {
@@ -555,12 +546,12 @@ public class PullUpGroupActivity extends BaseTitleActivity
         }
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         //循环模式下的分组检入 需要关闭当前页面重新检录
-        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP) {
-            finish();
-        }
-        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1) {
-            finish();
-        }
+//        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_LOOP) {
+//            finish();
+//        }
+//        if (systemSetting.isGroupCheck() && setting.getGroupMode() == TestConfigs.GROUP_PATTERN_SUCCESIVE && TestConfigs.getMaxTestCount() == 1) {
+//            finish();
+//        }
     }
 
     private void switchToPosition(int position) {
@@ -598,6 +589,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         for (int i = position() + 1; i < pairs.size() + position(); i++) {
             int j = i % pairs.size();
             StuDevicePair pair = pairs.get(j);
+            stuPairAdapter.setTestPosition(j);
             Student student = pair.getStudent();
             List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
             if (!isAllTest(roundResults, pair)) {
@@ -877,7 +869,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
             List<RoundResult> results = TestCache.getInstance().getResults().get(stuPairs.get(i).getStudent());
             stuPairAdapter.setTestPosition(i);
             hasRemains(results);
-            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo()-1);
+            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo() - 1);
             stuPairAdapter.notifyDataSetChanged();
             prepareForBegin();
         } else {
