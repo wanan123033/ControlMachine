@@ -49,6 +49,7 @@ import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.LoginActivity;
+import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRunAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -877,15 +878,31 @@ public class DataManageActivity
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
-        if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_SUCCEED) {
-            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-            ToastUtils.showShort("数据下载完成");
-            initAfrCount();
-        } else if (baseEvent.getTagInt() == EventConfigs.DATA_DOWNLOAD_FAULT) {
-            OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
-        } else if (baseEvent.getTagInt() == EventConfigs.TOKEN_ERROR) {
-            startActivity(new Intent(this, LoginActivity.class));
+        switch (baseEvent.getTagInt()){
+            case EventConfigs.REQUEST_UPLOAD_LOG_S:
+                OperateProgressBar.removeLoadingUiIfExist(this);
+                ToastUtils.showShort("网络备份完成");
+                break;
+            case EventConfigs.REQUEST_UPLOAD_LOG_E:
+                OperateProgressBar.removeLoadingUiIfExist(this);
+                ToastUtils.showShort("网络备份失败");
+                break;
+            case EventConfigs.REQUEST_UPLOAD_LOG_F:
+                OperateProgressBar.showLoadingUi(this, "正在网络备份...");
+                break;
+            case EventConfigs.DATA_DOWNLOAD_SUCCEED:
+                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                ToastUtils.showShort("数据下载完成");
+                initAfrCount();
+                break;
+            case EventConfigs.DATA_DOWNLOAD_FAULT:
+                OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+                break;
+            case EventConfigs.TOKEN_ERROR:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
         }
+
     }
 
     @Override
@@ -1402,14 +1419,26 @@ public class DataManageActivity
                 UsbFile targetFile = null;
                 try {
                     targetFile = file.createFile(fileName + df.format(new Date()) + ".db");
-                    boolean backupSuccess = backupManager.backup(targetFile);
+                    final boolean backupSuccess = backupManager.backup(targetFile);
                     UsbFile deleteFile = file.createFile("." + fileName + "delete.db");
                     deleteFile.delete();
-                    ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showShort(backupSuccess ? "数据库备份成功" : "数据库备份失败");
+                        }
+                    });
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showShort("文件创建失败,请确保路径目录不存在已有文件");
+                        }
+                    });
+
                     Logger.i("文件创建失败,数据库备份失败");
                 }
 
@@ -1429,9 +1458,9 @@ public class DataManageActivity
                                 @Override
                                 public void run() {
                                     ToastUtils.showShort(reason);
-                                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
+//                                    OperateProgressBar.removeLoadingUiIfExist(DataManageActivity.this);
                                     if (responseCode == ExlListener.EXEL_WRITE_SUCCESS) {
-                                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件压缩中...");
+//                                        OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件压缩中...");
 
                                     } else {
                                         isProcessingData = false;
@@ -1460,7 +1489,7 @@ public class DataManageActivity
         });
     }
 
-    private void zipFile(String fileName, String zipPathName, File dbFile, File excelFile) {
+    private void zipFile(final String fileName, final String zipPathName, File dbFile, File excelFile) {
         // 生成的压缩文件
         try {
 //            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + backUp);
@@ -1491,6 +1520,13 @@ public class DataManageActivity
 
             UsbFile deleteFile = FileSelectActivity.sSelectedFile.createFile(".Delete" + fileName + ".zip");
             deleteFile.delete();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showUploadLog(fileName,zipPathName);
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1503,6 +1539,26 @@ public class DataManageActivity
 
 
     }
+
+    private void showUploadLog(final String fileName, final String zipPathName){
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
+                .setContentText("上传日志到云端?")
+                .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件上传中...");
+                ServerMessage.uploadLogFile(fileName,zipPathName);
+                sweetAlertDialog.dismissWithAnimation();
+            }
+        }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            @Override
+            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                sweetAlertDialog.dismissWithAnimation();
+
+            }
+        }).show();
+    }
+
 
     public void chooseFile() {
         Intent intent = new Intent();

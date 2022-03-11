@@ -52,4 +52,8 @@ public class EventConfigs {
     public static final int AUTO_ADD_RESULT = 24;
 
     public static final int STOP_GROUP_LED=25;
+
+    public static final int REQUEST_UPLOAD_LOG_S = 26;
+    public static final int REQUEST_UPLOAD_LOG_E = 27;
+    public static final int REQUEST_UPLOAD_LOG_F = 28;
 }

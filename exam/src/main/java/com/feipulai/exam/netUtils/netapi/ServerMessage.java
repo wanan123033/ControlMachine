@@ -9,6 +9,7 @@ import android.util.Log;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.LoadingDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForGroupActivity;
 import com.feipulai.exam.activity.MiddleDistanceRace.MiddleDistanceRaceForPersonActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -20,13 +21,29 @@ import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.Item;
+import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.HttpManager;
+import com.feipulai.exam.netUtils.URLConstant;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.feipulai.exam.config.EventConfigs.REQUEST_UPLOAD_LOG_E;
+import static com.feipulai.exam.config.EventConfigs.REQUEST_UPLOAD_LOG_S;
 
 /**
  * Created by zzs on  2019/1/4
@@ -409,5 +426,54 @@ public class ServerMessage {
         } else {
             uploadResult(context, uploadResultsList);
         }
+    }
+
+    public static void uploadLogFile(String fileName, String zipPathName) {
+
+        File file = new File(zipPathName);
+        final OkHttpClient client = new OkHttpClient.Builder().build();
+        final MediaType mediaType = MediaType.parse("multipart/form-data;boundary=params");
+        String itemCode = TestConfigs.sCurrentItem.getItemCode();
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("logList[0].itemCode",TextUtils.isEmpty(itemCode)?"default":itemCode)
+                .addFormDataPart("logList[0].itemName",TestConfigs.sCurrentItem.getItemName())
+                .addFormDataPart("logList[0].logTime",System.currentTimeMillis()+"")
+                .addFormDataPart("logList[0].hostNo",SettingHelper.getSystemSetting().getHostId()+"")
+                .addFormDataPart("logList[0].fileName",fileName+".zip")
+                .addFormDataPart("logList[0].msEquipment", CommonUtils.getDeviceId(MyApplication.getInstance()))
+                .addFormDataPart("logList[0].file",fileName+".zip", RequestBody.create(MediaType.parse("application/octet-stream"),
+                        file)).build();
+        final String url = URLConstant.BASE_URL+"/run/terminalLogBackUp";
+        final Request request = new Request.Builder().url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "multipart/form-data;boundary=params")
+                .addHeader("Authorization", "bearer " + MyApplication.TOKEN) .build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Logger.i(e.getMessage()+"失败");
+                        EventBus.getDefault().post(new BaseEvent(REQUEST_UPLOAD_LOG_E));
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        try {
+                            String body = response.body().string();
+                            Logger.i(body+response.code()+"返回"+url);
+                            if (body.contains("备份成功")){
+                                EventBus.getDefault().post(new BaseEvent(REQUEST_UPLOAD_LOG_S));
+                            }else {
+                                EventBus.getDefault().post(new BaseEvent(REQUEST_UPLOAD_LOG_E));
+                            } } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                });
+            }
+        }).start();
     }
 }
