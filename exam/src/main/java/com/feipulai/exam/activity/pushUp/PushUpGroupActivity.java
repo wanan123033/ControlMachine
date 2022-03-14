@@ -82,8 +82,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
     @BindView(R.id.cb_device_state)
     CheckBox cbDeviceState;
-    @BindView(R.id.rv_test_result)
-    RecyclerView rvTestResult;
     @BindView(R.id.tv_start_test)
     TextView tvStartTest;
     @BindView(R.id.tv_stop_test)
@@ -102,12 +100,8 @@ public class PushUpGroupActivity extends BaseTitleActivity
     RecyclerView rvTestingPairs;
     @BindView(R.id.tv_group_name)
     TextView tvGroupName;
-    @BindView(R.id.tv_result)
-    TextView tvResult;
     @BindView(R.id.tv_device_pair)
     TextView tvDevicePair;
-    @BindView(R.id.lv_results)
-    ListView lvResults;
     @BindView(R.id.tv_resurvey)
     TextView tvResurvey;
     private PushUpResiltListener facade;
@@ -179,7 +173,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
             public void inputResult(String result, int state) {
                 pairs.get(position()).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
-                tvResult.setText(displayResult);
                 editResultDialog.dismissDialog();
             }
         });
@@ -358,7 +351,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
 
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_device_pair, R.id.tv_confirm,
-            R.id.tv_abandon_test, R.id.tv_result, R.id.tv_resurvey, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})
+            R.id.tv_abandon_test, R.id.tv_resurvey, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})
     public void onViewClicked(View view) {
         String[] resultArray = stuPairs
                 .get(stuPairAdapter.getSaveLayoutSeletePosition()).getTimeResult();
@@ -434,12 +427,12 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 LogUtils.operation("俯卧撑点击了设备配对");
                 changeBadDevice();
                 break;
-            case R.id.tv_result:
-
-                if (SettingHelper.getSystemSetting().isInputTest()) {
-                    editResultDialog.showDialog(pairs.get(0).getStudent());
-                }
-                break;
+//            case R.id.tv_result:
+//
+//                if (SettingHelper.getSystemSetting().isInputTest()) {
+//                    editResultDialog.showDialog(pairs.get(0).getStudent());
+//                }
+//                break;
             case R.id.tv_foul:
                 penalizeDialog.setGroupId(group.getId());
 
@@ -523,7 +516,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
     }
 
     private void onResultConfirmed() {
-        tvResult.setText("");
         List<StuDevicePair> pairList = new ArrayList<>(1);
         pairs.get(position()).getDeviceResult().setResult(pairs.get(position()).getDeviceResult().getResult() - intervalCount);
 
@@ -727,7 +719,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
         tvStopTest.setVisibility(tvStopTestEnable ? View.VISIBLE : View.GONE);
         tvPunish.setVisibility(tvPunishEnable ? View.VISIBLE : View.GONE);
 
-        setAdapter();
     }
 
     protected void displayCheckedInLED() {
@@ -742,13 +733,12 @@ public class PushUpGroupActivity extends BaseTitleActivity
         ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
-            ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
+            ledManager.showString(hostId, "成绩:" + displayResult, 2, 3, false, true);
         }
     }
 
     private void prepareForBegin() {
         Student student = pairs.get(position()).getStudent();
-        tvResult.setText(student.getStudentName());
 
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
         LogUtils.operation("俯卧撑当前测试考生:" + student.toString() + "---当前已有成绩 = " + results.toString());
@@ -775,7 +765,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 true, false, true, false,
                 false);
 
-        tvResult.setText("准备");
         testDate = System.currentTimeMillis() + "";
         facade.startTest(0);
         state = TESTING;
@@ -810,7 +799,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
                 intervalCount = msg.arg1;
                 pairs.get(position()).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
-                tvResult.setText(displayResult + (intervalCount == 0 ? "" : "\n超时：" + intervalCount + "个"));
                 break;
         }
     }
@@ -913,25 +901,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
         return state == WAIT_BEGIN;
     }
 
-    private void setAdapter() {
-        int maxTestNo = TestConfigs.getMaxTestCount(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
-        rvTestResult.setLayoutManager(layoutManager);
-        Student student = TestCache.getInstance().getAllStudents().get(position());
-        List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
-        // Log.i("james", roundResults.toString());
-        List<String> results = new ArrayList<>(maxTestNo);
-        for (int i = 0; i < maxTestNo; i++) {
-            results.add(new String());
-        }
-        if (roundResults != null) {
-            for (int j = 0; j < roundResults.size(); j++) {
-                results.set(j, ResultDisplayUtils.getStrResultForDisplay(roundResults.get(j).getResult()));
-            }
-        }
-        BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);
-        rvTestResult.setAdapter(adapter);
-    }
 
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
@@ -941,7 +910,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             List<RoundResult> results = TestCache.getInstance().getResults().get(stuPairs.get(i).getStudent());
             stuPairAdapter.setTestPosition(i);
             hasRemains(results);
-            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo()-1);
+            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo() - 1);
 
             stuPairAdapter.notifyDataSetChanged();
             prepareForBegin();
@@ -957,6 +926,14 @@ public class PushUpGroupActivity extends BaseTitleActivity
         title = TestConfigs.machineNameMap.get(machineCode)
                 + SettingHelper.getSystemSetting().getHostId() + "号机"
                 + (isTestNameEmpty ? "" : ("-" + SettingHelper.getSystemSetting().getTestName()));
+        if (setting.getTestType() == 1) {
+            return builder.setTitle(title).addRightText("设备连接", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    changeBadDevice();
+                }
+            });
+        }
         return builder.setTitle(title);
     }
 

@@ -33,17 +33,22 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
         @Override
         public boolean handleMessage(Message msg) {
             VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
-            checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
-            checkDeviceView.setCheckResult(resul.getCheckResult());
+            if (getDialog() != null
+                    && getDialog().isShowing()) {
+                checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
+                checkDeviceView.setCheckResult(resul.getCheckResult());
+
+            }
 
 
             return false;
         }
     });
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setting = SharedPrefsUtil.loadFormSource(getActivity().getApplicationContext(),VolleyBallSetting.class);
+        setting = SharedPrefsUtil.loadFormSource(getActivity().getApplicationContext(), VolleyBallSetting.class);
         RadioManager.getInstance().setOnRadioArrived(this);
     }
 
@@ -73,9 +78,9 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
 
     private void sendSelfCheck(final int deviceId) {
         int hostId = SettingHelper.getSystemSetting().getHostId();
-        VolleyBallRadioManager.getInstance().selfCheck(hostId,deviceId);
+        VolleyBallRadioManager.getInstance().selfCheck(hostId, deviceId);
 
-        handler.postDelayed(runable,3000);
+        handler.postDelayed(runable, 3000);
     }
 
     @Override

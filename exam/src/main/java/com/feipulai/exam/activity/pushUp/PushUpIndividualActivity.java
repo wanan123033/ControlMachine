@@ -440,13 +440,17 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 LogUtils.operation("俯卧撑点击了结束测试");
                 facade.stopTest();
                 SoundPlayUtils.play(12);
-                prepareForConfirmResult();
+//                prepareForConfirmResult();
                 if (intervalCount > 0) {
                     //显示最终成绩
                     ledManager.showString(systemSetting.getHostId(),
                             "最终成绩:" + ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult() - intervalCount),
                             1, 3, false, true);
                 }
+                pairs.get(0).getDeviceResult().setResult(pairs.get(0).getDeviceResult().getResult() - intervalCount);
+
+                InteractUtils.saveResults(pairs, testDate);
+                onResultConfirmed();
                 break;
 
             case R.id.tv_print:
@@ -776,6 +780,7 @@ public class PushUpIndividualActivity extends BaseTitleActivity
         prepareView(true, false, false, false,
                 false, true, false, false,
                 false, false);
+
     }
 
     private void prepareForFinish() {

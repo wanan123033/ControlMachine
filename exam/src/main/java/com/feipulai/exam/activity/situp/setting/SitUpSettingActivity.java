@@ -21,8 +21,8 @@ public class SitUpSettingActivity extends AbstractRadioSettingActivity implement
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        llTestMin.setVisibility(View.VISIBLE);
-        llTestMax.setVisibility(View.VISIBLE);
+//        llTestMin.setVisibility(View.VISIBLE);
+//        llTestMax.setVisibility(View.VISIBLE);
         llTestLed.setVisibility(View.VISIBLE);
         Button btnConnect = findViewById(R.id.btn_connect);
 //        Button btnSyncTime = findViewById(R.id.btn_sync_time);

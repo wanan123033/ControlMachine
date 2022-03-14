@@ -83,8 +83,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
 
     @BindView(R.id.cb_device_state)
     CheckBox cbDeviceState;
-    @BindView(R.id.rv_test_result)
-    RecyclerView rvTestResult;
     @BindView(R.id.tv_start_test)
     TextView tvStartTest;
     @BindView(R.id.tv_stop_test)
@@ -103,10 +101,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
     RecyclerView rvTestingPairs;
     @BindView(R.id.tv_group_name)
     TextView tvGroupName;
-    @BindView(R.id.tv_result)
-    TextView tvResult;
-    @BindView(R.id.lv_results)
-    ListView lvResults;
     @BindView(R.id.tv_resurvey)
     TextView tvResurvey;
     private PullUpTestFacade facade;
@@ -172,8 +166,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
             @Override
             public void inputResult(String result, int state) {
                 pairs.get(position()).getDeviceResult().setResult(ResultDisplayUtils.getDbResultForUnit(Double.valueOf(result)));
-                String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
-                tvResult.setText(displayResult);
                 editResultDialog.dismissDialog();
             }
         });
@@ -369,8 +361,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 if (setting.isPenalize()) {
                     prepareForConfirmResult();
                 } else {
-                    tvResult.setText("");
-//                    InteractUtils.saveResults(pairs, testDate);
                     onResultConfirmed();
                 }
                 break;
@@ -509,7 +499,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     private void onResultConfirmed() {
-        tvResult.setText("");
         List<StuDevicePair> pairList = new ArrayList<>(1);
         pairList.add(pairs.get(position()));
         InteractUtils.saveResults(pairList, testDate);
@@ -668,7 +657,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
         tvStopTest.setVisibility(tvStopTestEnable ? View.VISIBLE : View.GONE);
         tvPunish.setVisibility(tvPunishEnable ? View.VISIBLE : View.GONE);
         tvTimeCount.setVisibility(tvCountEnable ? View.VISIBLE : View.GONE);
-        setAdapter();
     }
 
     protected void displayCheckedInLED() {
@@ -683,13 +671,12 @@ public class PullUpGroupActivity extends BaseTitleActivity
         ledManager.showString(hostId, pairs.get(position()).getStudent().getLEDStuName(), 5, 0, true, lastResult == null);
         if (lastResult != null) {
             String displayResult = ResultDisplayUtils.getStrResultForDisplay(lastResult.getResult());
-            ledManager.showString(hostId, "已有成绩:" + displayResult, 2, 3, false, true);
+            ledManager.showString(hostId, "成绩:" + displayResult, 2, 3, false, true);
         }
     }
 
     private void prepareForBegin() {
         Student student = pairs.get(position()).getStudent();
-        tvResult.setText(student.getStudentName());
 
         List<RoundResult> results = TestCache.getInstance().getResults().get(student);
 
@@ -715,7 +702,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 true, false, false,
                 false, true);
 
-        tvResult.setText("准备");
         testDate = System.currentTimeMillis() + "";
         facade.startTest();
         state = TESTING;
@@ -746,7 +732,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
                 PullUpStateResult result = (PullUpStateResult) msg.obj;
                 pairs.get(position()).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(position()).getDeviceResult().getResult());
-                tvResult.setText(displayResult);
                 break;
         }
     }
@@ -811,22 +796,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
         return state == WAIT_BEGIN;
     }
 
-    private void setAdapter() {
-        int maxTestNo = TestConfigs.getMaxTestCount(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
-        rvTestResult.setLayoutManager(layoutManager);
-        Student student = TestCache.getInstance().getAllStudents().get(position());
-        List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
-        // Log.i("james", roundResults.toString());
-        List<String> results = new ArrayList<>(maxTestNo);
-        if (roundResults != null) {
-            for (RoundResult result : roundResults) {
-                results.add(ResultDisplayUtils.getStrResultForDisplay(result.getResult()));
-            }
-        }
-        BasePersonTestResultAdapter adapter = new BasePersonTestResultAdapter(results);
-        rvTestResult.setAdapter(adapter);
-    }
+
 
     public void showPenalizeDialog(int max) {
         final NumberPicker numberPicker = new NumberPicker(this);
