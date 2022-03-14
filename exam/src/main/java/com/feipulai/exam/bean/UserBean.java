@@ -11,6 +11,14 @@ public class UserBean implements Serializable {
     private String token;
     private String examName;//考试名称
     private String siteId; //考点ID
+    private String examPersonnelPhotoSuffix;
+    private String[] permission;
+    private String type;
+    private String examPersonnelPhotoData;
+    private int equipmentstatus;
+    private String examPersonnelId;
+    private int examPersonnelPhotoType;
+    private String typevalue;
 
     public String getToken() {
         return token;
@@ -43,5 +51,73 @@ public class UserBean implements Serializable {
 
     public void setSiteId(String siteId) {
         this.siteId = siteId;
+    }
+
+    public String getExamPersonnelPhotoSuffix() {
+        return examPersonnelPhotoSuffix;
+    }
+
+    public void setExamPersonnelPhotoSuffix(String examPersonnelPhotoSuffix) {
+        this.examPersonnelPhotoSuffix = examPersonnelPhotoSuffix;
+    }
+
+    public String[] getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String[] permission) {
+        this.permission = permission;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getExamPersonnelPhotoData() {
+        return examPersonnelPhotoData;
+    }
+
+    public void setExamPersonnelPhotoData(String examPersonnelPhotoData) {
+        this.examPersonnelPhotoData = examPersonnelPhotoData;
+    }
+
+    public int getEquipmentstatus() {
+        return equipmentstatus;
+    }
+
+    public void setEquipmentstatus(int equipmentstatus) {
+        this.equipmentstatus = equipmentstatus;
+    }
+
+    public String getExamPersonnelId() {
+        return examPersonnelId;
+    }
+
+    public void setExamPersonnelId(String examPersonnelId) {
+        this.examPersonnelId = examPersonnelId;
+    }
+
+    public int getExamPersonnelPhotoType() {
+        return examPersonnelPhotoType;
+    }
+
+    public void setExamPersonnelPhotoType(int examPersonnelPhotoType) {
+        this.examPersonnelPhotoType = examPersonnelPhotoType;
+    }
+
+    public String getTypevalue() {
+        return typevalue;
+    }
+
+    public void setTypevalue(String typevalue) {
+        this.typevalue = typevalue;
+    }
+
+    public String getFileName() {
+        return examPersonnelId + "." + examPersonnelPhotoSuffix;
     }
 }

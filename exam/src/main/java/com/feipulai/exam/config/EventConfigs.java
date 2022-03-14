@@ -49,6 +49,8 @@ public class EventConfigs {
     public static final int UPLOAD_RESULT_FAULT = 22;
     public static final int FOUL_DIALOG_MISS = 23;
 
+    public static final int GOTO_LOGIN = 24;
+
     public static final int AUTO_ADD_RESULT = 24;
 
     public static final int STOP_GROUP_LED=25;

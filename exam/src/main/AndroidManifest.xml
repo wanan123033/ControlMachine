@@ -405,7 +405,7 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
          <activity
             android:screenOrientation="landscape"
-            android:name=".activity.LoginActivity"
+            android:name=".activity.login.LoginActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />

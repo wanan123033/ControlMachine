@@ -291,7 +291,6 @@ public class DBManager {
     }
 
 
-
     public List<StudentFace> getStudentFeatures() {
         return studentFaceDao.queryBuilder()
                 .where(StudentFaceDao.Properties.FaceFeature.notEq(""))
@@ -1040,6 +1039,12 @@ public class DBManager {
         db.endTransaction();
     }
 
+    public List<Item> queryItemNotNullItemCode() {
+        return itemDao.queryBuilder()
+                .where(ItemDao.Properties.ItemCode.notEq(""))
+                .where(ItemDao.Properties.ItemCode.isNotNull()).list();
+    }
+
     /*******************************************
      * 学生项目信息表
      ******************************************************************/
@@ -1435,8 +1440,8 @@ public class DBManager {
      * @param roundResult
      */
     public void insertRoundResult(RoundResult roundResult) {
-        if (TextUtils.isEmpty(roundResult.getTestTime())){
-            roundResult.setTestTime(System.currentTimeMillis()+"");
+        if (TextUtils.isEmpty(roundResult.getTestTime())) {
+            roundResult.setTestTime(System.currentTimeMillis() + "");
         }
         String encryptData = roundResult.getStudentCode() + "," + roundResult.getItemCode() + "," + roundResult.getExamType()
                 + "," + roundResult.getResult() + "," + roundResult.getResultState() + "," + roundResult.getTestTime();
@@ -1727,6 +1732,7 @@ public class DBManager {
                 .orderAsc(RoundResultDao.Properties.RoundNo)
                 .list();
     }
+
     public List<RoundResult> queryFinallyRountScoreByExamTypeAll(String studentCode, int exemType) {
         return roundResultDao.queryBuilder()
                 .where(RoundResultDao.Properties.StudentCode.eq(studentCode))
@@ -1736,6 +1742,7 @@ public class DBManager {
                 .orderDesc(RoundResultDao.Properties.TestNo)
                 .list();
     }
+
     /**
      * 查询对应考生当前项目最后一次成绩
      *
@@ -2864,6 +2871,7 @@ public class DBManager {
                 .where(StudentThermometerDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .limit(1).unique();
     }
+
     public StudentThermometer getThermometer(GroupItem groupItem) {
         return thermometerDao.queryBuilder().where(StudentThermometerDao.Properties.StudentCode.eq(groupItem.getStudentCode()))
                 .where(StudentThermometerDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
@@ -2884,8 +2892,12 @@ public class DBManager {
         Account account = new Account();
         account.setAccount(accountName);
         account.setPassword(pwd);
-        account.setType(type);
+        account.setType(type+"");
         account.setCreateTime(DateUtil.getCurrentTime());
+        accountDao.insertOrReplace(account);
+    }
+
+    public void insterAccount(Account account) {
         accountDao.insertOrReplace(account);
     }
 
@@ -2895,6 +2907,10 @@ public class DBManager {
         accountDao.updateInTx(account);
     }
 
+    public Account queryAccountByExamPersonnelId(String examPersonnelId) {
+        return accountDao.queryBuilder().where(AccountDao.Properties.ExamPersonnelId.eq(examPersonnelId))
+                 .unique();
+    }
     public Account queryAccount(String accountName, String pwd) {
         return accountDao.queryBuilder().where(AccountDao.Properties.Account.eq(accountName))
                 .where(AccountDao.Properties.Password.eq(pwd)).unique();
@@ -2904,6 +2920,11 @@ public class DBManager {
         return accountDao.loadAll();
     }
 
+    public List<Account> getAccountFeatures() {
+        return accountDao.queryBuilder()
+                .where(AccountDao.Properties.FaceFeature.notEq(""))
+                .where(AccountDao.Properties.FaceFeature.isNotNull()).list();
+    }
     public void deleteAccountAll() {
         accountDao.deleteAll();
     }

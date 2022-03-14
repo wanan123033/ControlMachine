@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.HttpResult;
 import com.feipulai.exam.netUtils.URLConstant;
@@ -44,7 +46,7 @@ public class DownloadUtils {
     private List<String> stopList = new ArrayList<>();
     private List<String> downList = new ArrayList<>();
     private static final String TAG = "DownloadUtil";
-    private static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/DownloadFile/";
+
     //视频下载相关
     protected DownService mApi;
     private Call<ResponseBody> mCall;
@@ -195,11 +197,11 @@ public class DownloadUtils {
     }
 
     public void downloadFile(String url, final String fileName, final DownloadListener downloadListener) {
-        File targetFile = new File(DOWNLOAD_PATH);
+        File targetFile = new File(MyApplication.DOWNLOAD_PATH);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
-        mPath = DOWNLOAD_PATH + fileName;
+        mPath = MyApplication.DOWNLOAD_PATH + fileName;
         mFile = new File(mPath);
         if (mFile.exists()) {//文件不存在则新建
             try {

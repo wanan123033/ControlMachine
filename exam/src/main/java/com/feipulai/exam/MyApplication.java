@@ -33,6 +33,7 @@ public class MyApplication extends MultiDexApplication {
     public static final String PATH_APK = FileUtil.PATH_BASE + "KS_APK/";//图片存在路径
     public static final String PATH_PDF_IMAGE = FileUtil.PATH_BASE + "KS_PDF_IMAGE/";//成绩图片与PDF文件存放路径
     public static final String PATH_LOG_NAME = "KS_LOGGER";//日志文件夹名称
+    public static final String DOWNLOAD_PATH = FileUtil.PATH_BASE + "/DownloadFile/";
     public static boolean RADIO_TIME_SYNC = false;
     public static String SOFTWAREUUID = "FP-KTA2108_KS";//软件识别码
     public static String HARDWAREUUID = "FP-KTA2108_KS_ANDROID";//硬件识别码
