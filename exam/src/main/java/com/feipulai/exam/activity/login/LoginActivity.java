@@ -2,6 +2,7 @@ package com.feipulai.exam.activity.login;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +27,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.HandlerUtil;
 import com.feipulai.common.utils.ImageUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -39,6 +41,7 @@ import com.feipulai.exam.activity.data.DataManageActivity;
 import com.feipulai.exam.activity.data.DownLoadPhotoHeaders;
 import com.feipulai.exam.activity.setting.SettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
@@ -66,7 +69,9 @@ import com.ww.fpl.libarcface.util.ConfigUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -97,6 +102,8 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
     @BindView(R.id.llLogin)
     LinearLayout llLogin;
     private Account loginAccount;
+    @BindView(R.id.et_sever_ip)
+    EditText mEtSeverIp;
 
     @Override
     protected int setLayoutResID() {
@@ -125,6 +132,10 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
             }
         });
         initFace();
+        afrFrameLayout.setVisibility(View.VISIBLE);
+        llLogin.setVisibility(View.GONE);
+        afrFragment.gotoUVCFaceCamera(true);
+        mEtSeverIp.setText(SettingHelper.getSystemSetting().getServerIp());
     }
 
     private void initAFR() {
@@ -134,12 +145,19 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
     }
 
     @Override
-    public void compareStu(Account account) {
+    public void compareStu(final Account account) {
         if (account == null) {
             toastSpeak("查无此人");
         }
         loginAccount = account;
-        login(1, account.getAccount(), account.getPassword());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                login(1, account.getAccount(), account.getPassword());
+
+            }
+        });
+
 
     }
 
@@ -209,6 +227,7 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
 
     @OnClick(R.id.btn_login)
     public void onViewClicked() {
+
         if (isCheckData()) {
             login(0, editAccount.getText().toString(), editPass.getText().toString());
         }
@@ -223,6 +242,13 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
             ToastUtils.showShort("请输入密码");
             return false;
         }
+
+        if (TextUtils.isEmpty(mEtSeverIp.getText().toString().trim())) {
+            ToastUtils.showShort("请输入服务器地址");
+            return false;
+        }
+        SettingHelper.getSystemSetting().setServerIp(mEtSeverIp.getText().toString());
+        HttpManager.resetManager();
         return true;
     }
 
@@ -250,12 +276,19 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
                 if (!TextUtils.isEmpty(userBean.getExamName())) {
                     SettingHelper.getSystemSetting().setTestName(userBean.getExamName());
                 }
+                if (userBean.getPermission() != null) {
+                    List<String> permission = Arrays.asList(userBean.getPermission());
+                    if (permission.contains(SystemSetting.HAS_RETEST_PERMISSION)) {
+                        SettingHelper.getSystemSetting().setAgainTest(true);
+                    }
+                }
                 SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
                 SettingHelper.getSystemSetting().setSitCode(userBean.getSiteId());
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
                 if (loginType == 1) {
 
                     if (TextUtils.equals(loginAccount.getExamPersonnelId(), userBean.getExamPersonnelId())) {
+
                         getItemAll();
                         return;
                     } else {
@@ -296,6 +329,7 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
     }
 
     private void gotoMain() {
+        toastSpeak("登录成功");
         HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
         HttpManager.DEFAULT_READ_TIMEOUT = 20;
         HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
@@ -414,6 +448,8 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
      * 初始化登录头像
      */
     private void initFace() {
+        //本地人脸库初始化
+        boolean isFaceInit = FaceServer.getInstance().init(LoginActivity.this);
         DataBaseExecutor.addTask(new DataBaseTask() {
             @Override
             public DataBaseRespon executeOper() {
@@ -453,8 +489,24 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
         http.setOnRequestEndListener(new HttpSubscriber.OnRequestEndListener() {
             @Override
             public void onSuccess(int bizType) {
-//                List<Item> items = DBManager.getInstance().queryItemNotNullItemCode();
-                gotoMain();
+                List<Item> items = DBManager.getInstance().queryItemNotNullItemCode();
+                String itemCode = SharedPrefsUtil.getValue(LoginActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                if (TextUtils.isEmpty(itemCode)) {
+                    gotoMain();
+                } else {
+                    boolean isExist = false;
+                    for (Item item : items) {
+                        if (TextUtils.equals(item.getItemCode(), itemCode)) {
+                            isExist = true;
+                            break;
+                        }
+                    }
+                    if (!isExist) {
+                        SharedPrefsUtil.putValue(LoginActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
+                    }
+                    gotoMain();
+                }
+
             }
 
             @Override
@@ -467,5 +519,11 @@ public class LoginActivity extends BaseTitleActivity implements AccountAFRFragme
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
     }
 }

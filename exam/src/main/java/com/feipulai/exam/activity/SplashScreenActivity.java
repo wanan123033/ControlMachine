@@ -21,6 +21,7 @@ import com.feipulai.common.db.DataBaseTask;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.ActivityCollector;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.SoundPlayUtils;
@@ -30,6 +31,7 @@ import com.feipulai.device.serial.RadioManager;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.ActivateBean;
 import com.feipulai.exam.config.SharedPrefsConfigs;
@@ -208,43 +210,44 @@ public class SplashScreenActivity extends BaseActivity {
 
 
     private void init() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
-                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
-
-                        if (!isInit) {
-                            SoundPlayUtils.init(MyApplication.getInstance());
-                            LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
-                            ToastUtils.init(getApplicationContext());
-                            //这里初始化时间很长,大约需要3s左右
-                            TtsManager.getInstance().init(SplashScreenActivity.this, APP_ID, APP_KEY, SECRET_KEY);
-                            boolean isEngine = ConfigUtil.getISEngine(SplashScreenActivity.this);
-                            if (isEngine) {
-                                initLocalFace();
-                            } else {
-                                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
-                                    ToastUtils.showShort("请在参数设置激活人脸识别");
-                                }
-//                                activeEngine();
-                                gotoMain();
-                            }
-
-                        } else {
-
-                            gotoMain();
-                        }
-
-                        isInit = true;
-
-                    }
-                } else {
-                    showActivateConfirm(2);
-                }
-
-            }
-        }, 1000);
+        IntentUtil.gotoActivity(this, LoginActivity.class);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (activateBean != null && activateBean.getCurrentTime() < activateBean.getValidEndTime()) {
+//                    if (!ActivityCollector.getInstance().isExistActivity(MainActivity.class)) {
+//
+//                        if (!isInit) {
+//                            SoundPlayUtils.init(MyApplication.getInstance());
+//                            LogUtils.initLogger(true, true, MyApplication.PATH_LOG_NAME);
+//                            ToastUtils.init(getApplicationContext());
+//                            //这里初始化时间很长,大约需要3s左右
+//                            TtsManager.getInstance().init(SplashScreenActivity.this, APP_ID, APP_KEY, SECRET_KEY);
+//                            boolean isEngine = ConfigUtil.getISEngine(SplashScreenActivity.this);
+//                            if (isEngine) {
+//                                initLocalFace();
+//                            } else {
+//                                if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
+//                                    ToastUtils.showShort("请在参数设置激活人脸识别");
+//                                }
+////                                activeEngine();
+//                                gotoMain();
+//                            }
+//
+//                        } else {
+//
+//                            gotoMain();
+//                        }
+//
+//                        isInit = true;
+//
+//                    }
+//                } else {
+//                    showActivateConfirm(2);
+//                }
+//
+//            }
+//        }, 1000);
 
 
     }

@@ -11,6 +11,7 @@
         android:id="@+id/rgSelect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -36,8 +37,8 @@
 
     <FrameLayout
         android:id="@+id/frame_camera"
-        android:layout_width="500dp"
-        android:layout_height="300dp" />
+        android:layout_width="640dp"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/llLogin"
@@ -50,6 +51,30 @@
         android:paddingRight="35dp"
         android:paddingBottom="50dp"
         android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/style_setting_tv_title"
+                android:text="服务器地址:" />
+
+            <EditText
+                android:id="@+id/et_sever_ip"
+                android:layout_width="242dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edit_search_bg"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:text="192.168.1.100:7979" />
+
+
+        </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
