@@ -206,10 +206,12 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
+                int deviceIndex = 0;
                 for (int i = 0; i < deviceListAdapter.getData().size(); i++) {
                     DeviceDetail deviceDetail = deviceListAdapter.getData().get(i);
                     BaseStuPair pair = deviceDetail.getStuDevicePair();
                     if (TextUtils.equals(deviceDetail.getStuDevicePair().getStudent().getStudentCode(), roundResult.getStudentCode())) {
+                        deviceIndex = i;
                         String[] timeResult = deviceDetail.getStuDevicePair().getTimeResult();
 
                         timeResult[roundResult.getRoundNo() - 1] = ((roundResult.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" :
@@ -225,7 +227,8 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
                 }
                 //更新一对一数据
-                for (BaseStuPair stuPair : pairList) {
+                for (int i = 0; i < pairList.size(); i++) {
+                    BaseStuPair stuPair = pairList.get(i);
                     if (TextUtils.equals(stuPair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                         String[] timeResult = stuPair.getTimeResult();
 
@@ -243,6 +246,41 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                                 stuPair.setFullMark(true);
                             }
                         } else {
+                            //原满分跳过并且连续模式 有测试次数可以定位测试
+                            if (stuPair.isFullMark() || setTestPattern() == TestConfigs.GROUP_PATTERN_SUCCESIVE) {
+                                boolean isAllTest = true;
+                                for (String s : stuPair.getTimeResult()) {
+                                    if (TextUtils.isEmpty(s)) {
+                                        isAllTest = false;
+                                    }
+                                }
+                                if (!isAllTest) {
+                                    roundNo = getRoundNo(stuPair.getTimeResult());
+                                    stuAdapter.setTestPosition(i);
+                                    oneView.setTestPosition(i);
+
+                                    deviceDetails.get(deviceIndex).getStuDevicePair().setBaseHeight(0);
+
+                                    deviceDetails.get(deviceIndex).setRound(roundNo);
+
+                                    toastSpeak(String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getSpeakStuName(), roundNo),
+                                            String.format(getString(R.string.test_speak_hint), studentList.get(stuAdapter.getTestPosition()).getStudentName(), roundNo));
+                                    deviceDetails.get(deviceIndex).getStuDevicePair().setTimeResult(stuPair.getTimeResult());
+                                    deviceDetails.get(deviceIndex).getStuDevicePair().setStudent(stuPair.getStudent());
+                                    deviceDetails.get(deviceIndex).getStuDevicePair().setResult(-999);
+                                    deviceListAdapter.notifyItemChanged(deviceIndex);
+                                    rvTestStu.scrollToPosition(stuAdapter.getTestPosition());
+                                    oneView.indexStuTestResult(oneView.getTestPosition(), roundNo - 1);
+                                    setShowLed(stuPair, deviceIndex);
+                                    updateLastResultLed("", deviceIndex);
+                                    if (!isNextClickStart) {
+                                        deviceDetails.get(deviceIndex).getStuDevicePair().setTestTime(DateUtil.getCurrentTime() + "");
+                                        toStart(deviceIndex);
+                                    }
+                                    stuAdapter.notifyDataSetChanged();
+                                }
+
+                            }
                             stuPair.setFullMark(false);
                         }
 
@@ -524,7 +562,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         if (pair.getStudent() != null) {
                             penalizeDialog.setGroupId(group.getId());
                             penalizeDialog.setData(1, pair.getStudent(),
-                                    pair.getTimeResult(), lastStu, lastResult);
+                                    pair.getTimeResult(), null, null);
                             penalizeDialog.showDialog(0);
                         } else {
                             toastSpeak("无设备添加考生测试");
@@ -534,7 +572,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         if (pair.getStudent() != null) {
                             penalizeDialog.setGroupId(group.getId());
                             penalizeDialog.setData(1, pair.getStudent(),
-                                    pair.getTimeResult(), lastStu, lastResult);
+                                    pair.getTimeResult(), null, null);
                             penalizeDialog.showDialog(1);
                         } else {
                             toastSpeak("无设备添加考生测试");
@@ -544,7 +582,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         if (pair.getStudent() != null) {
                             penalizeDialog.setGroupId(group.getId());
                             penalizeDialog.setData(1, pair.getStudent(),
-                                    pair.getTimeResult(), lastStu, lastResult);
+                                    pair.getTimeResult(), null, null);
                             penalizeDialog.showDialog(2);
                         } else {
                             toastSpeak("无设备添加考生测试");
@@ -554,7 +592,7 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
                         if (pair.getStudent() != null) {
                             penalizeDialog.setGroupId(group.getId());
                             penalizeDialog.setData(2, pair.getStudent(),
-                                    pair.getTimeResult(), lastStu, lastResult);
+                                    pair.getTimeResult(), null, null);
                             penalizeDialog.showDialog(3);
                         } else {
                             toastSpeak("无设备添加考生测试");
@@ -1716,9 +1754,9 @@ public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
 
         uploadResult(uploadResults);
 
-        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
-            toSkip(stuAdapter.getTestPosition());
-        }
+//        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
+//                toSkip(stuAdapter.getTestPosition());
+//        }
     }
 
     private void uploadResult(UploadResults uploadResults) {

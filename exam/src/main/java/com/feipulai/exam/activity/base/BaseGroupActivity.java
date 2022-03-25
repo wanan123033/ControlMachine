@@ -36,10 +36,13 @@ import com.feipulai.exam.activity.MiddleDistanceRace.MyTcpService;
 import com.feipulai.exam.activity.MiddleDistanceRace.bean.ServiceTcpBean;
 import com.feipulai.exam.activity.RadioTimer.RunTimerSetting;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRadioGroupActivity;
+import com.feipulai.exam.activity.basketball.BasketBallSelectActivity;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.basketball.reentry.BallReentryGroupActivity;
+import com.feipulai.exam.activity.basketball.reentry.BallReentrySettingActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
@@ -210,6 +213,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
             BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
             if (setting.getTestType() == 2) {
                 startActivity(new Intent(this, ShootSettingActivity.class));
+            } else if (setting.getTestType() == 5) {
+                startActivity(new Intent(this, BallReentrySettingActivity.class));
             } else {
                 startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
             }
@@ -811,9 +816,14 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     return;
                 }
 
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ
-                        && SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
-                    startActivity(new Intent(this, DribbleShootGroupActivity.class));
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                    BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
+                    if (setting.getTestType() == 5) {
+                        startActivity(new Intent(this, BallReentryGroupActivity.class));
+                    } else if (SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
+                        startActivity(new Intent(this, DribbleShootGroupActivity.class));
+                    }
+
                     return;
                 }
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP
@@ -885,7 +895,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 //            ServerMessage.uploadResult(uploadResultsList);
 
         }
-        if (SettingHelper.getSystemSetting().isStuConfirm()&&stuNoResultList.size() > 0) {
+        if (SettingHelper.getSystemSetting().isStuConfirm() && stuNoResultList.size() > 0) {
             AdvancedDialog advancedDialog = new AdvancedDialog();
             advancedDialog.setArguments(stuNoResultList, groupList.get(groupAdapter.getTestPosition()).getId());
             advancedDialog.show(getSupportFragmentManager(), "AdvancedDialog");
@@ -1108,7 +1118,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     ToastUtils.showLong("接收到上道终端发送的分组数据");
 
 
-                     if (scheduleList.size() == 0) {
+                    if (scheduleList.size() == 0) {
                         updateSchedules();
                     } else {
                         getGroupList(scheduleText);

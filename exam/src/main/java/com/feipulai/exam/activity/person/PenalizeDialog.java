@@ -2,6 +2,8 @@ package com.feipulai.exam.activity.person;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,14 +23,18 @@ import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.adapter.PenalizeResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.bean.RoundResultBean;
+import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
 import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
+import com.feipulai.exam.entity.Group;
 import com.feipulai.exam.entity.GroupItem;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
+import com.feipulai.exam.service.UploadService;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 
@@ -389,6 +395,7 @@ public class PenalizeDialog {
             DBManager.getInstance().insertRoundResult(roundResult);
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
             LogUtils.operation("新增判罚：" + roundResult.toString());
+            upload(roundResult);
         } else if (null != roundResultList && roundResultList.size() > mAdapter.getClick()) {
             RoundResult updateResult = null;
             for (RoundResult roundResult : roundResultList) {
@@ -417,6 +424,39 @@ public class PenalizeDialog {
             DBManager.getInstance().updateRoundResult(r);
             LogUtils.operation("判定为：" + tvTitle.getText().toString() + roundResultList.get(mAdapter.getClick()).toString());
             EventBus.getDefault().post(new BaseEvent(updateResult, EventConfigs.UPDATE_RESULT));
+            upload(updateResult);
+        }
+
+    }
+
+    private void upload(RoundResult roundResult) {
+        if (!SettingHelper.getSystemSetting().isRtUpload()) {
+            return;
+        }
+        if (TextUtils.isEmpty(TestConfigs.sCurrentItem.getItemCode())) {
+            ToastUtils.showShort("自动上传成绩需下载更新项目信息");
+            return;
+        }
+        if (SettingHelper.getSystemSetting().isRtUpload()) {
+            List<RoundResult> roundResultList = new ArrayList<>();
+            roundResultList.add(roundResult);
+            UploadResults uploadResults;
+            if (getGroupId() != -1) {
+                Group group=DBManager.getInstance().queryGroupById(getGroupId());
+                uploadResults = new UploadResults(roundResult.getScheduleNo()
+                        , TestConfigs.getCurrentItemCode(), roundResult.getStudentCode()
+                        , "1", group, RoundResultBean.beanCope(roundResultList, group));
+            } else {
+                uploadResults = new UploadResults(roundResult.getScheduleNo()
+                        , TestConfigs.getCurrentItemCode(), roundResult.getStudentCode()
+                        , "1", null, RoundResultBean.beanCope(roundResultList));
+            }
+
+            Intent serverIntent = new Intent(context, UploadService.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(UploadResults.BEAN_KEY, uploadResults);
+            serverIntent.putExtras(bundle);
+            context.startService(serverIntent);
         }
 
     }

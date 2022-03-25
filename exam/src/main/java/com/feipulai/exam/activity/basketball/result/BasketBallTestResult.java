@@ -15,7 +15,7 @@ public class BasketBallTestResult {
     private int result;//实际成绩
     private int penalizeNum;//违例数
     private int resultState; //-999 预设置状态，不做成绩处理
-
+    private int reentry;
     public BasketBallTestResult(int roundNo, List<MachineResult> machineResultList, int selectMachineResult, int result, int penalizeNum, int resultState) {
         this.roundNo = roundNo;
         this.machineResultList = machineResultList;
@@ -71,6 +71,14 @@ public class BasketBallTestResult {
 
     public void setSelectMachineResult(int selectMachineResult) {
         this.selectMachineResult = selectMachineResult;
+    }
+
+    public int getReentry() {
+        return reentry;
+    }
+
+    public void setReentry(int reentry) {
+        this.reentry = reentry;
     }
 
     @Override

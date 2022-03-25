@@ -42,35 +42,25 @@ public class MachineSelectActivity extends BaseTitleActivity
     @Override
     protected void initData() {
         systemSetting = SettingHelper.getSystemSetting();
-        List<Tuple> tupleList = new ArrayList<>();
-        tupleList.add(new Tuple(ItemDefault.CODE_TS, "跳绳", R.mipmap.icon_jump_rope, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_YWQZ, "仰卧起坐", R.mipmap.icon_situp, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_LDTY, "立定跳远", R.mipmap.icon_standjump, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, "坐位体前屈", R.mipmap.icon_sitreach, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_ZFP, "红外计时", R.mipmap.icon_runtime, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, "红外实心球", R.mipmap.icon_medicine_ball, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_YTXS, "引体向上", R.mipmap.icon_pullup, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_PQ, "排球垫球", R.mipmap.icon_volleyball, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_MG, "摸高", R.mipmap.mogao, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_FWC, "俯卧撑", R.mipmap.icon_fwc, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.icon_middle_distance_race, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.icon_basketball, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.icon_football, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_WLJ, "握力", R.mipmap.grip, 3));
+
+        mTupleList.add(new Tuple(ItemDefault.CODE_TS, "跳绳", R.mipmap.icon_jump_rope, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_YWQZ, "仰卧起坐", R.mipmap.icon_situp, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_LDTY, "立定跳远", R.mipmap.icon_standjump, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZWTQQ, "坐位体前屈", R.mipmap.icon_sitreach, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZFP, "红外计时", R.mipmap.icon_runtime, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_HWSXQ, "红外实心球", R.mipmap.icon_medicine_ball, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_YTXS, "引体向上", R.mipmap.icon_pullup, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_PQ, "排球垫球", R.mipmap.icon_volleyball, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_MG, "摸高", R.mipmap.mogao, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_FWC, "俯卧撑", R.mipmap.icon_fwc, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZCP, "中长跑", R.mipmap.icon_middle_distance_race, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_LQYQ, "篮球运球", R.mipmap.icon_basketball, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_ZQYQ, "足球运球", R.mipmap.icon_football, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_WLJ, "握力", R.mipmap.grip, 3));
 //        mTupleList.add(new Tuple(ItemDefault.CODE_SHOOT, "篮球投篮", R.mipmap.basket_shoot, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_SGBQS, "双杠臂屈伸", R.mipmap.icon_parallel_bars, 3));
-        tupleList.add(new Tuple(ItemDefault.CODE_SPORT_TIMER, "运动计时", R.mipmap.icon_runtime, 3));
-        List<Item> itemList = DBManager.getInstance().queryItemNotNullItemCode();
-        List<Integer> itemMachineCodeList = new ArrayList<>();
-        for (Item item : itemList) {
-            itemMachineCodeList.add(item.getMachineCode());
-    }
-        for (Tuple tuple : tupleList) {
-        if (itemMachineCodeList.contains(tuple.getMachineCode())) {
-            mTupleList.add(tuple);
-        }
-    }
+        mTupleList.add(new Tuple(ItemDefault.CODE_JGCJ, "激光测距", R.mipmap.icon_jgcj, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_SGBQS, "双杠臂屈伸", R.mipmap.icon_parallel_bars, 3));
+        mTupleList.add(new Tuple(ItemDefault.CODE_SPORT_TIMER, "运动计时", R.mipmap.icon_runtime, 3));
 
         RecyclerView recyclerView = findViewById(R.id.rv_item);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 12);
@@ -100,7 +90,7 @@ public class MachineSelectActivity extends BaseTitleActivity
 
     private void setCurrentItem(int machineCode) {
         List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(machineCode);
-        Log.e("TAG", itemList.size() + "------");
+        Log.e("TAG",itemList.size()+"------");
         if (itemList.size() == 1 || machineCode == ItemDefault.CODE_ZCP) {
             int init = TestConfigs.init(this, machineCode, null, this);
             if (init == TestConfigs.INIT_SUCCESS) {

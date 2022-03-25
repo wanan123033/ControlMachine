@@ -68,9 +68,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @BindView(R.id.rg_group_mode)
     RadioGroup rgGroupMode;
     @BindView(R.id.et_intercept_time)
-    EditText etInterceptTime;
+    public EditText etInterceptTime;
     @BindView(R.id.et_sensitivity)
-    EditText etSensitivity;
+    public EditText etSensitivity;
     @BindView(R.id.et_host_ip)
     EditText etHostIp;
     @BindView(R.id.et_port)
@@ -78,7 +78,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @BindView(R.id.ll_ip)
     LinearLayout llIp;
     @BindView(R.id.rg_accuracy)
-    RadioGroup rgAccuracy;
+    public RadioGroup rgAccuracy;
     @BindView(R.id.sp_carryMode)
     Spinner spCarryMode;
     @BindView(R.id.view_carryMode)
@@ -88,20 +88,20 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     @BindView(R.id.sp_test_mode)
     Spinner spTestMode;
     @BindView(R.id.tv_pair)
-    TextView tvPair;
+    public TextView tvPair;
     @BindView(R.id.tv_ip_connect)
     TextView tvIpConnect;
     private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
-    private BasketBallSetting setting;
-    private MyHandler mHandler = new MyHandler(this);
-    private static final int MSG_DISCONNECT = 0X101;
+    public BasketBallSetting setting;
+    public MyHandler mHandler = new MyHandler(this);
+    public static final int MSG_DISCONNECT = 0X101;
     //3秒内检测IP是否可以
-    private volatile boolean isDisconnect;
+    public volatile boolean isDisconnect;
     /**
      * 点击是否为连接
      */
-    private boolean isClickConnect;
+    public boolean isClickConnect;
     private BallManager manager;
 
     @Override
@@ -328,7 +328,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
-        if (setting.getTestType() == 4){
+        if (setting.getTestType() == 4) {
             IntentUtil.gotoActivity(this, SportPairActivity.class);
             return;
         }
@@ -413,7 +413,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     }
 
 
-    private static class MyHandler extends Handler {
+    public static class MyHandler extends Handler {
 
         private WeakReference<BasketBallSettingActivity> mActivityWeakReference;
 

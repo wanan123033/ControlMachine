@@ -3,9 +3,11 @@ package com.feipulai.exam.activity.volleyball;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -135,9 +137,15 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
     @Override
-    protected void initData() {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         systemSetting = SettingHelper.getSystemSetting();
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initData() {
+
 
         group = (Group) TestConfigs.baseGroupMap.get("group");
         String type = "男女混合";

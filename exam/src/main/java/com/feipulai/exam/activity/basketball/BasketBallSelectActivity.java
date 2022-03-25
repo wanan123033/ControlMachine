@@ -8,6 +8,7 @@ import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.exam.activity.SubItemsSelectActivity;
 import com.feipulai.exam.activity.base.BaseGroupActivity;
 import com.feipulai.exam.activity.basketball.motion.BasketBallMotionTestActivity;
+import com.feipulai.exam.activity.basketball.reentry.BallReentryActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.entity.Item;
@@ -23,6 +24,7 @@ public class BasketBallSelectActivity
         this.itemList.add(new Item("往返运球投篮模式"));
         this.itemList.add(new Item("无线运球模式（V6.6）"));
         this.itemList.add(new Item("运动计时模式"));
+        this.itemList.add(new Item("无线折返模式"));
 //        this.itemList.add(new Item("投篮模式"));
         this.adapter.notifyDataSetChanged();
         getToolbar().setTitle("篮球模式选择");
@@ -33,7 +35,7 @@ public class BasketBallSelectActivity
                 if (position == 3) {
                     setting.setTestType(1);
                     setting.setDeviceVersion(1);
-                } else{
+                } else {
                     setting.setTestType(position);
                 }
                 ShootSetting shootSetting = SharedPrefsUtil.loadFormSource(BasketBallSelectActivity.this, ShootSetting.class);
@@ -57,6 +59,12 @@ public class BasketBallSelectActivity
 //                            LogUtils.operation("跳转:篮球投篮模式");
 //                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketBallShootActivity.class);
 //                            break;
+                        case 5:
+                            setting.setDeviceVersion(1);
+                            setting.setTestType(5);
+                            IntentUtil.gotoActivity(BasketBallSelectActivity.this, BallReentryActivity.class);
+
+                            break;
                     }
 
                 } else {

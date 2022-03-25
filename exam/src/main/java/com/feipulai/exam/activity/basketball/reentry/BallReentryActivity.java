@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity.basketball.motion;
+package com.feipulai.exam.activity.basketball.reentry;
 
 import android.graphics.Paint;
 import android.net.NetworkInfo;
@@ -48,7 +48,6 @@ import com.feipulai.exam.activity.basketball.adapter.BallReentryResultAdapter;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
-import com.feipulai.exam.activity.basketball.reentry.BasketBallReentryFacade;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
 import com.feipulai.exam.activity.jump_rope.bean.BaseDeviceState;
@@ -82,9 +81,9 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
- * 红外篮球
+ * 篮球折返
  */
-public class BasketBallMotionTestActivity extends BaseTitleActivity implements IndividualCheckFragment.OnIndividualCheckInListener
+public class BallReentryActivity extends BaseTitleActivity implements IndividualCheckFragment.OnIndividualCheckInListener
         , BasketBallListener.BasketBallResponseListener, TimerUtil.TimerAccepListener, BaseAFRFragment.onAFRCompareListener {
 
     private static final int GET_STATE = 22;
@@ -119,6 +118,10 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     CheckBox cbLed;
     @BindView(R.id.tv_resurvey)
     TextView tvResurvey;
+    @BindView(R.id.tv_reentry_add)
+    TextView tvReentryAdd;
+    @BindView(R.id.tv_reentry_remove)
+    TextView tvReentryRemove;
     private IndividualCheckFragment individualCheckFragment;
     // 状态 WAIT_FREE---> WAIT_CHECK_IN---> WAIT_BEGIN--->TESTING---->WAIT_STOP---->WAIT_CONFIRM--->WAIT_CHECK_IN
     private static final int WAIT_FREE = 0x0;
@@ -132,7 +135,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     private BasketBallSetting setting;
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private List<BasketBallTestResult> resultList = new ArrayList<>();
-    private BasketBallResultAdapter resultAdapter;
+    private BallReentryResultAdapter resultAdapter;
     private String testDate;
     private StudentItem mStudentItem;
     private int roundNo;
@@ -140,7 +143,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 
     private BallManager ballManager;
     private SportTimerManger sportTimerManger;
-    private BasketBallMotionFacade facade;
+    private BasketBallReentryFacade facade;
     private long timerDate;//当前计时时间
     private FrameLayout afrFrameLayout;
     private BaseAFRFragment afrFragment;
@@ -148,7 +151,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 
     @Override
     protected int setLayoutResID() {
-        return R.layout.activity_individual_basketball;
+        return R.layout.activity_reentry_basketball;
     }
 
     @Override
@@ -176,7 +179,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), this);
+        facade = new BasketBallReentryFacade(setting.getTestType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
@@ -196,7 +199,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 
         ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
 
-        resultAdapter = new BasketBallResultAdapter(resultList, setting);
+        resultAdapter = new BallReentryResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         rvTestResult.setAdapter(resultAdapter);
 
@@ -206,7 +209,13 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 if (!isConfigurableNow() || state == WAIT_STOP) {
                     resultAdapter.setSelectPosition(position);
                     resultAdapter.notifyDataSetChanged();
-
+                    if (resultList.get(position).getReentry() > 0) {
+                        tvReentryRemove.setVisibility(View.VISIBLE);
+                        tvReentryAdd.setVisibility(View.GONE);
+                    } else {
+                        tvReentryRemove.setVisibility(View.GONE);
+                        tvReentryAdd.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -247,8 +256,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         });
         //设置状态 同步时间
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
-        tvPair.setVisibility(View.VISIBLE);
-        cbFar.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -309,7 +317,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             Student student = (Student) baseEvent.getData();
             StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
             onIndividualCheckIn(student, studentItem, new ArrayList<RoundResult>());
-        } else if (baseEvent.getTagInt() == EventConfigs.BALL_STATE) {
+        } else  if (baseEvent.getTagInt() == EventConfigs.BALL_STATE) {
             Basketball868Result result = (Basketball868Result) baseEvent.getData();
             if (result.getDeviceId() == 1) {
                 getDeviceStateString(cbNear, "近红外", result.getState());
@@ -401,6 +409,8 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             roundNo = results.size() + 1;
             LogUtils.operation("篮球当前轮次：" + roundNo);
             TestCache.getInstance().getTestNoMap().put(student, testNo);
+            tvReentryRemove.setVisibility(View.GONE);
+            tvReentryAdd.setVisibility(View.VISIBLE);
             presetResult(student, testNo);
             resultAdapter.notifyDataSetChanged();
 
@@ -494,8 +504,10 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         pairs.get(0).setDeviceResult(result);
         Student student = pairs.get(0).getStudent();
         int testNo = TestCache.getInstance().getTestNoMap().get(student);
+        if (result.gettNum()==1){
+            state = WAIT_CONFIRM;
+        }
 
-        state = WAIT_CONFIRM;
         txtDeviceStatus.setText("中断");
         List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
                 , testNo,
@@ -509,56 +521,70 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         machineResult.setRoundNo(roundNo);
         machineResult.setStudentCode(student.getStudentCode());
         machineResult.setResult(result.getResult());
-
+        if (result.gettNum() == 2) {
+            machineResult.setResultType(1);
+            tvReentryRemove.setVisibility(View.VISIBLE);
+            tvReentryAdd.setVisibility(View.GONE);
+        }
 
         //第一次拦截保存成绩，其他拦截只保存
         if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
+            if (result.gettNum() == 2) {
+                if (resultList.isEmpty()) {
+                    resultList.add(new BasketBallTestResult(roundNo, machineResultList, 0, -999, 0, -999));
+                }
+                resultList.get(resultAdapter.getSelectPosition()).setReentry(result.getResult());
 
-            machineResultList.add(machineResult);
-            addRoundResult(result);
-            if (resultList.isEmpty()) {
-                resultList.add(new BasketBallTestResult(roundNo, machineResultList, 0, -999, 0, -999));
+            } else {
+                machineResultList.add(machineResult);
+                addRoundResult(result);
+                if (resultList.isEmpty()) {
+                    resultList.add(new BasketBallTestResult(roundNo, machineResultList, 0, -999, 0, -999));
+                }
+                resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
+                resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setResult(machineResult.getResult());
+                resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
+                resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
             }
-            resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
-            resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).setResult(machineResult.getResult());
-            resultList.get(resultAdapter.getSelectPosition()).setPenalizeNum(0);
-            resultList.get(resultAdapter.getSelectPosition()).setResultState(RoundResult.RESULT_STATE_NORMAL);
-
 
         } else {
 
             BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
             int pResult = result.getResult() + (testResult.getPenalizeNum() * (int) (setting.getPenaltySecond() * 1000.0));
 
-            machineResultList.add(machineResult);
-            testResult.setSelectMachineResult(machineResult.getResult());
-            testResult.setResult(pResult);
-            testResult.getMachineResultList().clear();
-            testResult.getMachineResultList().addAll(machineResultList);
-            RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
-                    testNo, roundNo);
-            testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
-            testRoundResult.setResult(pResult);
-            testRoundResult.setMachineResult(result.getResult());
-            LogUtils.operation("篮球拦截更新成绩" + testRoundResult.toString());
-            //更新成绩，
-            DBManager.getInstance().updateRoundResult(testRoundResult);
-            //获取所有成绩设置为非最好成绩
-            List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
-            //获取最小成绩设置为最好成绩
-            RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), testNo);
-            for (RoundResult roundResult : results) {
-                if (roundResult.getResult() == dbAscResult.getResult()) {
-                    roundResult.setIsLastResult(1);
-                } else {
-                    roundResult.setIsLastResult(0);
+            if (result.gettNum() == 2) {
+                testResult.setReentry(result.getResult());
+            } else {
+                machineResultList.add(machineResult);
+                testResult.setSelectMachineResult(machineResult.getResult());
+                testResult.setResult(pResult);
+                testResult.getMachineResultList().clear();
+                testResult.getMachineResultList().addAll(machineResultList);
+                RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
+                        testNo, roundNo);
+                testRoundResult.setPenaltyNum(testResult.getPenalizeNum());
+                testRoundResult.setResult(pResult);
+                testRoundResult.setMachineResult(result.getResult());
+                LogUtils.operation("篮球拦截更新成绩" + testRoundResult.toString());
+                //更新成绩，
+                DBManager.getInstance().updateRoundResult(testRoundResult);
+                //获取所有成绩设置为非最好成绩
+                List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
+                //获取最小成绩设置为最好成绩
+                RoundResult dbAscResult = DBManager.getInstance().queryOrderAscScore(student.getStudentCode(), testNo);
+                for (RoundResult roundResult : results) {
+                    if (roundResult.getResult() == dbAscResult.getResult()) {
+                        roundResult.setIsLastResult(1);
+                    } else {
+                        roundResult.setIsLastResult(0);
+                    }
+                    DBManager.getInstance().updateRoundResult(roundResult);
                 }
-                DBManager.getInstance().updateRoundResult(roundResult);
-            }
 
-            if (results != null) {
-                TestCache.getInstance().getResults().put(student, results);
+                if (results != null) {
+                    TestCache.getInstance().getResults().put(student, results);
+                }
             }
 
 
@@ -567,17 +593,18 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         resultAdapter.notifyDataSetChanged();
         DBManager.getInstance().insterMachineResult(machineResult);
         setOperationUI();
-        showStuInfoResult();
-        String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
-        if (time.charAt(0) == '0' && time.charAt(1) == '0') {
-            time = time.substring(3, time.toCharArray().length);
-        } else if (time.charAt(0) == '0') {
-            time = time.substring(1, time.toCharArray().length);
+        if (result.gettNum() == 1) {
+            showStuInfoResult();
+            String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
+            if (time.charAt(0) == '0' && time.charAt(1) == '0') {
+                time = time.substring(3, time.toCharArray().length);
+            } else if (time.charAt(0) == '0') {
+                time = time.substring(1, time.toCharArray().length);
+            }
+            tvResult.setText(time);
+
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
         }
-        tvResult.setText(time);
-
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-
 
     }
 
@@ -722,7 +749,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     private void startProjectSetting() {
         if (!isConfigurableNow()) {
             LogUtils.all("跳转至篮球项目设置界面");
-            IntentUtil.gotoActivityForResult(this, BaskBallMotionSettingActivity.class, 1);
+            IntentUtil.gotoActivityForResult(this, BallReentrySettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
@@ -740,9 +767,68 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     @OnClick(R.id.tv_pair)
     public void onViewClicked() {
         LogUtils.all("跳转至篮球设备配对界面");
-        IntentUtil.gotoActivity(this, BasketMotionPairActivity.class);
+        IntentUtil.gotoActivity(this, BasketReentryPairActivity.class);
     }
 
+    @OnClick({R.id.tv_reentry_add, R.id.tv_reentry_remove})
+    public void onReentryClicked(View view) {
+        final Student student = pairs.get(0).getStudent();
+        final int testNo = TestCache.getInstance().getTestNoMap().get(student);
+        final BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
+        switch (view.getId()) {
+            case R.id.tv_reentry_add:
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
+                        .setContentText("是否到达折返点").setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+
+                        MachineResult machineResult = new MachineResult();
+                        machineResult.setItemCode(TestConfigs.getCurrentItemCode());
+                        machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
+                        machineResult.setTestNo(testNo);
+                        machineResult.setRoundNo(resultAdapter.getSelectPosition());
+                        machineResult.setStudentCode(student.getStudentCode());
+                        machineResult.setResult(0);
+                        machineResult.setResultType(1);
+                        machineResult.setResultState(1);
+                        DBManager.getInstance().insterMachineResult(machineResult);
+
+                        testResult.setReentry(0);
+                        resultAdapter.notifyDataSetChanged();
+                        tvReentryRemove.setVisibility(View.VISIBLE);
+                        tvReentryAdd.setVisibility(View.GONE);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+
+                break;
+            case R.id.tv_reentry_remove:
+
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("温馨提示")
+                        .setContentText("是否清除折返点").setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                        DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), testNo, roundNo, RoundResult.DEAFULT_GROUP_ID);
+                        testResult.setReentry(-999);
+                        resultAdapter.notifyDataSetChanged();
+                        tvReentryRemove.setVisibility(View.GONE);
+                        tvReentryAdd.setVisibility(View.VISIBLE);
+                    }
+                }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                }).show();
+                break;
+        }
+    }
 
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
             , R.id.tv_result, R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test, R.id.img_AFR
@@ -831,7 +917,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 if (state == WAIT_CONFIRM) {
                     sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 }
-
+                if (!isReentryCheck()) {
+                    return;
+                }
                 if (state != TESTING && pairs.get(0).getStudent() != null) {
                     tvResult.setText("");
                     txtDeviceStatus.setText("空闲");
@@ -847,7 +935,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
                     timerUtil.stop();
-
+                    if (!isReentryCheck()) {
+                        return;
+                    }
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
                     txtDeviceStatus.setText("空闲");
@@ -869,6 +959,46 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         }
     }
 
+    /**
+     * 检测是否存在未折返成绩
+     */
+    private boolean isReentryCheck() {
+        final Student student = pairs.get(0).getStudent();
+        final int testNo = TestCache.getInstance().getTestNoMap().get(student);
+        final List<BasketBallTestResult> reentryNullResult = new ArrayList<>();
+        for (BasketBallTestResult testResult : resultList) {
+            if (testResult.getResult() != -999 && testResult.getReentry() == -999 && testResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                reentryNullResult.add(testResult);
+            }
+        }
+        if (reentryNullResult.size() > 0) {
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("存在未到折返点成绩")
+                    .setContentText("是否将未到折返点成绩标识为<犯规>").setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                    for (BasketBallTestResult testResult : resultList) {
+                        if (testResult.getResult() != -999 && testResult.getReentry() == -999 && testResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
+                            RoundResult testRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
+                                    testNo, testResult.getRoundNo());
+                            testRoundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+                            DBManager.getInstance().updateRoundResult(testRoundResult);
+                            testResult.setResultState(RoundResult.RESULT_STATE_FOUL);
+                        }
+                    }
+                    sweetAlertDialog.dismissWithAnimation();
+                    resultAdapter.notifyDataSetChanged();
+                }
+            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    sweetAlertDialog.dismissWithAnimation();
+                }
+            }).show();
+            return false;
+        }
+        return true;
+    }
 
     private void showResurvey() {
         if (pairs.get(0).getStudent() == null) {

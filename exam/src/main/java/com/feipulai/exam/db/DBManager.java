@@ -1837,6 +1837,7 @@ public class DBManager {
                 .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(RoundResultDao.Properties.RoundNo.eq(roundNo))
+                .limit(1)
                 .unique();
     }
 
@@ -2819,14 +2820,42 @@ public class DBManager {
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
                 .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.ResultType.eq("0"))
                 .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
     }
+
+    public MachineResult getMachineResultReentry(String stuCode, int testNo, int roundNo) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
+                .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(roundNo))
+                .where(MachineResultDao.Properties.ResultType.eq("1"))
+                .orderDesc(MachineResultDao.Properties.Id)
+                .limit(1)
+                .unique();
+    }
+
+    public MachineResult getGroupMachineResultReentry(String stuCode,  long groupId, int roundNo) {
+        return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
+                .where(MachineResultDao.Properties.TestNo.eq(1))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .where(MachineResultDao.Properties.RoundNo.eq(roundNo))
+                .where(MachineResultDao.Properties.ResultType.eq("1"))
+                .orderDesc(MachineResultDao.Properties.Id)
+                .limit(1)
+                .unique();
+    }
+
 
     public List<MachineResult> getItemGroupFRoundMachineResult(String stuCode, long groupId, int roundNo) {
         return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
                 .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .where(MachineResultDao.Properties.ResultType.eq("0"))
                 .where(MachineResultDao.Properties.RoundNo.eq(roundNo)).list();
     }
 
@@ -2850,6 +2879,18 @@ public class DBManager {
                 .where(MachineResultDao.Properties.TestNo.eq(testNo))
                 .where(MachineResultDao.Properties.RoundNo.eq(rountNo))
                 .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .buildDelete().executeDeleteWithoutDetachingEntities();
+    }
+
+    public void deleteStuMachineResultsReentry(String studentCode, int testNo, int rountNo, long groupId) {
+        machineResultDao.queryBuilder()
+                .where(MachineResultDao.Properties.StudentCode.eq(studentCode))
+                .where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(MachineResultDao.Properties.TestNo.eq(testNo))
+                .where(MachineResultDao.Properties.RoundNo.eq(rountNo))
+                .where(MachineResultDao.Properties.GroupId.eq(groupId))
+                .where(MachineResultDao.Properties.ResultType.eq("1"))
                 .buildDelete().executeDeleteWithoutDetachingEntities();
     }
 

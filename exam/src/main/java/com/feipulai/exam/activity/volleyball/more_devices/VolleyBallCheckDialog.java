@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.device.manager.VolleyBallRadioManager;
 import com.feipulai.device.serial.RadioManager;
+import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.beans.VolleyPair868Result;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -32,12 +33,17 @@ public class VolleyBallCheckDialog extends DialogFragment implements RadioManage
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
-            if (getDialog() != null
-                    && getDialog().isShowing()) {
-                checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
-                checkDeviceView.setCheckResult(resul.getCheckResult());
+            if (msg.what == SerialConfigs.VOLLEY_BALL_SELFCHECK) {
+                VolleyPair868Result resul = (VolleyPair868Result) msg.obj;
+                if (getDialog() != null
+                        && getDialog().isShowing()) {
+                    if (resul != null && resul.getPositionList() != null) {
+                        checkDeviceView.setData(setting.getTestPattern() == 0 ? VolleyBallSetting.ANTIAIRCRAFT_POLE : VolleyBallSetting.WALL_POLE, resul.getPositionList());
+                        checkDeviceView.setCheckResult(resul.getCheckResult());
+                    }
 
+
+                }
             }
 
 

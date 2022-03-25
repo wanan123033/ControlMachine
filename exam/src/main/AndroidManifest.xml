@@ -661,6 +661,33 @@
         <activity android:name=".activity.data.DataDownLoadActivity" />
         <activity android:name=".activity.base.BaseGroupCheckActivity" />
 
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.reentry.BasketReentryPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.reentry.BallReentryActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.reentry.BallReentrySettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.reentry.BallReentryGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.motion.BasketMotionPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.basketball.motion.BaskBallMotionSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />

@@ -63,7 +63,29 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:background="#313131">
-
+            <TextView
+                android:id="@+id/tv_reentry_add"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:text="到达折返点"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+            <TextView
+                android:id="@+id/tv_reentry_remove"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:text="未到折返点"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
             <CheckBox
                 android:id="@+id/cb_near"
                 android:layout_width="wrap_content"
@@ -292,7 +314,7 @@
 
             <LinearLayout
                 android:id="@+id/view_list_head"
-                android:layout_width="620dp"
+                android:layout_width="640dp"
                 android:layout_height="35dp"
                 android:background="@color/grey_A8"
                 android:orientation="horizontal">
@@ -318,11 +340,16 @@
                     android:gravity="center"
                     android:text="实际成绩"
                     android:textSize="@dimen/sp_16" />
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="折返点"
+                    android:textSize="@dimen/sp_16" />
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="违例数"
                     android:textSize="@dimen/sp_16" />
@@ -334,10 +361,9 @@
                     android:text="状态"
                     android:textSize="@dimen/sp_16" />
             </LinearLayout>
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_test_result"
-                android:layout_width="620dp"
+                android:layout_width="640dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/view_list_head"
                 android:background="@color/white"

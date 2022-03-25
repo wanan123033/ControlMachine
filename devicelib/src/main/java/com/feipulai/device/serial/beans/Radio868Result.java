@@ -266,9 +266,8 @@ public class Radio868Result {
 
                     }
 
-                }
-                if (data[0] == 0xab && data[data.length - 1] == 0x56) {
-                    Log.i("红外=====================", StringUtility.bytesToHexString(data));
+                } else if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                    runResult(data);
                 }
                 break;
 
@@ -402,31 +401,43 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
             case ItemDefault.CODE_ZFP:
-                if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d) {
-                    if (data[1] < data.length) {
-                        data = Arrays.copyOf(data, data[1]);
-                    }
-
-                    setResult(new SportResult(data));
-                    switch (data[7]) {
-                        case 20://子机配对
-                        case 23://设置参数
-                            setType(SerialConfigs.SPORT_TIMER_MATCH);
-                            break;
-                        case 0:
-                            setType(SerialConfigs.SPORT_TIMER_CONNECT);
-                            break;
-                        case 2:
-                            setType(SerialConfigs.SPORT_TIMER_GET_TIME);
-                            break;
-                        case 4:
-                            setType(SerialConfigs.SPORT_TIMER_GET_TIME);
-                            break;
-                        case 13:
-                            setType(SerialConfigs.SPORT_TIMER_RESULT);
-                            break;
-                    }
+                if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                    runResult(data);
                 }
+                break;
+        }
+    }
+
+    private void runResult(byte[] data) {
+        if (data[1] < data.length) {
+            data = Arrays.copyOf(data, data[1]);
+        }
+
+        setResult(new SportResult(data));
+        switch (data[7]) {
+            case 20://子机配对
+            case 23://设置参数
+                setType(SerialConfigs.SPORT_TIMER_MATCH);
+                break;
+            case 0:
+                setType(SerialConfigs.SPORT_TIMER_CONNECT);
+                break;
+            case 2:
+                setType(SerialConfigs.SPORT_TIMER_GET_TIME);
+                break;
+            case 4:
+                setType(SerialConfigs.SPORT_TIMER_GET_TIME);
+                break;
+            case 6:
+                setResult(data[10] & 0xFF);
+                setType(SerialConfigs.SPORT_TIMER_GET_SENSITIVE);
+                break;
+            case 19:
+                setResult(data[10] & 0xFF);
+                setType(SerialConfigs.SPORT_TIMER_GET_MIN_TIME);
+                break;
+            case 13:
+                setType(SerialConfigs.SPORT_TIMER_RESULT);
                 break;
         }
     }

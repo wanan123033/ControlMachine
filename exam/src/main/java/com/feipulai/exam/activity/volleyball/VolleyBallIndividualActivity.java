@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.volleyball;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -151,9 +152,15 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
     }
 
     @Override
-    protected void initData() {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         systemSetting = SettingHelper.getSystemSetting();
         setting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initData() {
+
         lastResult = new String[setting.getTestNo()];
         TestCache.getInstance().clear();
 

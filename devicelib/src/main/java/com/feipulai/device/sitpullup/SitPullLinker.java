@@ -13,6 +13,7 @@ import com.feipulai.device.serial.beans.PullUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.ShoulderResult;
 import com.feipulai.device.serial.beans.SitPushUpSetFrequencyResult;
 import com.feipulai.device.serial.beans.SitReachWirelessResult;
+import com.feipulai.device.serial.beans.SportResult;
 import com.feipulai.device.serial.beans.StringUtility;
 import com.feipulai.device.serial.beans.VitalCapacityNewResult;
 import com.feipulai.device.serial.beans.VitalCapacityResult;
@@ -117,7 +118,9 @@ public class SitPullLinker implements Handler.Callback {
         }
         return false;
     }
-
+    private void checkDevice(SportResult result) {
+        checkDevice(result.getDeviceId(),   result.getFrequency());
+    }
     private void checkDevice(VitalCapacityResult result) {
         checkDevice(result.getDeviceId(), result.getFrequency());
     }

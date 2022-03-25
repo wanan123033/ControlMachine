@@ -324,5 +324,18 @@ public class DateUtil {
 //        SystemClock.setCurrentTimeMillis(value);
 
     }
+    /**
+     * 返回当前时间精确到毫秒 不要年月日
+     *
+     * @return
+     */
+    public static int getTime() {
+        Calendar Cld = Calendar.getInstance();
+        int HH = Cld.get(Calendar.HOUR_OF_DAY);
+        int mm = Cld.get(Calendar.MINUTE);
+        int SS = Cld.get(Calendar.SECOND);
+        int MI = Cld.get(Calendar.MILLISECOND);
+        return HH * 60 * 60 * 1000 + mm * 60 * 1000 + SS * 1000 + MI;
+    }
 
 }

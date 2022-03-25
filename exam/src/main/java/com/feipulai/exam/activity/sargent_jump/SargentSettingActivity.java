@@ -491,7 +491,10 @@ public class SargentSettingActivity extends BaseTitleActivity implements Compoun
 
                     break;
                 case 2:
-                    alertDialog.dismiss();
+                    if (alertDialog!=null&&alertDialog.isShowing()){
+                        alertDialog.dismiss();
+                    }
+
                     ToastUtils.showShort("匹配成功");
                     break;
                 case 3:

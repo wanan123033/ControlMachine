@@ -1134,10 +1134,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
         DBManager.getInstance().insertRoundResult(roundResult);
         LogUtils.operation("保存成绩:" + roundResult.toString());
         uploadServer(baseStuPair, roundResult);
-        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
-            //是否测试到最后一位
-            continuousTest();
-        }
+//        if (groupItem != null && groupItem.getExamType() == StudentItem.EXAM_MAKE) {
+//            //是否测试到最后一位
+//            continuousTest();
+//        }
 
         SystemSetting systemSetting = SettingHelper.getSystemSetting();
         //循环模式下的分组检入 需要关闭当前页面重新检录

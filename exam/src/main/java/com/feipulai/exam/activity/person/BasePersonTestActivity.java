@@ -672,10 +672,10 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
                     @Override
                     public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int updateRoundNo) {
-                        if (pair.getStudent()!=null){
-                            LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo+ "轮成绩");
+                        if (pair.getStudent() != null) {
+                            LogUtils.operation(pair.getStudent().getStudentCode() + "重测第" + updateRoundNo + "轮成绩");
 
-                            result[updateRoundNo-1] = "";
+                            result[updateRoundNo - 1] = "";
                             pair.setTimeResult(result);
                             resultList.clear();
                             resultList.addAll(Arrays.asList(result));
@@ -761,6 +761,17 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         startActivity(new Intent(this, LEDSettingActivity.class));
     }
 
+    @Override
+    public void finish() {
+        if (pair.getStudent() != null && pair.getBaseDevice().getState() != BaseDeviceState.STATE_NOT_BEGAIN
+                && pair.getBaseDevice().getState() != BaseDeviceState.STATE_FREE
+                && pair.getBaseDevice().getState() != BaseDeviceState.STATE_ERROR) {
+            toastSpeak("测试中,不允许退出当前界面");
+            return;
+        }
+        super.finish();
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -941,7 +952,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     toastSpeak("是否需要判罚,否则请选择跳过");
                     return;
                 }
-                if (pair.isFullMark()){
+                if (pair.isFullMark()) {
                     toastSpeak("满分");
                 }
                 //测试结束学生清除 ，设备设置空闲状态

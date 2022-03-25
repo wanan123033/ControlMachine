@@ -198,4 +198,8 @@ public class SportResult {
     public void setBattery(int battery) {
         this.battery = battery;
     }
+
+    public String getMapKey() {
+        return deviceId + "" + sumTimes;
+    }
 }

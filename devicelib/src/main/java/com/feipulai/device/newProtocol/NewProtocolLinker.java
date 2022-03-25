@@ -35,7 +35,7 @@ public class NewProtocolLinker extends SitPullLinker {
 //                    listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
 //                }
             } else {
-                if (machineCode == ItemDefault.CODE_SPORT_TIMER){
+                if (machineCode == ItemDefault.CODE_SPORT_TIMER||machineCode == ItemDefault.CODE_LQYQ ){
                     listener.setFrequency(currentDeviceId, hostId, TARGET_FREQUENCY);
                 }else {
                     listener.setFrequency(currentDeviceId, frequency, TARGET_FREQUENCY);
@@ -85,6 +85,10 @@ public class NewProtocolLinker extends SitPullLinker {
             return true;
         }
          else if (machineCode == ItemDefault.CODE_SPORT_TIMER && what == SerialConfigs.SPORT_TIMER_MATCH) {
+            SportResult result = (SportResult) msg.obj;
+            checkDevice(result.getDeviceId(),result.getFrequency(),result.getHostId());
+            return true;
+        }if (machineCode == ItemDefault.CODE_LQYQ && what == SerialConfigs.SPORT_TIMER_MATCH) {
             SportResult result = (SportResult) msg.obj;
             checkDevice(result.getDeviceId(),result.getFrequency(),result.getHostId());
             return true;
