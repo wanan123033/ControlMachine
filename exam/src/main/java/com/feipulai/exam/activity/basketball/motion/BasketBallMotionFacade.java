@@ -293,6 +293,8 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                     timeRountList.add(sportResult);
 
                 }
+                BasketballResult basketballResult = new BasketballResult();
+                basketballResult.settNum(sportResult.getDeviceId());
                 if (!isledStartTime) {
                     //第一次拦截为折返 过滤
                     if (patternTypes == 5 && sportResult.getDeviceId() == 2) {
@@ -309,7 +311,7 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                     ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
                     isledStartTime = true;
                     listener.getDeviceStatus(3);//设置计时状态
-                    listener.triggerStart(null);//开始计时
+                    listener.triggerStart(basketballResult);//开始计时
                 }
                 if (sportResult.getSumTimes() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(sportResult.getMapKey())) { //获取拦截成绩
                     ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
@@ -322,7 +324,6 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                         return;
                     }
                     int[] time = TimeUtil.getTestResult(testTime);
-                    BasketballResult basketballResult = new BasketballResult();
                     basketballResult.settNum(sportResult.getDeviceId());
                     if (time != null) {
                         basketballResult.setHour(time[0]);

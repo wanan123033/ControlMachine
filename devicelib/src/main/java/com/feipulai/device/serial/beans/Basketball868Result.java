@@ -71,7 +71,10 @@ public class Basketball868Result {
         serialNumber = (data[8] & 0xff) + (data[9] & 0xff) + (data[10] & 0xff) + (data[11] & 0xff) + "";
         deviceCode = data[4];
         sensitivity = data[16] & 0xff;
-        interceptSecond = data[17] & 0xff;
+        if (data.length > 17) {
+            interceptSecond = data[17] & 0xff;
+        }
+
 
         if (data[7] == 0x0a) {//设置
             sensitivity = data[13] & 0xff;

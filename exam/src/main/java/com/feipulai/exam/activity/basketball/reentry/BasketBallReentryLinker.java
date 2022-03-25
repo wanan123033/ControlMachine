@@ -29,8 +29,8 @@ public class BasketBallReentryLinker
         if (((paramMessage.what == SerialConfigs.DRIBBLEING_PARAMETER)
                 || (paramMessage.what == SerialConfigs.DRIBBLEING_FREQUENCY))) {
             Basketball868Result result = (Basketball868Result) paramMessage.obj;
-            if (this.machineCode == ItemDefault.CODE_LQYQ) {
-                if ((currentDeviceId == deviceCount-1) && (result.getDeviceCode() == 2)) {
+            if (this.machineCode == ItemDefault.CODE_LQYQ || machineCode == ItemDefault.CODE_ZQYQ) {
+                if ((currentDeviceId == deviceCount - 1) && (result.getDeviceCode() == 2)) {
                     if (paramMessage.what == SerialConfigs.DRIBBLEING_PARAMETER) {//设置成功LED id为0 ，设置配对设备ID为0
                         currentDeviceId = 0;
                     }
@@ -42,7 +42,7 @@ public class BasketBallReentryLinker
             return true;
 
         }
-        if (machineCode == ItemDefault.CODE_LQYQ && paramMessage.what == SerialConfigs.SPORT_TIMER_MATCH) {
+        if ((machineCode == ItemDefault.CODE_LQYQ || machineCode == ItemDefault.CODE_ZQYQ) && paramMessage.what == SerialConfigs.SPORT_TIMER_MATCH) {
             SportResult result = (SportResult) paramMessage.obj;
             checkDevice(result.getDeviceId(), result.getFrequency(), result.getHostId());
             return true;

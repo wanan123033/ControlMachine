@@ -26,9 +26,9 @@ public class BasketBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = TestConfigs.GROUP_PATTERN_SUCCESIVE;
-    private int testType = 0;//0有线 1无线 3无线6.6版本 4 红外拦截器
+    private int testType = 0;//0有线 1无线 3无线6.6版本 4 红外拦截器 5折返
     private int deviceVersion = 0;//0:6.4 1无线6.6版本
-    private int useLedType=0;//使用LED類型 0 標配 1 通用
+    private int useLedType = 0;//使用LED類型 0 標配 1 通用
 
     public int getUseLedType() {
         return useLedType;
@@ -45,6 +45,7 @@ public class BasketBallSetting {
     public void setDeviceVersion(int deviceVersion) {
         this.deviceVersion = deviceVersion;
     }
+
     public int getTestNo() {
         return testNo;
     }

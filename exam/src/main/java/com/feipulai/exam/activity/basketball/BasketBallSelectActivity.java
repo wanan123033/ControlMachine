@@ -53,6 +53,7 @@ public class BasketBallSelectActivity
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, DribbleShootActivity.class);
                             break;
                         case 4:
+                            setting.setTestType(position);
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, BasketBallMotionTestActivity.class);
                             break;
 //                        case 3:
@@ -61,7 +62,7 @@ public class BasketBallSelectActivity
 //                            break;
                         case 5:
                             setting.setDeviceVersion(1);
-                            setting.setTestType(5);
+                            setting.setTestType(position);
                             IntentUtil.gotoActivity(BasketBallSelectActivity.this, BallReentryActivity.class);
 
                             break;
