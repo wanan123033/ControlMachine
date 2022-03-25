@@ -555,7 +555,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
 
         }
 //        tvResult.setText(DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
-        doGetResult(result);
+//        doGetResult(result);
 //        String time = DateUtil.caculateFormatTime(result.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
         String time = ResultDisplayUtils.getStrResultForDisplay(result.getResult());
         if (time.charAt(0) == '0' && time.charAt(1) == '0') {
