@@ -41,8 +41,11 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.basketball.motion.BasketBallMotionGroupActivity;
 import com.feipulai.exam.activity.basketball.reentry.BallReentryGroupActivity;
 import com.feipulai.exam.activity.basketball.reentry.BallReentrySettingActivity;
+import com.feipulai.exam.activity.footBall.FootBallSetting;
+import com.feipulai.exam.activity.footBall.motion.FootBallMotionGroupActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
@@ -776,67 +779,13 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     LogUtils.operation("分组进入测试学生:" + pairs.get(i).getStudent().toString());
                 }
 
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
-                    PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
-                    if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1)
-                            || setting.getTestType() == PushUpSetting.WIRED_TYPE) {
-                        startActivity(new Intent(this, PushUpGroupActivity.class));
-                        return;
-                    }
-                    if (setting.getTestType() == 2) {
-                        startActivity(new Intent(this, PushUpDistanceTestActivity.class));
-                    }
-                }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
-                        SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType() == 2) {
-                    startActivity(new Intent(this, SargentTestGroupActivity.class));
-                    return;
-                }
 
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HWSXQ &&
-                        SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class).getConnectType() == 1) {
-                    startActivity(new Intent(this, BallGroupMoreActivity.class));
-                    return;
-                }
-
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
-                        && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 2) {
-
-                    startActivity(new Intent(this, VolleyBallGroupActivity.class));
-                    return;
-                }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY
-                        && SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class).getTestType() == 1) {
-                    startActivity(new Intent(this, StandJumpGroupMoreActivity.class));
-                    return;
-                }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZWTQQ
-                        && SharedPrefsUtil.loadFormSource(this, SitReachSetting.class).getTestType() == 1) {
-                    startActivity(new Intent(this, SitReachMoreGroupActivity.class));
-                    return;
-                }
-
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-                    BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
-                    if (setting.getTestType() == 5) {
-                        startActivity(new Intent(this, BallReentryGroupActivity.class));
-                    } else if (SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
-                        startActivity(new Intent(this, DribbleShootGroupActivity.class));
-                    }
-
-                    return;
-                }
-                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP
-                        && SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class).getConnectType() == 1) {
-                    startActivity(new Intent(this, NewRadioGroupActivity.class));
-                    return;
-                }
 //                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_YWQZ
 //                        && SharedPrefsUtil.loadFormSource(this, SitUpSetting.class).getTestType() == 1) {
 //                    startActivity(new Intent(this, SitUpArmCheckActivity.class));
 //                    return;
 //                }
-                startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+                gotoActivity();
                 break;
 
             case R.id.txt_print:
@@ -870,6 +819,81 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 scoreUpload();
                 break;
         }
+    }
+
+    private void gotoActivity() {
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_FWC) {
+            PushUpSetting setting = SharedPrefsUtil.loadFormSource(this, PushUpSetting.class);
+            if ((setting.getTestType() == PushUpSetting.WIRELESS_TYPE && setting.getDeviceSum() == 1)
+                    || setting.getTestType() == PushUpSetting.WIRED_TYPE) {
+                startActivity(new Intent(this, PushUpGroupActivity.class));
+                return;
+            }
+            if (setting.getTestType() == 2) {
+                startActivity(new Intent(this, PushUpDistanceTestActivity.class));
+            }
+        }
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_MG &&
+                SharedPrefsUtil.loadFormSource(this, SargentSetting.class).getType() == 2) {
+            startActivity(new Intent(this, SargentTestGroupActivity.class));
+            return;
+        }
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_HWSXQ &&
+                SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class).getConnectType() == 1) {
+            startActivity(new Intent(this, BallGroupMoreActivity.class));
+            return;
+        }
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_PQ
+                && SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class).getType() == 2) {
+
+            startActivity(new Intent(this, VolleyBallGroupActivity.class));
+            return;
+        }
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LDTY
+                && SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class).getTestType() == 1) {
+            startActivity(new Intent(this, StandJumpGroupMoreActivity.class));
+            return;
+        }
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZWTQQ
+                && SharedPrefsUtil.loadFormSource(this, SitReachSetting.class).getTestType() == 1) {
+            startActivity(new Intent(this, SitReachMoreGroupActivity.class));
+            return;
+        }
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+            BasketBallSetting setting = SharedPrefsUtil.loadFormSource(this, BasketBallSetting.class);
+            if (setting.getTestType() == 5) {
+                startActivity(new Intent(this, BallReentryGroupActivity.class));
+                return;
+            } else if (SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 2) {
+                startActivity(new Intent(this, DribbleShootGroupActivity.class));
+                return;
+            } else if (SharedPrefsUtil.loadFormSource(this, ShootSetting.class).getTestType() == 4) {
+                startActivity(new Intent(this, BasketBallMotionGroupActivity.class));
+                return;
+            }
+
+
+        }
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
+            FootBallSetting setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
+            if (setting.getTestType() == 3) {
+                startActivity(new Intent(this, FootBallMotionGroupActivity.class));
+                return;
+            }
+        }
+
+        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZFP
+                && SharedPrefsUtil.loadFormSource(this, RunTimerSetting.class).getConnectType() == 1) {
+            startActivity(new Intent(this, NewRadioGroupActivity.class));
+            return;
+        }
+
+        startActivity(new Intent(this, TestConfigs.groupActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+
     }
 
     List<UploadResults> uploadResultsList = new ArrayList<>();

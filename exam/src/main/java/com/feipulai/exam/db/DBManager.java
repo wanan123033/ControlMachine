@@ -2836,7 +2836,7 @@ public class DBManager {
                 .unique();
     }
 
-    public MachineResult getGroupMachineResultReentry(String stuCode,  long groupId, int roundNo) {
+    public MachineResult getGroupMachineResultReentry(String stuCode, long groupId, int roundNo) {
         return machineResultDao.queryBuilder().where(MachineResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(MachineResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
                 .where(MachineResultDao.Properties.StudentCode.eq(stuCode))
@@ -2894,6 +2894,10 @@ public class DBManager {
                 .buildDelete().executeDeleteWithoutDetachingEntities();
     }
 
+    public void deleteMachineResult(List<MachineResult> machineResultList) {
+        machineResultDao.deleteInTx(machineResultList);
+    }
+
     /**********************************体温********************************************************/
     public void insterThermometer(StudentThermometer thermometer) {
         thermometerDao.insertOrReplace(thermometer);
@@ -2933,7 +2937,7 @@ public class DBManager {
         Account account = new Account();
         account.setAccount(accountName);
         account.setPassword(pwd);
-        account.setType(type+"");
+        account.setType(type + "");
         account.setCreateTime(DateUtil.getCurrentTime());
         accountDao.insertOrReplace(account);
     }
@@ -2950,8 +2954,9 @@ public class DBManager {
 
     public Account queryAccountByExamPersonnelId(String examPersonnelId) {
         return accountDao.queryBuilder().where(AccountDao.Properties.ExamPersonnelId.eq(examPersonnelId))
-                 .unique();
+                .unique();
     }
+
     public Account queryAccount(String accountName, String pwd) {
         return accountDao.queryBuilder().where(AccountDao.Properties.Account.eq(accountName))
                 .where(AccountDao.Properties.Password.eq(pwd)).unique();
@@ -2966,6 +2971,7 @@ public class DBManager {
                 .where(AccountDao.Properties.FaceFeature.notEq(""))
                 .where(AccountDao.Properties.FaceFeature.isNotNull()).list();
     }
+
     public void deleteAccountAll() {
         accountDao.deleteAll();
     }

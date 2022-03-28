@@ -25,6 +25,7 @@ import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.FileUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.LogUtil;
+import com.feipulai.common.utils.NumberEnum;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.utils.print.PrintA4Util;
@@ -662,9 +663,9 @@ public class InteractUtils {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(llStuDetail.getContext(), 35));
                 textView.setPadding(5, 0, 0, 0);
                 if (results.get(i).getIsDelete()) {
-                    textView.setText(results.get(i).getRoundNo() + ":");
+                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + ":");
                 } else {
-                    textView.setText(results.get(i).getRoundNo() + " : " + InteractUtils.getDisplayResult(results.get(i)));
+                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + " : " + InteractUtils.getDisplayResult(results.get(i)));
                 }
 
                 textView.setTextSize(18f);

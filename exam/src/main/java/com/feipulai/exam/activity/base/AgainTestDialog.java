@@ -21,6 +21,7 @@ import com.feipulai.exam.adapter.ScoreAdapter;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.db.DBManager;
 import com.feipulai.exam.entity.GroupItem;
+import com.feipulai.exam.entity.MachineResult;
 import com.feipulai.exam.entity.RoundResult;
 import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
@@ -123,9 +124,12 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 //                        if (roundResult.getIsLastResult() == RoundResult.LAST_RESULT){
 //                            roundResult.setIsLastResult(RoundResult.NOT_LAST_RESULT);
 //                        }
+
+
                         DBManager.getInstance().updateRoundResult(roundResult);
                         results.remove(selectPos);
                         setLastResults();
+                        removeMachineResult(roundResult);
                         SystemSetting systemSetting = SettingHelper.getSystemSetting();
                         if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                             listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
@@ -146,6 +150,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
                     DBManager.getInstance().updateRoundResult(roundResult);
                     results.remove(selectPos);
                     setLastResults();
+                    removeMachineResult(roundResult);
                     SystemSetting systemSetting = SettingHelper.getSystemSetting();
                     if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         listener.onCommitPattern(student, studentItem, results, roundResult.getRoundNo());
@@ -167,12 +172,30 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
         Log.e("TAG", roundResult.getId() + "----" + roundResult.getResult() + "-----" + roundResult.getRoundNo());
     }
 
+    private void removeMachineResult(RoundResult roundResult) {
+        if (systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN) {
+            List<MachineResult> machineResultList = DBManager.getInstance().getItemGroupFRoundMachineResult(student.getStudentCode()
+                    , roundResult.getGroupId(),
+                    roundResult.getRoundNo());
+            DBManager.getInstance().deleteMachineResult(machineResultList);
+        } else {
+            List<MachineResult> machineResultList = DBManager.getInstance().getItemRoundMachineResult(student.getStudentCode()
+                    , roundResult.getTestNo(),
+                    roundResult.getRoundNo());
+
+            DBManager.getInstance().deleteMachineResult(machineResultList);
+        }
+    }
+
     private void setLastResults() {
         RoundResult lastRount = null;
         List<RoundResult> resultList = new ArrayList<>();
-        if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
-            resultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(),
-                    results.get(selectPos).getGroupId() + "");
+        if (systemSetting.getTestPattern() == SystemSetting.GROUP_PATTERN) {
+            if (results.size()>0){
+                resultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(),
+                        results.get(0).getGroupId() + "");
+            }
+
         } else {
             resultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
 

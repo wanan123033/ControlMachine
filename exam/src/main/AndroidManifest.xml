@@ -701,6 +701,11 @@
             android:screenOrientation="landscape"
             android:name=".activity.footBall.motion.FootballMotionSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.footBall.motion.FootBallMotionGroupActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 

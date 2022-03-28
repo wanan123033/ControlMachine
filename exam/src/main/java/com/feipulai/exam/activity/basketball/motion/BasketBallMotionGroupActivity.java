@@ -121,7 +121,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
     private List<StuDevicePair> pairs = new ArrayList<>(1);
     private VolleyBallGroupStuAdapter stuPairAdapter;
     private List<BasketBallTestResult> resultList = new ArrayList<>();
-    private BallReentryResultAdapter resultAdapter;
+    private BasketBallResultAdapter resultAdapter;
 
     private BasketBallSetting setting;
     private TimerUtil timerUtil;
@@ -184,7 +184,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
         rvTestingPairs.setAdapter(stuPairAdapter);
         stuPairAdapter.setOnItemClickListener(this);
 
-        resultAdapter = new BallReentryResultAdapter(resultList, setting);
+        resultAdapter = new BasketBallResultAdapter(resultList, setting);
         rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         rvTestResult.setAdapter(resultAdapter);
         resultAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -204,7 +204,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
 
 
         fristCheckTest();
-
+        cbFar.setVisibility(View.GONE);
     }
 
 
@@ -244,13 +244,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         timerUtil.stop();
         facade.finish();
-        if (setting.getTestType() == 0) {
-//            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
-            ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
-        } else {
-            ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
-        }
-
+        sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
     }
 
@@ -688,9 +682,6 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
                     sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                     startTest = false;
                 }
-                if (!isReentryCheck()) {
-                    return;
-                }
                 if (state != TESTING) {
                     tvResult.setText("");
                     if (group.getIsTestComplete() == Group.FINISHED) {
@@ -720,9 +711,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
                         prepareForFinish();
                     } else {
                         timerUtil.stop();
-                        if (!isReentryCheck()) {
-                            return;
-                        }
+
                         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
@@ -762,46 +751,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
         }
     }
 
-    /**
-     * 检测是否存在未折返成绩
-     */
-    private boolean isReentryCheck() {
 
-        final Student student = pairs.get(stuPairAdapter.getTestPosition()).getStudent();
-        final List<BasketBallTestResult> reentryNullResult = new ArrayList<>();
-        for (BasketBallTestResult testResult : resultList) {
-            if (testResult.getResult() != -999 && testResult.getReentry() == -999 && testResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                reentryNullResult.add(testResult);
-            }
-        }
-        if (reentryNullResult.size() > 0) {
-            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("存在未到折返点成绩")
-                    .setContentText("是否将未到折返点成绩标识为<犯规>").setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                @Override
-                public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                    for (BasketBallTestResult testResult : resultList) {
-                        if (testResult.getResult() != -999 && testResult.getReentry() == -999 && testResult.getResultState() == RoundResult.RESULT_STATE_NORMAL) {
-                            RoundResult testRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId() + "", testResult.getRoundNo());
-
-                            testRoundResult.setResultState(RoundResult.RESULT_STATE_FOUL);
-                            DBManager.getInstance().updateRoundResult(testRoundResult);
-                            testResult.setResultState(RoundResult.RESULT_STATE_FOUL);
-                        }
-                    }
-                    sweetAlertDialog.dismissWithAnimation();
-                    resultAdapter.notifyDataSetChanged();
-                }
-            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                @Override
-                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                    sweetAlertDialog.dismissWithAnimation();
-                }
-            }).show();
-            return false;
-        }
-        return true;
-    }
 
     private void showResurvey() {
         if (stuPairAdapter.getTestPosition() == -1) {
