@@ -38,7 +38,7 @@ import com.feipulai.device.ic.entity.StuInfo;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.LoginActivity;
+import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.data.adapter.DataRetrieveAdapter;
 import com.feipulai.exam.activity.data.adapter.ItemSelectAdapter;

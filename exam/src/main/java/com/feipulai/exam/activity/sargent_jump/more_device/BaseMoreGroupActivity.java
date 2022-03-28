@@ -65,7 +65,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
+public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
     @BindView(R.id.txt_group_name)
     TextView txtGroupName;
     @BindView(R.id.rv_device_list)

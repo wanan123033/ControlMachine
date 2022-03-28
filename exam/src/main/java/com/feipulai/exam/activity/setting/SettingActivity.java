@@ -43,7 +43,7 @@ import com.feipulai.device.tcp.SendTcpClientThread;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.LoginActivity;
+import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.account.AccountSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.config.TestConfigs;

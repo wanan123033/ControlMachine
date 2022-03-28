@@ -48,7 +48,7 @@ import com.feipulai.common.view.dialog.EditDialog;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
-import com.feipulai.exam.activity.LoginActivity;
+import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.RadioTimer.newRadioTimer.NewRunAdapter;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingActivity;

@@ -26,6 +26,7 @@ import com.feipulai.exam.entity.Student;
 import com.feipulai.exam.entity.StudentItem;
 import com.feipulai.exam.utils.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -168,7 +169,16 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
 
     private void setLastResults() {
         RoundResult lastRount = null;
-        for (RoundResult result : results) {
+        List<RoundResult> resultList = new ArrayList<>();
+        if (systemSetting.getTestPattern() == SystemSetting.PERSON_PATTERN) {
+            resultList = DBManager.getInstance().queryGroupRound(student.getStudentCode(),
+                    results.get(selectPos).getGroupId() + "");
+        } else {
+            resultList = DBManager.getInstance().queryFinallyRountScoreByExamTypeList(student.getStudentCode(), studentItem.getExamType());
+
+        }
+
+        for (RoundResult result : resultList) {
             result.setIsLastResult(RoundResult.NOT_LAST_RESULT);
             if (!result.isDelete()) {
                 if (lastRount == null) {
@@ -204,7 +214,7 @@ public class AgainTestDialog extends DialogFragment implements BaseQuickAdapter.
         }
         if (lastRount != null) {
             lastRount.setIsLastResult(RoundResult.LAST_RESULT);
-            DBManager.getInstance().updateRoundResult(results);
+            DBManager.getInstance().updateRoundResult(resultList);
             DBManager.getInstance().updateRoundResult(lastRount);
         }
 

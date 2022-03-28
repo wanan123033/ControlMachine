@@ -1,4 +1,4 @@
-package com.feipulai.exam.activity;
+package com.feipulai.exam.activity.login;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

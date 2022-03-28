@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,12 +22,14 @@ import android.widget.TextView;
 
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.serial.SerialConfigs;
 import com.feipulai.device.serial.SerialDeviceManager;
 import com.feipulai.device.serial.beans.MedicineBallSelfCheckResult;
 import com.feipulai.device.serial.command.ConvertCommand;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseActivity;
+import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.medicineBall.pair.MedicineBallPairActivity;
 import com.feipulai.exam.activity.setting.CorrespondTestActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -43,7 +47,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class MedicineBallSettingActivity extends BaseActivity implements AdapterView.OnItemSelectedListener,
+public class MedicineBallSettingActivity extends BaseTitleActivity implements AdapterView.OnItemSelectedListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "MedicineBallSettingActi";
     @BindView(R.id.sp_device_count)
@@ -77,9 +81,24 @@ public class MedicineBallSettingActivity extends BaseActivity implements Adapter
     private volatile boolean isDisconnect = true;
 
     @Override
+    protected int setLayoutResID() {
+        return R.layout.activity_medicine_ball_setting;
+    }
+
+    @Nullable
+    @Override
+    protected BaseToolbar.Builder setToolbar(@NonNull BaseToolbar.Builder builder) {
+        return builder.setTitle("项目设置");
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medicine_ball_setting);
         ButterKnife.bind(this);
         medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
         if (medicineBallSetting == null) {

@@ -218,6 +218,9 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
+                if (TextUtils.equals(lastStu.getStudentCode(), roundResult.getStudentCode())) {
+                    lastResult[roundResult.getRoundNo() - 1] = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
+                }
                 for (int i = 0; i < deviceDetails.size(); i++) {
                     DeviceDetail deviceDetail = deviceDetails.get(i);
                     BaseStuPair pair = deviceDetail.getStuDevicePair();
@@ -1013,6 +1016,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
                 }
                 int nextRount = getRound(timeResult);
                 detail.setRound(nextRount);
+                oneView.indexResult(deviceDetails.get(index).getRound() - 1);
                 toastSpeak(String.format(getString(R.string.test_speak_hint), pair.getStudent().getSpeakStuName(), nextRount)
                         , String.format(getString(R.string.test_speak_hint), pair.getStudent().getStudentName(), nextRount));
                 LogUtils.operation((index + 1) + "号机：" + pair.getStudent().getStudentName());
@@ -1374,6 +1378,7 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             detail.getStuDevicePair().setStudent(null);
             detail.getStuDevicePair().setResult(-999);
             detail.getStuDevicePair().setRoundNo(0);
+            detail.getStuDevicePair().setCanTest(true);
             deviceListAdapter.notifyDataSetChanged();
             oneView.initData(detail.getStuDevicePair());
             oneView.setBtnEnabled(false, false, false);

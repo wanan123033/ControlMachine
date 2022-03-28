@@ -62,9 +62,9 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     @BindView(R.id.rg_group_mode)
     RadioGroup rgGroupMode;
     @BindView(R.id.et_intercept_time)
-    EditText etInterceptTime;
+    public EditText etInterceptTime;
     @BindView(R.id.et_sensitivity)
-    EditText etSensitivity;
+    public EditText etSensitivity;
     @BindView(R.id.et_host_ip)
     EditText etHostIp;
     @BindView(R.id.et_port)
@@ -72,7 +72,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     @BindView(R.id.ll_ip)
     LinearLayout llIp;
     @BindView(R.id.rg_accuracy)
-    RadioGroup rgAccuracy;
+    public RadioGroup rgAccuracy;
     @BindView(R.id.sp_carryMode)
     Spinner spCarryMode;
     @BindView(R.id.view_carryMode)
@@ -84,22 +84,22 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     @BindView(R.id.ll_use_mode)
     LinearLayout llUseMode;
     @BindView(R.id.tv_pair)
-    TextView tvPair;
+    public  TextView tvPair;
     @BindView(R.id.tv_ip_connect)
     TextView tvIpConnect;
     private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     private String[] useMode = {"单拦截", "2:起点1:终点", "2:终点1:起点", "2:折返点1:起终点", "2:起终点1:折返点"};
-    private FootBallSetting setting;
+    public FootBallSetting setting;
     //    private UdpClient udpClient;
-    private FootBallSettingActivity.MyHandler mHandler = new FootBallSettingActivity.MyHandler(this);
-    private static final int MSG_DISCONNECT = 0X101;
+    public FootBallSettingActivity.MyHandler mHandler = new FootBallSettingActivity.MyHandler(this);
+    public static final int MSG_DISCONNECT = 0X101;
     //3秒内检测IP是否可以
-    private volatile boolean isDisconnect;
+    public volatile boolean isDisconnect;
     /**
      * 点击是否为连接
      */
-    private boolean isClickConnect;
+    public boolean isClickConnect;
     private BallManager manager;
 
     @Override
@@ -413,7 +413,7 @@ public class FootBallSettingActivity extends BaseTitleActivity implements Compou
     }
 
 
-    private static class MyHandler extends Handler {
+    public static class MyHandler extends Handler {
 
         private WeakReference<FootBallSettingActivity> mActivityWeakReference;
 

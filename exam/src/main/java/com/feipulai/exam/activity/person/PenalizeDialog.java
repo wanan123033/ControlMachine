@@ -347,15 +347,15 @@ public class PenalizeDialog {
 
         RoundResult dbRoundResult;
         if (groupId != -1) {
-            dbRoundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), getGroupId() + "", mAdapter.getClick() + 1);
+            dbRoundResult = DBManager.getInstance().queryGroupRoundNoResult(queryStudent.getStudentCode(), getGroupId() + "", mAdapter.getClick() + 1);
         } else {
             if (roundResultList.size() == 0) {
-                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
+                RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(queryStudent.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
             } else {
                 testNo = roundResultList.get(0).getTestNo();
             }
-            dbRoundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(),
+            dbRoundResult = DBManager.getInstance().queryRoundByRoundNo(queryStudent.getStudentCode(),
                     testNo, mAdapter.getClick() + 1);
         }
 

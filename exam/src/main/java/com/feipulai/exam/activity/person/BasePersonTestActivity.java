@@ -322,13 +322,21 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                         pair.setTestTime(DateUtil.getCurrentTime() + "");
                         sendTestCommand(pair);
                     }
-
+                    adapter.setIndexPostion(roundNo - 1);
+                    adapter.notifyDataSetChanged();
+                }else{
+                    //测试结束学生清除 ，设备设置空闲状态
+                    roundNo = 1;
+                    //4秒后清理学生信息
+                    clearHandler.sendEmptyMessageDelayed(0, 4000);
                 }
-                adapter.setIndexPostion(roundNo - 1);
-                adapter.notifyDataSetChanged();
+
                 break;
             case EventConfigs.UPDATE_RESULT:
                 RoundResult roundResult = (RoundResult) baseEvent.getData();
+                if (TextUtils.equals(lastStudent.getStudentCode(), roundResult.getStudentCode())) {
+                    lastResult[roundResult.getRoundNo() - 1] = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
+                }
                 if (TextUtils.equals(pair.getStudent().getStudentCode(), roundResult.getStudentCode())) {
                     String[] timeResult = result;
                     tmp = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
@@ -586,6 +594,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                     pair.setTestTime(DateUtil.getCurrentTime() + "");
                     sendTestCommand(pair);
+                }else{
+                    pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
+                    setBegin(1);
                 }
 
                 break;

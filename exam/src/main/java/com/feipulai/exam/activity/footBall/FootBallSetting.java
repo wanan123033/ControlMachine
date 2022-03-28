@@ -5,6 +5,8 @@ package com.feipulai.exam.activity.footBall;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class FootBallSetting {
+    private boolean autoPair = true;
+
     private int testNo = 1;// 允许测试的次数
     private int interceptSecond = 2;//默认5秒
     private int sensitivity = 20;//灵敏度
@@ -24,8 +26,9 @@ public class FootBallSetting {
      * 分组测试模式 0 连续 1 循环
      */
     private int testPattern = 0;
-    private int testType = 0;   //0 有线  1 无线
+    private int testType = 0;   //0 有线  1 无线 3 红外
     private int deviceVersion = 0;//0:6.4 1无线6.6版本
+    private int useLedType = 0;//使用LED類型 0 標配 1 通用
 
     public int getDeviceVersion() {
         return deviceVersion;
@@ -144,5 +147,21 @@ public class FootBallSetting {
 
     public int getTestType() {
         return testType;
+    }
+
+    public boolean isAutoPair() {
+        return autoPair;
+    }
+
+    public void setAutoPair(boolean autoPair) {
+        this.autoPair = autoPair;
+    }
+
+    public int getUseLedType() {
+        return useLedType;
+    }
+
+    public void setUseLedType(int useLedType) {
+        this.useLedType = useLedType;
     }
 }

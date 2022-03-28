@@ -688,6 +688,20 @@
             android:screenOrientation="landscape"
             android:name=".activity.basketball.motion.BaskBallMotionSettingActivity"
             android:configChanges="keyboardHidden|keyboard" />
+
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.footBall.motion.FootballMotionPairActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.footBall.motion.FootballMotionActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".activity.footBall.motion.FootballMotionSettingActivity"
+            android:configChanges="keyboardHidden|keyboard" />
+
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />
 
         <service android:name="com.inuker.bluetooth.library.BluetoothService" />
