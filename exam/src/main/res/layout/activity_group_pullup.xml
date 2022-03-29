@@ -63,8 +63,7 @@
             android:layout_height="230dp"
             android:layout_below="@+id/tv_group_name"
             android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:paddingTop="@dimen/dp_10">
+            android:gravity="center_horizontal" >
 
 
             <TextView
@@ -142,9 +141,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:paddingLeft="30dp"
-            android:paddingTop="@dimen/dp_15"
             android:paddingRight="30dp"
-            android:paddingBottom="@dimen/dp_15">
+            android:paddingBottom="@dimen/dp_10">
 
             <TextView
                 android:id="@+id/tv_start_test"
@@ -189,12 +187,12 @@
                 android:id="@+id/tv_time_count"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_background"
                 android:gravity="center"
                 android:padding="5dp"
-                android:textSize="40sp"
+                android:textSize="36sp"
                 android:visibility="gone" />
 
             <TextView

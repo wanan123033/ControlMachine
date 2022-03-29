@@ -24,13 +24,13 @@ public class ResultsAdapter extends BaseQuickAdapter<RoundResult,BaseViewHolder>
     @Override
     protected void convert(BaseViewHolder helper, RoundResult item) {
         helper.setText(R.id.tv_result,RoundResult.resultStateStr(item.getResultState(),item.getResult()) );
-        helper.setText(R.id.tv_index, String.format("第%s次:", toChineseIndex(helper.getAdapterPosition())));
+        helper.setText(R.id.tv_index, String.format("第%s次:", toChineseIndex(item.getRoundNo())));
     }
 
     private String toChineseIndex(int num){
         if (num >8)
             return "";
-        String [] c = {"一","二","三","四","五","六","七","八"};
+        String [] c = {"零","一","二","三","四","五","六","七","八"};
         return c[num];
     }
 }

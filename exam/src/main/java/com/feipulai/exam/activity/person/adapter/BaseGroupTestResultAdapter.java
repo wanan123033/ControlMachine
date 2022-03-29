@@ -36,6 +36,13 @@ public class BaseGroupTestResultAdapter extends BaseQuickAdapter<SelectResult, B
             holder.setText(R.id.item_txt_test_result, "");
         }
         RelativeLayout viewContent = holder.getView(R.id.view_content);
+
+        View viewLine = holder.getView(R.id.item_view_line);
+        if (holder.getLayoutPosition()==0){
+            viewLine.setVisibility(View.VISIBLE);
+        }else{
+            viewLine.setVisibility(View.GONE);
+        }
         holder.setText(R.id.item_txt_test_round, NumberEnum.valueOfTo(holder.getLayoutPosition() + 1).getValue());
 
         if (result.isIndex()) {

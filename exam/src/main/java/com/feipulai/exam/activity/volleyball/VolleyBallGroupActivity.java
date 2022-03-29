@@ -131,6 +131,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     private PenalizeDialog penalizeDialog;
     private String[] lastResult;
     private Student lastStudent;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_group_volleyball;
@@ -188,6 +189,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         super.onRestart();
         facade.setVolleySetting(setting);
     }
+
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
@@ -268,9 +270,10 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
 
         }
     }
+
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
             R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair
-            ,R.id.tv_resurvey, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})
+            , R.id.tv_resurvey, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})
     public void onViewClicked(View view) {
         String[] resultArray = stuPairs
                 .get(stuPairAdapter.getSaveLayoutSeletePosition()).getTimeResult();
@@ -358,7 +361,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 if (pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent() == null) {
                     return;
                 }
-                Student student=pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent();
+                Student student = pairs.get(stuPairAdapter.getSaveLayoutSeletePosition()).getStudent();
                 AgainTestDialog dialog = new AgainTestDialog();
                 RoundResult roundResult = DBManager.getInstance().queryGroupRoundNoResult(student.getStudentCode(), group.getId().toString(), stuPairAdapter.getSaveSeletePosition() + 1);
 
@@ -411,6 +414,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                 break;
         }
     }
+
     private void abandon() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("温馨提示");
@@ -543,7 +547,6 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
         } else {
             nextPosition = nextPosition();
             if (nextPosition == -1) {
-                nextPosition = position();
                 ToastUtils.showShort("所有人均测试完成");
                 group.setIsTestComplete(Group.FINISHED);
                 DBManager.getInstance().updateGroup(group);
@@ -557,6 +560,13 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
                     }
 
                 }
+                state=WAIT_BEGIN;
+                stuPairAdapter.notifyDataSetChanged();
+                prepareView(true,
+                        false,
+                        false, false, false, false,
+                        false);
+                return;
             }
         }
         switchToPosition(nextPosition);
@@ -582,7 +592,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             return false;
         }
         boolean fullSkip = fullSkip(roundResults, pair.getStudent());
-        return fullSkip || !hasRemains(roundResults);
+        return !hasRemains(roundResults) || fullSkip;
     }
 
     private boolean fullSkip(List<RoundResult> roundResults, Student student) {
@@ -827,7 +837,6 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
     }
 
 
-
     public int setTestCount() {
 //        SystemSetting setting = SettingHelper.getSystemSetting();
 //        StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), stuPairs.get(position()).getStudent().getStudentCode());
@@ -880,7 +889,7 @@ public class VolleyBallGroupActivity extends BaseTitleActivity
             List<RoundResult> results = TestCache.getInstance().getResults().get(stuPairs.get(i).getStudent());
             stuPairAdapter.setTestPosition(i);
             hasRemains(results);
-            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo()-1);
+            stuPairAdapter.indexStuTestResult(i, pairs.get(i).getCurrentRoundNo() - 1);
             stuPairAdapter.notifyDataSetChanged();
             prepareForBegin();
         } else {

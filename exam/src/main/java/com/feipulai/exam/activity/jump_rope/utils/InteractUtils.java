@@ -663,9 +663,9 @@ public class InteractUtils {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(llStuDetail.getContext(), 35));
                 textView.setPadding(5, 0, 0, 0);
                 if (results.get(i).getIsDelete()) {
-                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + ":");
+                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + " ");
                 } else {
-                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + " : " + InteractUtils.getDisplayResult(results.get(i)));
+                    textView.setText(NumberEnum.valueOfTo(results.get(i).getRoundNo()).getValue() + "   " + InteractUtils.getDisplayResult(results.get(i)));
                 }
 
                 textView.setTextSize(18f);

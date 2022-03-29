@@ -206,6 +206,15 @@ public class DataManageActivity
             @Override
             public DataBaseRespon executeOper() {
                 int stuCount = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0).size();
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
+                    stuCount=0;
+                    List<Item> itemLists = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
+
+                    for (Item item : itemLists) {
+                        stuCount += DBManager.getInstance().getItemStudent("-2", item.getItemCode(), -1, 0).size();
+
+                    }
+                }
                 int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
 
                 return new DataBaseRespon(true, stuCount + "", afrCount);

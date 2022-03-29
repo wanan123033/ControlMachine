@@ -32,6 +32,7 @@ import com.feipulai.device.CheckDeviceOpener;
 import com.feipulai.device.ic.ICCardDealer;
 import com.feipulai.device.ic.NFCDevice;
 import com.feipulai.device.ic.entity.StuInfo;
+import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.AgainTestDialog;
@@ -402,12 +403,40 @@ public class IndividualCheckFragment
             int fullSkip[] = TestConfigs.getFullSkip();
             if (fullSkip != null) {
                 for (RoundResult result : results) {
-                    if (student.getSex() == 0 && result.getResult() >= TestConfigs.getFullSkip()[0]) {//男子满分跳过
-                        showDialog(student, studentItem, results);
-                        return false;
-                    } else if (student.getSex() == 1 && result.getResult() >= TestConfigs.getFullSkip()[1]) {//女子满分跳过
-                        showDialog(student, studentItem, results);
-                        return false;
+//                    if (student.getSex() == 0 && result.getResult() >= TestConfigs.getFullSkip()[0]) {//男子满分跳过
+//                        showDialog(student, studentItem, results);
+//                        return false;
+//                    } else if (student.getSex() == 1 && result.getResult() >= TestConfigs.getFullSkip()[1]) {//女子满分跳过
+//                        showDialog(student, studentItem, results);
+//                        return false;
+//                    }
+                    if (student.getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                            if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
+                                showDialog(student, studentItem, results);
+                                return false;
+                            }
+                        } else {
+                            if (result.getResult() >= TestConfigs.getFullSkip()[0]) {
+                                showDialog(student, studentItem, results);
+                                return false;
+                            }
+                        }
+
+
+                    }else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null  ) {//女子满分跳过
+
+                        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                            if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
+                                showDialog(student, studentItem, results);
+                                return false;
+                            }
+                        } else {
+                            if (result.getResult() >= TestConfigs.getFullSkip()[1]) {
+                                showDialog(student, studentItem, results);
+                                return false;
+                            }
+                        }
                     }
                 }
             }

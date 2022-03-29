@@ -838,6 +838,12 @@ public class PushUpIndividualActivity extends BaseTitleActivity
                 pairs.get(0).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult + (intervalCount == 0 ? "" : "\n超时：" + intervalCount + "个"));
+                String[] resultArray = new String[resultList.size()];
+                resultList.toArray(resultArray);
+                resultArray[adapter.getIndexPostion()] = RoundResult.resultStateStr(RoundResult.RESULT_STATE_NORMAL, result.getResult());
+                resultList.clear();
+                resultList.addAll(Arrays.asList(resultArray));
+                adapter.notifyDataSetChanged();
                 break;
         }
     }

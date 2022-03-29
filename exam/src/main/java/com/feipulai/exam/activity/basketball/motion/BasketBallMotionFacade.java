@@ -96,7 +96,11 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
 
 
                 }
-
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 //                try {
 //                    Thread.sleep(200);
 //                } catch (InterruptedException e) {
@@ -227,7 +231,6 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("zzs", "SerialConfigs=====>" + msg.what);
 
             if (msg.what == SerialConfigs.DRIBBLEING_START) {
                 Basketball868Result result = (Basketball868Result) msg.obj;
@@ -242,7 +245,6 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                 }
                 BasketballResult basketballResult = new BasketballResult();
                 basketballResult.settNum(result.getDeviceId());
-                Log.i("zzs", result.toString());
                 setState(result);
                 EventBus.getDefault().post(new BaseEvent(result, EventConfigs.BALL_STATE));
 
@@ -308,10 +310,11 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                     timeResult.setSencond(0);
                     timeResult.setMinsencond(0);
                     timeResult.setMinth(0);
-                    ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
                     isledStartTime = true;
                     listener.getDeviceStatus(3);//设置计时状态
                     listener.triggerStart(basketballResult);//开始计时
+                    ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
+                    return;
                 }
                 if (sportResult.getSumTimes() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(sportResult.getMapKey())) { //获取拦截成绩
                     ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());

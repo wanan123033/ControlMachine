@@ -919,7 +919,10 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     if (!TextUtils.isEmpty(studentCode) && TextUtils.equals(student.getStudentCode(), studentCode)) {
                         compareListener.compareStu(student);
                     }
-                    registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    if (!TextUtils.isEmpty(student.getFaceFeature())){
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+
+                    }
                 }
                 FaceServer.getInstance().addFaceList(registerInfoList);
 

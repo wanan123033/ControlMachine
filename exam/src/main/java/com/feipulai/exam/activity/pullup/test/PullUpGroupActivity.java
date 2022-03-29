@@ -560,7 +560,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
         } else {
             nextPosition = nextPosition();
             if (nextPosition == -1) {
-                nextPosition = position();
                 ToastUtils.showShort("所有人均测试完成");
                 group.setIsTestComplete(Group.FINISHED);
                 DBManager.getInstance().updateGroup(group);
@@ -569,6 +568,13 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
                             TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 }
+                state=WAIT_BEGIN;
+                stuPairAdapter.notifyDataSetChanged();
+                prepareView(true,
+                        false,
+                        false, false, false, false,
+                        false);
+                return;
             }
         }
         switchToPosition(nextPosition);

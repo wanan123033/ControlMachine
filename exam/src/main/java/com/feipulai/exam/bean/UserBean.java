@@ -19,6 +19,7 @@ public class UserBean implements Serializable {
     private String examPersonnelId;
     private int examPersonnelPhotoType;
     private String typevalue;
+    private String[] deviceIds;
 
     public String getToken() {
         return token;
@@ -119,5 +120,13 @@ public class UserBean implements Serializable {
 
     public String getFileName() {
         return examPersonnelId + "." + examPersonnelPhotoSuffix;
+    }
+
+    public String[] getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(String[] deviceIds) {
+        this.deviceIds = deviceIds;
     }
 }

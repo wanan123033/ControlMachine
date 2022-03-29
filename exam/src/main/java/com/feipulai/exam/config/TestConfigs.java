@@ -638,6 +638,22 @@ public class TestConfigs {
                     full[1] = volleyBallSetting.getFemaleFullScore();
                 }
                 break;
+            case ItemDefault.CODE_LQYQ:
+                BasketBallSetting basketBallSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), BasketBallSetting.class);
+                if (basketBallSetting.isFullSkip()) {
+                    full = new int[2];
+                    full[0] = (int) (basketBallSetting.getMaleFullScore() * 1000);
+                    full[1] = (int) (basketBallSetting.getFemaleFullScore() * 1000);
+                }
+                break;
+            case ItemDefault.CODE_ZQYQ:
+                FootBallSetting footBallSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), FootBallSetting.class);
+                if (footBallSetting.isFullSkip()) {
+                    full = new int[2];
+                    full[0] = (int) (footBallSetting.getMaleFullScore() * 1000);
+                    full[1] = (int) (footBallSetting.getFemaleFullScore() * 1000);
+                }
+                break;
         }
         return full;
     }

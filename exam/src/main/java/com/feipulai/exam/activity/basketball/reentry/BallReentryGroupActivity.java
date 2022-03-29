@@ -158,6 +158,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
         facade.resume();
+        facade.setInterceptSecond(setting.getInterceptSecond());
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
@@ -387,7 +388,21 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        timerUtil.startTime(1);
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerUtil.startTime(100);
+                break;
+            case 2:
+                timerUtil.startTime(10);
+                break;
+            case 3:
+                timerUtil.startTime(1);
+                break;
+            default:
+                timerUtil.startTime(10);
+                break;
+        }
+
     }
 
 
@@ -533,9 +548,23 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
 
     @Override
     public void timer(Long time) {
-        timerDate = time;
+
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerDate = time * 100;
+                break;
+            case 2:
+                timerDate = time * 10;
+                break;
+            case 3:
+                timerDate = time;
+                break;
+            default:
+                timerDate = time * 10;
+                break;
+        }
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(timerDate, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
 
     }
@@ -561,6 +590,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
             ToastUtils.showShort("测试中,不能更换考生");
         }
     }
+
     @OnClick({R.id.tv_reentry_add, R.id.tv_reentry_remove})
     public void onReentryClicked(View view) {
         final Student student = pairs.get(stuPairAdapter.getTestPosition()).getStudent();
@@ -619,6 +649,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 break;
         }
     }
+
     @OnClick({R.id.tv_punish_add, R.id.tv_punish_subtract, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal, R.id.tv_print, R.id.tv_confirm
             , R.id.txt_waiting, R.id.txt_illegal_return, R.id.txt_continue_run, R.id.txt_stop_timing, R.id.txt_finish_test,
             R.id.tv_result, R.id.tv_resurvey})
@@ -787,6 +818,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 break;
         }
     }
+
     /**
      * 检测是否存在未折返成绩
      */
@@ -827,6 +859,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         }
         return true;
     }
+
     private void showResurvey() {
         if (stuPairAdapter.getTestPosition() == -1) {
             return;
@@ -1061,7 +1094,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 BasketBallTestResult basketBallTestResult = new BasketBallTestResult(i + 1, null, 0, -999, 0, -999);
                 basketBallTestResult.setReentry(-999);
                 resultList.add(basketBallTestResult);
-                 if (resultAdapter.getSelectPosition() == -1) {
+                if (resultAdapter.getSelectPosition() == -1) {
                     resultAdapter.setSelectPosition(i);
                 }
             } else {
@@ -1098,10 +1131,10 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    if (startTest) {
-                        roundNo = i + 1;
-                        startTest = false;
-                    }
+//                    if (startTest) {
+                    roundNo = i + 1;
+                    startTest = false;
+//                    }
 
                     Log.i("roundNo", "isExistTestPlace" + roundNo);
                     resultAdapter.notifyDataSetChanged();
@@ -1545,10 +1578,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 }
                 state = WAIT_CONFIRM;
                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
-                //设置空闲重新等待
-                ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 sleep();
-                sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 facade.awaitState();
             }

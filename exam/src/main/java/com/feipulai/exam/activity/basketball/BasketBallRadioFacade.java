@@ -190,7 +190,6 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("zzs", "SerialConfigs=====>" + msg.what);
 
             if (msg.what == SerialConfigs.DRIBBLEING_START) {
                 Basketball868Result result = (Basketball868Result) msg.obj;
@@ -224,10 +223,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                         timeResult.setSencond(0);
                         timeResult.setMinsencond(0);
                         timeResult.setMinth(0);
-                        ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
                         isledStartTime = true;
                         listener.getDeviceStatus(3);//设置计时状态
                         listener.triggerStart(basketballResult);//开始计时
+                        ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
+                        return;
                     }
                     if (result.getSum() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(result.getMapKey())) { //获取拦截成绩
                         ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());

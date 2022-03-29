@@ -496,7 +496,17 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
     public void triggerStart(BasketballResult basketballResult) {
         LogUtils.operation("篮球开始计时");
         testDate = System.currentTimeMillis() + "";
-        timerUtil.startTime(1);
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerUtil.startTime(100);
+                break;
+            case 2:
+                timerUtil.startTime(10);
+                break;
+            case 3:
+                timerUtil.startTime(1);
+                break;
+        }
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
@@ -632,9 +642,22 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
     @Override
     public void timer(Long time) {
-        timerDate = time;
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerDate = time * 100;
+                break;
+            case 2:
+                timerDate = time * 10;
+                break;
+            case 3:
+                timerDate = time;
+                break;
+            default:
+                timerDate = time * 10;
+                break;
+        }
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(timerDate, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
     }
 
@@ -919,7 +942,8 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 break;
         }
     }
-    private void showResurvey(){
+
+    private void showResurvey() {
         if (pairs.get(0).getStudent() == null) {
             return;
         }
@@ -965,6 +989,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         dialog.show(getSupportFragmentManager(), "AgainTestDialog");
 
     }
+
     private void sleep() {
 
         try {
@@ -1259,12 +1284,15 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private void showStuInfoResult() {
         Student student = pairs.get(0).getStudent();
-        List<RoundResult> scoreResultList = new ArrayList<>();
-        // 重新判断最好成绩
-        RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), TestCache.getInstance().getTestNoMap().get(student));
-        if (bestResult != null)
-            scoreResultList.add(bestResult);
-        InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
+//        List<RoundResult> scoreResultList = new ArrayList<>();
+//        // 重新判断最好成绩
+//        RoundResult bestResult = DBManager.getInstance().queryBestScore(student.getStudentCode(), TestCache.getInstance().getTestNoMap().get(student));
+//        if (bestResult != null)
+//            scoreResultList.add(bestResult);
+
+        List<RoundResult> roundResultList = TestCache.getInstance().getResults().get(student);
+
+        InteractUtils.showStuInfo(llStuDetail, student, roundResultList);
     }
 
     /**

@@ -481,12 +481,13 @@ public class HttpSubscriber {
 
             @Override
             public void onSuccess(BatchBean<List<GroupBean>> result) {
-                LogUtils.net("获取分组信息解析：" + result.toString());
+
                 if (result == null || result.getDataInfo() == null) {
                     if (onRequestEndListener != null)
                         onRequestEndListener.onSuccess(GROUP_BIZ);
                     return;
                 }
+                LogUtils.net("获取分组信息解析：" + result.toString());
                 final List<Group> groupList = new ArrayList<>();
                 final List<GroupItem> groupItemList = new ArrayList<>();
 

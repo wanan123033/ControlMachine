@@ -29,6 +29,9 @@ import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.device.serial.MachineCode;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.SerialParams;
+import com.feipulai.device.serial.beans.StringUtility;
+import com.feipulai.device.serial.command.ConvertCommand;
+import com.feipulai.device.serial.command.RadioChannelCommand;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
@@ -60,6 +63,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.tcp.FileUtils;
 import com.feipulai.exam.view.BatteryView;
+import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
 import com.ww.fpl.videolibrary.play.util.PUtil;
@@ -210,7 +214,9 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             Log.i("wrong", e.getMessage());
             toastSpeak("项目选择错误,请重选");
         }
-
+        RadioChannelCommand command = new RadioChannelCommand(SettingHelper.getSystemSetting().getUseChannel());
+        LogUtils.serial("切频指令" + StringUtility.bytesToHexString(command.getCommand()) + "---");
+        RadioManager.getInstance().sendCommand(new ConvertCommand(command));
 //        testUpload();
 
 //        createFile();

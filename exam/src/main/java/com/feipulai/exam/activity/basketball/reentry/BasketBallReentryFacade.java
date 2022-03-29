@@ -89,11 +89,11 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
 
                 }
 
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -155,6 +155,12 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                     listener.getDeviceStatus(2);
                     ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
                     isledStartTime = false;
+                    if (timeRountList != null) {
+                        timeRountList.clear();
+                    }
+                    if (numResult != null) {
+                        numResult.clear();
+                    }
                     timeRountList = new ArrayList<>();
                     numResult = new HashMap<>();
                     for (int i = 0; i < sendIndex.length; i++) {
@@ -205,7 +211,6 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("zzs", "SerialConfigs=====>" + msg.what);
 
             if (msg.what == SerialConfigs.DRIBBLEING_START) {
                 Basketball868Result result = (Basketball868Result) msg.obj;
@@ -243,7 +248,7 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                 }
             } else if (msg.what == SerialConfigs.SPORT_TIMER_RESULT) {
                 SportResult sportResult = (SportResult) msg.obj;
-                if (sportResult.getDeviceId() == 0 || (sportResult.getDeviceId() - 1) >= mCurrentConnect.length)
+                if (numResult == null && sportResult.getDeviceId() == 0 || (sportResult.getDeviceId() - 1) >= mCurrentConnect.length)
                     return;
                 setDeviceState(sportResult);
                 if (sportResult.getDeviceState() == 0) {
@@ -284,10 +289,11 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                     timeResult.setSencond(0);
                     timeResult.setMinsencond(0);
                     timeResult.setMinth(0);
-                    ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
                     isledStartTime = true;
                     listener.getDeviceStatus(3);//设置计时状态
                     listener.triggerStart(null);//开始计时
+                    ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
+                    return;
                 }
                 if (sportResult.getSumTimes() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(sportResult.getMapKey())) { //获取拦截成绩
                     ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());

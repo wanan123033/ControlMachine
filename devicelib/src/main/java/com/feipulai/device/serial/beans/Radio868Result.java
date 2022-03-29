@@ -266,7 +266,7 @@ public class Radio868Result {
 
                     }
 
-                } else if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                } else if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
                     runResult(data);
                 }
                 break;

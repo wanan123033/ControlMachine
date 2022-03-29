@@ -544,13 +544,35 @@ public class BaseGroupActivity extends BaseTitleActivity {
             stuPairsList.get(position).setResultState(result.getResultState());
             stuPairsList.get(position).setResult(result.getResult());
             if (result.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-                if (stuPairsList.get(position).getStudent().getSex() == 0 && getFullSkip() != null && result.getResult() >= getFullSkip()[0]) {//男子满分跳过
-                    stuPairsList.get(position).setCanTest(false);
-                    stuPairsList.get(position).setCanCheck(false);
+
+                if (stuPairsList.get(position).getStudent().getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
+                    if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
+                        if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
+                            stuPairsList.get(position).setCanTest(false);
+                            stuPairsList.get(position).setCanCheck(false);
+                        }
+                    } else {
+                        if (result.getResult() >= TestConfigs.getFullSkip()[0]) {
+                            stuPairsList.get(position).setCanTest(false);
+                            stuPairsList.get(position).setCanCheck(false);
+                        }
+                    }
+
+
                 }
-                if (stuPairsList.get(position).getStudent().getSex() == 1 && getFullSkip() != null && result.getResult() >= getFullSkip()[1]) {//女子满分跳过
-                    stuPairsList.get(position).setCanTest(false);
-                    stuPairsList.get(position).setCanCheck(false);
+                if (stuPairsList.get(position).getStudent().getSex() == 1 && TestConfigs.getFullSkip() != null && result.getResult() >= TestConfigs.getFullSkip()[1]) {//女子满分跳过
+
+                    if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
+                        if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
+                            stuPairsList.get(position).setCanTest(false);
+                            stuPairsList.get(position).setCanCheck(false);
+                        }
+                    } else {
+                        if (result.getResult() >= TestConfigs.getFullSkip()[1]) {
+                            stuPairsList.get(position).setCanTest(false);
+                            stuPairsList.get(position).setCanCheck(false);
+                        }
+                    }
                 }
             }
 
@@ -586,13 +608,34 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 stuPairs.get(i).setResultState(result.getResultState());
                 stuPairs.get(i).setResult(result.getResult());
                 if (result.getResultState() != RoundResult.RESULT_STATE_FOUL) {
-                    if (student.getSex() == 0 && getFullSkip() != null && result.getResult() >= getFullSkip()[0]) {//男子满分跳过
-                        stuPairs.get(i).setCanTest(false);
-                        stuPairs.get(i).setCanCheck(false);
+                    if (student.getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
+                        if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
+                            if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
+                                stuPairs.get(i).setCanTest(false);
+                                stuPairs.get(i).setCanCheck(false);
+                            }
+                        } else {
+                            if (result.getResult() >= TestConfigs.getFullSkip()[0]) {
+                                stuPairs.get(i).setCanTest(false);
+                                stuPairs.get(i).setCanCheck(false);
+                            }
+                        }
+
+
                     }
-                    if (student.getSex() == 1 && getFullSkip() != null && result.getResult() >= getFullSkip()[1]) {//女子满分跳过
-                        stuPairs.get(i).setCanTest(false);
-                        stuPairs.get(i).setCanCheck(false);
+                    if (student.getSex() == 1 && TestConfigs.getFullSkip() != null) {//女子满分跳过
+
+                        if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
+                            if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
+                                stuPairs.get(i).setCanTest(false);
+                                stuPairs.get(i).setCanCheck(false);
+                            }
+                        } else {
+                            if (result.getResult() >= TestConfigs.getFullSkip()[1]) {
+                                stuPairs.get(i).setCanTest(false);
+                                stuPairs.get(i).setCanCheck(false);
+                            }
+                        }
                     }
                 }
 
@@ -608,63 +651,63 @@ public class BaseGroupActivity extends BaseTitleActivity {
      *
      * @return
      */
-    public int[] getFullSkip() {
-        int code = MachineCode.machineCode;
-        int[] full = null;
-        switch (code) {
-            case ItemDefault.CODE_ZWTQQ:
-                SitReachSetting sitReachSetting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
-                if (sitReachSetting.isFullReturn()) {
-                    full = new int[2];
-                    full[0] = (int) (sitReachSetting.getManFull() * 10);
-                    full[1] = (int) (sitReachSetting.getWomenFull() * 10);
-                }
-                break;
-            case ItemDefault.CODE_LDTY:
-                StandJumpSetting jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
-                if (jumpSetting.isFullReturn()) {
-                    full = new int[2];
-                    full[0] = jumpSetting.getManFull() * 10;
-                    full[1] = jumpSetting.getWomenFull() * 10;
-                }
-
-                break;
-            case ItemDefault.CODE_HWSXQ:
-                MedicineBallSetting medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
-                if (medicineBallSetting.isFullReturn()) {
-                    full = new int[2];
-                    if (!TextUtils.isEmpty(medicineBallSetting.getMaleFull())) {
-                        full[0] = Integer.parseInt(medicineBallSetting.getMaleFull()) * 10;
-                    }
-                    if (!TextUtils.isEmpty(medicineBallSetting.getFemaleFull())) {
-                        full[1] = Integer.parseInt(medicineBallSetting.getFemaleFull()) * 10;
-                    }
-                }
-                break;
-            case ItemDefault.CODE_MG:
-                SargentSetting sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
-                if (sargentSetting.isFullReturn()) {
-                    full = new int[2];
-                    if (!TextUtils.isEmpty(sargentSetting.getMaleFull())) {
-                        full[0] = Integer.parseInt(sargentSetting.getMaleFull()) * 10;
-                    }
-                    if (!TextUtils.isEmpty(sargentSetting.getFemaleFull())) {
-                        full[1] = Integer.parseInt(sargentSetting.getFemaleFull()) * 10;
-                    }
-                }
-                break;
-            case ItemDefault.CODE_PQ:
-                VolleyBallSetting volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
-                if (volleyBallSetting.isFullSkip()) {
-                    full = new int[2];
-                    full[0] = volleyBallSetting.getMaleFullScore();
-                    full[1] = volleyBallSetting.getFemaleFullScore();
-                }
-                break;
-        }
-        return full;
-    }
-
+//    public int[] getFullSkip() {
+//        int code = MachineCode.machineCode;
+//        int[] full = null;
+//        switch (code) {
+//            case ItemDefault.CODE_ZWTQQ:
+//                SitReachSetting sitReachSetting = SharedPrefsUtil.loadFormSource(this, SitReachSetting.class);
+//                if (sitReachSetting.isFullReturn()) {
+//                    full = new int[2];
+//                    full[0] = (int) (sitReachSetting.getManFull() * 10);
+//                    full[1] = (int) (sitReachSetting.getWomenFull() * 10);
+//                }
+//                break;
+//            case ItemDefault.CODE_LDTY:
+//                StandJumpSetting jumpSetting = SharedPrefsUtil.loadFormSource(this, StandJumpSetting.class);
+//                if (jumpSetting.isFullReturn()) {
+//                    full = new int[2];
+//                    full[0] = jumpSetting.getManFull() * 10;
+//                    full[1] = jumpSetting.getWomenFull() * 10;
+//                }
+//
+//                break;
+//            case ItemDefault.CODE_HWSXQ:
+//                MedicineBallSetting medicineBallSetting = SharedPrefsUtil.loadFormSource(this, MedicineBallSetting.class);
+//                if (medicineBallSetting.isFullReturn()) {
+//                    full = new int[2];
+//                    if (!TextUtils.isEmpty(medicineBallSetting.getMaleFull())) {
+//                        full[0] = Integer.parseInt(medicineBallSetting.getMaleFull()) * 10;
+//                    }
+//                    if (!TextUtils.isEmpty(medicineBallSetting.getFemaleFull())) {
+//                        full[1] = Integer.parseInt(medicineBallSetting.getFemaleFull()) * 10;
+//                    }
+//                }
+//                break;
+//            case ItemDefault.CODE_MG:
+//                SargentSetting sargentSetting = SharedPrefsUtil.loadFormSource(this, SargentSetting.class);
+//                if (sargentSetting.isFullReturn()) {
+//                    full = new int[2];
+//                    if (!TextUtils.isEmpty(sargentSetting.getMaleFull())) {
+//                        full[0] = Integer.parseInt(sargentSetting.getMaleFull()) * 10;
+//                    }
+//                    if (!TextUtils.isEmpty(sargentSetting.getFemaleFull())) {
+//                        full[1] = Integer.parseInt(sargentSetting.getFemaleFull()) * 10;
+//                    }
+//                }
+//                break;
+//            case ItemDefault.CODE_PQ:
+//                VolleyBallSetting volleyBallSetting = SharedPrefsUtil.loadFormSource(this, VolleyBallSetting.class);
+//                if (volleyBallSetting.isFullSkip()) {
+//                    full = new int[2];
+//                    full[0] = volleyBallSetting.getMaleFullScore();
+//                    full[1] = volleyBallSetting.getFemaleFullScore();
+//                }
+//                break;
+//
+//        }
+//        return full;
+//    }
     @OnItemSelected({R.id.sp_schedule})
     public void spinnerItemSelected(Spinner spinner, int position) {
         switch (spinner.getId()) {

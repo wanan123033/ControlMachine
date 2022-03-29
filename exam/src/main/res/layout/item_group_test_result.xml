@@ -8,6 +8,7 @@
     android:descendantFocusability="blocksDescendants">
 
     <View
+        android:id="@+id/item_view_line"
         style="@style/divider_black_vertical_style"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp" />
@@ -17,9 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:singleLine="true"
         android:gravity="center"
         android:paddingTop="20dp"
+        android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="35sp" />
 
@@ -32,5 +33,10 @@
         android:textColor="@color/grey"
         android:textSize="28sp" />
 
+    <View
+        style="@style/divider_black_vertical_style"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
 </RelativeLayout>
 

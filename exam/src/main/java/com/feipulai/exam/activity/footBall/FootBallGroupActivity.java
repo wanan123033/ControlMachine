@@ -448,7 +448,17 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
      */
     private void doTriggerStart() {
         testDate = System.currentTimeMillis() + "";
-        timerUtil.startTime(1);
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerUtil.startTime(100);
+                break;
+            case 2:
+                timerUtil.startTime(10);
+                break;
+            case 3:
+                timerUtil.startTime(1);
+                break;
+        }
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
@@ -606,9 +616,22 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 
     @Override
     public void timer(Long time) {
-        timerDate = time;
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerDate = time * 100;
+                break;
+            case 2:
+                timerDate = time * 10;
+                break;
+            case 3:
+                timerDate = time;
+                break;
+            default:
+                timerDate = time * 10;
+                break;
+        }
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(timerDate, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
 
     }
@@ -1052,10 +1075,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    if (startTest) {
+//                    if (startTest) {
                         roundNo = i + 1;
                         startTest = false;
-                    }
+//                    }
 
                     resultAdapter.notifyDataSetChanged();
                     return true;

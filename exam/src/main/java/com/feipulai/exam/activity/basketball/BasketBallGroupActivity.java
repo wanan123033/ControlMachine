@@ -410,7 +410,17 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        timerUtil.startTime(1);
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerUtil.startTime(100);
+                break;
+            case 2:
+                timerUtil.startTime(10);
+                break;
+            case 3:
+                timerUtil.startTime(1);
+                break;
+        }
     }
 
 
@@ -543,9 +553,22 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
 
     @Override
     public void timer(Long time) {
-        timerDate = time;
+        switch (TestConfigs.sCurrentItem.getDigital()) {
+            case 1:
+                timerDate = time * 100;
+                break;
+            case 2:
+                timerDate = time * 10;
+                break;
+            case 3:
+                timerDate = time;
+                break;
+            default:
+                timerDate = time * 10;
+                break;
+        }
         if (state == TESTING) {
-            tvResult.setText(DateUtil.caculateTime(time, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
+            tvResult.setText(DateUtil.caculateTime(timerDate, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
 
     }
@@ -1009,10 +1032,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
-                    if (startTest) {
+//                    if (startTest) {
                         roundNo = i + 1;
                         startTest = false;
-                    }
+//                    }
 
                     Log.i("roundNo", "isExistTestPlace" + roundNo);
                     resultAdapter.notifyDataSetChanged();

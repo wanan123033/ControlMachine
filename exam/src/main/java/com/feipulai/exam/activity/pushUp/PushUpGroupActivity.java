@@ -592,7 +592,6 @@ public class PushUpGroupActivity extends BaseTitleActivity
         } else {
             nextPosition = nextPosition();
             if (nextPosition == -1) {
-                nextPosition = position();
                 ToastUtils.showShort("所有人均测试完成");
                 group.setIsTestComplete(Group.FINISHED);
                 DBManager.getInstance().updateGroup(group);
@@ -606,6 +605,14 @@ public class PushUpGroupActivity extends BaseTitleActivity
                                 TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                     }
                 }
+                state=WAIT_BEGIN;
+                stuPairAdapter.notifyDataSetChanged();
+                prepareView(true,
+                        false,
+                        false, false, false, false,
+                        false);
+                return;
+
             }
         }
         switchToPosition(nextPosition);
@@ -631,7 +638,7 @@ public class PushUpGroupActivity extends BaseTitleActivity
             return false;
         }
         boolean fullSkip = fullSkip(roundResults, pair.getStudent());
-        return fullSkip || !hasRemains(roundResults);
+        return !hasRemains(roundResults)|| fullSkip ;
     }
 
     private boolean fullSkip(List<RoundResult> roundResults, Student student) {

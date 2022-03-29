@@ -247,6 +247,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     public void finish() {
         if (!TextUtils.isEmpty(etPenaltySecond.getText().toString()))
             setting.setPenaltySecond(Double.parseDouble(etPenaltySecond.getText().toString()));
+        if (cbFullSkip.isChecked() && !isCheckSetting()) {
+            setting.setFullSkip(false);
+        }
         EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
         SharedPrefsUtil.save(this, setting);
         DBManager.getInstance().updateItem(TestConfigs.sCurrentItem);
