@@ -12,11 +12,15 @@ import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.activity.setting.MonitoringBean;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.bean.UserBean;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -95,6 +99,20 @@ public class LoginActivity extends BaseTitleActivity {
                 SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
                 SettingHelper.getSystemSetting().setSitCode(userBean.getSiteId());
                 SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
+
+                if (userBean.getDeviceIds() != null) {
+                    List<MonitoringBean> monitoringBeans = SettingHelper.getSystemSetting().getMonitoringList();
+
+                    for (String deviceId : userBean.getDeviceIds()) {
+                        MonitoringBean addBean = new MonitoringBean(deviceId, DateUtil.getCurrentTime2("yyyy-MM-dd HH:mm:ss"), true);
+
+                        if (!monitoringBeans.contains(addBean)) {
+                            monitoringBeans.add(addBean);
+                        }
+                    }
+                    SettingHelper.getSystemSetting().setMonitoringJson(new Gson().toJson(monitoringBeans));
+                }
+
                 finish();
             }
 
