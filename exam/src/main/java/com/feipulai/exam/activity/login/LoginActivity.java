@@ -98,8 +98,6 @@ public class LoginActivity extends BaseTitleActivity {
                 }
                 SettingHelper.getSystemSetting().setUserName(editAccount.getText().toString());
                 SettingHelper.getSystemSetting().setSitCode(userBean.getSiteId());
-                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
-
                 if (userBean.getDeviceIds() != null) {
                     List<MonitoringBean> monitoringBeans = SettingHelper.getSystemSetting().getMonitoringList();
 
@@ -112,6 +110,9 @@ public class LoginActivity extends BaseTitleActivity {
                     }
                     SettingHelper.getSystemSetting().setMonitoringJson(new Gson().toJson(monitoringBeans));
                 }
+                SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
+
+
 
                 finish();
             }
