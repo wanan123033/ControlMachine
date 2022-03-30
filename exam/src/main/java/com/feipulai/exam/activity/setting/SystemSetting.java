@@ -17,7 +17,7 @@ import java.util.List;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class SystemSetting {
-    public static final String HAS_RETEST_PERMISSION="hasRetest";
+
     /**
      * 测试名称
      */
@@ -109,6 +109,7 @@ public class SystemSetting {
     private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
     public static final int LED_VERSION_V1 = 0;
     public static final int LED_VERSION_V4 = 1;
+    public static final int LED_VERSION_V8 = 2;
     private int radioLed;//用于区分红外计时版本0带盒子版，1不带盒子
     //信道
     private int channel = 1;
@@ -147,6 +148,12 @@ public class SystemSetting {
     private boolean resultConfirm;  //成绩确认
     private boolean isGroupCheck;//分组检入
     private boolean isStuConfirm;//考生成绩确定（确认考生所有轮次，未测成绩添加放弃）
+    private int ledColor;
+    private int ledColor2;
+
+    public static final int LED_SHOW_COLOR_RED = 1;
+    public static final int LED_SHOW_COLOR_GREEN = 2;
+    public static final int LED_SHOW_COLOR_YELLOW = 3;
 
     public boolean isStuConfirm() {
         return isStuConfirm;
@@ -556,5 +563,21 @@ public class SystemSetting {
 
     public void setGroupCheck(boolean groupCheck) {
         this.isGroupCheck = groupCheck;
+    }
+
+    public void setLedColor(int ledColor) {
+        this.ledColor = ledColor;
+    }
+
+    public int getLedColor() {
+        return ledColor;
+    }
+
+    public int getLedColor2() {
+        return ledColor2;
+    }
+
+    public void setLedColor2(int ledColor2) {
+        this.ledColor2 = ledColor2;
     }
 }

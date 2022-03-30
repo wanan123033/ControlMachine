@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.led.LEDManager;
@@ -21,10 +19,7 @@ import com.feipulai.device.led.RunLEDManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.adapter.LedMoreAdapter;
 import com.feipulai.exam.config.TestConfigs;
-
-import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,12 +40,22 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
     Spinner ledVersion;
     @BindView(R.id.rv_mode)
     RelativeLayout rvMode;
+    @BindView(R.id.sp_show_color)
+    Spinner spShowColor;
+    @BindView(R.id.sp_show_color_s)
+    Spinner spShowColorS;
+    @BindView(R.id.rv_color_s)
+    RelativeLayout rv_color_s;
+    @BindView(R.id.rv_color)
+    RelativeLayout rvColor;
     private LEDManager mLEDManager;
     private RunLEDManager runLEDManager;
     private int hostId;
     private int flag;
     private int ledMode;
     private int ledType;
+    private int ledColor;
+    private int ledColors;
 
     @Override
     protected int setLayoutResID() {
@@ -68,6 +73,8 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
 
         ledType = SettingHelper.getSystemSetting().getLedVersion();
+        ledColor = SettingHelper.getSystemSetting().getLedColor();
+        ledColors = SettingHelper.getSystemSetting().getLedColor2();
 //        rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
 //
 //        ledMode = SettingHelper.getSystemSetting().getLedMode();
@@ -101,13 +108,35 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         spShowMode.setEnabled(false);
 //        spShowMode.setOnItemSelectedListener(this);
 
-        String[] spinnerItems1 = {"4.1及以上", "4.1以下"};
+        String[] spinnerItems1 = {"4.1及以上", "4.1以下","4.8及以上"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerItems1);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ledVersion.setAdapter(adapter1);
-        ledVersion.setSelection(ledType == 0 ? 0 : 1);
+        ledVersion.setSelection(ledType);
         ledVersion.setOnItemSelectedListener(this);
+        if (ledType == 2){
+            rvColor.setVisibility(View.VISIBLE);
+            rv_color_s.setVisibility(View.VISIBLE);
+            mLEDManager.setVersions(LEDManager.LED_VERSION_4_8);
+        }else {
+            rvColor.setVisibility(View.GONE);
+            rv_color_s.setVisibility(View.GONE);
+        }
+
+        ArrayAdapter<String> colorAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new String[]{"红色","绿色","蓝色"});
+        colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spShowColor.setAdapter(colorAdapter);
+        spShowColor.setSelection(ledColor);
+        ArrayAdapter<String> colorAdapters = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new String[]{"红色","绿色","蓝色"});
+        colorAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spShowColorS.setAdapter(colorAdapters);
+        spShowColorS.setSelection(ledColors);
+        spShowColorS.setSelection(ledColors);
+        spShowColor.setOnItemSelectedListener(this);
+        spShowColorS.setOnItemSelectedListener(this);
 
 
     }
@@ -141,12 +170,12 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                             if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
                                 mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
 
-                                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE);
-                                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true);
+                                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE,1);
+                                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true,1);
                             } else {
                                 mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId);
-                                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE);
-                                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, false, true);
+                                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE,1);
+                                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, true, true,1);
                             }
                         }
                     }
@@ -231,7 +260,21 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 if (btnLedConnect.getVisibility() == View.GONE) {
                     btnLedConnect.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
                 }
+                if (position == 2){
+                    rvColor.setVisibility(View.VISIBLE);
+                    rv_color_s.setVisibility(View.VISIBLE);
+                    mLEDManager.setVersions(LEDManager.LED_VERSION_4_8);
+                }else {
+                    rvColor.setVisibility(View.GONE);
+                    rv_color_s.setVisibility(View.GONE);
 
+                }
+                break;
+            case R.id.sp_show_color:
+                SettingHelper.getSystemSetting().setLedColor(position);
+                break;
+            case R.id.sp_show_color_s:
+                SettingHelper.getSystemSetting().setLedColor2(position);
                 break;
         }
 

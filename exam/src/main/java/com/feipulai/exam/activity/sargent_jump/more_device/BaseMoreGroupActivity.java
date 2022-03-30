@@ -390,10 +390,16 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
         if (stuPair == null)
             return;
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getTrackNo() + "   " + stuPair.getStudent().getLEDStuName(), 0, 0, true, false);
+        int color = 0;
+        if (stuPair.isFullMark()){
+            color = SettingHelper.getSystemSetting().getLedColor();
+        }else {
+            color = SettingHelper.getSystemSetting().getLedColor2();
+        }
         for (int i = 0; i < stuPair.getTimeResult().length; i++) {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),
                     String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
-                    0, i + 1, false, true);
+                    0, i + 1, false, true,color);
 
 //            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1,
 //                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),

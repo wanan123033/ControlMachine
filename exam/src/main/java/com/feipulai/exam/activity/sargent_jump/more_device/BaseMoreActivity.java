@@ -1288,7 +1288,15 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
         String result = (baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult());
         if (ledMode == 0) {
             int x = ResultDisplayUtils.getStringLength(result);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
+            if (baseStu.isFullMark()){
+                int color = SettingHelper.getSystemSetting().getLedColor();
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true,color);
+            }else {
+                int color = SettingHelper.getSystemSetting().getLedColor2();
+                mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true,color);
+
+            }
+//            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), result, 16 - x, index, false, true);
         } else {
             byte[] data = new byte[16];
             String str1 = "当前：";
@@ -1301,8 +1309,14 @@ public abstract class BaseMoreActivity extends BaseCheckActivity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, data, 0, 1, false, true);
-            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+            int color = 0;
+            if (baseStu.isFullMark()){
+                color = SettingHelper.getSystemSetting().getLedColor();
+            }else {
+                color = SettingHelper.getSystemSetting().getLedColor2();
+            }
+            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), index, data, 0, 1, false, true,color);
+            mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true,color);
 
             RoundResult bestResult = DBManager.getInstance().queryBestScore(baseStu.getStudent().getStudentCode(), testNo);
             int res = 0;

@@ -1238,6 +1238,12 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
 
         byte[] data = new byte[16];
         String str = "当前：";
+        int color = 0;
+        if (pair.isFullMark()){
+            color = SettingHelper.getSystemSetting().getLedColor();
+        }else {
+            color = SettingHelper.getSystemSetting().getLedColor2();
+        }
         try {
             byte[] strData = str.getBytes("GB2312");
             System.arraycopy(strData, 0, data, 0, strData.length);
@@ -1246,7 +1252,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true,color);
     }
 
     private void updateLastResultLed(RoundResult roundResult) {
