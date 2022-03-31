@@ -60,7 +60,7 @@ public class QRReadRunnable extends SerialReadRunnable {
             // 释放触发
             QRManager.getInstance().stopScan();
             msg.what = SerialConfigs.QR_CODE_READ;
-            msg.obj = qrCode;
+            msg.obj = qrCode.trim();
             // 这里保证后续触发间隔超过50ms
             Thread.sleep(50);
         } catch (IOException e) {

@@ -336,9 +336,16 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
                 partResultAdapter.notifyDataSetChanged();
             }
         }
-        testCountAdapter.setSelectPosition(roundNo - 1);
-        testCountAdapter.notifyDataSetChanged();
-        partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+        if (roundNo<testResults.size()){
+            testCountAdapter.setSelectPosition(roundNo - 1);
+            testCountAdapter.notifyDataSetChanged();
+            partResultAdapter.replaceData(testResults.get(roundNo - 1).getSportTimeResults());
+        }else {
+            testCountAdapter.setSelectPosition(0);
+            testCountAdapter.notifyDataSetChanged();
+            partResultAdapter.replaceData(testResults.get(0).getSportTimeResults());
+        }
+
     }
 
     @Nullable
