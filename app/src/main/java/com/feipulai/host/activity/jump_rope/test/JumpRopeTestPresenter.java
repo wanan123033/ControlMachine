@@ -101,6 +101,12 @@ public class JumpRopeTestPresenter
     }
 
     @Override
+    public int ledColor(int position) {
+
+        return 0;
+    }
+
+    @Override
     public int stateOfPosition(int position) {
         return pairs.get(position).getBaseDevice().getState();
     }

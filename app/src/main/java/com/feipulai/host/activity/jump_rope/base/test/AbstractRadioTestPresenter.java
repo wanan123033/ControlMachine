@@ -47,7 +47,7 @@ public abstract class AbstractRadioTestPresenter<Setting>
     protected volatile int[] currentConnect;
     protected volatile int[] endGetResultPairs;//结束后缓存收到数据设备
     protected List<StuDevicePair> pairs;
-    protected Setting setting;
+    protected Setting  setting;
     protected Context context;
     protected RadioTestContract.View<Setting> view;
     protected int[] deviceIdPIV;

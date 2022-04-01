@@ -258,18 +258,18 @@ public class InteractUtils {
                 results = new ArrayList<>();
                 TestCache.getInstance().getResults().put(student, results);
             }
-            if (pair.getCurrentRoundNo() != 0){
+            if (pair.getCurrentRoundNo() != 0) {
                 roundResult.setRoundNo(pair.getCurrentRoundNo());
                 pair.setCurrentRoundNo(0);
                 roundResult.setResultTestState(RoundResult.RESULT_RESURVEY_STATE);
                 List<BaseStuPair> stuPairs = (List<BaseStuPair>) TestConfigs.baseGroupMap.get("basePairStu");
-                if (stuPairs != null){
-                    for (BaseStuPair pp : stuPairs){
+                if (stuPairs != null) {
+                    for (BaseStuPair pp : stuPairs) {
                         if (pp.getStudent().getStudentCode().equals(pair.getStudent().getStudentCode()))
                             pp.setRoundNo(0);
                     }
                 }
-            }else {
+            } else {
                 if (results.size() == 0) {
                     roundResult.setRoundNo(1);
                 } else {
@@ -281,10 +281,10 @@ public class InteractUtils {
                 // 分组模式下,在一个分组只允许测试一次
                 roundResult.setTestNo(1);
                 roundResult.setGroupId(TestCache.getInstance().getGroup().getId());
-                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestCache.getInstance().getGroup(),student.getStudentCode());
-                if (TestCache.getInstance().getGroup().getExamType() == StudentItem.EXAM_MAKE){
+                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestCache.getInstance().getGroup(), student.getStudentCode());
+                if (TestCache.getInstance().getGroup().getExamType() == StudentItem.EXAM_MAKE) {
                     roundResult.setExamType(TestCache.getInstance().getGroup().getExamType());
-                }else {
+                } else {
                     roundResult.setExamType(groupItem.getExamType());
                 }
                 roundResult.setScheduleNo(TestCache.getInstance().getGroup().getScheduleNo());
@@ -789,6 +789,41 @@ public class InteractUtils {
         }
         result = sb.toString();
         return result;
+    }
+
+    public static int generateLEDColor(List<StuDevicePair> pairs, int position) {
+        StuDevicePair pair = pairs.get(position);
+        Student student = pairs.get(position).getStudent();
+        // Log.i("james", pairs.size() + "   position:" + position + "  student:" + student);
+        if (student == null) {
+            return 0;
+        }
+        int result = InteractUtils.getResultInt(pair);
+        switch (TestConfigs.sCurrentItem.getMachineCode()) {
+
+            case ItemDefault.CODE_TS:
+                JumpRopeSetting jumpRopeSetting = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), JumpRopeSetting.class);
+                if (jumpRopeSetting.isFullSkip()) {
+                    if (student.getSex() == Student.MALE) {
+                        if (result >= jumpRopeSetting.getMaleFullScore()) {
+                            return SettingHelper.getSystemSetting().getLedColor();
+                        } else {
+                            return SettingHelper.getSystemSetting().getLedColor2();
+                        }
+
+                    }
+                    if (student.getSex() == Student.FEMALE) {
+                        if (result >= jumpRopeSetting.getFemaleFullScore()) {
+                            return SettingHelper.getSystemSetting().getLedColor();
+                        } else {
+                            return SettingHelper.getSystemSetting().getLedColor2();
+                        }
+
+                    }
+                }
+                break;
+        }
+        return 0;
     }
 
     public static String generateLEDTestString(List<StuDevicePair> pairs, int position) {

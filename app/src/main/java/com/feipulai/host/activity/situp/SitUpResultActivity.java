@@ -186,7 +186,10 @@ public class SitUpResultActivity
     public String generate(int position) {
         return null;
     }
-
+    @Override
+    public int ledColor(int position) {
+        return 0;
+    }
     private static class MyHandler extends Handler {
 
         private WeakReference<SitUpResultActivity> mReference;

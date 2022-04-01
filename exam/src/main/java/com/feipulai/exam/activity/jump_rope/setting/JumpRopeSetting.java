@@ -13,6 +13,13 @@ public class JumpRopeSetting {
     private int testTime = 30;// 一轮测试的时间,单位为秒
     private int testNo = 1;// 允许测试的次数
 
+    /**
+     * 满分跳过
+     */
+    private boolean fullSkip = false;
+    private int maleFullScore;
+    private int femaleFullScore;
+
     public static final int GROUP_PATTERN_SUCCESIVE = TestConfigs.GROUP_PATTERN_SUCCESIVE;
     public static final int GROUP_PATTERN_LOOP = TestConfigs.GROUP_PATTERN_LOOP;
     private int groupMode = GROUP_PATTERN_SUCCESIVE;
@@ -23,6 +30,30 @@ public class JumpRopeSetting {
     private int getStateLoopCount = 5;
 
     private boolean isShowStumbleCount=false;
+
+    public boolean isFullSkip() {
+        return fullSkip;
+    }
+
+    public void setFullSkip(boolean fullSkip) {
+        this.fullSkip = fullSkip;
+    }
+
+    public int getMaleFullScore() {
+        return maleFullScore;
+    }
+
+    public void setMaleFullScore(int maleFullScore) {
+        this.maleFullScore = maleFullScore;
+    }
+
+    public int getFemaleFullScore() {
+        return femaleFullScore;
+    }
+
+    public void setFemaleFullScore(int femaleFullScore) {
+        this.femaleFullScore = femaleFullScore;
+    }
 
     public int getGroupMode() {
         return groupMode;

@@ -12,4 +12,5 @@ public interface LEDContentGenerator{
 	 */
 	String generate(int position);
 
+	int ledColor(int position);
 }

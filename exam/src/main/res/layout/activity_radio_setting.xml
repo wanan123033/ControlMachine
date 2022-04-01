@@ -33,6 +33,7 @@
             android:background="@drawable/btn_click_bg"
             android:text="设备匹配"
             android:visibility="gone" />
+
         <Button
             android:id="@+id/btn_connect"
             android:layout_width="120dp"
@@ -40,7 +41,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/btn_click_bg"
             android:text="通信质量测试"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,6 +88,78 @@
                 android:background="@drawable/icon_spinner_bg"
                 android:gravity="center"
                 android:paddingLeft="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_is_skip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="满分跳过：" />
+
+            <CheckBox
+                android:id="@+id/cb_full_skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:button="@drawable/checkbox_switch_selected" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_full_skip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="满分设置：" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:text="男子:" />
+
+            <EditText
+                android:id="@+id/edit_male_full"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="个" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:text="女子:" />
+
+            <EditText
+                android:id="@+id/edit_female_full"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="个" />
 
         </LinearLayout>
 
@@ -175,8 +248,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -211,8 +284,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -246,8 +319,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -256,12 +329,13 @@
                 android:layout_margin="5dp"
                 android:text="显示子机计数:"
                 android:textSize="18sp" />
+
             <CheckBox
                 android:id="@+id/cb_show_led"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_gravity="center"
+                android:layout_marginStart="10dp"
                 android:button="@drawable/checkbox_switch_selected" />
         </LinearLayout>
 

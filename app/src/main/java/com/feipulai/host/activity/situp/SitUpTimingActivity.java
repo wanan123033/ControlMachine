@@ -190,7 +190,10 @@ public class SitUpTimingActivity extends BaseActivity implements BaseQuickAdapte
 			mAdapter.notifyItemChanged(mCurrentPosition);
 		}
 	}
-	
+	@Override
+	public int ledColor(int position) {
+		return 0;
+	}
 	// @Override
 	public String generate(BaseStuPair pair){
 		String showContent;

@@ -356,7 +356,10 @@ public abstract class AbstractRadioTestPresenter<Setting>
     public String generate(int position) {
         return InteractUtils.generateLEDTestString(pairs, position);
     }
-
+    @Override
+    public int ledColor(int position) {
+        return InteractUtils.generateLEDColor(pairs, position);
+    }
     protected abstract int getCountStartTime();
 
     protected abstract int getCountFinishTime();

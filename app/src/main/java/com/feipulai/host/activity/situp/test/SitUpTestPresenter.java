@@ -81,7 +81,10 @@ public class SitUpTestPresenter
     public String generate(int position) {
         return InteractUtils.generateLEDTestString(pairs, position);
     }
-
+    @Override
+    public int ledColor(int position) {
+        return 0;
+    }
     @Override
     public void onRadioArrived(Message msg) {
 
