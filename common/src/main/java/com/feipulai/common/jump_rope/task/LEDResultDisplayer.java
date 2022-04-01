@@ -46,10 +46,10 @@ public class LEDResultDisplayer {
             if (isLast) {
                 if (hasInPage) {
                     mLEDManager.showString(hostId, hasStudentHere ? showContent : EMPTY_LINE,
-                            0, currentY, false, updateScreen);
+                            0, currentY, false, updateScreen, generator.ledColor(position));
                     if (!updateScreen) {// 填充满一页
                         for (int j = currentY + 1; j <= 3; j++) {
-                            mLEDManager.showString(hostId, EMPTY_LINE, 0, j, false, j == 3);
+                            mLEDManager.showString(hostId, EMPTY_LINE, 0, j, false, j == 3, generator.ledColor(position));
                         }
                     }
                     position = 0;

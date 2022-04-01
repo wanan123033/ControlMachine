@@ -57,8 +57,8 @@ public class JumpRopeSettingActivity extends AbstractRadioSettingActivity {
         llFullSkip.setVisibility(View.VISIBLE);
         llIsSkip.setVisibility(View.VISIBLE);
         cbFullSkip.setChecked(jPresenter.setting.isFullSkip());
-        editMaleFull.setText(jPresenter.setting.getMaleFullScore());
-        editFemaleFull.setText(jPresenter.setting.getFemaleFullScore());
+        editMaleFull.setText(jPresenter.setting.getMaleFullScore()+"");
+        editFemaleFull.setText(jPresenter.setting.getFemaleFullScore()+"");
     }
 
     @OnClick(R.id.btn_matching)
