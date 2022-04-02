@@ -148,8 +148,8 @@ public class SystemSetting {
     private boolean resultConfirm;  //成绩确认
     private boolean isGroupCheck;//分组检入
     private boolean isStuConfirm;//考生成绩确定（确认考生所有轮次，未测成绩添加放弃）
-    private int ledColor; //0 红 1绿 3 蓝 满分
-    private int ledColor2;//0 红 1绿 3 蓝 未满分
+    private int ledColor; //0 1 红 2绿 3 蓝 满分
+    private int ledColor2;//0  1红 2绿 3 蓝 未满分
 
     public static final int LED_SHOW_COLOR_RED = 1;
     public static final int LED_SHOW_COLOR_GREEN = 2;
@@ -570,11 +570,11 @@ public class SystemSetting {
     }
 
     public int getLedColor() {
-        return ledColor;
+        return ledColor + 1;
     }
 
     public int getLedColor2() {
-        return ledColor2;
+        return ledColor2 + 1;
     }
 
     public void setLedColor2(int ledColor2) {

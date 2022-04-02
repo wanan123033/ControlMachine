@@ -73,13 +73,13 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
 
         ledType = SettingHelper.getSystemSetting().getLedVersion();
-        ledColor = SettingHelper.getSystemSetting().getLedColor();
-        ledColors = SettingHelper.getSystemSetting().getLedColor2();
+        ledColor = SettingHelper.getSystemSetting().getLedColor() - 1;
+        ledColors = SettingHelper.getSystemSetting().getLedColor2() - 1;
 //        rvMode.setVisibility(ledType == 0 ? View.VISIBLE : View.GONE);
 //
 //        ledMode = SettingHelper.getSystemSetting().getLedMode();
 //        rvLed.setVisibility(ledMode == 0 ? View.GONE : View.VISIBLE);
-          rvLed.setVisibility(View.GONE);
+        rvLed.setVisibility(View.GONE);
 //        String[] strings = new String[]{"屏幕1连接", "屏幕2连接", "屏幕3连接", "屏幕4连接"};
 //        LedMoreAdapter adapter = new LedMoreAdapter(Arrays.asList(strings));
 //        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -108,29 +108,29 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         spShowMode.setEnabled(false);
 //        spShowMode.setOnItemSelectedListener(this);
 
-        String[] spinnerItems1 = {"4.1及以上", "4.1以下","4.8及以上"};
+        String[] spinnerItems1 = {"4.1及以上", "4.1以下", "4.8及以上"};
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerItems1);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ledVersion.setAdapter(adapter1);
         ledVersion.setSelection(ledType);
         ledVersion.setOnItemSelectedListener(this);
-        if (ledType == 2){
+        if (ledType == 2) {
             rvColor.setVisibility(View.VISIBLE);
             rv_color_s.setVisibility(View.VISIBLE);
             mLEDManager.setVersions(LEDManager.LED_VERSION_4_8);
-        }else {
+        } else {
             rvColor.setVisibility(View.GONE);
             rv_color_s.setVisibility(View.GONE);
         }
 
         ArrayAdapter<String> colorAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"红色","绿色","蓝色"});
+                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色"});
         colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShowColor.setAdapter(colorAdapter);
         spShowColor.setSelection(ledColor);
         ArrayAdapter<String> colorAdapters = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"红色","绿色","蓝色"});
+                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色"});
         colorAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShowColorS.setAdapter(colorAdapters);
         spShowColorS.setSelection(ledColors);
@@ -165,17 +165,17 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                                 + " " + hostId;
                         if (flag == 0) {
                             runLEDManager.link(hostId);
-                            runLEDManager.resetLEDScreen(hostId,title);
+                            runLEDManager.resetLEDScreen(hostId, title);
                         } else {
                             if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
                                 mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
 
-                                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE,1);
-                                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true,1);
+                                mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE, 1);
+                                mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true, 1);
                             } else {
                                 mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId);
-                                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE,1);
-                                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, true, true,1);
+                                mLEDManager.showString(hostId, title, 0, true, false, LEDManager.MIDDLE, 1);
+                                mLEDManager.showString(hostId, "菲普莱体育", 3, 3, true, true, 1);
                             }
                         }
                     }
@@ -234,6 +234,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        SettingHelper.updateSettingCache(SettingHelper.getSystemSetting());
     }
 
     @Override
@@ -260,11 +261,11 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                 if (btnLedConnect.getVisibility() == View.GONE) {
                     btnLedConnect.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
                 }
-                if (position == 2){
+                if (position == 2) {
                     rvColor.setVisibility(View.VISIBLE);
                     rv_color_s.setVisibility(View.VISIBLE);
                     mLEDManager.setVersions(LEDManager.LED_VERSION_4_8);
-                }else {
+                } else {
                     rvColor.setVisibility(View.GONE);
                     rv_color_s.setVisibility(View.GONE);
 

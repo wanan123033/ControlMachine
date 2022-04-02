@@ -36,6 +36,7 @@ public class LEDResultDisplayer {
             boolean isLast = position == size - 1;
 
             String showContent = generator.generate(position);
+            int color = generator.ledColor(position);
             boolean hasStudentHere = !TextUtils.isEmpty(showContent);// 当前位置是否有考生
 
             if (hasStudentHere) {
@@ -46,10 +47,10 @@ public class LEDResultDisplayer {
             if (isLast) {
                 if (hasInPage) {
                     mLEDManager.showString(hostId, hasStudentHere ? showContent : EMPTY_LINE,
-                            0, currentY, false, updateScreen, generator.ledColor(position));
+                            0, currentY, false, updateScreen,color );
                     if (!updateScreen) {// 填充满一页
                         for (int j = currentY + 1; j <= 3; j++) {
-                            mLEDManager.showString(hostId, EMPTY_LINE, 0, j, false, j == 3, generator.ledColor(position));
+                            mLEDManager.showString(hostId, EMPTY_LINE, 0, j, false, j == 3, color);
                         }
                     }
                     position = 0;
@@ -63,7 +64,7 @@ public class LEDResultDisplayer {
                 continue;// 没人,不用显示
             }
             position = (position + 1) % size;
-            mLEDManager.showString(hostId, showContent, 0, currentY, false, updateScreen, generator.ledColor(position));
+            mLEDManager.showString(hostId, showContent, 0, currentY, false, updateScreen,color);
         }
     }
 
