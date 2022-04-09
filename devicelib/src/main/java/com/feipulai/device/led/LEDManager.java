@@ -41,9 +41,10 @@ public class LEDManager {
         this.versions = versions;
     }
 
-    public void setVersions(int versions){
+    public void setVersions(int versions) {
         this.versions = versions;
     }
+
     static final Map<Integer, Integer> machineCodesForLed = new HashMap<>();
 
     static {
@@ -81,30 +82,30 @@ public class LEDManager {
             return;
         }
         if (versions == LED_VERSION_4_1) {
-            link(channel,machineCode, hostId, 1);
+            link(channel, machineCode, hostId, 1);
             return;
         }
-        if (versions == LED_VERSION_4_8){
-            link(channel, machineCode, hostId,1);
+        if (versions == LED_VERSION_4_8) {
+            link(channel, machineCode, hostId, 1);
             return;
         }
 
         //先切到0频道
         RadioChannelCommand channelCommand = new RadioChannelCommand(0);
-        LogUtils.normal(channelCommand.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand.getCommand())+"---LED切频指令");
+        LogUtils.normal(channelCommand.getCommand().length + "---" + StringUtility.bytesToHexString(channelCommand.getCommand()) + "---LED切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
 
         //连接LED屏
         byte[] command = {(byte) 0xaa, 0x00, (byte) 0xa1, 0x00, 0x00, (byte) 0xa1, 0x00, 0x01, 4, 0x0d};
         command[1] = (byte) (machineCodesForLed.get(machineCode) & 0xff);
         command[6] = (byte) (hostId & 0xff);
-        LogUtils.normal(command.length+"---"+StringUtility.bytesToHexString(command)+"---LED连接指令");
+        LogUtils.normal(command.length + "---" + StringUtility.bytesToHexString(command) + "---LED连接指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
 
         //调到与LED同频进行
 //        RadioChannelCommand channelCommand1 = new RadioChannelCommand(hostId + SerialConfigs.sProChannels.get(machineCode) - 1);
         RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
-        LogUtils.normal(channelCommand1.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand1.getCommand())+"---LED同频指令");
+        LogUtils.normal(channelCommand1.getCommand().length + "---" + StringUtility.bytesToHexString(channelCommand1.getCommand()) + "---LED同频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 
@@ -130,7 +131,7 @@ public class LEDManager {
         }
         //先切到0频道
         RadioChannelCommand channelCommand = new RadioChannelCommand(0);
-        LogUtils.normal(channelCommand.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand.getCommand())+"---LED切频指令");
+        LogUtils.normal(channelCommand.getCommand().length + "---" + StringUtility.bytesToHexString(channelCommand.getCommand()) + "---LED切频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand));
 
         //连接LED屏
@@ -144,10 +145,10 @@ public class LEDManager {
         }
 
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
-        LogUtils.normal(command.length+"---"+StringUtility.bytesToHexString(command)+"---LED连接指令");
+        LogUtils.normal(command.length + "---" + StringUtility.bytesToHexString(command) + "---LED连接指令");
         //调到与LED同频进行
         RadioChannelCommand channelCommand1 = new RadioChannelCommand(channel);
-        LogUtils.normal(channelCommand1.getCommand().length+"---"+StringUtility.bytesToHexString(channelCommand1.getCommand())+"---LED同频指令");
+        LogUtils.normal(channelCommand1.getCommand().length + "---" + StringUtility.bytesToHexString(channelCommand1.getCommand()) + "---LED同频指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(channelCommand1));
     }
 
@@ -167,7 +168,7 @@ public class LEDManager {
             return;
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
-        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---LED自检指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -177,7 +178,7 @@ public class LEDManager {
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xA6, 0x0D};
         cmd[4] = (byte) (ledId & 0xff);
-        LogUtils.normal(cmd.length+"---"+StringUtility.bytesToHexString(cmd)+"---LED自检指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED自检指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -214,50 +215,59 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa5, 0x01, (byte)
                 0x00, 0x00, 0x00};
         cmd[4] = (byte) (ledId & 0xff);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频清空LED显示屏指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED频清空LED显示屏指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
     public void showString(int hostId, String str, int y, boolean clearScreen, boolean update, int align) {
-        showString(MachineCode.machineCode, hostId, 1, str, y, clearScreen, update, align,0);
+        showString(MachineCode.machineCode, hostId, 1, str, y, clearScreen, update, align, 0);
     }
-    public void showString(int hostId, String str, int y, boolean clearScreen, boolean update, int align,int color) {
-        showString(MachineCode.machineCode, hostId, 1, str, y, clearScreen, update, align,color);
+
+    public void showString(int hostId, String str, int y, boolean clearScreen, boolean update, int align, int color) {
+        showString(MachineCode.machineCode, hostId, 1, str, y, clearScreen, update, align, color);
     }
+
     public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update) {
-        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update,true,1);
+        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update, true, 1);
     }
-    public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update,int color) {
-        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update,true,color);
+
+    public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update, int color) {
+        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update, true, color);
     }
 
     public void showString(int machineCode, int hostId, String str, int x, int y, boolean clearScreen, boolean update) {
         showSubsetString(machineCode, hostId, 1, str, x, y, clearScreen, update);
     }
+
     public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update) {
-        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update,true,1);
+        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update, true, 1);
     }
-    public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update,int color) {
-        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update,true,color);
+
+    public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update, int color) {
+        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update, true, color);
     }
+
     public void showSubsetString(int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align) {
-        showString(MachineCode.machineCode, hostId, ledId, str, y, clearScreen, update, align,1);
+        showString(MachineCode.machineCode, hostId, ledId, str, y, clearScreen, update, align, 1);
     }
-    public void showSubsetString(int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align,int color) {
-        showString(MachineCode.machineCode, hostId, ledId, str, y, clearScreen, update, align,color);
+
+    public void showSubsetString(int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align, int color) {
+        showString(MachineCode.machineCode, hostId, ledId, str, y, clearScreen, update, align, color);
     }
+
     public void showSubsetString(int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
         try {
             byte[] data = str.getBytes("GB2312");
-            showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update,1);
+            showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update, 1);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public void showSubsetString(int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update,int color) {
+
+    public void showSubsetString(int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update, int color) {
         try {
             byte[] data = str.getBytes("GB2312");
-            showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update,color);
+            showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update, color);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -266,30 +276,33 @@ public class LEDManager {
     public void showSubsetString(int machineCode, int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update) {
         try {
             byte[] data = str.getBytes("GB2312");
-            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update,false,0);
+            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update, false, 0);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public void showSubsetString(int machineCode, int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update,boolean isColor,int color) {
+
+    public void showSubsetString(int machineCode, int hostId, int ledId, String str, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
         try {
             byte[] data = str.getBytes("GB2312");
-            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update,isColor,color);
+            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update, isColor, color);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public void showSubsetString(int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update,int color) {
-        showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update,color);
+
+    public void showSubsetString(int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update, int color) {
+        showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update, color);
     }
+
     public void showSubsetString(int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update) {
-        showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update,1);
+        showString(MachineCode.machineCode, hostId, ledId, data, x, y, clearScreen, update, 1);
     }
 
     /**
      * @param align 对齐方式 默认为{@link #LEFT}   {@link #MIDDLE}   {@link #RIGHT}
      */
-    public void showString(int machineCode, int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align,int color) {
+    public void showString(int machineCode, int hostId, int ledId, String str, int y, boolean clearScreen, boolean update, int align, int color) {
         int x = 0;
         if (align == MIDDLE) {
             try {
@@ -307,7 +320,7 @@ public class LEDManager {
 
         try {
             byte[] data = str.getBytes("GB2312");
-            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update,color);
+            showString(machineCode, hostId, ledId, data, x, y, clearScreen, update, color);
 //            byte[] data = new byte[16];
 //            System.arraycopy(stringData, 0, data, x, stringData.length);
 //
@@ -319,9 +332,10 @@ public class LEDManager {
     }
 
 
-    public void showString(int machineCode, int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update,int color) {
-        showString(machineCode, hostId, ledId, data, x, y, clearScreen, update,false,color);
+    public void showString(int machineCode, int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update, int color) {
+        showString(machineCode, hostId, ledId, data, x, y, clearScreen, update, false, color);
     }
+
     /**
      * 显示字符串
      *
@@ -335,7 +349,7 @@ public class LEDManager {
      * @param isColor     是否采用颜色显示
      * @param color       1红色 2绿色 3黄色
      */
-    public void showString(int machineCode, int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update,boolean isColor,int color) {
+    public void showString(int machineCode, int hostId, int ledId, byte[] data, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
@@ -362,15 +376,15 @@ public class LEDManager {
         cmd[9] = (byte) (x & 0xff);
         cmd[10] = (byte) (y & 0xff);
         System.arraycopy(data, 0, cmd, 11, data.length);
-        if (isColor) {
+        if (isColor && color != 0) {
 //            cmd[6] = (byte) (clearScreen ? 0x03 : 0x000);
             cmd[11 + data.length] = (byte) color;
             cmd[12 + data.length] = (byte) 0xEE;
-        }else {
+        } else {
             cmd[11 + data.length] = 0x00;
             cmd[12 + data.length] = 0x00;
         }
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频显示字符指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED频显示字符指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd)/*,CMD_SEND_INTERVAL*/);
 
     }
@@ -441,7 +455,7 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xbb,
                 (byte) 0x0d};
         cmd[4] = (byte) (ledId & 0xff);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频增加亮度指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED频增加亮度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -474,7 +488,7 @@ public class LEDManager {
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, (byte) 0xaa,
                 (byte) 0x0d};
         cmd[4] = (byte) (ledId & 0xff);
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频减少亮度指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED频减少亮度指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -490,7 +504,7 @@ public class LEDManager {
         }
         byte[] cmd = {(byte) 0xAA, (byte) (machineCodesForLed.get(machineCode) & 0xff), (byte) 0xa1, (byte) (hostId & 0xff), 0x01, (byte) 0xa4, 0x00, (byte)
                 0x0d};
-        LogUtils.normal(cmd.length+"---"+ StringUtility.bytesToHexString(cmd)+"---LED频亮度最暗指令");
+        LogUtils.normal(cmd.length + "---" + StringUtility.bytesToHexString(cmd) + "---LED频亮度最暗指令");
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
 
@@ -499,7 +513,7 @@ public class LEDManager {
      *
      * @param hostId 主机号
      */
-    public void resetLEDScreen(int hostId, String machineName,int color) {
+    public void resetLEDScreen(int hostId, String machineName, int color) {
         //第一行项目加主机号
         //第二行“请检录”
         //第三行空
@@ -507,31 +521,34 @@ public class LEDManager {
         String title;
         title = machineName + " " + hostId;
 
-        showString(hostId, title, getX(title), 0, true, false,color);
-        showString(hostId, "请检录", 5, 1, false, false,color);
-        showString(hostId, "菲普莱体育", 3, 3, false, true,color);
+        showString(hostId, title, getX(title), 0, true, false, color);
+        showString(hostId, "请检录", 5, 1, false, false, color);
+        showString(hostId, "菲普莱体育", 3, 3, false, true, color);
     }
+
     public void resetLEDScreen(int hostId, String machineName) {
-        resetLEDScreen(hostId, machineName,1);
+        resetLEDScreen(hostId, machineName, 1);
     }
+
     /**
      * 显示当前项目信息
      *
      * @param hostId 主机号
      */
-    public void resetLEDScreen(int hostId, int ledId, String machineName,int color) {
+    public void resetLEDScreen(int hostId, int ledId, String machineName, int color) {
         //第一行项目加主机号
         //第二行“请检录”
         //第三行空
         //第四行“菲普莱体育”
         String title;
         title = machineName + " " + hostId;
-        showSubsetString(hostId, ledId, title, getX(title), 0, true, false,color);
-        showSubsetString(hostId, ledId, "请检录", 5, 1, false, false,color);
-        showSubsetString(hostId, ledId, "菲普莱体育", 3, 3, false, true,color);
+        showSubsetString(hostId, ledId, title, getX(title), 0, true, false, color);
+        showSubsetString(hostId, ledId, "请检录", 5, 1, false, false, color);
+        showSubsetString(hostId, ledId, "菲普莱体育", 3, 3, false, true, color);
     }
+
     public void resetLEDScreen(int hostId, int ledId, String machineName) {
-        resetLEDScreen(hostId, ledId, machineName,1);
+        resetLEDScreen(hostId, ledId, machineName, 1);
     }
 
     public int getX(String showMsg) {
@@ -556,11 +573,11 @@ public class LEDManager {
         return pattern.matcher(str).matches();
     }
 
-    public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update,boolean isColor,int color) {
-        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update,isColor,color);
+    public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
+        showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update, isColor, color);
     }
 
     public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
-        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update,isColor,color);
+        showSubsetString(MachineCode.machineCode, hostId, 1, str, x, y, clearScreen, update, isColor, color);
     }
 }

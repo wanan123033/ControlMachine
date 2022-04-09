@@ -50,6 +50,7 @@ import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
+import com.feipulai.exam.activity.volleyball.VolleyBallIndividualActivity;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -394,6 +395,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             state = WAIT_CHECK_IN;
             setOperationUI();
             pairs.get(0).setStudent(student);
+            TestCache.getInstance().clear();
             TestCache.getInstance().init();
             TestCache.getInstance().getAllStudents().add(student);
             TestCache.getInstance().getResults().put(student, results);
@@ -1483,10 +1485,12 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                 if (student != null) {
+                    individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                    InteractUtils.toastSpeak(BasketballIndividualActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(BasketballIndividualActivity.this, "该考生不存在");

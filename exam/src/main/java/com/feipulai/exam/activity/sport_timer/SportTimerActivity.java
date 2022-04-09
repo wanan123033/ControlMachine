@@ -394,11 +394,13 @@ public class SportTimerActivity extends BaseTitleActivity implements BaseAFRFrag
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
-                if (student != null) {
+               if (student != null) {
+                   individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
-                    afrFrameLayout.setVisibility(View.GONE);
-                }
+                   afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                   InteractUtils.toastSpeak(SportTimerActivity.this, "该考生不存在");
+               }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(SportTimerActivity.this, "该考生不存在");
 //                    return;

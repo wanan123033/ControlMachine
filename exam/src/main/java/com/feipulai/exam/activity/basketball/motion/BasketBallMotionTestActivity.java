@@ -43,6 +43,7 @@ import com.feipulai.exam.activity.basketball.BasketBallListener;
 import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
+import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
 import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.basketball.adapter.BallReentryResultAdapter;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
@@ -57,6 +58,7 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
+import com.feipulai.exam.activity.volleyball.more_devices.BaseVolleyBallMoreActivity;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -1429,10 +1431,12 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                 if (student != null) {
+                    individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                    InteractUtils.toastSpeak(BasketBallMotionTestActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(BasketballIndividualActivity.this, "该考生不存在");

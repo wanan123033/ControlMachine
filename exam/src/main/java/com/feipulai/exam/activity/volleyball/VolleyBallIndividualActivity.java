@@ -897,12 +897,15 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 pairs.get(0).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult);
-                String[] resultArray = new String[resultList.size()];
-                resultList.toArray(resultArray);
-                resultArray[adapter.getIndexPostion()] = RoundResult.resultStateStr(RoundResult.RESULT_STATE_NORMAL, result.getResult());
-                resultList.clear();
-                resultList.addAll(Arrays.asList(resultArray));
-                adapter.notifyDataSetChanged();
+                if (adapter.getIndexPostion()!=-1){
+                    String[] resultArray = new String[resultList.size()];
+                    resultList.toArray(resultArray);
+                    resultArray[adapter.getIndexPostion()] = RoundResult.resultStateStr(RoundResult.RESULT_STATE_NORMAL, result.getResult());
+                    resultList.clear();
+                    resultList.addAll(Arrays.asList(resultArray));
+                    adapter.notifyDataSetChanged();
+                }
+
                 break;
         }
     }
@@ -1150,10 +1153,11 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                 if (student != null) {
-
+                    individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                     afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                    InteractUtils.toastSpeak(VolleyBallIndividualActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(VolleyBallIndividualActivity.this, "该考生不存在");

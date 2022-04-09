@@ -49,15 +49,20 @@ public class TestCache {
     }
 
     public void init() {
-        if (testingPairs==null){
-            testingPairs = new ArrayList<>();
-            allStudents = new ArrayList<>();
-            results = new IdentityHashMap<>();
-            group = null;
-            testNoMap = new IdentityHashMap<>();
-            roundNoMap = new IdentityHashMap<>();
-            studentItemMap = new IdentityHashMap<>();
-            trackNoMap = new IdentityHashMap<>();
+        testingPairs = new ArrayList<>();
+        allStudents = new ArrayList<>();
+        results = new IdentityHashMap<>();
+        group = null;
+        testNoMap = new IdentityHashMap<>();
+        roundNoMap = new IdentityHashMap<>();
+        studentItemMap = new IdentityHashMap<>();
+        trackNoMap = new IdentityHashMap<>();
+
+    }
+
+    public void init(boolean isClear) {
+        if (isClear && testingPairs == null) {
+            init();
         }
 
     }
@@ -73,21 +78,21 @@ public class TestCache {
     }
 
     public Map<Student, Integer> getTestNoMap() {
-        if (testNoMap == null){
+        if (testNoMap == null) {
             testNoMap = new IdentityHashMap<>();
         }
         return testNoMap;
     }
 
     public Map<Student, StudentItem> getStudentItemMap() {
-        if (studentItemMap == null){
+        if (studentItemMap == null) {
             studentItemMap = new IdentityHashMap<>();
         }
         return studentItemMap;
     }
 
     public Map<Student, Integer> getTrackNoMap() {
-        if (trackNoMap == null){
+        if (trackNoMap == null) {
             trackNoMap = new IdentityHashMap<>();
         }
         return trackNoMap;
@@ -122,7 +127,7 @@ public class TestCache {
     }
 
     public List<Student> getAllStudents() {
-        if (allStudents == null){
+        if (allStudents == null) {
             allStudents = new ArrayList<>();
         }
         return allStudents;

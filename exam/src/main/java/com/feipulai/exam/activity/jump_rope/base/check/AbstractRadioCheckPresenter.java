@@ -75,7 +75,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         }
 
         mCurrentConnect = new int[pairs.size() + 1];
-        TestCache.getInstance().init();
+        TestCache.getInstance().init(true);
         view.initView(systemSetting, setting, pairs);
         // 分组模式检录
         if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.GROUP_PATTERN) {
@@ -127,7 +127,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
 
     @Override
     public void refreshEveryThing() {
-        TestCache.getInstance().init();
+        TestCache.getInstance().init(true);
         focusPosition = 0;
         pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
         view.refreshPairs(pairs);

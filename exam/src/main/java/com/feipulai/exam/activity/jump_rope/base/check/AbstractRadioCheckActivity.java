@@ -430,10 +430,12 @@ public abstract class AbstractRadioCheckActivity<Setting>
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                 if (student != null) {
+                    individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                    InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(AbstractRadioCheckActivity.this, "该考生不存在");

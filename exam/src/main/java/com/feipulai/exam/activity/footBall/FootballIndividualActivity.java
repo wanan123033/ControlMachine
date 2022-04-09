@@ -376,6 +376,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             state = WAIT_CHECK_IN;
             setOperationUI();
             pairs.get(0).setStudent(student);
+            TestCache.getInstance().clear();
             TestCache.getInstance().init();
             TestCache.getInstance().getAllStudents().add(student);
             TestCache.getInstance().getResults().put(student, results);
@@ -599,6 +600,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         if (machineResultList.size() == 0 || machineResultList == null || results1 == null || results1.size() == 0) {
             machineResultList.add(machineResult);
             addRoundResult(result);
+            if (resultList.isEmpty()) {
+                resultList.add(new BasketBallTestResult(roundNo, machineResultList, 0, -999, 0, -999));
+            }
             resultList.get(resultAdapter.getSelectPosition()).setMachineResultList(machineResultList);
             resultList.get(resultAdapter.getSelectPosition()).setSelectMachineResult(machineResult.getResult());
             resultList.get(resultAdapter.getSelectPosition()).setResult(machineResult.getResult());
@@ -1365,23 +1369,6 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
     }
 
     /**
-     * 等待
-     */
-    private void prepareForBegin() {
-        TestCache testCache = TestCache.getInstance();
-        Student student = pairs.get(0).getStudent();
-        List<RoundResult> scoreResultList = new ArrayList<>();
-        RoundResult result = DBManager.getInstance().queryBestScore(student.getStudentCode(), testCache.getTestNoMap().get(student));
-        if (result != null) {
-            scoreResultList.add(result);
-        }
-        InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
-        tvResult.setText(student.getStudentName());
-        state = WAIT_CHECK_IN;
-        setOperationUI();
-    }
-
-    /**
      * 结束
      */
     private void prepareForFinish() {
@@ -1418,6 +1405,23 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             Logger.i("自动上传成绩:" + uploadResults.toString());
             ServerMessage.uploadResult(uploadResults);
         }
+    }
+
+    /**
+     * 等待
+     */
+    private void prepareForBegin() {
+        TestCache testCache = TestCache.getInstance();
+        Student student = pairs.get(0).getStudent();
+        List<RoundResult> scoreResultList = new ArrayList<>();
+        RoundResult result = DBManager.getInstance().queryBestScore(student.getStudentCode(), testCache.getTestNoMap().get(student));
+        if (result != null) {
+            scoreResultList.add(result);
+        }
+        InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
+        tvResult.setText(student.getStudentName());
+        state = WAIT_CHECK_IN;
+        setOperationUI();
     }
 
     /**
@@ -1552,10 +1556,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                 if (student != null) {
+                    individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
+                }else{
+                    InteractUtils.toastSpeak(FootballIndividualActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
 //                    InteractUtils.toastSpeak(FootballIndividualActivity.this, "该考生不存在");
