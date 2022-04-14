@@ -535,6 +535,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <RelativeLayout
                 android:layout_width="520dp"
                 android:layout_height="wrap_content"
@@ -809,7 +810,8 @@
                     android:background="@drawable/btn_click_bg_selected"
                     android:text="帐号管理"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:visibility="invisible" />
 
                 <Button
                     android:id="@+id/btn_voice_setting"

@@ -16,6 +16,8 @@ public class BasketBallSetting {
     private String hostIp = "192.168.0.227";//计时仪IP
     private int post = 1026;//端口
     private double penaltySecond;//违例罚秒
+    private double autoPenaltySecond;//自动罚秒
+    private boolean autoPenalt = false;
     /**
      * 满分跳过
      */
@@ -141,6 +143,30 @@ public class BasketBallSetting {
 
     public void setAutoPair(boolean autoPair) {
         this.autoPair = autoPair;
+    }
+
+    public double getAutoPenaltySecond() {
+        return autoPenaltySecond;
+    }
+
+    public void setAutoPenaltySecond(double autoPenaltySecond) {
+        this.autoPenaltySecond = autoPenaltySecond;
+    }
+
+    public int getAutoPenaltyTime() {
+        if (autoPenalt) {
+            return (int) (autoPenaltySecond * 1000.0);
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isAutoPenalt() {
+        return autoPenalt;
+    }
+
+    public void setAutoPenalt(boolean autoPenalt) {
+        this.autoPenalt = autoPenalt;
     }
 
     @Override

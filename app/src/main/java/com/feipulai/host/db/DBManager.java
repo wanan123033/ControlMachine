@@ -365,20 +365,20 @@ public class DBManager {
                 .list();
     }
 
-    public List<Student> queryByItemStudentFeatures() {
+    public List<StudentFace> queryByItemStudentFeatures() {
 
-        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentDao.TABLENAME + " S");
-        sqlBuf.append(" WHERE S." + StudentDao.Properties.StudentCode.columnName + " IN ( ");
+        StringBuffer sqlBuf = new StringBuffer("SELECT S.* FROM " + StudentFaceDao.TABLENAME + " S");
+        sqlBuf.append(" WHERE S." + StudentFaceDao.Properties.StudentCode.columnName + " IN ( ");
         sqlBuf.append(" SELECT  " + StudentItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  )");
-        sqlBuf.append(" AND " + StudentDao.Properties.FaceFeature.columnName + " <>'' ");
+        sqlBuf.append(" AND " + StudentFaceDao.Properties.FaceFeature.columnName + " <>'' ");
 
         Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode()});
-        List<Student> students = new ArrayList<>();
+        List<StudentFace> students = new ArrayList<>();
         while (c.moveToNext()) {
-            Student student = studentDao.readEntity(c, 0);
+            StudentFace student = studentFaceDao.readEntity(c, 0);
             students.add(student);
         }
         c.close();

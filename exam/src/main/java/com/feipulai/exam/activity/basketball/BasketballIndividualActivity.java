@@ -168,10 +168,10 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade = new BasketBallRadioFacade(setting.getTestType(), setting.getAutoPenaltyTime(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
-                .setUdpListerner(new BasketBallListener(this)).build();
+                .setUdpListerner(new BasketBallListener(this, setting.getAutoPenaltyTime())).build();
         timerUtil = new TimerUtil(this);
 
         StuDevicePair pair = new StuDevicePair();
@@ -273,7 +273,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             facade.resume();
             facade.setInterceptSecond(setting.getInterceptSecond());
         } else {
-            ballManager.setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+            ballManager.setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this,setting.getAutoPenaltyTime()));
         }
         //设置精度
 
@@ -404,7 +404,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             if (results == null || results.size() == 0) {
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
-                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
+                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
@@ -706,7 +706,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
      */
     private void presetResult(Student student, int testNo) {
         resultList.clear();
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        for (int i = 0; i < TestConfigs.getMaxTestCount(student.getStudentCode()); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
             if (studentItem.getExamType() == 2) {
@@ -1007,7 +1007,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
             TestCache testCache = TestCache.getInstance();
 
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
         }
     }
 
@@ -1322,7 +1322,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
 
         if (SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
         }
 
         state = WAIT_FREE;
@@ -1489,7 +1489,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                     individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
-                }else{
+                } else {
                     InteractUtils.toastSpeak(BasketballIndividualActivity.this, "该考生不存在");
                 }
 //                if (student == null) {

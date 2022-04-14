@@ -148,7 +148,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), this);
+        facade = new BasketBallMotionFacade(setting.getTestType(),setting.getAutoPenaltyTime(), this);
         RadioManager.getInstance().setOnRadioArrived(facade);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));

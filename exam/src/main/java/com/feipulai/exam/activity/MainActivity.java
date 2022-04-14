@@ -193,6 +193,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     protected void onResume() {
         super.onResume();
         try {
+            LEDManager.versions=SettingHelper.getSystemSetting().getLedVersion();
             machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                     .DEFAULT_MACHINE_CODE);
             String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);

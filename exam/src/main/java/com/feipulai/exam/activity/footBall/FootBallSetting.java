@@ -29,7 +29,8 @@ public class FootBallSetting {
     private int testType = 0;   //0 有线  1 无线 3 红外
     private int deviceVersion = 0;//0:6.4 1无线6.6版本
     private int useLedType = 0;//使用LED類型 0 標配 1 通用
-
+    private double autoPenaltySecond;//自动罚秒
+    private boolean autoPenalt = false;
     public int getDeviceVersion() {
         return deviceVersion;
     }
@@ -163,5 +164,29 @@ public class FootBallSetting {
 
     public void setUseLedType(int useLedType) {
         this.useLedType = useLedType;
+    }
+
+    public double getAutoPenaltySecond() {
+        return autoPenaltySecond;
+    }
+
+    public void setAutoPenaltySecond(double autoPenaltySecond) {
+        this.autoPenaltySecond = autoPenaltySecond;
+    }
+
+    public int getAutoPenaltyTime() {
+        if (autoPenalt) {
+            return (int) autoPenaltySecond * 1000;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isAutoPenalt() {
+        return autoPenalt;
+    }
+
+    public void setAutoPenalt(boolean autoPenalt) {
+        this.autoPenalt = autoPenalt;
     }
 }

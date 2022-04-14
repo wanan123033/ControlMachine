@@ -57,6 +57,11 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
     private SportTimerManger manager;
     private volatile int[] sendIndex;
     private int testState = 0;
+    private int autoAddTime = 0;
+
+    public void setAutoAddTime(int autoAddTime) {
+        this.autoAddTime = autoAddTime;
+    }
 
     public void setDeviceVersion(int deviceVersion) {
         this.deviceVersion = deviceVersion;
@@ -66,8 +71,9 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
         this.interceptSecond = interceptSecond;
     }
 
-    public BasketBallMotionFacade(int patternType, final BasketBallListener.BasketBallResponseListener listener) {
+    public BasketBallMotionFacade(int patternType, int autoAddTime, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
+        this.autoAddTime = autoAddTime;
         this.patternTypes = patternType;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
@@ -321,7 +327,7 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
                     numResult.put(sportResult.getMapKey(), sportResult);
 
                     SportResult startTime = timeRountList.get(0);
-                    long testTime = sportResult.getLongTime() - startTime.getLongTime();
+                    long testTime = sportResult.getLongTime() - startTime.getLongTime()+autoAddTime;
 
                     if (testTime < interceptSecond * 1000) {
                         return;

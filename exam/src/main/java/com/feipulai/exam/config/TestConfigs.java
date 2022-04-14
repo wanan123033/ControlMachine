@@ -510,6 +510,16 @@ public class TestConfigs {
                 item.getItemCode();
     }
 
+    public static int getMaxTestCount(String stuCode) {
+        if (!TextUtils.isEmpty(stuCode)) {
+            StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(stuCode);
+            if (studentItem.getExamType() == StudentItem.EXAM_MAKE) {
+                return 1;
+            }
+        }
+        return getMaxTestCount();
+    }
+
     public static int getMaxTestCount(Context context) {
         int result = TestConfigs.sCurrentItem.getTestNum();
         if (result > 0) {

@@ -3,9 +3,12 @@ package com.feipulai.host.netUtils;
 import android.content.Context;
 import android.util.Log;
 
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.bean.SoftApp;
 import com.feipulai.host.bean.UpdateApp;
+import com.feipulai.host.bean.UserBean;
+import com.feipulai.host.config.SharedPrefsConfigs;
 
 import org.json.JSONObject;
 
@@ -18,6 +21,29 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 public class HttpSubscriber {
+    /**
+     * 用户登录
+     *
+     * @param username
+     * @param password
+     */
+    public void login(Context context, String username, String password, OnResultListener listener) {
+        if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
+            HttpManager.DEFAULT_READ_TIMEOUT = 20;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.resetManager();
+        }
+        Map<String, String> parameData = new HashMap<>();
+        parameData.put("username", username + "@" + CommonUtils.getDeviceId(context));
+//        parameData.put("username", username);
+        parameData.put("password", password);
+        //TODO 登录协议与其它接口分离，单传用户名和密码
+        String serverToken = SharedPrefsUtil.getValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.DEFAULT_SERVER_TOKEN, "dGVybWluYWw6dGVybWluYWxfc2VjcmV0");
+        Observable<HttpResult<UserBean>> observable = HttpManager.getInstance().getHttpApi().login("Basic " + serverToken, parameData);
+//        Observable<HttpResult<UserBean>> observable = HttpManager.getInstance().getHttpApi().login(CommonUtils.query("1001", parameData));
+        HttpManager.getInstance().toSubscribe(observable, new RequestSub<UserBean>(listener, context));
+    }
     public void getApps(Context context, String version, final OnResultListener listener) {
         Map<String, String> parameData = new HashMap<>();
         parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);

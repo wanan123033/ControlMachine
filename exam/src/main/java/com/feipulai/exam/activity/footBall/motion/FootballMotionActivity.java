@@ -145,7 +145,7 @@ public class FootballMotionActivity extends BaseTitleActivity implements Individ
         if (setting == null)
             setting = new FootBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), this);
+        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(),this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
@@ -363,7 +363,7 @@ public class FootballMotionActivity extends BaseTitleActivity implements Individ
             if (results == null || results.size() == 0) {
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
-                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
+                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
                 if (student != null)
@@ -715,7 +715,7 @@ public class FootballMotionActivity extends BaseTitleActivity implements Individ
      */
     private void presetResult(Student student, int testNo) {
         resultList.clear();
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        for (int i = 0; i < TestConfigs.getMaxTestCount(student.getStudentCode()); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, null, 0, -999, 0, -999));

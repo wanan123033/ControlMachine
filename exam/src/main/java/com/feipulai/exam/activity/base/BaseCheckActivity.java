@@ -367,7 +367,7 @@ public abstract class BaseCheckActivity
             return false;
         }
         final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount()) {
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount(student.getStudentCode())) {
             showDialog(student, studentItem, results);
 
             return false;

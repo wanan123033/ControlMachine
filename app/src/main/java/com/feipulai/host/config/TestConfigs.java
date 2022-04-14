@@ -60,7 +60,7 @@ public class TestConfigs {
     public static final int UPDATE_GRIDVIEW = 0x4;
     public static final int GROUP_PATTERN_SUCCESIVE = 0x0;
 
-    public static final String DEFAULT_IP_ADDRESS = "192.168.0.100:8099";
+    public static final String DEFAULT_IP_ADDRESS = "http://api.pt.fplcloud.com";
     public static final Map<Integer, Class<?>> proActivity = new HashMap<>();
     public static final Map<Integer, Class<?>> freedomActivity = new HashMap<>();
     public static final Map<Integer, String> machineNameMap = new HashMap<>();

@@ -143,10 +143,10 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade = new BasketBallRadioFacade(setting.getTestType(), setting.getAutoPenaltyTime(),this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
-                .setRadioListener(facade).setUdpListerner(new BasketBallListener(this)).build();
+                .setRadioListener(facade).setUdpListerner(new BasketBallListener(this,setting.getAutoPenaltyTime())).build();
 
         if (setting.getTestType() == 1) {
             facade.resume();
@@ -844,7 +844,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
                             case 1:
 
                                 InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                                        TestConfigs.getMaxTestCount(BasketBallGroupActivity.this), testCache.getTrackNoMap());
+                                        TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
                                 break;
                         }
                     }
@@ -1367,7 +1367,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         if (SettingHelper.getSystemSetting().isAutoPrint()) {
             TestCache testCache = TestCache.getInstance();
             InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(BasketBallGroupActivity.this), testCache.getTrackNoMap());
+                    TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
         }
         allTestComplete();
     }
@@ -1437,7 +1437,7 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
         List<RoundResult> roundResultList = DBManager.getInstance().queryGroupRound
                 (studentCode, group.getId() + "");
         //成绩数量是否小于测试次数
-        if (roundResultList.size() < TestConfigs.getMaxTestCount(this)) {
+        if (roundResultList.size() < TestConfigs.getMaxTestCount()) {
             boolean isSkip = false;
             for (RoundResult roundResult : roundResultList) {
                 //成绩是否存在满分跳过

@@ -52,6 +52,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private Basketball868Result farResult;
     private Basketball868Result ledResult;
     private int deviceVersion;
+    private int autoAddTime = 0;
+
+    public void setAutoAddTime(int autoAddTime) {
+        this.autoAddTime = autoAddTime;
+    }
 
     public void setDeviceVersion(int deviceVersion) {
         this.deviceVersion = deviceVersion;
@@ -61,8 +66,9 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
         this.interceptSecond = interceptSecond;
     }
 
-    public BasketBallRadioFacade(int patternType, final BasketBallListener.BasketBallResponseListener listener) {
+    public BasketBallRadioFacade(int patternType, int autoAddTime, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
+        this.autoAddTime = autoAddTime;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
 
@@ -231,10 +237,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                     }
                     if (result.getSum() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(result.getMapKey())) { //获取拦截成绩
                         ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
+
                         numResult.put(result.getMapKey(), result);
 
                         Basketball868Result startTime = timeRountList.get(0);
-                        long testTime = result.getInterceptTime() - startTime.getInterceptTime();
+                        long testTime = result.getInterceptTime() - startTime.getInterceptTime() + autoAddTime;
 
                         if (testTime < interceptSecond * 1000) {
                             return;

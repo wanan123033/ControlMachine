@@ -33,6 +33,10 @@
     <string name="jump_rope_pair_title">手柄匹配</string>
     <string name="sit_up_pair_title">设备匹配</string>
     <string name="setting_title">设置</string>
+    <!--账号提示-->
+    <string name="hint_account">请输入用户名</string>
+    <!--密码提示-->
+    <string name="hint_pass">请输入密码</string>
     <!--提示-->
     <string name="exit_hint">再按一次后退键退出程序</string>
     <string name="please_select_item">请先选择测试项目</string>

@@ -324,7 +324,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                     }
                     adapter.setIndexPostion(roundNo - 1);
                     adapter.notifyDataSetChanged();
-                }else{
+                } else {
                     //测试结束学生清除 ，设备设置空闲状态
                     roundNo = 1;
                     //4秒后清理学生信息
@@ -451,7 +451,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         testNo = roundResultList == null || roundResultList.size() == 0 ? 1 : roundResultList.get(0).getTestNo();
         //保存成绩，并测试轮次大于测试轮次次数
         List<RoundResult> roundResultAll = DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), mStudentItem.getExamType());
-        if (roundResultAll.size() >= TestConfigs.getMaxTestCount()) {
+        if (roundResultAll.size() >= TestConfigs.getMaxTestCount(student.getStudentCode())) {
             List<Integer> rounds = new ArrayList<>();
             for (int i = 0; i < roundResultList.size(); i++) {
                 if (roundResultList.size() > 0) {  //需要改变轮次
@@ -460,7 +460,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 }
             }
 
-            for (int j = 1; j <= TestConfigs.getMaxTestCount(); j++) {
+            for (int j = 1; j <= TestConfigs.getMaxTestCount(student.getStudentCode()); j++) {
                 if (!rounds.contains(j)) {
                     pair.setRoundNo(j);
                     break;
@@ -594,7 +594,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
                 if (pair.getBaseDevice().getState() == BaseDeviceState.STATE_NOT_BEGAIN || pair.getBaseDevice().getState() == BaseDeviceState.STATE_FREE) {
                     pair.setTestTime(DateUtil.getCurrentTime() + "");
                     sendTestCommand(pair);
-                }else{
+                } else {
                     pair.getBaseDevice().setState(BaseDeviceState.STATE_NOT_BEGAIN);
                     setBegin(1);
                 }
@@ -1239,9 +1239,9 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         byte[] data = new byte[16];
         String str = "当前：";
         int color = 0;
-        if (pair.isFullMark()){
+        if (pair.isFullMark()) {
             color = SettingHelper.getSystemSetting().getLedColor();
-        }else {
+        } else {
             color = SettingHelper.getSystemSetting().getLedColor2();
         }
         try {
@@ -1252,7 +1252,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true,color);
+        mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), data, 0, 1, false, true, color);
     }
 
     private void updateLastResultLed(RoundResult roundResult) {

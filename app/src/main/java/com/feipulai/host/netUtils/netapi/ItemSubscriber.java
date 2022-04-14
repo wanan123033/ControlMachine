@@ -272,8 +272,8 @@ public class ItemSubscriber {
                             studentBean.getExamType(), studentBean.getScheduleNo());
                     studentItemList.add(studentItem);
 
-                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
-                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
+                    if (!TextUtils.isEmpty(studentBean.getFaceFeature())) {
+                        registerInfoList.add(new FaceRegisterInfo(Base64.decode(studentBean.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
                     }
                 }
                 if (SettingHelper.getSystemSetting().getCheckTool() == 4) {

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.AudioUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -32,6 +33,7 @@ import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.base.BaseTitleActivity;
+import com.feipulai.host.activity.login.LoginActivity;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
@@ -93,6 +95,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     Spinner spAfr;
     @BindView(R.id.ll_afr)
     LinearLayout llAfr;
+
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -205,7 +208,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel, R.id.sw_net})
+    @OnClick({R.id.btn_face_init, R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print,
+            R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.cb_custom_channel, R.id.sw_net
+            , R.id.btn_login})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.sw_auto_broadcast:
@@ -225,7 +230,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.btn_bind:
                 bind();
                 break;
-
+            case R.id.btn_login:
+                IntentUtil.gotoActivity(this, LoginActivity.class);
+                break;
             case R.id.btn_default:
                 mEtSeverIp.setText(TestConfigs.DEFAULT_IP_ADDRESS);
                 setting.setServerIp(TestConfigs.DEFAULT_IP_ADDRESS);

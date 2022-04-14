@@ -272,7 +272,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
         if (results == null || results.size() == 0) {
             TestCache.getInstance().getResults().put(student,
                     results != null ? results
-                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
+                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             int testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
             TestCache.getInstance().getTestNoMap().put(student, testNo);
@@ -288,7 +288,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
 
         //保存成绩，并测试轮次大于测试轮次次数
         List<RoundResult> roundResultAll = DBManager.getInstance().queryFinallyRountScoreByExamTypeAll(student.getStudentCode(), studentItem.getExamType());
-        if (roundResultAll.size() >= TestConfigs.getMaxTestCount()) {
+        if (roundResultAll.size() >= TestConfigs.getMaxTestCount(student.getStudentCode())) {
             List<Integer> rounds = new ArrayList<>();
             for (int i = 0; i < results.size(); i++) {
                 if (results.size() > 0) {  //需要改变轮次
@@ -297,7 +297,7 @@ public class PullUpIndividualActivity extends BaseTitleActivity
                 }
             }
 
-            for (int j = 1; j <= TestConfigs.getMaxTestCount(); j++) {
+            for (int j = 1; j <= TestConfigs.getMaxTestCount(student.getStudentCode()); j++) {
                 if (!rounds.contains(j)) {
                     pairs.get(0).setCurrentRoundNo(j);
                     break;
@@ -615,9 +615,10 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     }
 
     private boolean shouldContinue() {
-        int maxTestNo = TestConfigs.getMaxTestCount(this);
+
         TestCache testCache = TestCache.getInstance();
         Student student = testCache.getAllStudents().get(0);
+        int maxTestNo = TestConfigs.getMaxTestCount(student.getStudentCode());
         //更新列表
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
         String[] resultArray = new String[maxTestNo];
@@ -841,10 +842,11 @@ public class PullUpIndividualActivity extends BaseTitleActivity
     }
 
     private void setAdapter() {
-        int maxTestNo = TestConfigs.getMaxTestCount(this);
+
 //        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
 //        rvTestResult.setLayoutManager(new LinearLayoutManager(this));
         Student student = TestCache.getInstance().getAllStudents().get(0);
+        int maxTestNo = TestConfigs.getMaxTestCount(student.getStudentCode());
         List<RoundResult> roundResults = TestCache.getInstance().getResults().get(student);
 
         String[] resultArray = new String[maxTestNo];

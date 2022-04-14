@@ -148,10 +148,10 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         if (setting == null)
             setting = new FootBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallRadioFacade(setting.getTestType(), this);
+        facade = new BasketBallRadioFacade(setting.getTestType(),setting.getAutoPenaltyTime(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
-                .setUdpListerner(new BasketBallListener(this)).build();
+                .setUdpListerner(new BasketBallListener(this,setting.getAutoPenaltyTime())).build();
 
         useMode = setting.getUseMode();
         timerUtil = new TimerUtil(this);
@@ -249,7 +249,8 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             facade.resume();
             facade.setInterceptSecond(setting.getInterceptSecond());
         } else {
-            ballManager.setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(), new BasketBallListener(this));
+            ballManager.setHostIpPostLocatListener(setting.getHostIp(), setting.getPost(),
+                    new BasketBallListener(this,setting.getAutoPenaltyTime()));
         }
         //设置精度
         ballManager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), setting.getSensitivity(),
@@ -385,7 +386,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
             if (results == null || results.size() == 0) {
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
-                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
+                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
                 if (student != null)
@@ -760,7 +761,7 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
      */
     private void presetResult(Student student, int testNo) {
         resultList.clear();
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        for (int i = 0; i < TestConfigs.getMaxTestCount(student.getStudentCode()); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             if (roundResult == null) {
                 resultList.add(new BasketBallTestResult(i + 1, null, 0, -999, 0, -999));

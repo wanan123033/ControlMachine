@@ -182,7 +182,6 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
             public DataBaseRespon executeOper() {
                 int stuCount = DBManager.getInstance().getItemStudent(-1, 0).size();
                 int afrCount = DBManager.getInstance().queryByItemStudentFeatures().size();
-
                 return new DataBaseRespon(true, stuCount + "", afrCount);
             }
 

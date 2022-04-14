@@ -840,7 +840,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+                if (getActivity()!=null&&uploadDataDialog == null || !uploadDataDialog.isShowing()) {
                     uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
                             .setContentText("是否进行服务器信息识别")
                             .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {

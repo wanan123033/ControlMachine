@@ -303,7 +303,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isOpenCamera = true;
             if (faceId == null) {
                 faceId = 0;
-            }else{
+            } else {
                 faceHelper.setName(faceId, Integer.toString(faceId));
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.TO_RETRY);
             }

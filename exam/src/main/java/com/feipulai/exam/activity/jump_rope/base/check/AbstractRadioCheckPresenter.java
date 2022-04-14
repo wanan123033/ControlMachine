@@ -364,7 +364,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
             TestCache.getInstance().getResults().put(student,
                     results != null ? results
-                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(context)));
+                            : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
             TestCache.getInstance().getTestNoMap().put(student, testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1);
         } else {
             lastResult = results.get(results.size() - 1);

@@ -43,6 +43,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.login.LoginActivity"
+            android:configChanges="keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.data.UpdateAppActivity"></activity>
         <activity android:name=".activity.pullup.pair.PullUpPairActivity" />
         <activity

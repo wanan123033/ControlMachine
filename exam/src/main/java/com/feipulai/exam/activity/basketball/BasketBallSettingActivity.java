@@ -91,6 +91,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     public TextView tvPair;
     @BindView(R.id.tv_ip_connect)
     TextView tvIpConnect;
+    @BindView(R.id.cb_auto_penalt)
+    CheckBox cbAutoPenalt;
+    @BindView(R.id.et_autoPenalt)
+    EditText etAutoPenalt;
     private Integer[] testRound;
     private String[] carryMode = new String[]{"四舍五入", "不进位", "非零进位"};
     public BasketBallSetting setting;
@@ -171,6 +175,10 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
 
         etPenaltySecond.setText(setting.getPenaltySecond() + "");
 
+        cbAutoPenalt.setChecked(setting.isAutoPenalt());
+        etAutoPenalt.setText(setting.getAutoPenaltySecond() + "");
+        cbAutoPenalt.setOnCheckedChangeListener(this);
+
         if (setting.getTestType() == 1 || setting.getTestType() == 3) {
             tvPair.setVisibility(View.VISIBLE);
             etPort.setEnabled(false);
@@ -247,6 +255,8 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
     public void finish() {
         if (!TextUtils.isEmpty(etPenaltySecond.getText().toString()))
             setting.setPenaltySecond(Double.parseDouble(etPenaltySecond.getText().toString()));
+        if (!TextUtils.isEmpty(etAutoPenalt.getText().toString()))
+            setting.setAutoPenaltySecond(Double.parseDouble(etAutoPenalt.getText().toString()));
         if (cbFullSkip.isChecked() && !isCheckSetting()) {
             setting.setFullSkip(false);
         }
@@ -292,6 +302,9 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
                     cbFullSkip.setChecked(false);
                     setting.setFullSkip(false);
                 }
+                break;
+            case R.id.cb_auto_penalt:
+                setting.setAutoPenalt(isChecked);
                 break;
         }
     }

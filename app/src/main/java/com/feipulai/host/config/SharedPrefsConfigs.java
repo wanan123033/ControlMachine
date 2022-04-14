@@ -6,7 +6,7 @@ package com.feipulai.host.config;
  */
 
 public class SharedPrefsConfigs {
-
+    public static final String DEFAULT_SERVER_TOKEN = "DEFAULT_SERVER_TOKEN";
     public static final String DEFAULT_PREFS = "host_prefs";
 
     public static final String MACHINE_CODE = "machine_code";

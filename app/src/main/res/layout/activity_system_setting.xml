@@ -15,14 +15,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="34dp"
             android:layout_marginTop="26dp"
+            android:layout_marginBottom="34dp"
             android:background="@drawable/bg_white_radius_10"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingLeft="31dp"
-            android:paddingRight="25dp"
-            android:paddingTop="42dp">
+            android:paddingTop="42dp"
+            android:paddingRight="25dp">
 
 
             <LinearLayout
@@ -109,6 +109,20 @@
                     android:textSize="@dimen/sp_16" />
 
                 <TextView
+                    android:id="@+id/btn_login"
+                    android:layout_width="73dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toLeftOf="@+id/tv_start_test"
+                    android:background="@drawable/btn_click_bg_selected"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="登录"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
                     android:id="@+id/btn_bind"
                     android:layout_width="73dp"
                     android:layout_height="35dp"
@@ -120,7 +134,8 @@
                     android:padding="8dp"
                     android:text="绑定"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sp_16" />
+                    android:textSize="@dimen/sp_16"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -144,13 +159,15 @@
                     android:layout_marginLeft="30dp"
                     android:background="@drawable/icon_spinner_bg" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/txt_host_hint"
                 style="@style/style_setting_tv_title"
                 android:layout_marginTop="@dimen/dp_10"
-                android:visibility="gone"
                 android:text="请区分开'仰卧起坐'与‘双杠臂屈伸’和主机号，不能相同"
-                android:textColor="@color/viewfinder_laser" />
+                android:textColor="@color/viewfinder_laser"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -250,6 +267,7 @@
                     android:entries="@array/afr_list"
                     android:paddingLeft="20dp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="520dp"
                 android:layout_height="wrap_content"
@@ -316,6 +334,7 @@
             <View
                 style="@style/divider_gray_horizontal_style"
                 android:layout_marginTop="8dp" />
+
             <RelativeLayout
                 android:id="@+id/rl_net"
                 android:layout_width="520dp"
@@ -389,8 +408,8 @@
                 android:id="@+id/btn_face_init"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginBottom="30dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
                 android:background="@drawable/btn_click_bg_selected"
                 android:text="人脸识别激活"
                 android:textColor="@color/white"

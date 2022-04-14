@@ -178,7 +178,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), this);
+        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(),this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
@@ -386,7 +386,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             if (results == null || results.size() == 0) {
                 TestCache.getInstance().getResults().put(student,
                         results != null ? results
-                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(this)));
+                                : new ArrayList<RoundResult>(TestConfigs.getMaxTestCount(student.getStudentCode())));
                 //是否有成绩，没有成绩查底该项目是否有成绩，没有成绩测试次数为1，有成绩测试次数+1
                 RoundResult testRoundResult = DBManager.getInstance().queryFinallyRountScore(student.getStudentCode());
                 testNo = testRoundResult == null ? 1 : testRoundResult.getTestNo() + 1;
@@ -679,7 +679,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
      */
     private void presetResult(Student student, int testNo) {
         resultList.clear();
-        for (int i = 0; i < TestConfigs.getMaxTestCount(this); i++) {
+        for (int i = 0; i < TestConfigs.getMaxTestCount(student.getStudentCode()); i++) {
             RoundResult roundResult = DBManager.getInstance().queryRoundByRoundNo(student.getStudentCode(), testNo, i + 1);
             StudentItem studentItem = DBManager.getInstance().queryStudentItemByCode(TestConfigs.getCurrentItemCode(), student.getStudentCode());
             if (studentItem.getExamType() == 2) {
@@ -957,7 +957,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             TestCache testCache = TestCache.getInstance();
 
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
         }
     }
 
@@ -1269,7 +1269,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 
         if (SettingHelper.getSystemSetting().isAutoPrint()) {
             InteractUtils.printResults(null, testCache.getAllStudents(), testCache.getResults(),
-                    TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
+                    TestConfigs.getMaxTestCount(), testCache.getTrackNoMap());
         }
 
         state = WAIT_FREE;

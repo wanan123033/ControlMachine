@@ -18,9 +18,15 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
     private BasketBallResponseListener listener;
     private Handler mHandler;
     private BasketballResult topResult;
+    private int autoAddTime = 0;
 
-    public BasketBallListener(final BasketBallResponseListener listener) {
+    public void setAutoAddTime(int autoAddTime) {
+        this.autoAddTime = autoAddTime;
+    }
+
+    public BasketBallListener(final BasketBallResponseListener listener, int autoAddTime) {
         this.listener = listener;
+        this.autoAddTime = autoAddTime;
         mHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -53,7 +59,8 @@ public class BasketBallListener implements UdpClient.UDPChannelListerner {
             case UDPBasketBallConfig.CMD_BREAK_RESPONSE://拦截成绩
             case UDPBasketBallConfig.CMD_GET_RESULT_RESPONSE:
                 if (basketballResult.getResult() != 0 && topResult == null || basketballResult.getResult() != topResult.getResult()) {
-                        listener.getResult(basketballResult);
+                    basketballResult.setHund(basketballResult.getHund() + autoAddTime);
+                    listener.getResult(basketballResult);
                     topResult = basketballResult;
                 }
 

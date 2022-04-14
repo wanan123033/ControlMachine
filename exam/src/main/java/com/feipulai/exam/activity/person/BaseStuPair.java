@@ -52,13 +52,11 @@ public class BaseStuPair implements Serializable {
         this.resultState = resultState;
         this.student = student;
         this.baseDevice = baseDevice;
-        testNo = TestConfigs.getMaxTestCount();
     }
 
     public BaseStuPair(Student student, BaseDeviceState baseDevice) {
         this.student = student;
         this.baseDevice = baseDevice;
-        testNo = TestConfigs.getMaxTestCount();
     }
 
     public BaseStuPair() {

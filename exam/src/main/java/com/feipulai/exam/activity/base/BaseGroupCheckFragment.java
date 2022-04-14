@@ -384,7 +384,7 @@ public class BaseGroupCheckFragment
             return false;
         }
         final List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(studentItem);
-        if (results != null && results.size() >= TestConfigs.getMaxTestCount(getActivity())) {
+        if (results != null && results.size() >= TestConfigs.getMaxTestCount()) {
             SystemSetting setting = SettingHelper.getSystemSetting();
             if (setting.isAgainTest() && setting.isResit()) {
                 final Student finalStudent = student;

@@ -19,10 +19,13 @@ import com.feipulai.host.netUtils.HttpResult;
 import com.feipulai.host.netUtils.ResponseParame;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -31,7 +34,10 @@ import retrofit2.http.POST;
  * 放置请求接口
  */
 public interface HttpApi {
-
+    /**
+     * 设备登录
+     */
+    String LOGIN_ACTION = "/auth/terminal/token";
     /**
      * 设备绑定接口
      */
@@ -55,6 +61,9 @@ public interface HttpApi {
     @POST(DEVICE_BINDING_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")
     Observable<HttpResult<UserBean>> bind(@Header("Authorization") String token, @Body ResponseParame data);
+    @POST(LOGIN_ACTION)
+    @FormUrlEncoded
+    Observable<HttpResult<UserBean>> login(@Header("Authorization") String token, @FieldMap() Map<String, String> map);
 
     @POST(GET_ITEM_ALL_ACTION)
     @Headers("Content-Type:application/json;charset=UTF-8")

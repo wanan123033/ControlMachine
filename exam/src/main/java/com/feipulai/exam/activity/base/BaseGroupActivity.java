@@ -264,7 +264,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(groupList.get(groupAdapter.getTestPosition()), stuPairsList.get(position).getStudent().getStudentCode());
                 List<RoundResult> results = getResults(stuPairsList.get(position).getStudent().getStudentCode());
                 Log.e("TAG", results.toString());
-                if (results != null && results.size() >= TestConfigs.getMaxTestCount(getApplicationContext())) {
+                if (results != null && results.size() >= TestConfigs.getMaxTestCount()) {
                     if (groupItem != null && (systemSetting.isResit() || systemSetting.isAgainTest())) {
                         if (systemSetting.isResit()) {
                             ResitDialog dialog = new ResitDialog();
@@ -316,7 +316,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
 
-                                    stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
+                                    stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);
@@ -594,7 +594,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
             List<RoundResult> results = getResults(student.getStudentCode());
             // 获取到组的考生时,将所有成绩均添加到 baseGroupMap中
             TestConfigs.baseGroupMap.put(student, results);
-            if (results != null && results.size() >= TestConfigs.getMaxTestCount(this)) { //测试完成
+            if (results != null && results.size() >= TestConfigs.getMaxTestCount()) { //测试完成
                 stuPairs.get(i).setCanTest(false);
                 stuPairs.get(i).setCanCheck(false);
             } else {
@@ -853,7 +853,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     InteractUtils.printResults(groupList.get(groupAdapter.getTestPosition()),
                             students,
                             results,
-                            TestConfigs.getMaxTestCount(this),
+                            TestConfigs.getMaxTestCount(),
                             trackNoMap);
                 }
 

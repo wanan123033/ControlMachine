@@ -13,8 +13,8 @@
         <LinearLayout
             android:layout_width="620dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/btn_bg_white"
             android:gravity="center_vertical"
             android:orientation="vertical"
@@ -24,13 +24,14 @@
                 android:id="@+id/tv_pair"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/dp_10"
                 android:background="@drawable/btn_click_bg"
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="设备配对"
                 android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -180,6 +181,47 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:text="自动罚秒：" />
+
+                <EditText
+                    android:id="@+id/et_autoPenalt"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:gravity="center"
+                    android:inputType="numberDecimal"
+                    android:maxLength="4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:text="秒"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/cb_auto_penalt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:button="@drawable/checkbox_switch_selected" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_use_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,6 +241,7 @@
                     android:layout_height="30dp"
                     android:layout_marginLeft="50dp"
                     android:background="@drawable/icon_spinner_bg" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -220,8 +263,8 @@
                     android:layout_height="wrap_content"
                     android:button="@null"
                     android:checked="true"
-                    android:drawablePadding="40dp"
                     android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:drawablePadding="40dp"
                     android:text="连续测试：" />
 
                 <RadioButton
@@ -230,8 +273,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:button="@null"
-                    android:drawablePadding="40dp"
                     android:drawableRight="@drawable/checkbox_switch_selected"
+                    android:drawablePadding="40dp"
                     android:text="循环测试：" />
 
             </RadioGroup>
@@ -389,8 +432,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:button="@null"
-                        android:drawablePadding="10dp"
                         android:drawableRight="@drawable/checkbox_switch_selected"
+                        android:drawablePadding="10dp"
                         android:text="十分位：" />
 
                     <RadioButton
@@ -400,9 +443,10 @@
                         android:layout_marginLeft="10dp"
                         android:button="@null"
                         android:checked="true"
-                        android:drawablePadding="10dp"
                         android:drawableRight="@drawable/checkbox_switch_selected"
+                        android:drawablePadding="10dp"
                         android:text="百分位：" />
+
                     <RadioButton
                         android:id="@+id/rb_thousand"
                         android:layout_width="wrap_content"
@@ -410,8 +454,8 @@
                         android:layout_marginLeft="10dp"
                         android:button="@null"
                         android:checked="true"
-                        android:drawablePadding="10dp"
                         android:drawableRight="@drawable/checkbox_switch_selected"
+                        android:drawablePadding="10dp"
                         android:text="千分位：" />
 
                 </RadioGroup>
