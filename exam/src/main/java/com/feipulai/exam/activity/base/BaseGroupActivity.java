@@ -41,11 +41,13 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.DribbleShootGroupActivity;
 import com.feipulai.exam.activity.basketball.ShootSetting;
 import com.feipulai.exam.activity.basketball.ShootSettingActivity;
+import com.feipulai.exam.activity.basketball.motion.BaskBallMotionSettingActivity;
 import com.feipulai.exam.activity.basketball.motion.BasketBallMotionGroupActivity;
 import com.feipulai.exam.activity.basketball.reentry.BallReentryGroupActivity;
 import com.feipulai.exam.activity.basketball.reentry.BallReentrySettingActivity;
 import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.footBall.motion.FootBallMotionGroupActivity;
+import com.feipulai.exam.activity.footBall.motion.FootballMotionSettingActivity;
 import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.check.CheckUtils;
@@ -218,6 +220,15 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 startActivity(new Intent(this, ShootSettingActivity.class));
             } else if (setting.getTestType() == 5) {
                 startActivity(new Intent(this, BallReentrySettingActivity.class));
+            } else if (setting.getTestType() == 4) {
+                startActivity(new Intent(this, BaskBallMotionSettingActivity.class));
+            } else {
+                startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
+            }
+        } else if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ) {
+            FootBallSetting setting = SharedPrefsUtil.loadFormSource(this, FootBallSetting.class);
+            if (setting.getTestType() == 3) {
+                startActivity(new Intent(this, FootballMotionSettingActivity.class));
             } else {
                 startActivity(new Intent(this, TestConfigs.settingActivity.get(TestConfigs.sCurrentItem.getMachineCode())));
             }
@@ -285,7 +296,7 @@ public class BaseGroupActivity extends BaseTitleActivity {
 
                                 @Override
                                 public void onCommitGroup(Student student, GroupItem groupItem, List<RoundResult> results, int roundNo) {
-                                    stuPairsList.get(position).setTestNo(TestConfigs.getMaxTestCount());
+                                    stuPairsList.get(position).setTestNo(1);
                                     stuPairsList.get(position).setRoundNo(roundNo);
                                     stuPairsList.get(position).setCanTest(true);
                                     stuPairsList.get(position).setCanCheck(true);

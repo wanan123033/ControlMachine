@@ -640,7 +640,7 @@ public class FootBallMotionGroupActivity extends BaseTitleActivity implements Ti
                 LogUtils.operation("足球点击了等待发令");
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
                     if (isExistTestPlace()) {
-                        if ((setting.getTestType() == 1 && facade.isDeviceNormal()) || setting.getTestType() == 0) {
+                        if (facade.isDeviceNormal()) {
                             //拦截器同步时间
                             sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), DateUtil.getTime());
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.LEFT);

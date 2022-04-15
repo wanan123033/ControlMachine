@@ -771,7 +771,7 @@ public class FootballMotionActivity extends BaseTitleActivity implements Individ
      */
     private void startProjectSetting() {
         if (!isConfigurableNow()) {
-            IntentUtil.gotoActivityForResult(this, FootBallSettingActivity.class, 1);
+            IntentUtil.gotoActivityForResult(this, FootballMotionSettingActivity.class, 1);
         } else {
             toastSpeak("测试中,不允许修改设置");
         }
