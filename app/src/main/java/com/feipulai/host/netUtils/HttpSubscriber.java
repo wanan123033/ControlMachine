@@ -29,9 +29,9 @@ public class HttpSubscriber {
      */
     public void login(Context context, String username, String password, OnResultListener listener) {
         if (HttpManager.DEFAULT_CONNECT_TIMEOUT==5){
-            HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
-            HttpManager.DEFAULT_READ_TIMEOUT = 20;
-            HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+            HttpManager.DEFAULT_CONNECT_TIMEOUT = 60;
+            HttpManager.DEFAULT_READ_TIMEOUT = 60;
+            HttpManager.DEFAULT_WRITE_TIMEOUT = 60;
             HttpManager.resetManager();
         }
         Map<String, String> parameData = new HashMap<>();

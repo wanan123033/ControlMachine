@@ -28,9 +28,9 @@ public class HttpManager {
     public String TAG = "HttpManager";
     public static final String CACHE_NAME = "yourApkName";
     public static String BASE_URL = URLConstant.BASE_URL;
-    public static int DEFAULT_CONNECT_TIMEOUT = 20;
-    public static int DEFAULT_WRITE_TIMEOUT = 20;
-    public static int DEFAULT_READ_TIMEOUT = 20;
+    public static int DEFAULT_CONNECT_TIMEOUT = 60;
+    public static int DEFAULT_WRITE_TIMEOUT = 60;
+    public static int DEFAULT_READ_TIMEOUT = 60;
     private Retrofit retrofit;
     private HttpApi httpApi;
     /**

@@ -106,8 +106,9 @@ public class RadioManager {
             long expectTime = mlastSendTime + RADIO_INTERVAL;
 //            LogUtils.all("ensureInterval====>");
             if (curTime < expectTime) {
-//                LogUtils.all("ensureInterval====>" + (expectTime - curTime) + "");
-                Thread.sleep(expectTime - curTime);
+                long sleepTime = expectTime - curTime;
+                LogUtils.all("ensureInterval====>" + sleepTime + "");
+                Thread.sleep(sleepTime>RADIO_INTERVAL?RADIO_INTERVAL:sleepTime);
             }
             mlastSendTime = System.currentTimeMillis();
         } catch (InterruptedException e) {

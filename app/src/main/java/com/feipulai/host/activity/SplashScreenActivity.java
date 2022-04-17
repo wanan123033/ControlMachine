@@ -85,7 +85,6 @@ public class SplashScreenActivity extends BaseActivity {
 //        }
 
 
-
         activateBean = SharedPrefsUtil.loadFormSource(this, ActivateBean.class);
         runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
         if (runTime == 0) {
@@ -115,9 +114,9 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void gotoMain() {
-        HttpManager.DEFAULT_CONNECT_TIMEOUT = 20;
-        HttpManager.DEFAULT_READ_TIMEOUT = 20;
-        HttpManager.DEFAULT_WRITE_TIMEOUT = 20;
+        HttpManager.DEFAULT_CONNECT_TIMEOUT = 60;
+        HttpManager.DEFAULT_READ_TIMEOUT = 60;
+        HttpManager.DEFAULT_WRITE_TIMEOUT = 60;
         HttpManager.resetManager();
         Intent intent = new Intent();
 //                        intent.setClass(SplashScreenActivity.this, AccountActivity.class);
