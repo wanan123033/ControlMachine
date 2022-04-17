@@ -174,7 +174,7 @@ public class ScannerGunManager {
             case KeyEvent.KEYCODE_NUMPAD_RIGHT_PAREN:
                 return ")";
             default:
-                return "?";
+                return "";
         }
     }
 

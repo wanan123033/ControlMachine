@@ -225,9 +225,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
                 }
 
             }
-            if (student!=null&&stuPairs!=null){
+            if (student != null && stuPairs != null) {
                 for (BaseStuPair stuPair : stuPairs) {
-                    if (TextUtils.equals(student.getStudentCode(),stuPair.getStudent().getStudentCode())){
+                    if (TextUtils.equals(student.getStudentCode(), stuPair.getStudent().getStudentCode())) {
                         pair.setCurrentRoundNo(stuPair.getRoundNo());
                         break;
                     }
@@ -319,7 +319,7 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         for (int i = 0; i < pairs.size(); i++) {
             StuDevicePair pair = pairs.get(i);
             Student stu = pair.getStudent();
-            if (results!=null){
+            if (results != null) {
                 for (RoundResult result : results) {
                     if (result.getIsDelete()) {
                         pair.setCurrentRoundNo(result.getRoundNo());
@@ -411,6 +411,9 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             StuDevicePair pair = pairs.get(i);
             BaseDeviceState deviceState = pair.getBaseDevice();
             oldState = deviceState.getState();
+            if (deviceState.getDeviceId() >= mCurrentConnect.length) {
+                return;
+            }
             if (mCurrentConnect[deviceState.getDeviceId()] == 0
                     && oldState != BaseDeviceState.STATE_DISCONNECT
                     && oldState != BaseDeviceState.STATE_STOP_USE

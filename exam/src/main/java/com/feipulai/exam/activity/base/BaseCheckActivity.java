@@ -383,7 +383,7 @@ public abstract class BaseCheckActivity
 //                        return false;
 //                    }
                     if (student.getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
-                     if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
+                        if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
                             if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
                                 showDialog(student, studentItem, results);
                                 return false;
@@ -396,7 +396,7 @@ public abstract class BaseCheckActivity
                         }
 
 
-                    }else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null  ) {//女子满分跳过
+                    } else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null) {//女子满分跳过
 
                         if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
                             if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
@@ -647,6 +647,9 @@ public abstract class BaseCheckActivity
 
     @Override
     public void onCommitPattern(Student student, StudentItem studentItem, List<RoundResult> results, int roundNo) {
+        this.mStudentItem = studentItem;
+        this.mStudent = student;
+        this.mResults = results;
         onIndividualCheckIn(student, studentItem, results);
         setRoundNo(student, roundNo);
     }
