@@ -125,6 +125,7 @@ public class BaseActivity extends FragmentActivity {
 //        }
         ActivityCollector.getInstance().onDestroy(this);
         EventBus.getDefault().unregister(this);
+//        TtsManager.getInstance().release();
     }
 
     @Override

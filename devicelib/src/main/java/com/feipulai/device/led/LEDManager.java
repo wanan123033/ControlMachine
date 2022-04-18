@@ -370,11 +370,12 @@ public class LEDManager {
         cmd[3] = (byte) (hostId & 0xff);
         cmd[4] = (byte) (ledId & 0xff);
         cmd[5] = (byte) 0xa2;
-        if (isColor && versions == LED_VERSION_4_8) {
-            cmd[6] = (byte) (clearScreen ? 0x03 : 0x000);
-        } else {
-            cmd[6] = (byte) (clearScreen ? 0x01 : 0x000);
-        }
+//        if (isColor && versions == LED_VERSION_4_8) {
+//            cmd[6] = (byte) (clearScreen ? 0x03 : 0x000);
+//        } else {
+//            cmd[6] = (byte) (clearScreen ? 0x01 : 0x000);
+//        }
+        cmd[6] = (byte) (clearScreen ? 0x01 : 0x000);
         cmd[7] = (byte) (update ? 0x01 : 0x00);
         cmd[8] = (byte) data.length;
         cmd[9] = (byte) (x & 0xff);

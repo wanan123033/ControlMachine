@@ -108,10 +108,13 @@ public class TtsManager {
      */
     public void speak(String text) {
         if (!TextUtils.isEmpty(text) && initedSuccess) {
+            mSpeechSynthesizer.stop();
             mSpeechSynthesizer.speak(text);
         }
     }
-
+    public void release(){
+        int result = mSpeechSynthesizer.release();
+    }
     /**
      * 将指定文本转换为语音输出
      *
