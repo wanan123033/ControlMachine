@@ -374,6 +374,9 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
                 int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                    activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
+                }
                 emitter.onNext(activeCode);
             }
         })

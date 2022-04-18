@@ -79,7 +79,7 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
         // 这里是否还需要延时需要再测试后再修改
         RadioManager.getInstance().init();
-        if (!Build.MODEL.equals("FPL")){
+        if (!Build.MODEL.equals("FPL")) {
             DateUtil.setTimeZone(this, "Asia/Shanghai");
         }
 
@@ -130,7 +130,7 @@ public class SplashScreenActivity extends BaseActivity {
         new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
-                if (!Build.MODEL.equals("FPL")){
+                if (!Build.MODEL.equals("FPL")) {
                     DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
                 }
 
@@ -251,12 +251,13 @@ public class SplashScreenActivity extends BaseActivity {
         Logger.i("本地人脸库初始化====>" + isFaceInit);
         if (SettingHelper.getSystemSetting().getCheckTool() == 4) {
 
-            DataBaseExecutor.addTask(new DataBaseTask(this, "", true) {
+            DataBaseExecutor.addTask(new DataBaseTask(this, "人脸特征加载中", true) {
                 @Override
                 public DataBaseRespon executeOper() {
                     List<StudentFace> studentList = DBManager.getInstance().getStudentFeatures();
                     Log.i("faceRegisterInfoList", "->" + studentList.size());
                     List<FaceRegisterInfo> registerInfoList = new ArrayList<>();
+
                     for (StudentFace student : studentList) {
                         try {
                             byte[] faceByte = Base64.decode(student.getFaceFeature(), Base64.DEFAULT);

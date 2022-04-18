@@ -187,16 +187,16 @@ public class FaceServer {
 
     public void addFaceList(List<FaceRegisterInfo> faces) {
         if (faceRegisterInfoList != null) {
-            for (FaceRegisterInfo face : faces) {
-                if (faceRegisterInfoList.contains(face)) {
-                    int index = faceRegisterInfoList.indexOf(face);
-                    faceRegisterInfoList.remove(index);
-                    faceRegisterInfoList.add(face);
-                }else{
-                    faceRegisterInfoList.add(face);
-                }
-            }
-//            faceRegisterInfoList.addAll(faces);
+//            for (FaceRegisterInfo face : faces) {
+//                if (faceRegisterInfoList.contains(face)) {
+//                    int index = faceRegisterInfoList.indexOf(face);
+//                    faceRegisterInfoList.remove(index);
+//                    faceRegisterInfoList.add(face);
+//                }else{
+//                    faceRegisterInfoList.add(face);
+//                }
+//            }
+            faceRegisterInfoList.addAll(faces);
         } else {
             faceRegisterInfoList = new ArrayList<>();
             faceRegisterInfoList.addAll(faces);

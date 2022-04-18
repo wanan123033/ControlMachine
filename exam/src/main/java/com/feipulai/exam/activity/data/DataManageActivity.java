@@ -207,7 +207,7 @@ public class DataManageActivity
             public DataBaseRespon executeOper() {
                 int stuCount = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0).size();
                 if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
-                    stuCount=0;
+                    stuCount = 0;
                     List<Item> itemLists = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
 
                     for (Item item : itemLists) {
@@ -887,7 +887,7 @@ public class DataManageActivity
     @Override
     public void onEventMainThread(BaseEvent baseEvent) {
         super.onEventMainThread(baseEvent);
-        switch (baseEvent.getTagInt()){
+        switch (baseEvent.getTagInt()) {
             case EventConfigs.REQUEST_UPLOAD_LOG_S:
                 OperateProgressBar.removeLoadingUiIfExist(this);
                 ToastUtils.showShort("网络备份完成");
@@ -1280,7 +1280,7 @@ public class DataManageActivity
                     });
                 }
             });
-            tcpDownLoad.getTcp(SCHEDULE, "",0, 0);
+            tcpDownLoad.getTcp(SCHEDULE, "", 0, 0);
         } else {
             OperateProgressBar.removeLoadingUiIfExist(this);
             Toast.makeText(getApplicationContext(), "请输入正确的TCP地址", Toast.LENGTH_SHORT).show();
@@ -1532,7 +1532,7 @@ public class DataManageActivity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showUploadLog(fileName,zipPathName);
+                    showUploadLog(fileName, zipPathName);
                 }
             });
 
@@ -1549,14 +1549,14 @@ public class DataManageActivity
 
     }
 
-    private void showUploadLog(final String fileName, final String zipPathName){
+    private void showUploadLog(final String fileName, final String zipPathName) {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText(getString(R.string.clear_dialog_title))
                 .setContentText("上传日志到云端?")
                 .setConfirmText(getString(com.feipulai.common.R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 OperateProgressBar.showLoadingUi(DataManageActivity.this, "备份文件上传中...");
-                ServerMessage.uploadLogFile(fileName,zipPathName);
+                ServerMessage.uploadLogFile(fileName, zipPathName);
                 sweetAlertDialog.dismissWithAnimation();
             }
         }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
