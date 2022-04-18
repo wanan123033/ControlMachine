@@ -108,7 +108,7 @@ public class TtsManager {
      */
     public void speak(String text) {
         if (!TextUtils.isEmpty(text) && initedSuccess) {
-            mSpeechSynthesizer.stop();
+//            mSpeechSynthesizer.stop();
             mSpeechSynthesizer.speak(text);
         }
     }

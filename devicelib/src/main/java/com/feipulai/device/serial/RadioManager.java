@@ -23,8 +23,7 @@ public class RadioManager {
     private static volatile RadioManager instance;
     public static final int RADIO_INTERVAL = 100;
     private long mlastSendTime;
-    private HandlerThread mSendingHandlerThread;
-    private Handler mSendingHandler;
+
 
     private RadioManager() {
     }
@@ -74,6 +73,11 @@ public class RadioManager {
         instance = null;
     }
 
+    public void clearListener() {
+        mOnRadioArrived = null;
+        mOnRadio232 = null;
+    }
+
     public void setOnRadioArrived(OnRadioArrivedListener onRadioArrived) {
         mOnRadioArrived = onRadioArrived;
     }
@@ -108,7 +112,7 @@ public class RadioManager {
             if (curTime < expectTime) {
                 long sleepTime = expectTime - curTime;
                 LogUtils.all("ensureInterval====>" + sleepTime + "");
-                Thread.sleep(sleepTime>RADIO_INTERVAL?RADIO_INTERVAL:sleepTime);
+                Thread.sleep(sleepTime > RADIO_INTERVAL ? RADIO_INTERVAL : sleepTime);
             }
             mlastSendTime = System.currentTimeMillis();
         } catch (InterruptedException e) {

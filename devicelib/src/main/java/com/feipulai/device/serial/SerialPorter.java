@@ -1,5 +1,7 @@
 package com.feipulai.device.serial;
 
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
@@ -35,6 +37,8 @@ public class SerialPorter {
     private SerialReadRunnable mSerialReadRunnable;
     private SerialPort serialPort;
     private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private HandlerThread mSendingHandlerThread;
+    private Handler mSendingHandler;
 
     public SerialPorter(SerialParams config, OnDataArrivedListener listener) {
         try {
@@ -47,6 +51,31 @@ public class SerialPorter {
         }
         mListener = listener;
         startReading(config);
+        startSendThread();
+    }
+
+    /**
+     * 开启发送消息的线程
+     */
+    private void startSendThread() {
+        // 开启发送消息的线程
+        mSendingHandlerThread = new HandlerThread("mSendingHandlerThread");
+        mSendingHandlerThread.start();
+        // Handler
+        mSendingHandler = new Handler(mSendingHandlerThread.getLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                byte[] sendBytes = (byte[]) msg.obj;
+
+                if (null != mFileOutputStream && null != sendBytes && 0 < sendBytes.length) {
+                    try {
+                        mFileOutputStream.write(sendBytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
     }
 
     private void startReading(SerialParams config) {
@@ -88,6 +117,13 @@ public class SerialPorter {
     }
 
     public void sendCommand(byte[] toSend) {
+//        if (null != mFileInputStream && null != mFileOutputStream) {
+//            if (null != mSendingHandler) {
+//                Message message = Message.obtain();
+//                message.obj = toSend;
+//                mSendingHandler.sendMessage(message);
+//            }
+//        }
         try {
             if (mFileOutputStream != null && toSend != null) {
                 mFileOutputStream.write(toSend);

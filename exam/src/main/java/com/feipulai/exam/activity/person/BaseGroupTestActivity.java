@@ -1683,8 +1683,7 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        RadioManager.getInstance().close();
-        RadioManager.getInstance().init();
+        RadioManager.getInstance().clearListener();
         EventBus.getDefault().post(new BaseEvent(EventConfigs.UPDATE_TEST_RESULT));
         Intent serverIntent = new Intent(this, UploadService.class);
         stopService(serverIntent);
