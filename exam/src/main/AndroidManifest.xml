@@ -579,11 +579,13 @@
          <activity
             android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerSettingActivity"
-            android:configChanges="keyboardHidden|keyboard" />
+             android:configChanges="keyboardHidden|keyboard">
+         </activity>
          <activity
             android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerTestActivity"
-            android:configChanges="keyboardHidden|keyboard" />
+             android:configChanges="keyboardHidden|keyboard">
+         </activity>
          <activity
             android:screenOrientation="landscape"
             android:name=".utils.bluetooth.BlueToothListActivity"
@@ -596,7 +598,9 @@
          <activity
             android:screenOrientation="landscape"
             android:name=".activity.ranger.RangerMoreActivity"
-            android:configChanges="keyboardHidden|keyboard" />
+             android:configChanges="keyboardHidden|keyboard">
+
+         </activity>
          <activity
             android:screenOrientation="landscape"
             android:name=".activity.ranger.bluetooth.BluetoothSettingActivity"
@@ -705,6 +709,16 @@
             android:screenOrientation="landscape"
             android:name=".activity.footBall.motion.FootBallMotionGroupActivity"
             android:configChanges="keyboardHidden|keyboard" />
+        <activity android:name=".activity.ranger.usb.RangerUsbDevicesActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|keyboard">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
 
 
         <receiver android:name="com.feipulai.device.spputils.SppReciver" />

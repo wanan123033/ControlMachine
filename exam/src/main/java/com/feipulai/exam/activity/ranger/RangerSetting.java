@@ -32,7 +32,7 @@ public class RangerSetting {
 
     private String bluetoothName;
     private String bluetoothMac;
-
+    private int connectType;
 
 
     public int getTestNo() {
@@ -233,5 +233,13 @@ public class RangerSetting {
 
     public double getLevel() {
         return level;
+    }
+
+    public void setConnectType(int connectType) {
+        this.connectType = connectType;
+    }
+
+    public int getConnectType() {
+        return connectType;
     }
 }

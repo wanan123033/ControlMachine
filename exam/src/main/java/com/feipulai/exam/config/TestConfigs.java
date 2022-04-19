@@ -49,6 +49,7 @@ import com.feipulai.exam.activity.pushUp.PushUpSetting;
 import com.feipulai.exam.activity.pushUp.PushUpSettingActivity;
 import com.feipulai.exam.activity.pushUp.check.PushUpCheckActivity;
 import com.feipulai.exam.activity.ranger.RangerMoreActivity;
+import com.feipulai.exam.activity.ranger.RangerSetting;
 import com.feipulai.exam.activity.ranger.RangerSettingActivity;
 import com.feipulai.exam.activity.ranger.RangerTestActivity;
 import com.feipulai.exam.activity.sargent_jump.SargentGroupActivity;
@@ -583,6 +584,9 @@ public class TestConfigs {
                 break;
             case ItemDefault.CODE_WLJ:
                 result = SharedPrefsUtil.loadFormSource(context, GripSetting.class).getTestRound();
+                break;
+            case ItemDefault.CODE_JGCJ:
+                result = SharedPrefsUtil.loadFormSource(context, RangerSetting.class).getTestNo();
                 break;
             default:
                 throw new IllegalArgumentException("wrong machine code");

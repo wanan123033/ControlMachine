@@ -231,6 +231,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
         result = new String[setTestCount()];
         lastResult = new String[setTestCount()];
         //创建适配器
+        resultList.clear();
         resultList.addAll(Arrays.asList(result));
         adapter = new BasePersonTestResultAdapter(resultList);
         //给RecyclerView设置适配器
@@ -842,6 +843,7 @@ public abstract class BaseTestActivity extends BaseCheckActivity {
             pair.setFullMark(baseStu.isFullMark());
             txtStuResult.setText(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
             refreshDevice();
+            updateDevice(baseStu.getBaseDevice());
 //            updateResultLed(((baseStu.getResultState() == RoundResult.RESULT_STATE_FOUL) ? "X" : ResultDisplayUtils.getStrResultForDisplay(baseStu.getResult())));
         }
     }

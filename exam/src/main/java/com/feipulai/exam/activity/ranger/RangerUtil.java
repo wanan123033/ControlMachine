@@ -24,17 +24,21 @@ public class RangerUtil {
      * 已知直线上的两点  求直线外一点到直线的距离
      * @param point1  直线上的一点
      * @param point2  直线上一点
-     * @param p       直线外的一点
+     * @param point3       直线外的一点
      * @return
      */
-    public static double length(Point point1,Point point2,Point p){
-        //1.求直线方程的一般式  ax+by+c=0
-        double a = point2.y - point1.y; //a=y2-y1
-        double b = point1.x - point2.x; //b=x1-x2
-        double c = point2.x * point1.y - point1.x * point2.y; //c=x2*y1-x1*y2
-        //2.距离公式  d = | ax+by+c | / 根号下 a*a + b*b
-        double length = Math.abs(a * p.x + b * p.y + c) / Math.sqrt(a * a + b * b);
-        return length;
+    public static double length(Point point1,Point point2,Point point3){
+//        //1.求直线方程的一般式  ax+by+c=0
+//        double a = point2.y - point1.y; //a=y2-y1
+//        double b = point1.x - point2.x; //b=x1-x2
+//        double c = point2.x * point1.y - point1.x * point2.y; //c=x2*y1-x1*y2
+//        //2.距离公式  d = | ax+by+c | / 根号下 a*a + b*b
+//        double length = Math.abs(a * p.x + b * p.y + c) / Math.sqrt(a * a + b * b);
+
+        //S=(x1y2-x1y3+x2y3-x2y1+x3y1-x3y2)  面积公式   没有乘以1/2  也就是面积的2倍
+        double S = point1.x * point2.y - point1.x * point3.y + point2.x * point3.y - point2.x * point1.y + point3.x * point1.y - point3.x * point2.y;
+        double len = Math.abs(S / length(point1,point2));
+        return len;
     }
 
     /**
