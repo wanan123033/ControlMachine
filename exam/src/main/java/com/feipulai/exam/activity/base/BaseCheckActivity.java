@@ -480,10 +480,10 @@ public abstract class BaseCheckActivity
             }
         });
 
-//        if (student == null) {
-//            InteractUtils.toastSpeak(this, "该考生不存在");
-//            return;
-//        }
+        if (student == null) {
+            InteractUtils.toastSpeak(this, "该考生不存在");
+            return;
+        }
 //        StudentItem studentItem = DBManager.getInstance().queryStuItemByStuCode(student.getStudentCode());
 //        if (studentItem == null) {
 //            InteractUtils.toastSpeak(this, "无此项目");

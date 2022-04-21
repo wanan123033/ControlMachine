@@ -442,6 +442,9 @@ public class FootBallMotionGroupActivity extends BaseTitleActivity implements Ti
             case 3:
                 timerUtil.startTime(1);
                 break;
+            default:
+                timerUtil.startTime(100);
+                break;
         }
         state = TESTING;
         txtDeviceStatus.setText("计时");

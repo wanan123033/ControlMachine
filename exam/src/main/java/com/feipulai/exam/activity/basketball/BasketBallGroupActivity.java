@@ -420,6 +420,9 @@ public class BasketBallGroupActivity extends BaseTitleActivity implements Basket
             case 3:
                 timerUtil.startTime(1);
                 break;
+            default:
+                timerUtil.startTime(100);
+                break;
         }
     }
 

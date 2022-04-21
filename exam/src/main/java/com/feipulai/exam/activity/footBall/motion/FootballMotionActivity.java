@@ -491,6 +491,9 @@ public class FootballMotionActivity extends BaseTitleActivity implements Individ
             case 3:
                 timerUtil.startTime(1);
                 break;
+            default:
+                timerUtil.startTime(100);
+                break;
         }
         state = TESTING;
         txtDeviceStatus.setText("计时");

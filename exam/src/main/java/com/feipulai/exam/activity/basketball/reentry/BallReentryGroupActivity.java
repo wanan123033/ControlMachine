@@ -399,7 +399,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 timerUtil.startTime(1);
                 break;
             default:
-                timerUtil.startTime(10);
+                timerUtil.startTime(100);
                 break;
         }
 

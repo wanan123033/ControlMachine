@@ -106,7 +106,7 @@ public class SystemSetting {
      */
     private int ledMode = 1;
 
-    private int ledVersion = 0;//0:1.0版本 1：V4.1 以上版本
+    private int ledVersion = 0;//1:1.0版本 0：V4.1 以上版本  2：4.8版本
     public static final int LED_VERSION_V1 = 0;
     public static final int LED_VERSION_V4 = 1;
     public static final int LED_VERSION_V8 = 2;

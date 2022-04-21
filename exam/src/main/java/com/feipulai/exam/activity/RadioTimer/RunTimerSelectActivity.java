@@ -24,10 +24,11 @@ public class RunTimerSelectActivity extends SubItemsSelectActivity {
     public static final String GOTO_FLAG = "goto_flag";
     private int gotoflag;
     private Context mContext;
+
     @Override
     protected void initData() {
         super.initData();
-        gotoflag = getIntent().getIntExtra(GOTO_FLAG,0);
+        gotoflag = getIntent().getIntExtra(GOTO_FLAG, 0);
         mContext = this;
         itemList.clear();
         itemList.add(new Item("V1版拦截器（有线）"));
@@ -37,17 +38,17 @@ public class RunTimerSelectActivity extends SubItemsSelectActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                SettingHelper.getSystemSetting().setRadioLed(position);
                 if (gotoflag == 0) {
                     RunTimerSetting setting = SharedPrefsUtil.loadFormSource(mContext, RunTimerSetting.class);
                     setting.setConnectType(position);
-                    SettingHelper.getSystemSetting().setRadioLed(position);
                     if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN) {
                         startActivity(new Intent(mContext, position == 1 ? PreTestActivity.class : RunTimerActivityTestActivity.class));
                     } else {
                         startActivity(new Intent(mContext, BaseGroupActivity.class));
                     }
                     SharedPrefsUtil.save(mContext, setting);
-                }else {
+                } else {
                     startActivity(new Intent(RunTimerSelectActivity.this, LEDSettingActivity.class));
                 }
                 finish();

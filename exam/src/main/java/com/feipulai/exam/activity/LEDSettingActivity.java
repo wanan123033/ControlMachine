@@ -125,12 +125,12 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
         }
 
         ArrayAdapter<String> colorAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色"});
+                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色", "黄色"});
         colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShowColor.setAdapter(colorAdapter);
         spShowColor.setSelection(ledColor);
         ArrayAdapter<String> colorAdapters = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色"});
+                android.R.layout.simple_spinner_item, new String[]{"红色", "绿色", "黄色"});
         colorAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShowColorS.setAdapter(colorAdapters);
         spShowColorS.setSelection(ledColors);
@@ -167,7 +167,7 @@ public class LEDSettingActivity extends BaseTitleActivity implements AdapterView
                             runLEDManager.link(hostId);
                             runLEDManager.resetLEDScreen(hostId, title);
                         } else {
-                            if (SettingHelper.getSystemSetting().getLedVersion() == 0) {
+                            if (SettingHelper.getSystemSetting().getLedVersion() == 0 || SettingHelper.getSystemSetting().getLedVersion() == LEDManager.LED_VERSION_4_8) {
                                 mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
 
                                 mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE, 1);

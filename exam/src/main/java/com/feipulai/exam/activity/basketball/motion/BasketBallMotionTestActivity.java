@@ -178,7 +178,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(),this);
+        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
@@ -488,6 +488,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 break;
             case 3:
                 timerUtil.startTime(1);
+                break;
+            default:
+                timerUtil.startTime(100);
                 break;
         }
         state = TESTING;
@@ -1435,7 +1438,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                     individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
 
                     afrFrameLayout.setVisibility(View.GONE);
-                }else{
+                } else {
                     InteractUtils.toastSpeak(BasketBallMotionTestActivity.this, "该考生不存在");
                 }
 //                if (student == null) {

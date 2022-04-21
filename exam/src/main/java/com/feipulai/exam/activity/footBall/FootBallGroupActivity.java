@@ -152,10 +152,10 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 //        //设置精度
 //        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_PRECISION(TestConfigs.sCurrentItem.getDigital() == 1 ? 0 : 1));
 //        sleep();
-        facade = new BasketBallRadioFacade(setting.getTestType(),setting.getAutoPenaltyTime(), this);
+        facade = new BasketBallRadioFacade(setting.getTestType(), setting.getAutoPenaltyTime(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager.Builder((setting.getTestType())).setHostIp(setting.getHostIp()).setInetPost(1527).setPost(setting.getPost())
-                .setRadioListener(facade).setUdpListerner(new BasketBallListener(this,setting.getAutoPenaltyTime())).build();
+                .setRadioListener(facade).setUdpListerner(new BasketBallListener(this, setting.getAutoPenaltyTime())).build();
 
         if (setting.getTestType() == 1) {
             facade.resume();
@@ -457,6 +457,9 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 break;
             case 3:
                 timerUtil.startTime(1);
+                break;
+            default:
+                timerUtil.startTime(100);
                 break;
         }
         state = TESTING;
@@ -1076,8 +1079,8 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 if (resultList.get(i).getResultState() == -999) {
                     resultAdapter.setSelectPosition(i);
 //                    if (startTest) {
-                        roundNo = i + 1;
-                        startTest = false;
+                    roundNo = i + 1;
+                    startTest = false;
 //                    }
 
                     resultAdapter.notifyDataSetChanged();

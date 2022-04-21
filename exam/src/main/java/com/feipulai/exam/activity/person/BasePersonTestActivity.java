@@ -880,7 +880,7 @@ public abstract class BasePersonTestActivity extends BaseCheckActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
                 sweetAlertDialog.dismissWithAnimation();
-                Logger.i("stuSkip:" + pair.getStudent().toString());
+//                Logger.i("stuSkip:" + pair.getStudent().toString());
                 //测试结束学生清除 ，设备设置空闲状态
                 roundNo = 1;
                 pair.setRoundNo(0);

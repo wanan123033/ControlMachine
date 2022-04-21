@@ -138,7 +138,7 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
 
     @Override
     protected int setLayoutResID() {
-        return R.layout.activity_group_ball_reentry;
+        return R.layout.activity_group_basketball;
     }
 
     @Override
@@ -380,6 +380,9 @@ public class BasketBallMotionGroupActivity extends BaseTitleActivity implements 
                 break;
             case 3:
                 timerUtil.startTime(1);
+                break;
+            default:
+                timerUtil.startTime(100);
                 break;
         }
     }
