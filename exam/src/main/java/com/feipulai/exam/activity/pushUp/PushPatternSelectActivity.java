@@ -25,7 +25,7 @@ public class PushPatternSelectActivity extends SubItemsSelectActivity {
         itemList.clear();
         itemList.add(new Item("有线模式"));
         itemList.add(new Item("无线模式"));
-        itemList.add(new Item("距离传感器模式"));
+//        itemList.add(new Item("距离传感器模式"));
         adapter.notifyDataSetChanged();
         getToolbar().setTitle("俯卧撑模式选择");
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
