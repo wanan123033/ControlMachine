@@ -50,6 +50,7 @@ import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.account.AccountSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.bean.ActivateBean;
+import com.feipulai.exam.bean.FaceSdkBean;
 import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
@@ -164,6 +165,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     private String[] partternList = new String[]{"个人测试", "分组测试"};
     private List<Integer> hostIdList;
     private SystemSetting systemSetting;
+    private ActivateBean activateBean;
     private SendTcpClientThread tcpClientThread;
 
     @Override
@@ -174,6 +176,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Override
     protected void initData() {
         systemSetting = SettingHelper.getSystemSetting();
+        activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
 
         mEtTestSite.setText(systemSetting.getTestSite());
         mEtSeverIp.setText(systemSetting.getServerIp());
@@ -381,12 +384,19 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                ActivateBean activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
                 if (updateActive) {
                     if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
-                        String appid = activateBean.getFaceSdkKeyList().get(0).getAppId();
-                        String sdkKey = activateBean.getFaceSdkKeyList().get(0).getActiveKey();
-                        int activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                        int activeCode = 0;
+                        for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
+                            String appid = faceSdkBean.getAppId();
+                            String sdkKey = faceSdkBean.getActiveKey();
+                            activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                            if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                                emitter.onNext(activeCode);
+                                break;
+                            }
+                        }
+
                         emitter.onNext(activeCode);
                     } else {
                         emitter.onNext(777888);
@@ -398,9 +408,16 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                     }
                     if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                         if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
-                            String appid = activateBean.getFaceSdkKeyList().get(0).getAppId();
-                            String sdkKey = activateBean.getFaceSdkKeyList().get(0).getActiveKey();
-                            activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                            for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
+                                String appid = faceSdkBean.getAppId();
+                                String sdkKey = faceSdkBean.getActiveKey();
+                                activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                                if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                                    emitter.onNext(activeCode);
+                                    break;
+                                }
+                            }
+
                         }
                     }
                     emitter.onNext(activeCode);
@@ -464,7 +481,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         new HttpSubscriber().activate(runTime, 1, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
-
+                activateBean = result;
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
                 SharedPrefsUtil.save(SettingActivity.this, result);
                 if (result.getFaceSdkKeyList() == null && result.getFaceSdkKeyList().size() == 0) {
