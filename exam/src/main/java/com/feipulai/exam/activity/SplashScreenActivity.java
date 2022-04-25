@@ -127,7 +127,7 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void activate() {
-        new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+        new HttpSubscriber().activate(runTime, 0, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
                 if (!Build.MODEL.equals("FPL")) {

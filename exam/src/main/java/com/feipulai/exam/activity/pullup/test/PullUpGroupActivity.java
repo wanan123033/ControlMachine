@@ -324,7 +324,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
     }
 
     @OnClick({R.id.tv_start_test, R.id.tv_stop_test, R.id.tv_print, R.id.tv_led_setting, R.id.tv_confirm,
-            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair, R.id.tv_result,
+            R.id.tv_punish, R.id.tv_abandon_test, R.id.tv_pair,
             R.id.tv_resurvey, R.id.tv_foul, R.id.tv_inBack, R.id.tv_abandon, R.id.tv_normal})
     public void onViewClicked(View view) {
 
@@ -568,7 +568,7 @@ public class PullUpGroupActivity extends BaseTitleActivity
                     InteractUtils.printResults(group, testCache.getAllStudents(), testCache.getResults(),
                             TestConfigs.getMaxTestCount(this), testCache.getTrackNoMap());
                 }
-                state=WAIT_BEGIN;
+                state = WAIT_BEGIN;
                 stuPairAdapter.notifyDataSetChanged();
                 prepareView(true,
                         false,
@@ -801,7 +801,6 @@ public class PullUpGroupActivity extends BaseTitleActivity
     private boolean isConfigurableNow() {
         return state == WAIT_BEGIN;
     }
-
 
 
     public void showPenalizeDialog(int max) {

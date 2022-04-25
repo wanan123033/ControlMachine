@@ -71,7 +71,16 @@ public abstract class AbstractRadioCheckPresenter<Setting>
                 || TestCache.getInstance().getTestingPairs() == null || TestCache.getInstance().getTestingPairs().size() == 0) {
             pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
         } else {
-            pairs = TestCache.getInstance().getTestingPairs();
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting(), stuPairs);
+            List<StuDevicePair> oldPairList = TestCache.getInstance().getTestingPairs();
+            if (oldPairList != null) {
+                for (int i = 0; i < pairs.size(); i++) {
+                    if (i < oldPairList.size()) {
+                        pairs.get(i).setStudent(oldPairList.get(i).getStudent());
+                        pairs.get(i).setCurrentRoundNo(oldPairList.get(i).getCurrentRoundNo());
+                    }
+                }
+            }
         }
 
         mCurrentConnect = new int[pairs.size() + 1];
@@ -281,6 +290,18 @@ public abstract class AbstractRadioCheckPresenter<Setting>
             pairs = newPairs;
             mCurrentConnect = new int[pairs.size() + 1];
             view.refreshPairs(pairs);
+        }else{
+            if (SettingHelper.getSystemSetting().getTestPattern() == SystemSetting.PERSON_PATTERN){
+                List<StuDevicePair> oldPairList = TestCache.getInstance().getTestingPairs();
+                if (oldPairList != null) {
+                    for (int i = 0; i < pairs.size(); i++) {
+                        if (i < oldPairList.size()) {
+                            pairs.get(i).setStudent(oldPairList.get(i).getStudent());
+                            pairs.get(i).setCurrentRoundNo(oldPairList.get(i).getCurrentRoundNo());
+                        }
+                    }
+                }
+            }
         }
     }
 

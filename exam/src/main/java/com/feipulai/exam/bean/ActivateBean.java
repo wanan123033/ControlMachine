@@ -1,6 +1,7 @@
 package com.feipulai.exam.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by zzs on  2021/1/5
@@ -18,6 +19,8 @@ public class ActivateBean implements Serializable {
     private long validEndTime;//有效截止时间，时间戳
     private long validRunTime;//有效可运行时长 毫秒
     private long currentTime;//当前时间
+
+    private List<FaceSdkBean> faceSdkKeyList;
 
     //本地使用天数 与更新时间
     private long useDeviceTime = 0;
@@ -111,4 +114,11 @@ public class ActivateBean implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public List<FaceSdkBean> getFaceSdkKeyList() {
+        return faceSdkKeyList;
+    }
+
+    public void setFaceSdkKeyList(List<FaceSdkBean> faceSdkKeyList) {
+        this.faceSdkKeyList = faceSdkKeyList;
+    }
 }

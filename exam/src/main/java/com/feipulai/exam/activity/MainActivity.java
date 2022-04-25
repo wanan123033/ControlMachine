@@ -193,7 +193,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
     protected void onResume() {
         super.onResume();
         try {
-            LEDManager.versions=SettingHelper.getSystemSetting().getLedVersion();
+            LEDManager.versions = SettingHelper.getSystemSetting().getLedVersion();
             machineCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.MACHINE_CODE, SharedPrefsConfigs
                     .DEFAULT_MACHINE_CODE);
             String itemCode = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.ITEM_CODE, null);
@@ -533,7 +533,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
 
     private void activate() {
         final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
-        new HttpSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+        new HttpSubscriber().activate(runTime, 0, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
 

@@ -27,7 +27,9 @@ import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.IntentUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.NetWorkUtils;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.DialogUtils;
@@ -43,11 +45,16 @@ import com.feipulai.device.tcp.SendTcpClientThread;
 import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.exam.MyApplication;
 import com.feipulai.exam.R;
+import com.feipulai.exam.activity.MainActivity;
 import com.feipulai.exam.activity.login.LoginActivity;
 import com.feipulai.exam.activity.account.AccountSettingActivity;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
+import com.feipulai.exam.bean.ActivateBean;
+import com.feipulai.exam.config.SharedPrefsConfigs;
 import com.feipulai.exam.config.TestConfigs;
 import com.feipulai.exam.netUtils.HttpManager;
+import com.feipulai.exam.netUtils.OnResultListener;
+import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
@@ -60,6 +67,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -369,15 +377,36 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
     }
 
-    private void activeFace() {
+    private void activeFace(final boolean updateActive) {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
-                if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
-                    activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
+                ActivateBean activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
+                if (updateActive) {
+                    if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
+                        String appid = activateBean.getFaceSdkKeyList().get(0).getAppId();
+                        String sdkKey = activateBean.getFaceSdkKeyList().get(0).getActiveKey();
+                        int activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                        emitter.onNext(activeCode);
+                    } else {
+                        emitter.onNext(777888);
+                    }
+                } else {
+                    int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                    if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                        activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
+                    }
+                    if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                        if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
+                            String appid = activateBean.getFaceSdkKeyList().get(0).getAppId();
+                            String sdkKey = activateBean.getFaceSdkKeyList().get(0).getActiveKey();
+                            activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                        }
+                    }
+                    emitter.onNext(activeCode);
                 }
-                emitter.onNext(activeCode);
+
+
             }
         })
                 .subscribeOn(Schedulers.io())
@@ -395,7 +424,24 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                             ConfigUtil.setISEngine(SettingActivity.this, true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort(getString(R.string.already_activated));
+                        } else if (activeCode == 777888) {
+                            ToastUtils.showShort("激活无可用KEY，请联系管理员");
                         } else {
+                            new SweetAlertDialog(SettingActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("人脸识别激活失败")
+                                    .setContentText("是否重新获取激活ID")
+                                    .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    activate();
+
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            }).show();
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }
                     }
@@ -413,15 +459,45 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     }
 
+    private void activate() {
+        final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        new HttpSubscriber().activate(runTime, 1, new OnResultListener<ActivateBean>() {
+            @Override
+            public void onSuccess(ActivateBean result) {
+
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
+                SharedPrefsUtil.save(SettingActivity.this, result);
+                if (result.getFaceSdkKeyList() == null && result.getFaceSdkKeyList().size() == 0) {
+                    ToastUtils.showShort("激活无可用KEY，请联系管理员");
+                } else {
+                    activeFace(true);
+
+                }
+
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+
+            }
+
+            @Override
+            public void onResponseTime(String responseTime) {
+
+            }
+        });
+    }
+
     @OnClick({R.id.btn_face_init})
     public void onClickFaceInit() {
-        activeFace();
+        activeFace(false);
     }
+
 
     @OnClick({R.id.sw_auto_broadcast, R.id.sw_rt_upload, R.id.sw_auto_print, R.id.btn_bind, R.id.btn_default, R.id.btn_net_setting, R.id.btn_tcp_test
             , R.id.txt_advanced, R.id.sw_identity_mark, R.id.sw_add_student, R.id.cb_route, R.id.cb_custom_channel, R.id.cb_monitoring, R.id.btn_account_setting,
             R.id.btn_monitoring_setting, R.id.btn_thermometer, R.id.cb_thermometer, R.id.cb_is_tcp, R.id.sw_auto_score, R.id.btn_print_setting, R.id.sw_auto_discern
-            , R.id.btn_voice_setting, R.id.cb_tcp_simultaneous,R.id.sw_group_check})
+            , R.id.btn_voice_setting, R.id.cb_tcp_simultaneous, R.id.sw_group_check})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_tcp_test:
