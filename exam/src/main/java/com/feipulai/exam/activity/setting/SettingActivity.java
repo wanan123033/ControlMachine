@@ -57,6 +57,7 @@ import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
 import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
+import com.google.gson.Gson;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
@@ -385,7 +386,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
                 if (updateActive) {
-                    if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
+                    if (activateBean.getJsonFaceSdkKeyList() != null && activateBean.getJsonFaceSdkKeyList().size() > 0) {
                         int activeCode = 0;
                         for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
                             String appid = faceSdkBean.getAppId();
@@ -407,7 +408,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                         activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
                     }
                     if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
-                        if (activateBean.getFaceSdkKeyList() != null && activateBean.getFaceSdkKeyList().size() > 0) {
+                        if (activateBean.getJsonFaceSdkKeyList() != null && activateBean.getJsonFaceSdkKeyList().size() > 0) {
                             for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
                                 String appid = faceSdkBean.getAppId();
                                 String sdkKey = faceSdkBean.getActiveKey();
@@ -482,8 +483,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             @Override
             public void onSuccess(ActivateBean result) {
                 activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
-                SharedPrefsUtil.save(SettingActivity.this, result);
+                SharedPrefsUtil.save(SettingActivity.this, activateBean);
                 if (result.getFaceSdkKeyList() == null && result.getFaceSdkKeyList().size() == 0) {
                     ToastUtils.showShort("激活无可用KEY，请联系管理员");
                 } else {

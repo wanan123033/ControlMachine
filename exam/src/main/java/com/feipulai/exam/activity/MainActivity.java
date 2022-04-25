@@ -63,6 +63,7 @@ import com.feipulai.exam.netUtils.netapi.ServerMessage;
 import com.feipulai.exam.service.UploadService;
 import com.feipulai.exam.tcp.FileUtils;
 import com.feipulai.exam.view.BatteryView;
+import com.google.gson.Gson;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.videolibrary.StorageUtils;
@@ -538,8 +539,11 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
             public void onSuccess(ActivateBean result) {
 
                 activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
-                SharedPrefsUtil.save(MainActivity.this, result);
+                SharedPrefsUtil.save(MainActivity.this, activateBean);
                 if (result.getCurrentTime() > result.getValidEndTime()) {
                     LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活

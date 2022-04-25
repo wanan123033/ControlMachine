@@ -39,6 +39,7 @@ import com.feipulai.exam.netUtils.CommonUtils;
 import com.feipulai.exam.netUtils.HttpManager;
 import com.feipulai.exam.netUtils.OnResultListener;
 import com.feipulai.exam.netUtils.netapi.HttpSubscriber;
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
@@ -135,9 +136,12 @@ public class SplashScreenActivity extends BaseActivity {
                 }
 
                 activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
                 runTime = result.getCurrentRunTime();
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
-                SharedPrefsUtil.save(SplashScreenActivity.this, result);
+                SharedPrefsUtil.save(SplashScreenActivity.this, activateBean);
                 if ((int) result.getActivateTime() == 0) {
                     //需要确认激活
                     showActivateConfirm(1);
