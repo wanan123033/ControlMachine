@@ -1,6 +1,13 @@
 package com.feipulai.host.bean;
 
+import android.text.TextUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zzs on  2021/1/5
@@ -19,6 +26,9 @@ public class ActivateBean implements Serializable {
     private long validRunTime;//有效可运行时长 毫秒
     private long currentTime;//当前时间
 
+    private List<FaceSdkBean> faceSdkKeyList;
+
+    private String faceSdkKeyJson;
     //本地使用天数 与更新时间
     private long useDeviceTime = 0;
     private long updateTime = 0L;
@@ -111,4 +121,30 @@ public class ActivateBean implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public List<FaceSdkBean> getFaceSdkKeyList() {
+        return faceSdkKeyList;
+    }
+
+    public void setFaceSdkKeyList(List<FaceSdkBean> faceSdkKeyList) {
+        this.faceSdkKeyList = faceSdkKeyList;
+    }
+
+    public String getFaceSdkKeyJson() {
+        return faceSdkKeyJson;
+    }
+
+    public void setFaceSdkKeyJson(String faceSdkKeyJson) {
+        this.faceSdkKeyJson = faceSdkKeyJson;
+    }
+
+    public List<FaceSdkBean> getJsonFaceSdkKeyList() {
+        List<FaceSdkBean> list;
+        if (TextUtils.isEmpty(faceSdkKeyJson)) {
+            list = new ArrayList<>();
+            return list;
+        }
+        list = new Gson().fromJson(faceSdkKeyJson, new TypeToken<List<FaceSdkBean>>() {
+        }.getType());
+        return list;
+    }
 }

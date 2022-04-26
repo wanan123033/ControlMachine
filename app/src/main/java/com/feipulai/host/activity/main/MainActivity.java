@@ -47,6 +47,7 @@ import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
 import com.feipulai.host.utils.TimerUtil;
 import com.feipulai.host.view.BatteryView;
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.ww.fpl.libarcface.faceserver.FaceServer;
 
@@ -353,13 +354,16 @@ public class MainActivity extends BaseActivity {
 
     private void activate() {
         final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
-        new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+        new UserSubscriber().activate(runTime,0, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
 
                 activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
-                SharedPrefsUtil.save(MainActivity.this, result);
+                SharedPrefsUtil.save(MainActivity.this, activateBean);
                 if (result.getCurrentTime() > result.getValidEndTime()) {
                     LogUtil.logDebugMessage(result.getCurrentTime() + "-----" + result.getValidEndTime());
                     //超出使用时间 重新激活

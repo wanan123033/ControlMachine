@@ -22,6 +22,7 @@ import com.arcsoft.face.FaceEngine;
 import com.feipulai.common.utils.AudioUtil;
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.NetWorkUtils;
+import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.device.ic.utils.ItemDefault;
@@ -34,9 +35,15 @@ import com.feipulai.host.R;
 import com.feipulai.host.activity.SplashScreenActivity;
 import com.feipulai.host.activity.base.BaseTitleActivity;
 import com.feipulai.host.activity.login.LoginActivity;
+import com.feipulai.host.bean.ActivateBean;
+import com.feipulai.host.bean.FaceSdkBean;
+import com.feipulai.host.config.SharedPrefsConfigs;
 import com.feipulai.host.config.TestConfigs;
 import com.feipulai.host.netUtils.HttpManager;
+import com.feipulai.host.netUtils.HttpSubscriber;
+import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
+import com.google.gson.Gson;
 import com.ww.fpl.libarcface.common.Constants;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
@@ -47,6 +54,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -95,7 +103,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     Spinner spAfr;
     @BindView(R.id.ll_afr)
     LinearLayout llAfr;
-
+    private ActivateBean activateBean;
     @Override
     protected int setLayoutResID() {
         return R.layout.activity_system_setting;
@@ -104,7 +112,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
     @Override
     protected void initData() {
         setting = SettingHelper.getSystemSetting();
-
+        activateBean = SharedPrefsUtil.loadFormSource(MyApplication.getInstance(), ActivateBean.class);
         mEtTestName.setText(setting.getTestName());
         mEtTestSite.setText(setting.getTestSite());
         mEtSeverIp.setText(setting.getServerIp());
@@ -241,9 +249,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
             case R.id.btn_net_setting:
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 break;
-            case R.id.btn_face_init:
-                activeFace();
-                break;
+
             case R.id.sw_net:
                 setting.setNetCheckTool(sw_net.isChecked());
                 break;
@@ -251,16 +257,50 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
         }
 
     }
-
-    private void activeFace() {
+    private void activeFace(final boolean updateActive) {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
-                if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
-                    activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
+                if (updateActive) {
+                    if (activateBean.getJsonFaceSdkKeyList() != null && activateBean.getJsonFaceSdkKeyList().size() > 0) {
+                        int activeCode = 0;
+                        for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
+                            String appid = faceSdkBean.getAppId();
+                            String sdkKey = faceSdkBean.getActiveKey();
+                            activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                            if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                                emitter.onNext(activeCode);
+                                break;
+                            }
+                        }
+
+                        emitter.onNext(activeCode);
+                    } else {
+                        emitter.onNext(777888);
+                    }
+                } else {
+                    int activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                    if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                        activeCode = FaceEngine.activeOnline(SettingActivity.this, Constants.APP_ID_2, Constants.SDK_KEY_2);
+                    }
+                    if (activeCode != ErrorInfo.MOK && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                        if (activateBean.getJsonFaceSdkKeyList() != null && activateBean.getJsonFaceSdkKeyList().size() > 0) {
+                            for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
+                                String appid = faceSdkBean.getAppId();
+                                String sdkKey = faceSdkBean.getActiveKey();
+                                activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
+                                if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                                    emitter.onNext(activeCode);
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                    emitter.onNext(activeCode);
                 }
-                emitter.onNext(activeCode);
+
+
             }
         })
                 .subscribeOn(Schedulers.io())
@@ -278,14 +318,31 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                             ConfigUtil.setISEngine(SettingActivity.this, true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort(getString(R.string.already_activated));
+                        } else if (activeCode == 777888) {
+                            ToastUtils.showShort("激活无可用KEY，请联系管理员");
                         } else {
+                            new SweetAlertDialog(SettingActivity.this, SweetAlertDialog.WARNING_TYPE).setTitleText("人脸识别激活失败")
+                                    .setContentText("是否重新获取激活ID")
+                                    .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    activate();
+
+                                }
+                            }).setCancelText(getString(R.string.cancel)).setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
+                            }).show();
                             ToastUtils.showShort(getString(R.string.active_failed));
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        ToastUtils.showShort("人脸识别激活失败");
                     }
 
                     @Override
@@ -296,6 +353,38 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
 
     }
 
+    private void activate() {
+        final long runTime = SharedPrefsUtil.getValue(this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, 0L);
+        new UserSubscriber().activate(runTime, 1, new OnResultListener<ActivateBean>() {
+            @Override
+            public void onSuccess(ActivateBean result) {
+                activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
+                SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
+                SharedPrefsUtil.save(SettingActivity.this, activateBean);
+                if (result.getFaceSdkKeyList() == null && result.getFaceSdkKeyList().size() == 0) {
+                    ToastUtils.showShort("激活无可用KEY，请联系管理员");
+                } else {
+                    activeFace(true);
+
+                }
+
+            }
+
+            @Override
+            public void onFault(int code, String errorMsg) {
+
+            }
+
+        });
+    }
+
+    @OnClick({R.id.btn_face_init})
+    public void onClickFaceInit() {
+        activeFace(false);
+    }
     /**
      * 绑定服务器
      */

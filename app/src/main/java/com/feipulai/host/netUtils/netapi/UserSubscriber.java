@@ -64,7 +64,7 @@ public class UserSubscriber {
      * @param currentRunTime
      * @param listener
      */
-    public void activate(long currentRunTime, OnResultListener listener) {
+    public void activate(long currentRunTime, int distribution, OnResultListener listener) {
         //减少连接时长
         HttpManager.DEFAULT_CONNECT_TIMEOUT = 5;
         HttpManager.DEFAULT_READ_TIMEOUT = 5;
@@ -75,7 +75,9 @@ public class UserSubscriber {
         parameData.put("currentRunTime", currentRunTime + "");
         parameData.put("softwareCode", MyApplication.SOFTWAREUUID);
         parameData.put("softwareName", CommonUtils.getAppName(MyApplication.getInstance()));
-
+        parameData.put("keyType", "0");
+        parameData.put("systemEnvironment", "Android");
+        parameData.put("distribution", distribution + "");
         Observable<HttpResult<ActivateBean>> observable = HttpManager.getInstance().getHttpApi().activate(CommonUtils.encryptQuery("300021100", parameData));
         HttpManager.getInstance().toSubscribe(observable, new RequestSub<ActivateBean>(listener));
     }

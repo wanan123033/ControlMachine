@@ -35,6 +35,7 @@ import com.feipulai.host.netUtils.HttpManager;
 import com.feipulai.host.netUtils.HttpSubscriber;
 import com.feipulai.host.netUtils.OnResultListener;
 import com.feipulai.host.netUtils.netapi.UserSubscriber;
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.feipulai.common.tts.TtsManager;
 import com.feipulai.common.utils.SoundPlayUtils;
@@ -129,15 +130,18 @@ public class SplashScreenActivity extends BaseActivity {
 
     private void activate() {
 
-        new UserSubscriber().activate(runTime, new OnResultListener<ActivateBean>() {
+        new UserSubscriber().activate(runTime,0, new OnResultListener<ActivateBean>() {
             @Override
             public void onSuccess(ActivateBean result) {
 //                if (!Build.MODEL.equals("FPL")){
 //                    DateUtil.setSysDate(SplashScreenActivity.this, result.getCurrentTime());
 //                }
                 activateBean = result;
+                if (activateBean.getFaceSdkKeyList() != null) {
+                    activateBean.setFaceSdkKeyJson(new Gson().toJson(result.getFaceSdkKeyList()));
+                }
                 SharedPrefsUtil.putValue(MyApplication.getInstance(), SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.APP_USE_TIME, result.getCurrentRunTime());
-                SharedPrefsUtil.save(SplashScreenActivity.this, result);
+                SharedPrefsUtil.save(SplashScreenActivity.this, activateBean);
                 if ((int) result.getActivateTime() == 0) {
                     //需要确认激活
                     showActivateConfirm(1);

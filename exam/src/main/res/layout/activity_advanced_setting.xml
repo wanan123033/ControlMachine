@@ -138,6 +138,7 @@
                     android:button="@drawable/checkbox_switch_selected" />
 
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -170,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="单项判罚开关：（只有减）" />
+                android:text="单项判罚开关：" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -239,14 +240,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="判罚犯规：（不支持修改成绩）" />
+                android:text="判罚犯规：（不支持修改成绩）"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -265,7 +268,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -284,7 +288,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -304,7 +309,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="@dimen/dp_10"
                 android:gravity="center_vertical"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -330,15 +336,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="重测补考"
-                android:visibility="visible"/>
+                android:visibility="visible" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="@dimen/dp_10"
                 android:gravity="center_vertical"
-                android:visibility="visible"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="visible">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -350,6 +357,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
+
                 <TextView
                     android:id="@+id/tv_pass1"
                     android:layout_width="wrap_content"
@@ -357,29 +365,32 @@
                     android:layout_below="@id/cb_resit"
                     android:layout_marginTop="8dp"
                     android:text="是否启用验证密码：" />
+
                 <EditText
                     android:id="@+id/et_resit_pass"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/black_border"
+                    android:layout_alignTop="@id/tv_pass1"
                     android:layout_toRightOf="@id/tv_pass1"
-                    android:layout_alignTop="@id/tv_pass1"/>
+                    android:background="@drawable/black_border" />
+
                 <CheckBox
                     android:id="@+id/cb_resit_pass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignTop="@id/tv_pass1"
-                    android:background="@drawable/black_border"/>
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/black_border" />
             </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="@dimen/dp_10"
                 android:gravity="center_vertical"
-                android:visibility="visible"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="visible">
 
                 <TextView
                     style="@style/style_setting_tv_title"
@@ -391,6 +402,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:button="@drawable/checkbox_switch_selected" />
+
                 <TextView
                     android:id="@+id/tv_pass"
                     android:layout_width="wrap_content"
@@ -398,20 +410,22 @@
                     android:layout_below="@id/cb_again"
                     android:layout_marginTop="8dp"
                     android:text="是否启用验证密码：" />
+
                 <EditText
                     android:id="@+id/et_again_pass"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/black_border"
+                    android:layout_alignTop="@id/tv_pass"
                     android:layout_toRightOf="@id/tv_pass"
-                    android:layout_alignTop="@id/tv_pass"/>
+                    android:background="@drawable/black_border" />
+
                 <CheckBox
                     android:id="@+id/cb_again_pass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignTop="@id/tv_pass"
-                    android:background="@drawable/black_border"/>
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/black_border" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -419,7 +433,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:padding="1dp">
+                android:padding="1dp"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/style_setting_tv_title"
