@@ -307,7 +307,7 @@ public class DBManager {
         sqlBuf.append(" UNION SELECT  " + GroupItemDao.Properties.StudentCode.columnName);
         sqlBuf.append(" FROM " + GroupItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + GroupItemDao.Properties.ItemCode.columnName + " = ?  )");
-        sqlBuf.append(" AND " + StudentFaceDao.Properties.FaceFeature.columnName + " <>'' ");
+        sqlBuf.append(" AND S." + StudentFaceDao.Properties.FaceFeature.columnName + " <>'' ");
 
         Logger.i("=====sql1===>" + sqlBuf.toString());
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{TestConfigs.getCurrentItemCode(), TestConfigs.getCurrentItemCode()});
