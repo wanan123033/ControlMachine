@@ -390,7 +390,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                         int activeCode = 0;
                         for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
                             String appid = faceSdkBean.getAppId();
-                            String sdkKey = faceSdkBean.getActiveKey();
+                            String sdkKey = faceSdkBean.getSdkKey();
                             activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
                             if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                                 emitter.onNext(activeCode);
@@ -411,7 +411,7 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                         if (activateBean.getJsonFaceSdkKeyList() != null && activateBean.getJsonFaceSdkKeyList().size() > 0) {
                             for (FaceSdkBean faceSdkBean : activateBean.getFaceSdkKeyList()) {
                                 String appid = faceSdkBean.getAppId();
-                                String sdkKey = faceSdkBean.getActiveKey();
+                                String sdkKey = faceSdkBean.getSdkKey();
                                 activeCode = FaceEngine.activeOnline(SettingActivity.this, appid, sdkKey);
                                 if (activeCode == ErrorInfo.MOK && activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                                     emitter.onNext(activeCode);
