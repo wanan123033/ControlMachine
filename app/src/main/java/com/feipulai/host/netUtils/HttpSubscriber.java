@@ -48,7 +48,7 @@ public class HttpSubscriber {
         Map<String, String> parameData = new HashMap<>();
         parameData.put("softwareUuid", MyApplication.SOFTWAREUUID);
         parameData.put("hardwareUuid", MyApplication.HARDWAREUUID);
-        parameData.put("version", "1.1.9.2");
+        parameData.put("version", version);
         parameData.put("deviceCode", MyApplication.DEVICECODE);
         final RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/json"), new JSONObject(parameData).toString());
         Observable<HttpResult<List<SoftApp>>> observable = HttpManager.getInstance().getHttpApi().getSoftApp(requestBody);

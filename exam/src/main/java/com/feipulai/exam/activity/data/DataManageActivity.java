@@ -744,7 +744,7 @@ public class DataManageActivity
             @Override
             public void onSuccess(List<SoftApp> result) {
 
-                if (result.size() > 0) {
+                if (result != null && result.size() > 0) {
                     showAppDataDialog(result);
                 }
             }
