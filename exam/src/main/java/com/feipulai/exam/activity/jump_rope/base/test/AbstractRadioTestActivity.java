@@ -384,13 +384,17 @@ public abstract class AbstractRadioTestActivity<Setting>
 //                mProgressDialog.setCanceledOnTouchOutside(false);
 //                mProgressDialog.setMessage("获取设备成绩中...");
 //                mProgressDialog.show();
+                try {
+                    sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE) ;
+                    sweetAlertDialog.setTitleText("获取最终成绩中");
+                    sweetAlertDialog.setContentText("获取设备成绩中...");
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.setCanceledOnTouchOutside(false);
+                    sweetAlertDialog.show();
+                } catch (Exception e) {
+                    LogUtils.crash(e.getMessage());
+                }
 
-                sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                sweetAlertDialog.setTitleText("获取最终成绩中");
-                sweetAlertDialog.setContentText("获取设备成绩中...");
-                sweetAlertDialog.setCancelable(false);
-                sweetAlertDialog.setCanceledOnTouchOutside(false);
-                sweetAlertDialog.show();
                 break;
 
             case DISMISS_WAIT_DIALOG:
