@@ -115,5 +115,4 @@
         android:paddingLeft="@dimen/dp_20"
         android:paddingEnd="@dimen/dp_20"
         android:text="通用屏必须4.8以上"/>
-
 </LinearLayout>

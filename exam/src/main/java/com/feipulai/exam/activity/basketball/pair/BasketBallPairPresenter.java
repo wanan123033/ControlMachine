@@ -66,4 +66,8 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
     public void saveSettings() {
         SharedPrefsUtil.save(context, setting);
     }
+
+    public BasketBallSetting getSetting() {
+        return setting;
+    }
 }
