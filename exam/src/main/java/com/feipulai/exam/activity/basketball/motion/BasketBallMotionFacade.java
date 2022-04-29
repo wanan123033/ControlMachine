@@ -4,6 +4,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
@@ -47,7 +48,7 @@ public class BasketBallMotionFacade implements RadioManager.OnRadioArrivedListen
     private int[] mCurrentConnect;
     public List<BallDeviceState> deviceStateList = new ArrayList<>();
     private List<SportResult> timeRountList;
-    private Map<String, SportResult> numResult;
+    private Map<String, SportResult> numResult=new ArrayMap<>();
     private int interceptSecond = 5;
     private Basketball868Result nearResult;
     private Basketball868Result farResult;

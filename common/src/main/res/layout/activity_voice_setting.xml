@@ -120,6 +120,15 @@
                     android:layout_marginLeft="50dp"
                     android:drawablePadding="40dp"
                     android:text="口令模式二" />
+
+                <RadioButton
+                    android:id="@+id/rb_mode3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:drawablePadding="40dp"
+                    android:text="口令模式三"
+                    android:visibility="gone" />
             </RadioGroup>
         </LinearLayout>
 

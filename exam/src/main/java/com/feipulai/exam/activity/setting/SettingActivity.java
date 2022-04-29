@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -623,7 +624,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 IntentUtil.gotoActivity(this, AccountSettingActivity.class);
                 break;
             case R.id.btn_voice_setting://发令语音
-                IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("mode3", true);
+                    IntentUtil.gotoActivity(this, VoiceSettingActivity.class, bundle);
+                } else {
+                    IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
+                }
+
                 break;
             case R.id.sw_group_check:  //分组检录
                 systemSetting.setGroupCheck(sw_group_check.isChecked());

@@ -8,7 +8,7 @@ public class VoiceSetting {
 
     private int voiceType = 0; //0女 1 男
 
-    private int voiceMode = 0;//0数字  1 嘟嘟.
+    private int voiceMode = 0;//0数字  1 嘟嘟. 2 跳
 
 
     private boolean isTimeBroadcast = false; //是否进行时间播报

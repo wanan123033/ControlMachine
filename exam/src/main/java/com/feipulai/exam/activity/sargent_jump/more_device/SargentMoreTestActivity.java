@@ -63,6 +63,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         super.initData();
         setFaultEnable(sargentSetting.isPenalize());
+
     }
 
     @Override
@@ -77,7 +78,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         for (int i = 0; i < deviceState.length; i++) {
 
             deviceState[i] = 0;//连续5次检测不到认为掉线
-            setShowGetData(i+1,true);
+            setShowGetData(i + 1, true);
         }
         runUp = sargentSetting.getRunUp();
         RadioManager.getInstance().setOnRadioArrived(resultImpl);
@@ -118,8 +119,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     protected void sendTestCommand(BaseStuPair pair, int index) {
-        LogUtils.operation("摸高开始测试:第="+(index+1)+"机:"+pair.getStudent().toString());
-        pair.setTestTime(DateUtil.getCurrentTime()+"");
+        LogUtils.operation("摸高开始测试:第=" + (index + 1) + "机:" + pair.getStudent().toString());
+        pair.setTestTime(DateUtil.getCurrentTime() + "");
         pair.getBaseDevice().setState(BaseDeviceState.STATE_ONUSE);
         updateDevice(pair.getBaseDevice());
         int id = pair.getBaseDevice().getDeviceId();
@@ -128,7 +129,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
     @Override
     public void getData(int pos) {
-        SargentJumpMore.getData(pos+1);
+        SargentJumpMore.getData(pos + 1);
     }
 
     private void sendStart(byte id) {
@@ -156,6 +157,8 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
 
         }
+//        deviceDetails.get(0).getStuDevicePair().getBaseDevice().setState(BaseDeviceState.STATE_FREE);
+//        updateDevice(deviceDetails.get(0).getStuDevicePair().getBaseDevice());
         for (DeviceDetail detail : deviceDetails) {
             SargentJumpMore.sendEmpty(detail.getStuDevicePair().getBaseDevice().getDeviceId());
         }
@@ -193,7 +196,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
 
         @Override
         public void onFree(int deviceId) {
-            deviceState[deviceId-1] = MAX_DISCONNECT;
+            deviceState[deviceId - 1] = MAX_DISCONNECT;
         }
 
         @Override
@@ -212,7 +215,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
                 case GET_SCORE_RESPONSE:
                     SargentJumpResult result = (SargentJumpResult) msg.obj;
                     if (result != null)
-                        LogUtils.all("摸高更新成绩:score="+result.getScore()+",result="+result.toString());
+                        LogUtils.all("摸高更新成绩:score=" + result.getScore() + ",result=" + result.toString());
                     for (DeviceDetail detail : deviceDetails) {
                         if (detail.getStuDevicePair().getBaseDevice().getDeviceId() == result.getDeviceId()) {
                             int dbResult = result.getScore() * 10;
@@ -240,7 +243,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
     });
 
     private void onResultArrived(int result, BaseStuPair stuPair) {
-        LogUtils.operation("摸高成绩更新:"+stuPair.getStudent()+"---"+result);
+        LogUtils.operation("摸高成绩更新:" + stuPair.getStudent() + "---" + result);
         if (result < 0 || result > (sargentSetting.getBaseHeight() + 216) * 10) {
             toastSpeak("数据异常，请重测");
             return;
@@ -248,7 +251,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         if (stuPair == null || stuPair.getStudent() == null)
             return;
         stuPair.setResult(result);
-        stuPair.setEndTime(DateUtil.getCurrentTime()+"");
+        stuPair.setEndTime(DateUtil.getCurrentTime() + "");
         stuPair.setResultState(RoundResult.RESULT_STATE_NORMAL);
         if (sargentSetting.isFullReturn()) {
             if (stuPair.getStudent().getSex() == Student.MALE) {
@@ -275,6 +278,7 @@ public class SargentMoreTestActivity extends BaseMoreActivity {
         LogUtils.operation("摸高跳转至SargentPairActivity");
         startActivity(new Intent(this, SargentPairActivity.class));
     }
+
     @Override
     public void setRoundNo(Student student, int roundNo) {
     }

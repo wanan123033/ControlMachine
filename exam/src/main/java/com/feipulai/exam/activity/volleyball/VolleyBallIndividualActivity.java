@@ -688,7 +688,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
 
     private void onResultConfirmed() {
         StuDevicePair pair = pairs.get(0);
-        int result = pair.getDeviceResult().getResult() + pair.getPenalty();
+        final int result = pair.getDeviceResult().getResult() + pair.getPenalty();
 
         if (systemSetting.isAutoBroadcast()) {
             TtsManager.getInstance().speak(String.format(getString(R.string.speak_result), pair.getStudent().getSpeakStuName(), ResultDisplayUtils.getStrResultForDisplay(result)));
@@ -699,13 +699,19 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
         if (studentItem.getExamType() == 2) {
             prepareForCheckIn();
         } else {
-            if (shouldContinue(result)) {
-                adapter.setIndexPostion(pairs.get(0).getCurrentRoundNo() - 1);
-                adapter.setSelectPosition(pairs.get(0).getCurrentRoundNo() - 1);
-                prepareForBegin();
-            } else {
-                prepareForFinish();
-            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (shouldContinue(result)) {
+                        adapter.setIndexPostion(pairs.get(0).getCurrentRoundNo() - 1);
+                        adapter.setSelectPosition(pairs.get(0).getCurrentRoundNo() - 1);
+                        prepareForBegin();
+                    } else {
+                        prepareForFinish();
+                    }
+                }
+            }, 500);
+
         }
 
     }
@@ -897,7 +903,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 pairs.get(0).setDeviceResult(result);
                 String displayResult = ResultDisplayUtils.getStrResultForDisplay(pairs.get(0).getDeviceResult().getResult());
                 tvResult.setText(displayResult);
-                if (adapter.getIndexPostion()!=-1){
+                if (adapter.getIndexPostion() != -1) {
                     String[] resultArray = new String[resultList.size()];
                     resultList.toArray(resultArray);
                     resultArray[adapter.getIndexPostion()] = RoundResult.resultStateStr(RoundResult.RESULT_STATE_NORMAL, result.getResult());
@@ -1156,7 +1162,7 @@ public class VolleyBallIndividualActivity extends BaseTitleActivity
                 if (student != null) {
                     individualCheckFragment.checkQulification(student.getStudentCode(), IndividualCheckFragment.STUDENT_CODE);
                     afrFrameLayout.setVisibility(View.GONE);
-                }else{
+                } else {
                     InteractUtils.toastSpeak(VolleyBallIndividualActivity.this, "该考生不存在");
                 }
 //                if (student == null) {
