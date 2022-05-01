@@ -533,7 +533,7 @@ public class BallReentryActivity extends BaseTitleActivity implements Individual
         txtDeviceStatus.setText("计时");
         setOperationUI();
         if (setting.getUseLedType() == 1){
-            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,2,false,2);
+            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,getAccuracy(),false,2);
         }
     }
 
