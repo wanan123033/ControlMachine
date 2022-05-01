@@ -520,7 +520,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         txtDeviceStatus.setText("计时");
         setOperationUI();
         if (setting.getUseLedType() == 1){
-            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,2,false,2);
+            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,getAccuracy(),false,2);
         }
     }
 
@@ -1241,6 +1241,17 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
                 }else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    try{
+                        byte[] buffer = new byte[16];
+                        byte[] nameByte = pairs.get(0).getStudent().getLEDStuName().getBytes("GB2312");
+                        System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
+                        nameByte = ("第" + roundNo + "次").getBytes("GB2312");
+                        System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
+                        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
+                    }catch( Exception e){
+                        e.printStackTrace();
+                    }
                     ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),testResult.getResult(),getAccuracy());
                 }
                 break;
