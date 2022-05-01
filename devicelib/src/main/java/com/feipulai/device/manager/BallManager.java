@@ -191,7 +191,7 @@ public class BallManager {
                     if (useLedType == 0) {
                         setLedShowData(hostId, "", 2, Paint.Align.CENTER);
                     }else {
-                        waitTime(hostId,2);
+                        //waitTime(hostId,2);
                     }
                     setRadioFreeStates(hostId);
                     try {
