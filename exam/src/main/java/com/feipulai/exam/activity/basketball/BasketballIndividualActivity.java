@@ -494,6 +494,7 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
                 state = WAIT_BEGIN;
                 txtDeviceStatus.setText("等待");
                 tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(0));
+                ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
                 break;
             case 3:
                 state = TESTING;
