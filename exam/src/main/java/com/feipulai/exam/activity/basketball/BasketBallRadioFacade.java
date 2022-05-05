@@ -179,11 +179,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     }
 
     public boolean isDeviceNormal() {
-//        for (BallDeviceState deviceState : deviceStateList) {
-//            if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
-//                return false;
-//            }
-//        }
+        for (BallDeviceState deviceState : deviceStateList) {
+            if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
+                return false;
+            }
+        }
         return true;
     }
 
