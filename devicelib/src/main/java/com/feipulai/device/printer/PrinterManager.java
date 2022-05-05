@@ -15,15 +15,15 @@ import java.io.UnsupportedEncodingException;
  * 深圳市菲普莱体育发展有限公司   秘密级别:绝密
  */
 public class PrinterManager{
-	
+
 	public static final int LEFT = 0;
 	public static final int MIDDLE = 1;
 	public static final int RIGHT = 2;
-	
+
 	private static volatile PrinterManager sPrinterManager;
 	private SerialPorter mSerialPorter;
 	private OnPrinterListener mOnPrinterListener;
-	
+
 	private PrinterManager(){
 		if (SerialParams.PRINTER.getVersions()==1){
 			IOPower.getInstance().setPrinterPwr(1);
@@ -38,7 +38,7 @@ public class PrinterManager{
 			}
 		});
 	}
-	
+
 	public static PrinterManager getInstance(){
 		if(sPrinterManager == null){
 			synchronized(PrinterManager.class){
@@ -49,11 +49,11 @@ public class PrinterManager{
 		}
 		return sPrinterManager;
 	}
-	
+
 	public void setOnPrinterListener(OnPrinterListener onPrinterListener){
 		mOnPrinterListener = onPrinterListener;
 	}
-	
+
 	public void print(String text){
 		LogUtils.operation("热敏打印信息:=" + text);
 		try{
@@ -64,7 +64,7 @@ public class PrinterManager{
 			e.printStackTrace();
 		}
 	}
-	
+
 	// MMP
 	public void printNln(String text){
 		try{
@@ -75,7 +75,7 @@ public class PrinterManager{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 获取打印机状态
 	 */
@@ -83,7 +83,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1d,0x72,0x01};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 初始化打印机
 	 * 清除打印缓冲器中的数据并且复位打印机配置
@@ -93,7 +93,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1b,0x40};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 设置行间距为默认值
 	 * 行间距默认值为6点行(6 * 0.125mm)
@@ -102,7 +102,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1b,0x32};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 设置行间距为n点行(n * 0.125mm)
 	 * 0 <= n <= 255
@@ -111,7 +111,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1b,0x33,(byte)(n & 0xff)};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 设置倍高和倍宽
 	 * 建议一般倍高不倍宽
@@ -128,13 +128,13 @@ public class PrinterManager{
 		}
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	public void nCRLF(int n){
 		for(int i = 0;i < n;i++){
 			print("\n");
 		}
 	}
-	
+
 	/**
 	 * 设置西文右侧字符间距n点行(n * 0.125mm)
 	 * 当字符打印模式为倍宽模式时,该指令设置的间距随之改变
@@ -146,7 +146,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1b,0x20,(byte)(n & 0xff)};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 设置中文左右边距n点行(n * 0.125mm)
 	 * 仅用于汉字字符,不影响ASCII字符设定
@@ -159,7 +159,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1c,0x53,(byte)(left & 0xff),(byte)(right & 0xff)};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 打印自检页
 	 */
@@ -167,12 +167,12 @@ public class PrinterManager{
 		byte[] cmd = {0x12,0x54};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	public void setPointSize(int x,int y){
 		byte[] cmd = {0x1d,0x50,(byte)(x & 0xff),(byte)(y & 0xff)};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	/**
 	 * 设置对其方式
 	 *
@@ -182,7 +182,7 @@ public class PrinterManager{
 		byte[] cmd = {0x1b,0x61,(byte)(align & 0xff)};
 		mSerialPorter.sendCommand(cmd);
 	}
-	
+
 	public void close(){
 		mSerialPorter.close();
 		if (SerialParams.PRINTER.getVersions()==1){
@@ -190,11 +190,11 @@ public class PrinterManager{
 		}
 		sPrinterManager = null;
 	}
-	
+
 	public interface OnPrinterListener{
 		void onPrinterListener(Message msg);
 	}
-	
+
 }
 
 // 使用demo

@@ -1357,9 +1357,9 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         List<RoundResult> results = DBManager.getInstance().queryResultsByStuItem(mStudentItem);
         TestCache.getInstance().getResults().put(student, results);
         showStuInfoResult();
-        if (mStudentItem.getExamType() == 2) {
-            prepareForCheckIn();
-        }
+//        if (mStudentItem.getExamType() == 2) {
+//            prepareForCheckIn();
+//        }
     }
 
     private void showStuInfoResult() {

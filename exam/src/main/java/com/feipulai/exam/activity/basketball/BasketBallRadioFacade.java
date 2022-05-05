@@ -47,7 +47,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private int[] mCurrentConnect;
     public List<BallDeviceState> deviceStateList = new ArrayList<>();
     private List<Basketball868Result> timeRountList;
-    private Map<String, Basketball868Result> numResult=new ArrayMap<>();
+    private Map<String, Basketball868Result> numResult = new ArrayMap<>();
     private int interceptSecond = 5;
     private Basketball868Result nearResult;
     private Basketball868Result farResult;
@@ -141,6 +141,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                         if (nearResult != null && nearResult.getState() == 2) {
                             listener.getDeviceStatus(2);
                             ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                            ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
                             isledStartTime = false;
                             timeRountList = new ArrayList<>();
                             numResult = new HashMap<>();
@@ -150,6 +151,7 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                                 farResult != null && farResult.getState() == 2) {
                             listener.getDeviceStatus(2);
                             ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                            ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
                             isledStartTime = false;
                             timeRountList = new ArrayList<>();
                             numResult = new HashMap<>();
@@ -177,11 +179,11 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     }
 
     public boolean isDeviceNormal() {
-        for (BallDeviceState deviceState : deviceStateList) {
-            if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
-                return false;
-            }
-        }
+//        for (BallDeviceState deviceState : deviceStateList) {
+//            if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
+//                return false;
+//            }
+//        }
         return true;
     }
 

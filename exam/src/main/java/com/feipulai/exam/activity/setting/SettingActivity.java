@@ -61,6 +61,7 @@ import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.google.gson.Gson;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
@@ -363,6 +364,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                     boolean isEngine = ConfigUtil.getISEngine(this);
                     if (!isEngine) {
                         ToastUtils.showShort("请在参数设置激活人脸识别");
+                    }else{
+                        FaceServer.getInstance().init(SettingActivity.this);
                     }
                 } else {
                     llAfr.setVisibility(View.GONE);
@@ -441,8 +444,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
                             ConfigUtil.setISEngine(SettingActivity.this, true);
+                            FaceServer.getInstance().init(SettingActivity.this);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort(getString(R.string.already_activated));
+                            ConfigUtil.setISEngine(SettingActivity.this, true);
+                            FaceServer.getInstance().init(SettingActivity.this);
                         } else if (activeCode == 777888) {
                             ToastUtils.showShort("激活无可用KEY，请联系管理员");
                         } else {
