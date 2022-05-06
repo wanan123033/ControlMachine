@@ -164,6 +164,54 @@ public class DateUtil {
         return (sec + n) < 10 ? "0" + (sec + n) : (sec + n) + "";
     }
 
+    /**
+     * 时间计算
+     * <h3>Version</h3> 1.0
+     * <h3>CreateTime</h3> 2017/10/18,16:15
+     * <h3>UpdateTime</h3> 2017/10/18,16:15
+     * <h3>CreateAuthor</h3> zzs
+     * <h3>UpdateAuthor</h3>
+     * <h3>UpdateInfo</h3> (此处输入修改内容,若无修改可不写.)
+     *
+     * @param digital   1 十分位 2 百分位
+     * @param carryMode 0
+     */
+    public static long caculateTimeLong(long caculTime, int digital, int carryMode) {
+        double bigTime = Double.valueOf(caculTime) / 1000;
+        //需要先舍掉小数位数后一位之后的所有，再进行进位
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(bigTime)).setScale(digital + 1, BigDecimal.ROUND_DOWN);
+        long carryTime = 0L;
+        switch (carryMode) {
+            case 0://不去舍
+                carryTime = caculTime;
+                break;
+            case 1://四舍五入
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(1000d)).longValue();
+                break;
+            case 2: //舍位
+//                String pattern = "#.";
+//                for (int i = 0; i < digital; i++) {
+//                    pattern += "0";
+//                }
+//                double formatTime = Double.valueOf(new DecimalFormat(pattern).format(bigTime));
+
+                NumberFormat nf = NumberFormat.getNumberInstance();
+                // 保留两位小数
+                nf.setMaximumFractionDigits(digital);
+                // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+                nf.setRoundingMode(RoundingMode.DOWN);
+                double formatTime = Double.valueOf(nf.format(bigTime).replaceAll(",", ""));
+                carryTime = BigDecimal.valueOf(formatTime).multiply(new BigDecimal(1000d)).longValue();
+                break;
+            case 3://非0进位
+                carryTime = bigDecimal.setScale(digital, BigDecimal.ROUND_UP).multiply(new BigDecimal(1000d)).longValue();
+                break;
+            default:
+                carryTime = caculTime;
+                break;
+        }
+        return carryTime;
+    }
 
     /**
      * 时间计算
@@ -235,31 +283,33 @@ public class DateUtil {
      * @param digital 1 百分位 2 十分位
      */
     public static String caculateFormatTime(long caculTime, int digital) {
-        String hundDigital;
-        switch (digital) {
-            case 1:
-                hundDigital = ".S";
-                break;
-            case 2:
-                hundDigital = ".SS";
-                break;
-            case 3:
-                hundDigital = ".SSS";
-                break;
-            default:
-                hundDigital = "";
-                break;
-        }
+        String hundDigital = ".SSS";
+//        switch (digital) {
+//            case 1:
+//                hundDigital = ".S";
+//                break;
+//            case 2:
+//                hundDigital = ".SS";
+//                break;
+//            case 3:
+//                hundDigital = ".SSS";
+//                break;
+//            default:
+//                hundDigital = "";
+//                break;
+//        }
+        String time ;
         if (caculTime < 60 * 1000) {
-         String time =    formatTime(caculTime, "ss" + hundDigital);
-            return time;
+            time = formatTime(caculTime, "ss" + hundDigital);
         } else if (caculTime >= 60 * 1000 && caculTime < 60 * 60 * 1000) { // 一小时之内
-            return formatTime(caculTime, "mm:ss" + hundDigital);
+            time = formatTime(caculTime, "mm:ss" + hundDigital);
         } else if (caculTime >= 60 * 60 * 1000 && caculTime < 60 * 60 * 24 * 1000) { // 同一天之内
-            return formatTime(caculTime, "HH:mm:ss" + hundDigital);
+            time = formatTime(caculTime, "HH:mm:ss" + hundDigital);
         } else {
-            return formatTime(caculTime, "dd HH:mm:ss" + hundDigital);
+            time = formatTime(caculTime, "dd HH:mm:ss" + hundDigital);
         }
+
+        return  time.substring(0, time.length() - (digital == 1 ? 2 : digital == 2 ? 1 : 0));
     }
 
     public static String getUseTime(long caculTime) {
@@ -324,6 +374,7 @@ public class DateUtil {
 //        SystemClock.setCurrentTimeMillis(value);
 
     }
+
     /**
      * 返回当前时间精确到毫秒 不要年月日
      *
