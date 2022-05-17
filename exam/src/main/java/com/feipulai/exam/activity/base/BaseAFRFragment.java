@@ -615,7 +615,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            isStartFace = true;
+//                            showAddHint();
                             return;
                         }
                     }
@@ -649,7 +650,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            isStartFace = true;
+                            //去除拉取考生信息
+//                            showAddHint();
                             return;
                         }
                     }
@@ -889,7 +892,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                 }
                 isStartFace = true;
                 retryRecognizeDelayed(faceId);
-
 
 
             }
