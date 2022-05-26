@@ -312,7 +312,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
             isOpenCamera = true;
             if (faceId == null) {
                 faceId = 0;
-            }else{
+            } else {
                 faceHelper.setName(faceId, Integer.toString(faceId));
                 requestFeatureStatusMap.put(faceId, RequestFeatureStatus.TO_RETRY);
             }
@@ -615,7 +615,8 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            isStartFace = true;
+//                            showAddHint();
                             return;
                         }
                     }
@@ -649,7 +650,9 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            showAddHint();
+                            isStartFace = true;
+                            //去除拉取考生信息
+//                            showAddHint();
                             return;
                         }
                     }
@@ -713,6 +716,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //        bs.recycle();
 //        bs = null;
     }
+
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);
@@ -731,6 +735,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //            TtsManager.getInstance().speak("拉取服务器数据失败，请重试");
 //        }
     }
+
     private boolean isNetface = false; //控制netFace()是否还没有走完  只有走完了才能再次调用哟
 
     public void netFace() {
@@ -840,7 +845,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (getActivity()!=null&&uploadDataDialog == null || !uploadDataDialog.isShowing()) {
+                if (getActivity() != null && uploadDataDialog == null || !uploadDataDialog.isShowing()) {
                     uploadDataDialog = new SweetAlertDialog(mContext).setTitleText(getString(R.string.student_nonentity))
                             .setContentText("是否进行服务器信息识别")
                             .setConfirmText(getString(R.string.confirm)).setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -880,11 +885,14 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                             OperateProgressBar.removeLoadingUiIfExist(getActivity());
                         }
                     });
+                if (mContext != null) {
+                    //下载学生
+                    Intent intent = new Intent(mContext, UpdateService.class);
+                    mContext.startService(intent);
+                }
                 isStartFace = true;
                 retryRecognizeDelayed(faceId);
-                //下载学生
-                Intent intent = new Intent(mContext, UpdateService.class);
-                mContext.startService(intent);
+
 
             }
 
@@ -919,7 +927,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                     if (!TextUtils.isEmpty(studentCode) && TextUtils.equals(student.getStudentCode(), studentCode)) {
                         compareListener.compareStu(student);
                     }
-                    if (!TextUtils.isEmpty(student.getFaceFeature())){
+                    if (!TextUtils.isEmpty(student.getFaceFeature())) {
                         registerInfoList.add(new FaceRegisterInfo(Base64.decode(student.getFaceFeature(), Base64.DEFAULT), student.getStudentCode()));
 
                     }
@@ -928,7 +936,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 
             }
         });
-        itemSubscriber.getItemStudent(null,TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL,"", studentCode);
+        itemSubscriber.getItemStudent(null, TestConfigs.getCurrentItemCode(), 1, StudentItem.EXAM_NORMAL, "", studentCode);
     }
 
     private onAFRCompareListener compareListener;

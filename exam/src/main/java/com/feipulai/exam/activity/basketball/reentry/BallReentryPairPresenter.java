@@ -88,4 +88,10 @@ public class BallReentryPairPresenter extends SitPullUpPairPresenter {
         super.changeFocusPosition(position);
         linker.startPair(position);
     }
+    public void setUsbLedType(int usbLedType){
+        setting.setUseLedType(usbLedType);
+    }
+    public int getUsbLedType(){
+        return setting.getUseLedType();
+    }
 }

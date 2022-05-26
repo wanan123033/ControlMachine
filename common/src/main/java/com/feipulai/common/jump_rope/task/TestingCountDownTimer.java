@@ -48,10 +48,11 @@ public class TestingCountDownTimer extends PreciseCountDownTimer {
     public void onFinish() {
         if (SoundPlayUtils.voiceSetting.getVoiceMode() == 0) {
             SoundPlayUtils.play(12);
-        } else {
+        } else if (SoundPlayUtils.voiceSetting.getVoiceMode() == 1) {
             SoundPlayUtils.play(17);
+        } else {
+            SoundPlayUtils.play(23);
         }
-
 
         if (listener != null) {
             listener.onTick(0);

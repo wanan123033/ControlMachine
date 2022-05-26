@@ -82,11 +82,15 @@ public class SoundPlayUtils {
             mSoundPlayer.load(mContext, R.raw.g_20, 1);// "20"         --------19
             mSoundPlayer.load(mContext, R.raw.g_30, 1);// "30"         --------20
             mSoundPlayer.load(mContext, R.raw.g_ready, 1);// "预备"         --------21
+            mSoundPlayer.load(mContext, R.raw.g_jump, 1);// "30"         --------22
+            mSoundPlayer.load(mContext, R.raw.g_stop, 1);// "预备"         --------23
         } else {
             mSoundPlayer.load(mContext, R.raw.b_10, 1);// "20"         --------18
             mSoundPlayer.load(mContext, R.raw.b_20, 1);// "20"         --------19
             mSoundPlayer.load(mContext, R.raw.b_30, 1);// "30"         --------20
             mSoundPlayer.load(mContext, R.raw.b_ready, 1);// "预备"         --------21
+            mSoundPlayer.load(mContext, R.raw.b_jump, 1);// "30"         --------22
+            mSoundPlayer.load(mContext, R.raw.b_stop, 1);// "预备"         --------23
         }
 
         return soundPlayUtils;

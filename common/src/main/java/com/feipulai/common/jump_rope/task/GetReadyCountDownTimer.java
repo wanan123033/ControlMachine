@@ -27,7 +27,8 @@ public class GetReadyCountDownTimer extends PreciseCountDownTimer {
     public void onTick(long tick) {
         if (tick <= 5) {
 
-            if (SoundPlayUtils.voiceSetting==null||SoundPlayUtils.voiceSetting.getVoiceMode() == 0) {
+            if (SoundPlayUtils.voiceSetting == null || SoundPlayUtils.voiceSetting.getVoiceMode() == 0
+                    || SoundPlayUtils.voiceSetting.getVoiceMode() == 2) {
                 SoundPlayUtils.play((int) tick);
             } else {
                 if (tick == 5) {
@@ -52,10 +53,12 @@ public class GetReadyCountDownTimer extends PreciseCountDownTimer {
 
     @Override
     public void onFinish() {
-        if (SoundPlayUtils.voiceSetting.getVoiceMode()==0){
+        if (SoundPlayUtils.voiceSetting.getVoiceMode() == 0) {
             SoundPlayUtils.play(11);
-        }else{
+        } else if (SoundPlayUtils.voiceSetting.getVoiceMode() == 1) {
             SoundPlayUtils.play(17);
+        } else {
+            SoundPlayUtils.play(22);
         }
 
 

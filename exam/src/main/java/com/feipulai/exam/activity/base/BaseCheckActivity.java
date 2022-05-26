@@ -384,12 +384,12 @@ public abstract class BaseCheckActivity
 //                    }
                     if (student.getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
                         if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
-                            if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() <= TestConfigs.getFullSkip()[0]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
                         } else {
-                            if (result.getResult() >= TestConfigs.getFullSkip()[0]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() >= TestConfigs.getFullSkip()[0]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
@@ -399,12 +399,12 @@ public abstract class BaseCheckActivity
                     } else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null) {//女子满分跳过
 
                         if (machineCode == ItemDefault.CODE_ZQYQ || machineCode == ItemDefault.CODE_LQYQ) {
-                            if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() <= TestConfigs.getFullSkip()[1]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
                         } else {
-                            if (result.getResult() >= TestConfigs.getFullSkip()[1]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() >= TestConfigs.getFullSkip()[1]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }

@@ -157,7 +157,7 @@ public class IndividualCheckFragment
         ScannerGunManager.getInstance().setScanListener(new ScannerGunManager.OnScanListener() {
             @Override
             public void onResult(String code) {
-                LogUtils.operation("扫描结果："+code);
+                LogUtils.operation("扫描结果：" + code);
                 boolean needAdd = checkQulification(code, STUDENT_CODE);
                 if (needAdd) {
                     Student student = new Student();
@@ -395,9 +395,9 @@ public class IndividualCheckFragment
         int max = TestConfigs.getMaxTestCount(student.getStudentCode());
 
         if (results != null && results.size() >= max) {
-            showDialog(student,studentItem,results);
+            showDialog(student, studentItem, results);
             return false;
-        }else{
+        } else {
             int fullSkip[] = TestConfigs.getFullSkip();
             if (fullSkip != null) {
                 for (RoundResult result : results) {
@@ -410,27 +410,27 @@ public class IndividualCheckFragment
 //                    }
                     if (student.getSex() == 0 && TestConfigs.getFullSkip() != null) {//男子满分跳过
                         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-                            if (result.getResult() <= TestConfigs.getFullSkip()[0]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() <= TestConfigs.getFullSkip()[0]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
                         } else {
-                            if (result.getResult() >= TestConfigs.getFullSkip()[0]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() >= TestConfigs.getFullSkip()[0]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
                         }
 
 
-                    }else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null  ) {//女子满分跳过
+                    } else if (student.getSex() == 1 && TestConfigs.getFullSkip() != null) {//女子满分跳过
 
                         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZQYQ || TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-                            if (result.getResult() <= TestConfigs.getFullSkip()[1]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() <= TestConfigs.getFullSkip()[1]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
                         } else {
-                            if (result.getResult() >= TestConfigs.getFullSkip()[1]) {
+                            if (result.getResultState() == RoundResult.RESULT_STATE_NORMAL && result.getResult() >= TestConfigs.getFullSkip()[1]) {
                                 showDialog(student, studentItem, results);
                                 return false;
                             }
@@ -447,6 +447,7 @@ public class IndividualCheckFragment
         checkInUIThread(student, studentItem);
         return false;
     }
+
     private void showDialog(final Student student, final StudentItem studentItem, final List<RoundResult> results) {
         SystemSetting setting = SettingHelper.getSystemSetting();
         if (setting.isAgainTest() && setting.isResit()) {
@@ -490,6 +491,7 @@ public class IndividualCheckFragment
             InteractUtils.toastSpeak(getActivity(), "该考生已测试");
         }
     }
+
     @Override
     public void onResponseTime(String responseTime) {
 

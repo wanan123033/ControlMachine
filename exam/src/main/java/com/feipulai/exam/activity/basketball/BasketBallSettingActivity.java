@@ -408,6 +408,7 @@ public class BasketBallSettingActivity extends BaseTitleActivity implements Comp
             case R.id.tv_accuracy_use:
                 switch (rgAccuracy.getCheckedRadioButtonId()) {
                     case R.id.rb_tenths: //十分位
+
                         manager.sendSetPrecision(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etSensitivity.getText().toString()),
                                 this.setting.getInterceptSecond(), 0);
 

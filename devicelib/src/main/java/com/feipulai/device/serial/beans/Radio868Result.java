@@ -28,6 +28,12 @@ public class Radio868Result {
             LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
             return;
         }
+        if (MachineCode.machineCode != ItemDefault.CODE_TS) {
+            if (data[1] > 0 && data[1] < data.length) {
+                data = Arrays.copyOf(data, data[1]);
+            }
+        }
+
         // 不处理其他非当前测试项目的噪音信息
         switch (MachineCode.machineCode) {
             // 跳绳
@@ -125,6 +131,9 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_MG:
                 if (data[0] == 0x54 && data[1] == 0x55 && data[5] == 0x01) {//[00] [01]：包头高字节0x54   低字节0x55
+                    if (data[3] > 0 && data[3] < data.length) {
+                        data = Arrays.copyOf(data, data[3]);
+                    }
                     if (data[6] == 0x00) {
                         switch (data[7]) {
                             case 0x00:
@@ -266,7 +275,7 @@ public class Radio868Result {
 
                     }
 
-                } else if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                } else if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && data[1] <= data.length && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
                     runResult(data);
                 }
                 break;
@@ -401,7 +410,7 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
             case ItemDefault.CODE_ZFP:
-                if ((data[0] & 0xff) == 0xAA && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && data[1] <= data.length && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
                     runResult(data);
                 }
                 break;

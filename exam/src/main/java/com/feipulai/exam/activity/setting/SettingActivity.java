@@ -3,6 +3,7 @@ package com.feipulai.exam.activity.setting;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -60,6 +61,7 @@ import com.feipulai.exam.utils.bluetooth.BlueToothListActivity;
 import com.google.gson.Gson;
 import com.orhanobut.logger.utils.LogUtils;
 import com.ww.fpl.libarcface.common.Constants;
+import com.ww.fpl.libarcface.faceserver.FaceServer;
 import com.ww.fpl.libarcface.util.ConfigUtil;
 
 import java.util.ArrayList;
@@ -362,6 +364,8 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                     boolean isEngine = ConfigUtil.getISEngine(this);
                     if (!isEngine) {
                         ToastUtils.showShort("请在参数设置激活人脸识别");
+                    }else{
+                        FaceServer.getInstance().init(SettingActivity.this);
                     }
                 } else {
                     llAfr.setVisibility(View.GONE);
@@ -440,8 +444,11 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort(getString(R.string.active_success));
                             ConfigUtil.setISEngine(SettingActivity.this, true);
+                            FaceServer.getInstance().init(SettingActivity.this);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort(getString(R.string.already_activated));
+                            ConfigUtil.setISEngine(SettingActivity.this, true);
+                            FaceServer.getInstance().init(SettingActivity.this);
                         } else if (activeCode == 777888) {
                             ToastUtils.showShort("激活无可用KEY，请联系管理员");
                         } else {
@@ -623,7 +630,14 @@ public class SettingActivity extends BaseTitleActivity implements TextWatcher {
                 IntentUtil.gotoActivity(this, AccountSettingActivity.class);
                 break;
             case R.id.btn_voice_setting://发令语音
-                IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
+                if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("mode3", true);
+                    IntentUtil.gotoActivity(this, VoiceSettingActivity.class, bundle);
+                } else {
+                    IntentUtil.gotoActivity(this, VoiceSettingActivity.class);
+                }
+
                 break;
             case R.id.sw_group_check:  //分组检录
                 systemSetting.setGroupCheck(sw_group_check.isChecked());

@@ -69,6 +69,8 @@ public class LEDManager {
         machineCodesForLed.put(ItemDefault.CODE_FHL, 8);//肺活量
         machineCodesForLed.put(ItemDefault.CODE_WLJ, 6);//握力
         machineCodesForLed.put(ItemDefault.CODE_SPORT_TIMER, 12);//运动计时
+        machineCodesForLed.put(ItemDefault.CODE_LQYQ, 0);//篮球计时
+        machineCodesForLed.put(ItemDefault.CODE_ZQYQ, 0);//
     }
 
     /**
@@ -370,7 +372,7 @@ public class LEDManager {
         cmd[3] = (byte) (hostId & 0xff);
         cmd[4] = (byte) (ledId & 0xff);
         cmd[5] = (byte) 0xa2;
-//        if (isColor && versions == LED_VERSION_4_8) {
+//        if (versions == LED_VERSION_4_8) {
 //            cmd[6] = (byte) (clearScreen ? 0x03 : 0x000);
 //        } else {
 //            cmd[6] = (byte) (clearScreen ? 0x01 : 0x000);
@@ -381,7 +383,7 @@ public class LEDManager {
         cmd[9] = (byte) (x & 0xff);
         cmd[10] = (byte) (y & 0xff);
         System.arraycopy(data, 0, cmd, 11, data.length);
-        if (isColor && versions == LED_VERSION_4_8) {
+        if (versions == LED_VERSION_4_8) {
             cmd[11 + data.length] = (byte) color;
             cmd[12 + data.length] = (byte) 0xEE;
         } else {
@@ -579,6 +581,34 @@ public class LEDManager {
 
     public void showString(int hostId, byte[] data, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
         showString(MachineCode.machineCode, hostId, 1, data, x, y, clearScreen, update, isColor, color);
+    }
+
+    /**
+     * @param timeShow    true 显示计时   false不显示计时
+     * @param startTime   true 启动计时  false 停止计时
+     * @param openTime    true 使用currTime时间戳开始计时  false 不使用
+     * @param currTime    时间戳
+     * @param showFormat  显示格式：1十分秒，2百分秒，3千分秒
+     * @param isSmallText true 使用小体字  false 使用大体字
+     * @param lineSum     行号
+     */
+    public void ballTimeControl(int hostId, boolean timeShow, boolean startTime, boolean openTime, long currTime, int showFormat, boolean isSmallText, int lineSum) {
+        byte[] command = new byte[]{(byte) 0xAA, 0x00, (byte) 0xA1, 0x00, 0x1, (byte) 0xC0, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        command[3] = (byte) hostId;
+//        command[6] = (byte) (timeShow ? 0 : 03);
+        command[7] = (byte) (timeShow ? 1 : 0);
+        command[8] = (byte) (startTime ? 1 : 0);
+        command[9] = (byte) (openTime ? 1 : 0);
+        command[10] = 1;
+        command[11] = (byte) showFormat;
+        command[12] = (byte) (isSmallText ? 1 : 2);
+        command[13] = (byte) lineSum;
+        if (openTime) {
+            command[14] = (byte) (currTime >> 16 & 0xff);
+            command[15] = (byte) (currTime >> 8 & 0xff);
+            command[16] = (byte) (currTime & 0xff);
+        }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
     }
 
     public void showString(int hostId, String str, int x, int y, boolean clearScreen, boolean update, boolean isColor, int color) {
