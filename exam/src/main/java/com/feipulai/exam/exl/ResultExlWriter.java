@@ -40,6 +40,7 @@ public class ResultExlWriter extends ExlWriter {
         writeData.clear();
         String[] headers = new String[13 + (testCount * 5)];
         String[] first = new String[]{"编号", "准考证号", "姓名", "性别", "学校名称", "班级", "项目", "日程", "组号", "考试状态", "备注", "决定成绩"};
+        first[first.length - 1] = "决定成绩(" + TestConfigs.sCurrentItem.getUnit() + ")";
         System.arraycopy(first, 0, headers, 0, first.length);
 //        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
 //            headers = new String[]{"学籍号", "姓名", "性别", "项目", "成绩", "轮次", "测试时间", "成绩状态", "考试类型", "拌绳次数", "备注"};
@@ -47,7 +48,7 @@ public class ResultExlWriter extends ExlWriter {
 //            headers = new String[]{"学籍号", "姓名", "性别", "项目", "成绩", "轮次", "测试时间", "成绩状态", "考试类型", "备注"};
 //        }
         for (int i = 0; i < testCount; i++) {
-            headers[11 + (i * 5) + 1] = "第" + (i + 1) + "轮成绩";
+            headers[11 + (i * 5) + 1] = "第" + (i + 1) + "轮成绩(" + TestConfigs.sCurrentItem.getUnit() + ")";
             headers[11 + (i * 5) + 2] = "第" + (i + 1) + "轮判罚值";
             headers[11 + (i * 5) + 3] = "第" + (i + 1) + "轮测试时间";
             headers[11 + (i * 5) + 4] = "第" + (i + 1) + "轮绊绳次数";
@@ -110,9 +111,9 @@ public class ResultExlWriter extends ExlWriter {
                 for (int k = 0; k < roundResultBeans.size(); k++) {
                     if (roundResultBeans.get(k).getResultType() == 1) {
 
-                        rowData[11] = ResultDisplayUtils.getStrResultForDisplay(roundResultBeans.get(k).getResult());
+                        rowData[11] = ResultDisplayUtils.getStrResultForDisplay(roundResultBeans.get(k).getResult(),false);
                     }
-                    rowData[11 + (k * 5) + 1] = ResultDisplayUtils.getStrResultForDisplay(roundResultBeans.get(k).getResult());
+                    rowData[11 + (k * 5) + 1] = ResultDisplayUtils.getStrResultForDisplay(roundResultBeans.get(k).getResult(),false);
                     rowData[11 + (k * 5) + 2] = roundResultBeans.get(k).getPenalty() + "";
                     rowData[11 + (k * 5) + 3] = DateUtil.formatTime2(Long.valueOf(roundResultBeans.get(k).getTestTime()), "yyyy-MM-dd HH:mm:ss");
                     rowData[11 + (k * 5) + 4] = roundResultBeans.get(k).getStumbleCount() + "";
