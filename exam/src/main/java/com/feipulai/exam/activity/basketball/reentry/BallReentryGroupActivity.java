@@ -3,7 +3,6 @@ package com.feipulai.exam.activity.basketball.reentry;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Paint;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -15,9 +14,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.arcsoft.face.Face3DAngle;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.utils.DateUtil;
-import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -26,18 +26,15 @@ import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.Basketball868Result;
-import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.AgainTestDialog;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
-import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.basketball.TimeUtil;
 import com.feipulai.exam.activity.basketball.adapter.BallReentryResultAdapter;
-import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
@@ -141,6 +138,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
     private EditResultDialog editResultDialog;
     List<BaseStuPair> stuPairs;
     private LEDManager ledManager;
+    private MyHandler myHandler = new MyHandler(this);
 
     @Override
     protected int setLayoutResID() {
@@ -155,7 +153,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallReentryFacade(setting.getTestType(), this);
+        facade = new BasketBallReentryFacade(setting.getTestType(), setting.getAutoPenaltyTime(), setting.getUseLedType(), this);
         RadioManager.getInstance().setOnRadioArrived(facade);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
@@ -202,7 +200,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 if (!isConfigurableNow()) {
                     resultAdapter.setSelectPosition(position);
                     resultAdapter.notifyDataSetChanged();
-                    if (resultList.get(position).getReentry() > 0) {
+                    if (resultList.get(position).getReentry() >= 0) {
                         tvReentryRemove.setVisibility(View.VISIBLE);
                         tvReentryAdd.setVisibility(View.GONE);
                     } else {
@@ -219,9 +217,9 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
 
 
         fristCheckTest();
-        if (setting.getUseLedType() == 1){
+        if (setting.getUseLedType() == 1) {
             cbLed.setVisibility(View.GONE);
-        }else {
+        } else {
             cbLed.setVisibility(View.VISIBLE);
         }
     }
@@ -264,7 +262,6 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         timerUtil.stop();
         facade.finish();
         if (setting.getTestType() == 0) {
-//            UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
             ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
         } else {
             ballManager.setRadioFreeStates(SettingHelper.getSystemSetting().getHostId());
@@ -392,26 +389,17 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
     @Override
     public void triggerStart(BasketballResult basketballResult) {
         LogUtils.operation("篮球开始计时");
+        if (state == WAIT_STOP) {
+            return;
+        }
         state = TESTING;
         txtDeviceStatus.setText("计时");
         testDate = System.currentTimeMillis() + "";
         setOperationUI();
-        switch (TestConfigs.sCurrentItem.getDigital()) {
-            case 1:
-                timerUtil.startTime(100);
-                break;
-            case 2:
-                timerUtil.startTime(10);
-                break;
-            case 3:
-                timerUtil.startTime(1);
-                break;
-            default:
-                timerUtil.startTime(100);
-                break;
-        }
-        if (setting.getUseLedType() == 1){
-            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,2,false,2);
+
+        timerUtil.startTime(70);
+        if (setting.getUseLedType() == 1) {
+            ledManager.ledStartTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
         }
     }
 
@@ -529,11 +517,22 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
             tvResult.setText(time);
             if (setting.getUseLedType() == 0) {
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-            }else {
-                ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),result.getResult(),getAccuracy());
+            } else {
+                int color = isFullSkip(result.getResult(), RoundResult.RESULT_STATE_NORMAL) ? SettingHelper.getSystemSetting().getLedColor() : SettingHelper.getSystemSetting().getLedColor2();
+                ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),
+                        DateUtil.caculateTimeLong(result.getResult(), TestConfigs.sCurrentItem.getDigital(), TestConfigs.sCurrentItem.getCarryMode()), getAccuracy(), color);
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),
+                        DateUtil.caculateTimeLong(result.getResult(), TestConfigs.sCurrentItem.getDigital(), TestConfigs.sCurrentItem.getCarryMode()), getAccuracy(), color);
+
             }
         }
     }
+
     private int getAccuracy() {
         switch (TestConfigs.sCurrentItem.getDigital()) {
             case 1:
@@ -544,6 +543,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 return 2;
         }
     }
+
     @Override
     public void getStatusStop(BasketballResult result) {
         LogUtils.all("篮球停止计时:状态 = " + state + ",成绩 = " + result);
@@ -559,36 +559,41 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             if (setting.getUseLedType() == 0)
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         } else {
             state = WAIT_STOP;
             setOperationUI();
             tvResult.setText(DateUtil.caculateFormatTime(0, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital()));
             if (setting.getUseLedType() == 0)
-            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
+                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         }
-        if (setting.getUseLedType() == 1){
-            ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),timerDate,getAccuracy());
+        if (setting.getUseLedType() == 1) {
+            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
         }
     }
 
     @Override
     public void timer(Long time) {
-
-        switch (TestConfigs.sCurrentItem.getDigital()) {
-            case 1:
-                timerDate = time * 100;
-                break;
-            case 2:
-                timerDate = time * 10;
-                break;
-            case 3:
-                timerDate = time;
-                break;
-            default:
-                timerDate = time * 10;
-                break;
-        }
+//        long chronometer;
+//        switch (TestConfigs.sCurrentItem.getDigital()) {
+//            case 1:
+//                chronometer = time * 100;
+//                break;
+//            case 2:
+//                chronometer = time * 10;
+//                break;
+//            case 3:
+//                chronometer = time;
+//                break;
+//            default:
+//                chronometer = time * 10;
+//                break;
+//        }
+//        if (chronometer - topChronometer >= 80) {
+//
+//            topChronometer = chronometer;
+//        }
+        timerDate = time * 70;
         if (state == TESTING) {
             tvResult.setText(DateUtil.caculateTime(timerDate, TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital(), 0));
         }
@@ -598,6 +603,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
     @Override
     public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
         if (!isConfigurableNow()) {
+            myHandler.removeCallbacksAndMessages(null);
             resultAdapter.setSelectPosition(-1);
             stuPairAdapter.setTestPosition(i);
             rvTestingPairs.scrollToPosition(i);
@@ -633,11 +639,12 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                         machineResult.setItemCode(TestConfigs.getCurrentItemCode());
                         machineResult.setMachineCode(TestConfigs.sCurrentItem.getMachineCode());
                         machineResult.setTestNo(1);
-                        machineResult.setRoundNo(resultAdapter.getSelectPosition());
+                        machineResult.setRoundNo(resultAdapter.getSelectPosition() + 1);
                         machineResult.setStudentCode(student.getStudentCode());
                         machineResult.setResult(0);
                         machineResult.setResultType(1);
                         machineResult.setResultState(1);
+                        machineResult.setGroupId(group.getId());
                         DBManager.getInstance().insterMachineResult(machineResult);
 
                         testResult.setReentry(0);
@@ -660,7 +667,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismissWithAnimation();
-                        DBManager.getInstance().deleteStuMachineResults(student.getStudentCode(), 1, roundNo, RoundResult.DEAFULT_GROUP_ID);
+                        DBManager.getInstance().deleteStuMachineResultsReentry(student.getStudentCode(), 1, resultAdapter.getSelectPosition() + 1, group.getId());
                         testResult.setReentry(-999);
                         resultAdapter.notifyDataSetChanged();
                         tvReentryRemove.setVisibility(View.GONE);
@@ -683,19 +690,17 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         switch (view.getId()) {
             case R.id.txt_waiting://等待发令
                 LogUtils.operation("篮球点击了等待发令");
+//                facade.awaitState();
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP)) {
                     if (isExistTestPlace()) {
                         if (facade.isDeviceNormal()) {
+                            facade.awaitState();
                             if (setting.getUseLedType() == 0) {
                                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), Paint.Align.LEFT);
-                            }else {
-                                ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "第"+roundNo+"次", 0, true, true, LEDManager.RIGHT, 1);
-                                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(position()).getStudent().getLEDStuName(), 0, false, true, LEDManager.LEFT, 1);
-
+                            } else {
+                                showBeginLed(pairs.get(position()).getStudent().getLEDStuName());
                             }
                             timerUtil.stop();
-                            facade.awaitState();
                             testDate = System.currentTimeMillis() + "";
                         } else {
                             toastSpeak("存在未连接设备，请配对");
@@ -726,7 +731,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                     if (setting.getUseLedType() == 0)
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
                     else
-                        ballManager.setRadioLedStartTimeTo(SettingHelper.getSystemSetting().getHostId(),timerDate,getAccuracy());
+                        ballManager.setRadioLedStartTimeTo(SettingHelper.getSystemSetting().getHostId(), timerDate, getAccuracy());
                     state = TESTING;
                     setOperationUI();
                 }
@@ -737,6 +742,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 getStatusStop(null);
+                facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                 break;
             case R.id.tv_punish_add: //违例+
                 LogUtils.operation("篮球点击了违例+");
@@ -774,6 +780,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                     return;
                 }
                 timerUtil.stop();
+                facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                     sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
@@ -806,7 +813,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 if (state == TESTING) {
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
-
+                    facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                     if (group.getIsTestComplete() == Group.FINISHED) {
                         prepareForFinish();
                     } else {
@@ -818,10 +825,10 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                         if (setting.getUseLedType() == 0) {
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
-                        }else {
+                        } else {
                             String title = TestConfigs.machineNameMap.get(machineCode)
                                     + " " + SettingHelper.getSystemSetting().getHostId();
-                            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
+                            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
                             ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, title, 0, true, true, LEDManager.MIDDLE);
                             ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, "请检录", 1, false, true, LEDManager.MIDDLE);
                             ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, "菲普莱体育", 3, 3, false, true);
@@ -945,9 +952,12 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 roundNo = updateRoundNo;
                 resultAdapter.notifyDataSetChanged();
                 prepareForBegin();
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
-
+                if (setting.getUseLedType() == 0) {
+                    ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
+                    ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
+                } else {
+                    showBeginLed(student.getLEDStuName());
+                }
             }
         });
         dialog.show(getSupportFragmentManager(), "AgainTestDialog");
@@ -1162,7 +1172,13 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
 
         }
         resultAdapter.notifyDataSetChanged();
-
+        if (resultList.get(resultAdapter.getSelectPosition()).getReentry() >= 0) {
+            tvReentryRemove.setVisibility(View.VISIBLE);
+            tvReentryAdd.setVisibility(View.GONE);
+        } else {
+            tvReentryRemove.setVisibility(View.GONE);
+            tvReentryAdd.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -1311,7 +1327,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
 
 
         uploadResults();
-
+        state = WAIT_CHECK_IN;
         nextTest();
 
     }
@@ -1323,7 +1339,21 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
         if (resultAdapter.getSelectPosition() == -1)
             return;
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), testResult.getPenalizeNum() + "", Paint.Align.LEFT);
+        if (setting.getUseLedType() == 0) {
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(position()).getStudent().getLEDStuName(), testResult.getPenalizeNum() + "", Paint.Align.LEFT);
+
+        } else {
+            try {
+                byte[] buffer = new byte[16];
+                byte[] nameByte = pairs.get(position()).getStudent().getLEDStuName().getBytes("GB2312");
+                System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
+                nameByte = ("第" + (resultAdapter.getSelectPosition() + 1) + "次").getBytes("GB2312");
+                System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
+                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 String time = ResultDisplayUtils.getStrResultForDisplay(testResult.getResult());
@@ -1334,33 +1364,35 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                 }
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-                }else {
-                    ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),testResult.getResult(),getAccuracy());
+                } else {
+                    int color = isFullSkip(testResult.getResult(), testResult.getResultState()) ? SettingHelper.getSystemSetting().getLedColor() : SettingHelper.getSystemSetting().getLedColor2();
+                    ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),
+                            DateUtil.caculateTimeLong(testResult.getResult(), TestConfigs.sCurrentItem.getDigital(), TestConfigs.sCurrentItem.getCarryMode()), getAccuracy(), color);
                 }
                 break;
             case RoundResult.RESULT_STATE_FOUL:
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"犯规",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "犯规", 2, false, true, LEDManager.MIDDLE);
                 }
                 break;
             case RoundResult.RESULT_STATE_BACK:
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"中退",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "中退", 2, false, true, LEDManager.MIDDLE);
 
                 }
                 break;
             case RoundResult.RESULT_STATE_WAIVE:
-                if (setting.getUseLedType() == 0){
+                if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"弃权",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "弃权", 2, false, true, LEDManager.MIDDLE);
 
                 }
                 break;
@@ -1407,10 +1439,35 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
 //                UdpLEDUtil.getLedByte(pairs.get(position()).getStudent().getSpeakStuName(), Paint.Align.CENTER)));
 //        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_DIS_LED(2,
 //                UdpLEDUtil.getLedByte("", Paint.Align.RIGHT)));
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
+        if (setting.getUseLedType() == 0) {
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
+        } else {
+            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+            showBeginLed(student.getLEDStuName());
+        }
     }
 
+    private void showBeginLed(final String stuName) {
+        DataBaseExecutor.addTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    byte[] buffer = new byte[16];
+                    byte[] nameByte = stuName.getBytes("GB2312");
+                    System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
+                    nameByte = ("第" + roundNo + "次").getBytes("GB2312");
+                    System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "准备", 2, false, true, LEDManager.MIDDLE);
+//                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "", 2, false, true, LEDManager.LEFT, 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
 
     /**
      * 结束 下一位
@@ -1434,7 +1491,7 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
     }
 
     private void nextTest() {
-        new Handler().postDelayed(new Runnable() {
+        myHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //连续测试
@@ -1641,13 +1698,10 @@ public class BallReentryGroupActivity extends BaseTitleActivity implements Baske
                     LogUtils.operation("篮球考生" + student.getStudentName() + "第" + roundNo + "轮进行违规返回");
                 }
                 state = WAIT_CONFIRM;
-                if (setting.getUseLedType() == 1) {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "第"+roundNo+"次", 0, true, true, LEDManager.RIGHT, 1);
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getLEDStuName(), 0, false, true, LEDManager.LEFT, 1);
-                    ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                }else {
+                if (setting.getUseLedType() == 0) {
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
+                } else {
+                    ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(), 0, getAccuracy());
                 }
                 sleep();
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);

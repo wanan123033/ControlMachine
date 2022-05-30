@@ -65,7 +65,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
+public abstract class BaseMoreGroupActivity extends BaseCheckActivity {
     @BindView(R.id.txt_group_name)
     TextView txtGroupName;
     @BindView(R.id.rv_device_list)
@@ -180,14 +180,17 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
                                 ResultDisplayUtils.getStrResultForDisplay(iRoundResult.getResult()));
 //                        deviceDetail.getStuDevicePair().setTimeResult(timeResult);
                         deviceListAdapter.notifyDataSetChanged();
-                        if (iRoundResult.getRoundNo() < setTestCount()) {
-                            deviceDetail.setRound(iRoundResult.getRoundNo());
+                        if (iRoundResult.getRoundNo() == deviceDetail.getRound()) {
+                            if (iRoundResult.getRoundNo() < setTestCount()) {
+                                deviceDetail.setRound(iRoundResult.getRoundNo());
+                            }
+                            deviceListAdapter.notifyDataSetChanged();
+                            pair.setResult(iRoundResult.getResult());
+                            pair.setResultState(iRoundResult.getResultState());
+                            updateResultLed(pair, i);
+                            matchStudent(pair, i);
                         }
-                        deviceListAdapter.notifyDataSetChanged();
-                        pair.setResult(iRoundResult.getResult());
-                        pair.setResultState(iRoundResult.getResultState());
-                        updateResultLed(pair, i);
-                        matchStudent(pair, i);
+
                     }
                 }
                 //更新一对一数据
@@ -391,15 +394,15 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
             return;
         mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(), stuPair.getTrackNo() + "   " + stuPair.getStudent().getLEDStuName(), 0, 0, true, false);
         int color = 0;
-        if (stuPair.isFullMark()){
+        if (stuPair.isFullMark()) {
             color = SettingHelper.getSystemSetting().getLedColor();
-        }else {
+        } else {
             color = SettingHelper.getSystemSetting().getLedColor2();
         }
         for (int i = 0; i < stuPair.getTimeResult().length; i++) {
             mLEDManager.showString(SettingHelper.getSystemSetting().getHostId(),
                     String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
-                    0, i + 1, false, true,color);
+                    0, i + 1, false, true, color);
 
 //            mLEDManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1,
 //                    String.format("%-4s", String.format("第%1$d次：", i + 1)) + (TextUtils.isEmpty(stuPair.getTimeResult()[i]) ? "" : stuPair.getTimeResult()[i]),
@@ -1220,7 +1223,8 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
 //            deviceListAdapter.setPenalize(isPenalize);
 //            deviceDetails.get(deviceIndex).setConfirmVisible(true);
 //            deviceListAdapter.notifyDataSetChanged();
-            doResult(pair, deviceIndex);
+            if (stuAdapter.getTestPosition() != -1)
+                doResult(pair, deviceIndex);
         }
 
         if (deviceDetails.get(deviceIndex).getStuDevicePair().getBaseDevice() != null) {
@@ -1398,13 +1402,8 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
                         continuousTestNext(deviceIndex);
                     } else {//继续测试同一个
                         //是否为重测，重测直接下一位
-                        boolean isAllTest = true;
-                        for (String s : pair.getTimeResult()) {
-                            if (TextUtils.isEmpty(s)) {
-                                isAllTest = false;
-                            }
-                        }
-                        if (isAllTest) {
+
+                        if (isStuAllTest(pair.getTimeResult())) {
                             //测试下一个
                             continuousTestNext(deviceIndex);
                             return;
@@ -1659,6 +1658,15 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
         return false;
     }
 
+    private boolean isStuAllTest(String[] timeResult) {
+        boolean isAllTest = true;
+        for (String s : timeResult) {
+            if (TextUtils.isEmpty(s)) {
+                isAllTest = false;
+            }
+        }
+        return isAllTest;
+    }
 
     private void identityMarkTest() {
 
@@ -1668,7 +1676,7 @@ public abstract class  BaseMoreGroupActivity extends BaseCheckActivity {
         if (!SettingHelper.getSystemSetting().isAutoPrint())
             return;
         //是否已全部次数测试完成，非满分跳过
-        if (getRoundNo(baseStuPair.getTimeResult()) < setTestCount() && !baseStuPair.isFullMark()) {
+        if (!isStuAllTest(baseStuPair.getTimeResult()) && !baseStuPair.isFullMark()) {
             return;
         }
         print(baseStuPair);

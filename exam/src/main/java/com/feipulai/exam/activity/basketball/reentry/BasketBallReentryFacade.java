@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.feipulai.common.jump_rope.task.GetDeviceStatesTask;
 import com.feipulai.common.utils.DateUtil;
+import com.feipulai.common.utils.LogUtil;
 import com.feipulai.device.ic.utils.ItemDefault;
 import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.manager.SportTimerManger;
@@ -57,7 +58,21 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
     private int patternTypes;
     private SportTimerManger manager;
     private volatile int[] sendIndex;
-    private int testState = 0;
+    private int getDeviceCount = 0;
+    private int autoAddTime = 0;
+    private int useLedType = 0;//使用LED類型 0 標配 1 通用
+    private int testState = 0; //0 空闲  1 等待 2 计时
+    public static final int TEST_STATE_FREE = 0;
+    public static final int TEST_STATE_BEGIN = 1;
+    public static final int TEST_STATE_TIME = 2;
+
+    public void setTestState(int testState) {
+        this.testState = testState;
+    }
+
+    public int getUseLedType() {
+        return useLedType;
+    }
 
     public void setDeviceVersion(int deviceVersion) {
         this.deviceVersion = deviceVersion;
@@ -67,9 +82,11 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
         this.interceptSecond = interceptSecond;
     }
 
-    public BasketBallReentryFacade(int patternType, final BasketBallListener.BasketBallResponseListener listener) {
+    public BasketBallReentryFacade(int patternType, int autoAddTime, final int useLedType, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
+        this.autoAddTime = autoAddTime;
         this.patternTypes = patternType;
+        this.useLedType = useLedType;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
         manager = new SportTimerManger();
@@ -78,39 +95,55 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
         mGetDeviceStatesTask = new GetDeviceStatesTask(new GetDeviceStatesTask.OnGettingDeviceStatesListener() {
             @Override
             public void onGettingState(int position) {
-                if (position == 0) {
-                    ballManager.getRadioLedState(SettingHelper.getSystemSetting().getHostId());
-                } else {
+                if (testState == TEST_STATE_BEGIN) {//等待只查起点
                     if (nearResult != null && farResult != null && nearResult.getState() == 3 && farResult.getState() == 3) {
-                        manager.getRecentCache(position, SettingHelper.getSystemSetting().getHostId(), sendIndex[position]);
+                        manager.getRecentCache(1, SettingHelper.getSystemSetting().getHostId(), sendIndex[position]);
                     } else {
-                        manager.getDeviceState(position, SettingHelper.getSystemSetting().getHostId());
+                        manager.getDeviceState(1, SettingHelper.getSystemSetting().getHostId());
                     }
-
-
+                } else {
+                    if (position == 0) {
+                        if (useLedType == 0)
+                            ballManager.getRadioLedState(SettingHelper.getSystemSetting().getHostId());
+                    } else {
+                        if (nearResult != null && farResult != null && nearResult.getState() == 3 && farResult.getState() == 3) {
+                            manager.getRecentCache(position, SettingHelper.getSystemSetting().getHostId(), sendIndex[position]);
+                        } else {
+                            manager.getDeviceState(position, SettingHelper.getSystemSetting().getHostId());
+                        }
+                    }
+                }
+                if (testState == TEST_STATE_FREE) {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
 
             @Override
             public void onStateRefreshed() {
-                int oldState;
-                for (int i = 0; i < deviceStateList.size(); i++) {
-                    BallDeviceState deviceState = deviceStateList.get(i);
-                    oldState = deviceState.getState();
-                    if (mCurrentConnect[deviceState.getDeviceId()] == 0
-                            && oldState != BaseDeviceState.STATE_DISCONNECT
-                            && oldState != BaseDeviceState.STATE_CONFLICT) {
-                        deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
-                        EventBus.getDefault().post(new BaseEvent(deviceState, EventConfigs.BALL_STATE_UPDATE));
+                if (getDeviceCount == 1) {
+                    int oldState;
+                    for (int i = 0; i < deviceStateList.size(); i++) {
+                        BallDeviceState deviceState = deviceStateList.get(i);
+                        oldState = deviceState.getState();
+                        if (mCurrentConnect[deviceState.getDeviceId()] == 0
+                                && oldState != BaseDeviceState.STATE_DISCONNECT
+                                && oldState != BaseDeviceState.STATE_CONFLICT) {
+                            deviceState.setState(BaseDeviceState.STATE_DISCONNECT);
+                            EventBus.getDefault().post(new BaseEvent(deviceState, EventConfigs.BALL_STATE_UPDATE));
+                        }
                     }
+                    mCurrentConnect = new int[getBallDeviceCount()];
+                    getDeviceCount = 0;
+
+                } else {
+                    getDeviceCount++;
                 }
-                mCurrentConnect = new int[getBallDeviceCount()];
+
             }
 
             @Override
@@ -136,42 +169,86 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
 
     }
 
+    private boolean isAwaitTrue = true;
+
     public void awaitState() {
-        //设置计时状态
-        ballManager.setLedShowData(SettingHelper.getSystemSetting().getHostId(), "", 2, Paint.Align.CENTER);
-        manager.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
-        manager.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
-        for (int i = 0; i < getBallDeviceCount(); i++) {
-            manager.getDeviceState(i + 1, SettingHelper.getSystemSetting().getHostId());
-        }
+        isAwaitTrue = true;
         nearResult = null;
         farResult = null;
         ledResult = null;
-        int time = TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ ? 500 : 700;
-        new Handler().postDelayed(new Runnable() {
+        manager.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+        manager.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 1);
+        for (int i = 1; i < getBallDeviceCount(); i++) {
+            manager.getDeviceState(i, SettingHelper.getSystemSetting().getHostId());
+        }
+//        mExecutor.execute(mGetDeviceStatesTask);
+        new Thread(new Runnable() {
             @Override
             public void run() {
-
-                if (nearResult != null && farResult != null && nearResult.getState() == 3 && farResult.getState() == 3) {
-                    listener.getDeviceStatus(2);
-                    ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
-                    isledStartTime = false;
-                    if (timeRountList != null) {
-                        timeRountList.clear();
+                while (true) {
+                    if (isAwaitTrue) {
+                        if (nearResult != null && farResult != null && nearResult.getState() == 3 && farResult.getState() == 3) {
+                            testState = TEST_STATE_BEGIN;
+                            listener.getDeviceStatus(2);
+                            ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                            ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
+                            isledStartTime = false;
+                            if (timeRountList != null) {
+                                timeRountList.clear();
+                            }
+                            if (numResult != null) {
+                                numResult.clear();
+                            }
+                            timeRountList = new ArrayList<>();
+                            numResult = new HashMap<>();
+                            for (int i = 0; i < sendIndex.length; i++) {
+                                sendIndex[i] = 1;
+                            }
+                            isAwaitTrue = false;
+                            return;
+                        }
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        return;
                     }
-                    if (numResult != null) {
-                        numResult.clear();
-                    }
-                    timeRountList = new ArrayList<>();
-                    numResult = new HashMap<>();
-                    for (int i = 0; i < sendIndex.length; i++) {
-                        sendIndex[i] = 1;
-                    }
-
                 }
-
             }
-        }, time);
+        }).start();
+        //设置计时状态
+        ballManager.setLedShowData(SettingHelper.getSystemSetting().getHostId(), "", 2, Paint.Align.CENTER);
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                if (nearResult != null && farResult != null && nearResult.getState() == 3 && farResult.getState() == 3) {
+//                    isBegin = true;
+//                    listener.getDeviceStatus(2);
+//                    ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+//                    ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
+//                    isledStartTime = false;
+//                    if (timeRountList != null) {
+//                        timeRountList.clear();
+//                    }
+//                    if (numResult != null) {
+//                        numResult.clear();
+//                    }
+//                    timeRountList = new ArrayList<>();
+//                    numResult = new HashMap<>();
+//                    for (int i = 0; i < sendIndex.length; i++) {
+//                        sendIndex[i] = 1;
+//                    }
+//
+//                } else {
+//                    isBegin = false;
+//                }
+//
+//            }
+//        }, 500);
 
 
     }
@@ -193,6 +270,9 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
 
     public boolean isDeviceNormal() {
         for (BallDeviceState deviceState : deviceStateList) {
+            if (useLedType == 1 && deviceState.getDeviceId() == 0) {
+                continue;
+            }
             if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
                 return false;
             }
@@ -233,24 +313,30 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
             } else if (msg.what == SerialConfigs.DRIBBLEING_LED_START_TIME) {
                 listener.getDeviceStatus(3);//设置计时状态
             } else if (msg.what == SerialConfigs.SPORT_TIMER_CONNECT) {
+
                 SportResult result = (SportResult) msg.obj;
                 setDeviceState(result);
             } else if (msg.what == SerialConfigs.SPORT_TIMER_GET_TIME) {
+                LogUtil.logDebugMessage("SPORT_TIMER_GET_TIME");
                 //获取子机时间 误差2S同步时间
                 if (msg.obj instanceof SportResult) {
                     SportResult sportResult = (SportResult) msg.obj;
-                    if (sportResult.getLongTime() > 0) {
-                        if (Math.abs(DateUtil.getTime() - sportResult.getLongTime()) > 2000) {
-                            manager.syncTime(SettingHelper.getSystemSetting().getHostId(), DateUtil.getTime());
-                        }
-                    } else {
-                        setDeviceState(sportResult);
-                    }
+//                    if (sportResult.getLongTime() > 0) {
+//                        if (Math.abs(DateUtil.getTime() - sportResult.getLongTime()) > 2000) {
+//                            manager.syncTime(SettingHelper.getSystemSetting().getHostId(), DateUtil.getTime());
+//                        }
+//                    } else {
+//                        setDeviceState(sportResult);
+//                    }
+                    setDeviceState(sportResult);
                 }
             } else if (msg.what == SerialConfigs.SPORT_TIMER_RESULT) {
                 SportResult sportResult = (SportResult) msg.obj;
                 if (numResult == null && sportResult.getDeviceId() == 0 || (sportResult.getDeviceId() - 1) >= mCurrentConnect.length)
                     return;
+                if (timeRountList == null) {
+                    return;
+                }
                 setDeviceState(sportResult);
                 if (sportResult.getDeviceState() == 0) {
                     return;//非计时状态成绩无效
@@ -280,6 +366,7 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                 if (!isledStartTime) {
                     //第一次拦截为折返 过滤
                     if (patternTypes == 5 && sportResult.getDeviceId() == 2) {
+                        timeRountList.clear();
                         return;
                     }
                     Log.i("zzzz", "triggerStart=====>");
@@ -294,14 +381,16 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                     listener.getDeviceStatus(3);//设置计时状态
                     listener.triggerStart(null);//开始计时
                     ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), timeResult);
+                    testState = TEST_STATE_TIME;
                     return;
                 }
                 if (sportResult.getSumTimes() != 0 && timeRountList.size() >= 2 && !numResult.containsKey(sportResult.getMapKey())) { //获取拦截成绩
+                    testState = TEST_STATE_TIME;
                     ballManager.setRadioPause(SettingHelper.getSystemSetting().getHostId());
                     numResult.put(sportResult.getMapKey(), sportResult);
 
                     SportResult startTime = timeRountList.get(0);
-                    long testTime = sportResult.getLongTime() - startTime.getLongTime();
+                    long testTime = sportResult.getLongTime() - startTime.getLongTime() + autoAddTime;
 
                     if (testTime < interceptSecond * 1000) {
                         return;
@@ -366,18 +455,6 @@ public class BasketBallReentryFacade implements RadioManager.OnRadioArrivedListe
                 EventBus.getDefault().post(new BaseEvent(deviceStateList.get(result.getDeviceId()), EventConfigs.BALL_STATE_UPDATE));
             }
 
-//            if (TextUtils.isEmpty(deviceStateList.get(result.getDeviceName()).getDeviceSerial())) {
-//                deviceStateList.get(result.getDeviceName()).setDeviceSerial(result.getSerialNumber());
-//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_FREE;
-//            } else if (TextUtils.equals(deviceStateList.get(result.getDeviceName()).getDeviceSerial(), result.getSerialNumber())) {
-//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_FREE;
-//            } else {
-//                mCurrentConnect[result.getDeviceName()] = BaseDeviceState.STATE_CONFLICT;
-//            }
-//            if (deviceStateList.get(result.getDeviceName()).getResultState() != mCurrentConnect[result.getDeviceName()]) {
-//                deviceStateList.get(result.getDeviceName()).setResultState(mCurrentConnect[result.getDeviceName()]);
-//                EventBus.getDefault().post(new BaseEvent(result.getDeviceName(), EventConfigs.BALL_STATE_UPDATE));
-//            }
 
         }
     }

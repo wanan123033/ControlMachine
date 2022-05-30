@@ -310,4 +310,5 @@ public class SerialConfigs {
 
     public static final int SPORT_TIMER_GET_SENSITIVE = 0x8D;
     public static final int SPORT_TIMER_GET_MIN_TIME = 0x8E;
+    public static final int SPORT_TIMER_GET_LIGHT_TIME = 0x8F;
 }

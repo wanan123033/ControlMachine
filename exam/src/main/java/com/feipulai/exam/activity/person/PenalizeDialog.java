@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,9 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.feipulai.common.db.DataBaseExecutor;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.LogUtil;
 import com.feipulai.common.utils.ToastUtils;
+import com.feipulai.device.printer.PrinterManager;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.person.adapter.PenalizeResultAdapter;
 import com.feipulai.exam.activity.setting.SettingHelper;
@@ -42,6 +45,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -91,6 +95,8 @@ public class PenalizeDialog {
     private int resultState;
     private long groupId = -1;
     private int selectPosition = -1;
+    private Group group;
+    private GroupItem groupItem;
 
     /**
      * @param context
@@ -220,6 +226,11 @@ public class PenalizeDialog {
         this.student = student;
         this.lastStudent = lastStudent;
         this.state = state;
+        if (getGroupId() != -1) {
+            group = DBManager.getInstance().queryGroupById(getGroupId());
+            groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(), student.getStudentCode());
+
+        }
 
         switch (state) {
             case 0:
@@ -315,7 +326,6 @@ public class PenalizeDialog {
         turnLast.setVisibility(View.GONE);
         turnNext.setVisibility(View.GONE);
         this.student = null;
-        this.student = null;
         resultState = -1;
         groupId = -1;
         selectPosition = -1;
@@ -367,7 +377,7 @@ public class PenalizeDialog {
                 roundResult.setExamType(studentItem.getExamType());
                 roundResult.setScheduleNo(studentItem.getScheduleNo());
             } else {
-                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(), queryStudent.getStudentCode());
+//                GroupItem groupItem = DBManager.getInstance().getItemStuGroupItem(TestConfigs.getCurrentItemCode(), queryStudent.getStudentCode());
                 roundResult.setExamType(groupItem.getExamType());
                 roundResult.setScheduleNo(groupItem.getScheduleNo());
             }
@@ -392,6 +402,7 @@ public class PenalizeDialog {
                 roundResult.setIsLastResult(1);
             }
             roundResultList.add(roundResult);
+            results[roundResult.getRoundNo() - 1] = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
             DBManager.getInstance().insertRoundResult(roundResult);
             EventBus.getDefault().post(new BaseEvent(roundResult, EventConfigs.INSTALL_RESULT));
             LogUtils.operation("新增判罚：" + roundResult.toString());
@@ -403,6 +414,8 @@ public class PenalizeDialog {
                     updateResult = roundResult;
                     roundResult.setResultState(resultState);
                     roundResult.setIsLastResult(0);
+                    results[roundResult.getRoundNo() - 1] = RoundResult.resultStateStr(roundResult.getResultState(), roundResult.getResult());
+
                     DBManager.getInstance().updateRoundResult(roundResult);
                 }
             }
@@ -427,6 +440,46 @@ public class PenalizeDialog {
             upload(updateResult);
         }
 
+        print();
+    }
+
+    private void print() {
+        if (!SettingHelper.getSystemSetting().isAutoPrint())
+            return;
+        //是否全部测试完成
+        boolean isAllTest = true;
+        for (String s : results) {
+            if (TextUtils.isEmpty(s)) {
+                isAllTest = false;
+            }
+        }
+        if (!isAllTest) {
+            return;
+        }
+        DataBaseExecutor.addTask(new Runnable() {
+            @Override
+            public void run() {
+                if (getGroupId() != -1) {
+                    PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机  " + group.getGroupNo() + "组");
+                    PrinterManager.getInstance().print("序  号:" + groupItem.getTrackNo() + "");
+                } else {
+                    PrinterManager.getInstance().print(TestConfigs.sCurrentItem.getItemName() + SettingHelper.getSystemSetting().getHostId() + "号机  ");
+                }
+                Student student = DBManager.getInstance().queryStudentByCode(groupItem.getStudentCode());
+                PrinterManager.getInstance().print("考  号:" + student.getStudentCode() + "");
+                PrinterManager.getInstance().print("姓  名:" + student.getStudentName() + "");
+                for (int i = 0; i < results.length; i++) {
+                    if (!TextUtils.isEmpty(results[i])) {
+                        PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + results[i] + "");
+                    } else {
+                        PrinterManager.getInstance().print(String.format("第%1$d次：", i + 1) + "");
+                    }
+                }
+                PrinterManager.getInstance().print("打印时间:" + TestConfigs.df.format(Calendar.getInstance().getTime()) + "");
+                PrinterManager.getInstance().print(" \n");
+            }
+        });
+
     }
 
     private void upload(RoundResult roundResult) {
@@ -442,7 +495,7 @@ public class PenalizeDialog {
             roundResultList.add(roundResult);
             UploadResults uploadResults;
             if (getGroupId() != -1) {
-                Group group=DBManager.getInstance().queryGroupById(getGroupId());
+                Group group = DBManager.getInstance().queryGroupById(getGroupId());
                 uploadResults = new UploadResults(roundResult.getScheduleNo()
                         , TestConfigs.getCurrentItemCode(), roundResult.getStudentCode()
                         , "1", group, RoundResultBean.beanCope(roundResultList, group));

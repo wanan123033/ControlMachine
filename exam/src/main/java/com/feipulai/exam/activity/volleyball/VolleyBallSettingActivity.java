@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.feipulai.common.utils.HandlerUtil;
+import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -38,12 +39,14 @@ import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.setting.SystemSetting;
 import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallCheckDialog;
+import com.feipulai.exam.activity.volleyball.more_devices.VolleyBallPairActivity;
 import com.feipulai.exam.config.TestConfigs;
 import com.orhanobut.logger.Logger;
 
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -69,6 +72,8 @@ public class VolleyBallSettingActivity
     EditText etTestTime;
     @BindView(R.id.txt_device_versions)
     TextView txtDeviceVersions;
+    @BindView(R.id.tv_device_connect)
+    TextView tvDeviceConnect;
 
     private Integer[] testRound;
 
@@ -126,6 +131,10 @@ public class VolleyBallSettingActivity
         etTestTime.addTextChangedListener(this);
         SerialDeviceManager.getInstance().setRS232ResiltListener(this);
         volleyBallManager.getVersions();
+
+        if (setting.getType() > 0) {
+            tvDeviceConnect.setVisibility(View.VISIBLE);
+        }
     }
 
     @Nullable
@@ -350,6 +359,12 @@ public class VolleyBallSettingActivity
                 }
             }
         });
+    }
+
+
+    @OnClick(R.id.tv_device_connect)
+    public void onViewClicked() {
+        IntentUtil.gotoActivity(this, VolleyBallPairActivity.class);
     }
 
 

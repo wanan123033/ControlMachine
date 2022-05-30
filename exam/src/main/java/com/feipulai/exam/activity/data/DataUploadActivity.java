@@ -282,7 +282,7 @@ public class DataUploadActivity extends BaseTitleActivity {
             public DataBaseRespon executeOper() {
 
 
-                return new DataBaseRespon(true, "", DBManager.getInstance().getUploadResultsByStuCode(mCurrentItem.getItemCode(), studentCode));
+                return new DataBaseRespon(true, "", DBManager.getInstance().getUploadResultsByStuCode(getItemCode(), studentCode));
             }
 
             @Override
@@ -300,4 +300,6 @@ public class DataUploadActivity extends BaseTitleActivity {
         });
 
     }
+
+
 }

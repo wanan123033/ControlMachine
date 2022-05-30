@@ -14,6 +14,10 @@ import com.feipulai.exam.activity.footBall.FootBallSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Objects;
 
@@ -81,6 +85,7 @@ public class FootballMotionPairPresenter extends SitPullUpPairPresenter {
     @Override
     public void saveSettings() {
         SharedPrefsUtil.save(context, setting);
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
     }
 
     @Override
@@ -89,7 +94,12 @@ public class FootballMotionPairPresenter extends SitPullUpPairPresenter {
         linker.startPair(position);
     }
 
-
+    public void setUsbLedType(int usbLedType){
+        setting.setUseLedType(usbLedType);
+    }
+    public int getUsbLedType(){
+        return setting.getUseLedType();
+    }
 
 
 }

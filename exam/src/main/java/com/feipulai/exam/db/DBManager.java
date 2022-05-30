@@ -109,8 +109,8 @@ public class DBManager {
      * 数据库初始化
      */
     public void initDB() {
-//        QueryBuilder.LOG_SQL = true;
-//        QueryBuilder.LOG_VALUES = true;
+        QueryBuilder.LOG_SQL = true;
+        QueryBuilder.LOG_VALUES = true;
         helper = new DBOpenHelper(MyApplication.getInstance(), DB_NAME);
         db = BuildConfig.DEBUG ? helper.getWritableDb() : helper.getEncryptedWritableDb(DB_PASSWORD);
         daoMaster = new DaoMaster(db);
@@ -200,10 +200,11 @@ public class DBManager {
                     insertItem(machineCode, "俯卧撑", "次", TEST_TYPE_COUNT);
                     break;
                 case ItemDefault.CODE_LQYQ:
-                    insertItem(machineCode, "篮球运球", "分'秒", TEST_TYPE_TIME);
+                    insertItem(machineCode, "篮球运球", "分'秒", 2, TEST_TYPE_TIME);
+
                     break;
                 case ItemDefault.CODE_ZQYQ:
-                    insertItem(machineCode, "足球运球", "分'秒", TEST_TYPE_TIME);
+                    insertItem(machineCode, "足球运球", "分'秒", 2, TEST_TYPE_TIME);
                     break;
                 case ItemDefault.CODE_ZCP:
                     Item item800 = DBManager.getInstance().queryItemByName("800米");
@@ -690,6 +691,7 @@ public class DBManager {
         }
 
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
+        sqlBuf.append("    AND R." + RoundResultDao.Properties.IsDelete.columnName + "= 0  ");
         sqlBuf.append(")  ");
 
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode, itemCode});
@@ -858,8 +860,10 @@ public class DBManager {
 
                 if (isUpload) {
                     sqlBuf.append("  WHERE R." + RoundResultDao.Properties.UpdateState.columnName + "= 1  AND ");
+
                 } else {
                     sqlBuf.append("  WHERE R." + RoundResultDao.Properties.UpdateState.columnName + "= 0 AND ");
+
                 }
             } else {
                 sqlBuf.append(" AND " + StudentDao.Properties.StudentCode.columnName);
@@ -867,16 +871,19 @@ public class DBManager {
                     sqlBuf.append(" IN (SELECT " +
                             RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R  WHERE R." + RoundResultDao
                             .Properties.UpdateState.columnName + "= 1 AND ");
+
                 } else {
                     sqlBuf.append(" IN (SELECT " +
                             RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R  WHERE R." + RoundResultDao
                             .Properties.UpdateState.columnName + "= 0 AND ");
+
                 }
             }
         } else {
             sqlBuf.append(" WHERE ");
         }
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + itemCode + "'");
+        sqlBuf.append("    AND R." + RoundResultDao.Properties.IsDelete.columnName + "= 0  ");
         sqlBuf.append(")  ");
         sqlBuf.append(" limit " + offset + "," + limit);
 
@@ -979,6 +986,16 @@ public class DBManager {
         item.setMachineCode(machineCode);
         item.setItemName(itemName);
         item.setUnit(unit);
+        item.setTestType(testType);
+        itemDao.insert(item);
+    }
+
+    private void insertItem(int machineCode, String itemName, String unit, int digital, int testType) {
+        Item item = new Item();
+        item.setMachineCode(machineCode);
+        item.setItemName(itemName);
+        item.setUnit(unit);
+        item.setDigital(digital);
         item.setTestType(testType);
         itemDao.insert(item);
     }
@@ -1471,6 +1488,11 @@ public class DBManager {
     }
 
     public void insertRoundResults(List<RoundResult> roundResults) {
+        for (RoundResult allScore : roundResults) {
+            String encryptData = allScore.getStudentCode() + "," + allScore.getItemCode() + "," + allScore.getExamType()
+                    + "," + allScore.getResult() + "," + allScore.getResultState() + "," + allScore.getTestTime();
+            allScore.setRemark3(EncryptUtil.setEncryptString(RoundResult.ENCRYPT_KEY, encryptData));
+        }
         roundResultDao.insertInTx(roundResults);
     }
 
@@ -1883,7 +1905,13 @@ public class DBManager {
                 .where(RoundResultDao.Properties.GroupId.eq(groupId))
                 .list();
     }
-
+    public List<RoundResult> queryAllRoundResult() {
+        return roundResultDao.queryBuilder()
+                .where(RoundResultDao.Properties.IsDelete.eq(false))
+                .where(RoundResultDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
+                .where(RoundResultDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
+                .list();
+    }
     /**
      * 查询对应考生当前项目轮次所有成绩
      *
@@ -2033,6 +2061,7 @@ public class DBManager {
         sqlBuf1.append(" FROM " + RoundResultDao.TABLENAME);
 //        sqlBuf1.append(" WHERE " + RoundResultDao.Properties.UpdateState.columnName + " = ? AND ");
         sqlBuf1.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + " =  ?  AND ");
+        sqlBuf1.append(RoundResultDao.Properties.IsDelete.columnName + " =  0  AND ");
         sqlBuf1.append(RoundResultDao.Properties.MachineCode.columnName + " = ? ");
         if (!isUploadAll) {
             sqlBuf1.append(" AND " + RoundResultDao.Properties.UpdateState.columnName + " = 0  ");
@@ -2324,7 +2353,8 @@ public class DBManager {
     public List<String> getResultTimeData(String itemCode) {
         StringBuffer sqlBuf = new StringBuffer("SELECT  DISTINCT date( " + RoundResultDao.Properties.TestTime.columnName + "/1000, 'unixepoch') as T ");
         sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
-        sqlBuf.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + "= ? ");
+        sqlBuf.append(" WHERE " + RoundResultDao.Properties.ItemCode.columnName + "= ? AND ");
+        sqlBuf.append(RoundResultDao.Properties.IsDelete.columnName + "= 0 ");
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{itemCode});
 
         List<String> timeList = new ArrayList<>();
@@ -2343,7 +2373,7 @@ public class DBManager {
         sqlBuf.append(" FROM " + RoundResultDao.TABLENAME);
         sqlBuf.append(" WHERE  date( " + RoundResultDao.Properties.TestTime.columnName + "/1000, 'unixepoch') = ? ");
         sqlBuf.append(" AND " + RoundResultDao.Properties.ItemCode.columnName + " = ?  ");
-
+        sqlBuf.append(" AND " + RoundResultDao.Properties.IsDelete.columnName + " = 0  ");
         sqlBuf.append(" )");
         Cursor c = daoSession.getDatabase().rawQuery(sqlBuf.toString(), new String[]{resultDate, itemCode});
 
@@ -2860,7 +2890,7 @@ public class DBManager {
     }
 
     public void insterMachineResult(MachineResult machineResult) {
-        machineResultDao.insert(machineResult);
+        machineResultDao.insertInTx(machineResult);
     }
 
     public void insterMachineResults(List<MachineResult> machineResults) {

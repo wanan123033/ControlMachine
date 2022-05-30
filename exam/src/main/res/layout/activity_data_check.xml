@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/btnDataCheck"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/btn_click_bg_selected"
+        android:text="数据校验"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <RelativeLayout
+        android:id="@+id/view_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnDataCheck">
+
+        <ProgressBar
+            android:id="@+id/progress_storage"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/black_T20"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_bg" />
+
+        <TextView
+            android:id="@+id/txt_page"
+            style="@style/txt_black_style"
+            android:layout_below="@id/progress_storage"
+            android:layout_alignLeft="@+id/progress_storage"
+            android:text="0"
+            android:textColor="@color/colorAccent"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/txt_total"
+            style="@style/txt_black_style"
+            android:layout_below="@id/progress_storage"
+            android:layout_alignRight="@+id/progress_storage"
+            android:text="0"
+            android:textSize="22sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/view_data_head"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/view_progress"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="#E6E6E6"
+        android:orientation="horizontal"
+        android:padding="1dp">
+
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="学号" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1.2"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="姓名" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="性别" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="轮次" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="成绩" />
+
+        <TextView
+            style="@style/style_txt_white_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="#AAD3FF"
+            android:gravity="center"
+            android:text="校验成绩" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/view_data_head" />
+</RelativeLayout>

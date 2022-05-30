@@ -1068,7 +1068,8 @@ public class BaseGroupActivity extends BaseTitleActivity {
                 //led 屏最多8个字符 男子某某某1组
                 StringBuilder sb = new StringBuilder();
                 String groupNo = groupList.get(groupAdapter.getTestPosition()).getGroupNo() + "";
-                sb.append(title.substring(0, 8 - (groupNo.length() + 1)))
+                int index = groupNo.length() > 8 ? 7 : groupNo.length();
+                sb.append(title.substring(0, 8 - (index + 1)))
                         .append(groupNo).append("组");
                 this.title = sb.toString();
             } else {
@@ -1199,7 +1200,12 @@ public class BaseGroupActivity extends BaseTitleActivity {
                     if (scheduleList.size() == 0) {
                         updateSchedules();
                     } else {
-                        getGroupList(scheduleText);
+                        if (TextUtils.equals(message.getSchedule().getScheduleNo(), scheduleText)) {
+                            getGroupList(scheduleText);
+                        } else {
+                            updateSchedules();
+                        }
+
                     }
 
                 }

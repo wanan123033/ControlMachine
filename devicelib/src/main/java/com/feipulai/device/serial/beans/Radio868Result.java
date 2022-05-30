@@ -28,6 +28,10 @@ public class Radio868Result {
             LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");
             return;
         }
+        if (data.length <= 8) {
+            LogUtils.serial(data.length + "-解析完成，数据包异常--" + StringUtility.bytesToHexString(data));
+            return;
+        }
         if (MachineCode.machineCode != ItemDefault.CODE_TS) {
             if (data[1] > 0 && data[1] < data.length) {
                 data = Arrays.copyOf(data, data[1]);
@@ -275,7 +279,8 @@ public class Radio868Result {
 
                     }
 
-                } else if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && data[1] <= data.length && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                } else if ((data[0] & 0xff) == 0xAA && data.length > 2 && data[1] - 1 > 0 &&
+                        data[1] <= data.length && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
                     runResult(data);
                 }
                 break;
@@ -410,7 +415,8 @@ public class Radio868Result {
                 break;
             case ItemDefault.CODE_SPORT_TIMER:
             case ItemDefault.CODE_ZFP:
-                if ((data[0] & 0xff) == 0xAA && data[1] - 1 > 0 && data[1] <= data.length && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
+                if ((data[0] & 0xff) == 0xAA && data.length > 2 && data[1] - 1 > 0 && data[1] <= data.length
+                        && (data[data[1] - 1] & 0xff) == 0x0d && data[2] == 0x0E) {
                     runResult(data);
                 }
                 break;
@@ -440,6 +446,11 @@ public class Radio868Result {
             case 6:
                 setResult(data[10] & 0xFF);
                 setType(SerialConfigs.SPORT_TIMER_GET_SENSITIVE);
+                break;
+            case 8:
+                int lightTime = Integer.parseInt(Integer.toHexString(data[10] & 0xff) + Integer.toHexString(data[11] & 0xff), 16);
+                setResult(lightTime);
+                setType(SerialConfigs.SPORT_TIMER_GET_LIGHT_TIME);
                 break;
             case 19:
                 setResult(data[10] & 0xFF);

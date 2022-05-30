@@ -108,11 +108,11 @@ public class SerialPorter {
 
     public void sendCommand(ConvertCommand cmd) {
         byte[] toSend = cmd.getCmdBytes();
-        LogUtils.serial(StringUtility.bytesToHexString(toSend));
+        LogUtils.serialSend("发送前：" + StringUtility.bytesToHexString(toSend));
 ////        //TODO 添加写入文件给测试用
 //        DistanceParser.writeFileByString(DistanceParser.PATH_BASE, "PARSER_DEVICE_RETURN.txt", "发送==》" + DistanceParser.bytes2HexString(toSend));
         sendCommand(toSend);
-
+        LogUtils.serialSend("发送后：" + StringUtility.bytesToHexString(toSend));
 
     }
 

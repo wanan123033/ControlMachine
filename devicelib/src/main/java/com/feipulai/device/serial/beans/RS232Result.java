@@ -27,7 +27,7 @@ public class RS232Result {
             return;
         }
         //Logger.i(StringUtility.bytesToHexString(data));
-        Log.i("RS232Result", StringUtility.bytesToHexString(data));
+        LogUtils.serial("RS232Result:" + StringUtility.bytesToHexString(data));
         //Log.i("james","I got sth");
         if (MachineCode.machineCode == -1) {
             LogUtils.all(data.length + "---" + StringUtility.bytesToHexString(data) + "---当前测试项目代码为-1");

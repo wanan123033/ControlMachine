@@ -31,6 +31,15 @@ public class BasketBallSetting {
     private int testType = 0;//0有线 1无线 3无线6.6版本 4 红外拦截器 5折返
     private int deviceVersion = 0;//0:6.4 1无线6.6版本
     private int useLedType = 0;//使用LED類型 0 標配 1 通用
+    private int lightTime;//运行计时拦截器灯亮时长
+
+    public int getLightTime() {
+        return lightTime;
+    }
+
+    public void setLightTime(int lightTime) {
+        this.lightTime = lightTime;
+    }
 
     public int getUseLedType() {
         return useLedType;
@@ -167,6 +176,10 @@ public class BasketBallSetting {
 
     public void setAutoPenalt(boolean autoPenalt) {
         this.autoPenalt = autoPenalt;
+    }
+
+    public int getDeviceCount() {
+        return useLedType == 0 ? 2 : 1;
     }
 
     @Override

@@ -20,7 +20,7 @@ public abstract class SitPullUpTestActivity<Setting>
 		extends AbstractRadioTestActivity<Setting>
 		implements SitPullUpTestContract.View<Setting> {
 	
-	private SitPullUpTestPresenter<Setting> presenter;
+	public SitPullUpTestPresenter<Setting> presenter;
 	private WaitDialog changBadDialog;
 	
 	@SuppressWarnings("unchecked")

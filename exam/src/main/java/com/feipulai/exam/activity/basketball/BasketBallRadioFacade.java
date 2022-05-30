@@ -54,10 +54,17 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     private Basketball868Result ledResult;
     private int deviceVersion;
     private int autoAddTime = 0;
+    private int useLedType = 0;//使用LED類型 0 標配 1 通用
 
     public void setAutoAddTime(int autoAddTime) {
         this.autoAddTime = autoAddTime;
     }
+
+    public int getUseLedType() {
+        return useLedType;
+    }
+
+
 
     public void setDeviceVersion(int deviceVersion) {
         this.deviceVersion = deviceVersion;
@@ -67,9 +74,10 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
         this.interceptSecond = interceptSecond;
     }
 
-    public BasketBallRadioFacade(int patternType, int autoAddTime, final BasketBallListener.BasketBallResponseListener listener) {
+    public BasketBallRadioFacade(int patternType, int autoAddTime, int useLedType, final BasketBallListener.BasketBallResponseListener listener) {
         this.listener = listener;
         this.autoAddTime = autoAddTime;
+        this.useLedType = useLedType;
         mExecutor = Executors.newFixedThreadPool(2);
         ballManager = new BallManager(patternType);
 
@@ -126,39 +134,50 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
         }
         mCurrentConnect = new int[deviceStateList.size()];
     }
-
+    private boolean isAwaitTrue = true;
     public void awaitState() {
         if (deviceVersion == 1) {
+            isAwaitTrue = true;
             nearResult = null;
             farResult = null;
             ledResult = null;
-            int time = TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ ? 500 : 700;
-            new Handler().postDelayed(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
-                        // && ledResult != null && ledResult.getState() == 2
-                        if (nearResult != null && nearResult.getState() == 2) {
-                            listener.getDeviceStatus(2);
-                            ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
-                            ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
-                            isledStartTime = false;
-                            timeRountList = new ArrayList<>();
-                            numResult = new HashMap<>();
-                        }
-                    } else {
-                        if (nearResult != null && nearResult.getState() == 2 &&
-                                farResult != null && farResult.getState() == 2) {
-                            listener.getDeviceStatus(2);
-                            ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
-                            ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
-                            isledStartTime = false;
-                            timeRountList = new ArrayList<>();
-                            numResult = new HashMap<>();
+                    while (true) {
+                        if (isAwaitTrue) {
+                            if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
+                                // && ledResult != null && ledResult.getState() == 2
+                                if (nearResult != null && nearResult.getState() == 2) {
+                                    isAwaitTrue = false;
+                                    listener.getDeviceStatus(2);
+                                    ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                                    ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
+                                    isledStartTime = false;
+                                    timeRountList = new ArrayList<>();
+                                    numResult = new HashMap<>();
+
+                                }
+                            } else {
+                                if (nearResult != null && nearResult.getState() == 2 &&
+                                        farResult != null && farResult.getState() == 2) {
+                                    isAwaitTrue = false;
+                                    listener.getDeviceStatus(2);
+                                    ballManager.setRadioLEDStartAwait(SettingHelper.getSystemSetting().getHostId());
+                                    ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), TestConfigs.sCurrentItem.getDigital());
+                                    isledStartTime = false;
+                                    timeRountList = new ArrayList<>();
+                                    numResult = new HashMap<>();
+
+                                }
+                            }
+                        } else {
+                            return;
                         }
                     }
                 }
-            }, time);
+            }).start();
+
         }
 
     }
@@ -180,6 +199,9 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
 
     public boolean isDeviceNormal() {
         for (BallDeviceState deviceState : deviceStateList) {
+            if (useLedType == 1 && deviceState.getDeviceId() == 0) {
+                continue;
+            }
             if (deviceState.getState() == BallDeviceState.STATE_DISCONNECT) {
                 return false;
             }
@@ -255,18 +277,6 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
                             basketballResult.setMinute(time[1]);
                             basketballResult.setSecond(time[2]);
                             basketballResult.setHund(time[3]);
-                            //获取到多条成绩为停止状态
-                            Log.i("zzzz", "getResult=====>" + basketballResult.toString());
-//                            String showLEDTime = DateUtil.caculateFormatTime(basketballResult.getResult(), TestConfigs.sCurrentItem.getDigital() == 0 ? 2 : TestConfigs.sCurrentItem.getDigital());
-//                            String showLEDTime = ResultDisplayUtils.getStrResultForDisplay(basketballResult.getResult());
-//
-//                            if (showLEDTime.charAt(0) == '0' && showLEDTime.charAt(1) == '0') {
-//                                showLEDTime = showLEDTime.substring(3, showLEDTime.toCharArray().length);
-//                            } else if (showLEDTime.charAt(0) == '0') {
-//                                showLEDTime = showLEDTime.substring(1, showLEDTime.toCharArray().length);
-//                            }
-                            //发屏显示并暂停计时
-//                            ballManager.setLedShowData(SettingHelper.getSystemSetting().getHostId(), showLEDTime, 2, Paint.Align.RIGHT);
                             listener.getResult(basketballResult);//获取拦截时间
                         }
                     }

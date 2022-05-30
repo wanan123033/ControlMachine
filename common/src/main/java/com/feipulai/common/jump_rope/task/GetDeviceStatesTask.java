@@ -61,7 +61,7 @@ public class GetDeviceStatesTask implements Runnable {
                         }
                         // 对每一个获取状态
                         listener.onGettingState(j);
-                        Thread.sleep(200);
+                        Thread.sleep(10);
                     }
                 }
                 // 没有获取状态时,不更新界面配对情况

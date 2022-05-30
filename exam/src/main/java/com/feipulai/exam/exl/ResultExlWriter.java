@@ -38,7 +38,7 @@ public class ResultExlWriter extends ExlWriter {
     @Override
     protected void write(UsbFile file) {
         writeData.clear();
-        String[] headers = new String[12 + (testCount * 5)];
+        String[] headers = new String[13 + (testCount * 5)];
         String[] first = new String[]{"编号", "准考证号", "姓名", "性别", "学校名称", "班级", "项目", "日程", "组号", "考试状态", "备注", "决定成绩"};
         System.arraycopy(first, 0, headers, 0, first.length);
 //        if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_TS) {
@@ -53,18 +53,19 @@ public class ResultExlWriter extends ExlWriter {
             headers[11 + (i * 5) + 4] = "第" + (i + 1) + "轮绊绳次数";
             headers[11 + (i * 5) + 5] = "第" + (i + 1) + "轮成绩状态";
         }
+        headers[headers.length - 1] = "组别";
         List<String> headerList = Arrays.asList(headers);
         writeData.add(headerList);
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_ZCP) {
             List<Item> itemList = DBManager.getInstance().queryItemsByMachineCode(ItemDefault.CODE_ZCP);
             for (Item item : itemList) {
                 List<Student> studentList = DBManager.getInstance().getItemStudent
-                        ("-2",item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
+                        ("-2", item.getItemCode() == null ? TestConfigs.DEFAULT_ITEM_CODE : item.getItemCode(), -1, 0);
 
                 generateRows(item, studentList);
             }
         } else {
-            List<Student> studentList = DBManager.getInstance().getItemStudent("-2",TestConfigs.getCurrentItemCode(), -1, 0);
+            List<Student> studentList = DBManager.getInstance().getItemStudent("-2", TestConfigs.getCurrentItemCode(), -1, 0);
 
             generateRows(TestConfigs.sCurrentItem, studentList);
         }
@@ -84,7 +85,7 @@ public class ResultExlWriter extends ExlWriter {
             Student student = (Student) dataMap.get("stu");
 
             for (int j = 0; j < uploadResults.size(); j++) {
-                String[] rowData = new String[uploadResults.get(j).getRoundResultList().size() * 5 + 12];
+                String[] rowData = new String[writeData.get(0).size() + 10];
                 rowData[0] = number + "";
                 rowData[1] = student.getStudentCode();
                 rowData[2] = student.getStudentName();
@@ -102,6 +103,7 @@ public class ResultExlWriter extends ExlWriter {
                         rowData[7] = DateUtil.formatTime2(Long.valueOf(schedule.getBeginTime()), "yyyy-MM-dd HH:mm:ss");
                     }
                     rowData[8] = uploadResults.get(j).getGroupNo();
+                    rowData[rowData.length - 11] = uploadResults.get(j).getSortName();
                 }
                 List<RoundResultBean> roundResultBeans = uploadResults.get(j).getRoundResultList();
                 rowData[9] = roundResultBeans.get(0).getExamState() == 0 ? "正常" : "补考";
@@ -115,6 +117,11 @@ public class ResultExlWriter extends ExlWriter {
                     rowData[11 + (k * 5) + 3] = DateUtil.formatTime2(Long.valueOf(roundResultBeans.get(k).getTestTime()), "yyyy-MM-dd HH:mm:ss");
                     rowData[11 + (k * 5) + 4] = roundResultBeans.get(k).getStumbleCount() + "";
                     rowData[11 + (k * 5) + 5] = ResultDisplayUtils.setResultState(roundResultBeans.get(k).getIsFoul());
+                }
+                for (int l = 0; l < rowData.length; l++) {
+                    if (TextUtils.isEmpty(rowData[l])) {
+                        rowData[l] = "";
+                    }
                 }
                 writeData.add(Arrays.asList(rowData));
 

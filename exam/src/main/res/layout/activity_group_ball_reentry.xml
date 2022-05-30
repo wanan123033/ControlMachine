@@ -82,7 +82,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/btn_background"
                 android:gravity="center"
-                android:text="未到折返点"
+                android:text="取消折返点"
                 android:visibility="gone"
                 android:textColor="@color/white"
                 android:textSize="18dp" />

@@ -536,10 +536,10 @@ public class DBManager {
         sqlBuf.append(" FROM " + StudentItemDao.TABLENAME);
         sqlBuf.append(" WHERE  " + StudentItemDao.Properties.ItemCode.columnName + " = ?  )");
 
-        sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
+
 
         if (isTested || isUnTested) {
-
+            sqlBuf.append(" AND S." + StudentDao.Properties.StudentCode.columnName);
             if (isTested) {
                 sqlBuf.append(" IN (SELECT " + RoundResultDao.Properties.StudentCode.columnName + " FROM " + RoundResultDao.TABLENAME + " R");
             } else {
@@ -566,7 +566,11 @@ public class DBManager {
             }
 
         } else {
-            sqlBuf.append(" WHERE ");
+            if (isTested || isUnTested) {
+                sqlBuf.append(" WHERE ");
+            } else {
+                sqlBuf.append(" AND ");
+            }
         }
 
         sqlBuf.append("  R." + RoundResultDao.Properties.ItemCode.columnName + " = '" + TestConfigs.getCurrentItemCode() + "'");

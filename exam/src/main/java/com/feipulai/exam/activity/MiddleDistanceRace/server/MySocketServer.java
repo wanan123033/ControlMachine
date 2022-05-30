@@ -209,7 +209,7 @@ public class MySocketServer {
 
         JieXiStudent(result);
 
-        if (endStr.substring(1, endStr.length() - 1).equals("FPTCP-PACKAGE-TAIL")) {
+        if (endStr.substring(1, endStr.length() - 1).contains("FPTCP-PACKAGE-TAIL")) {
             if (!isPass && listener != null) {
                 listener.onTcpReceiveResult(schedule, m_strEvent);
             }

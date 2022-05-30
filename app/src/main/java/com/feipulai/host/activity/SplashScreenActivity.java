@@ -80,7 +80,7 @@ public class SplashScreenActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-
+        RadioManager.getInstance().init();
 //        if (!Build.MODEL.equals("FPL")){
 //            DateUtil.setTimeZone(this, "Asia/Shanghai");
 //        }

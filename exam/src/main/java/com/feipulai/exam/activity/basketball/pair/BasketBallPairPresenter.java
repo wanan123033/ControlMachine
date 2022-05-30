@@ -10,7 +10,11 @@ import com.feipulai.exam.activity.basketball.BasketBallSetting;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairContract;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+import com.feipulai.exam.config.BaseEvent;
+import com.feipulai.exam.config.EventConfigs;
 import com.feipulai.exam.config.TestConfigs;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Objects;
 
@@ -65,9 +69,10 @@ public class BasketBallPairPresenter extends SitPullUpPairPresenter {
     @Override
     public void saveSettings() {
         SharedPrefsUtil.save(context, setting);
+        EventBus.getDefault().post(new BaseEvent(EventConfigs.ITEM_SETTING_UPDATE));
     }
 
-    public BasketBallSetting getSetting() {
+    protected BasketBallSetting getSetting() {
         return setting;
     }
 }

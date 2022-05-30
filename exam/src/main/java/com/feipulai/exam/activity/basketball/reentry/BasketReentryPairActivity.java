@@ -1,6 +1,7 @@
 package com.feipulai.exam.activity.basketball.reentry;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -10,10 +11,12 @@ import com.feipulai.exam.activity.jump_rope.bean.StuDevicePair;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.activity.situp.base_pair.SitPullPairActivity;
 import com.feipulai.exam.activity.situp.base_pair.SitPullUpPairPresenter;
+import com.feipulai.exam.config.TestConfigs;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class BasketReentryPairActivity extends SitPullPairActivity implements CompoundButton.OnCheckedChangeListener {
     private int hostId;
@@ -73,5 +76,15 @@ public class BasketReentryPairActivity extends SitPullPairActivity implements Co
         if (presenter instanceof BallReentryPairPresenter){
             ((BallReentryPairPresenter) presenter).setUsbLedType(isChecked ? 1 : 0);
         }
+    }
+    @OnClick(R.id.tv_currency_connect)
+    public void onClick(View view){
+        String title = TestConfigs.machineNameMap.get(machineCode)
+                + " " + SettingHelper.getSystemSetting().getHostId();
+        mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);
+
+        mLEDManager.showSubsetString(hostId, 1, title, 0, true, false, LEDManager.MIDDLE, 1);
+        mLEDManager.showSubsetString(hostId, 1, "菲普莱体育", 3, 3, false, true, 1);
+
     }
 }

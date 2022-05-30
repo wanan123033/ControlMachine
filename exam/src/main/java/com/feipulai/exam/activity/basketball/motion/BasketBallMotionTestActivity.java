@@ -1,7 +1,6 @@
 package com.feipulai.exam.activity.basketball.motion;
 
 import android.graphics.Paint;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +21,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.feipulai.common.utils.ActivityUtils;
 import com.feipulai.common.utils.DateUtil;
 import com.feipulai.common.utils.IntentUtil;
-import com.feipulai.common.utils.NetWorkUtils;
 import com.feipulai.common.utils.SharedPrefsUtil;
 import com.feipulai.common.utils.ToastUtils;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
@@ -31,9 +29,6 @@ import com.feipulai.device.manager.BallManager;
 import com.feipulai.device.manager.SportTimerManger;
 import com.feipulai.device.serial.RadioManager;
 import com.feipulai.device.serial.beans.Basketball868Result;
-import com.feipulai.device.udp.UDPBasketBallConfig;
-import com.feipulai.device.udp.UdpClient;
-import com.feipulai.device.udp.UdpLEDUtil;
 import com.feipulai.device.udp.result.BasketballResult;
 import com.feipulai.exam.R;
 import com.feipulai.exam.activity.base.AgainTestDialog;
@@ -41,15 +36,10 @@ import com.feipulai.exam.activity.base.BaseAFRFragment;
 import com.feipulai.exam.activity.base.BaseTitleActivity;
 import com.feipulai.exam.activity.base.ResitDialog;
 import com.feipulai.exam.activity.basketball.BasketBallListener;
-import com.feipulai.exam.activity.basketball.BasketBallRadioFacade;
 import com.feipulai.exam.activity.basketball.BasketBallSetting;
-import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
-import com.feipulai.exam.activity.basketball.BasketballIndividualActivity;
 import com.feipulai.exam.activity.basketball.TimeUtil;
-import com.feipulai.exam.activity.basketball.adapter.BallReentryResultAdapter;
 import com.feipulai.exam.activity.basketball.adapter.BasketBallResultAdapter;
 import com.feipulai.exam.activity.basketball.bean.BallDeviceState;
-import com.feipulai.exam.activity.basketball.pair.BasketBallPairActivity;
 import com.feipulai.exam.activity.basketball.reentry.BasketBallReentryFacade;
 import com.feipulai.exam.activity.basketball.result.BasketBallTestResult;
 import com.feipulai.exam.activity.basketball.util.TimerUtil;
@@ -59,7 +49,6 @@ import com.feipulai.exam.activity.jump_rope.bean.TestCache;
 import com.feipulai.exam.activity.jump_rope.fragment.IndividualCheckFragment;
 import com.feipulai.exam.activity.jump_rope.utils.InteractUtils;
 import com.feipulai.exam.activity.setting.SettingHelper;
-import com.feipulai.exam.activity.volleyball.more_devices.BaseVolleyBallMoreActivity;
 import com.feipulai.exam.bean.RoundResultBean;
 import com.feipulai.exam.bean.UploadResults;
 import com.feipulai.exam.config.BaseEvent;
@@ -180,7 +169,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         if (setting == null)
             setting = new BasketBallSetting();
         LogUtils.all("项目设置" + setting.toString());
-        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(), this);
+        facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(), setting.getUseLedType(), this);
         facade.setDeviceVersion(setting.getDeviceVersion());
         ballManager = new BallManager((setting.getTestType()));
         sportTimerManger = new SportTimerManger();
@@ -266,6 +255,11 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     @Override
     protected void onResume() {
         super.onResume();
+        if (facade.getUseLedType() != setting.getUseLedType()) {
+            facade.finish();
+            facade = new BasketBallMotionFacade(setting.getTestType(), setting.getAutoPenaltyTime(), setting.getUseLedType(), this);
+            facade.setDeviceVersion(setting.getDeviceVersion());
+        }
         ballManager.setUseLedType(setting.getUseLedType());
         RadioManager.getInstance().setOnRadioArrived(facade);
         facade.resume();
@@ -276,9 +270,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 setting.getInterceptSecond(), TestConfigs.sCurrentItem.getDigital() - 1);
         sportTimerManger.syncTime(SettingHelper.getSystemSetting().getHostId(), DateUtil.getTime());
         sportTimerManger.getTime(1, SettingHelper.getSystemSetting().getHostId());
-        if (setting.getUseLedType() == 1){
+        if (setting.getUseLedType() == 1) {
             cbLed.setVisibility(View.GONE);
-        }else {
+        } else {
             cbLed.setVisibility(View.VISIBLE);
         }
     }
@@ -423,19 +417,8 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             if (setting.getUseLedType() == 0) {
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
-            }else {
-                try {
-                    byte[] buffer = new byte[16];
-                    byte[] nameByte = student.getLEDStuName().getBytes("GB2312");
-                    System.arraycopy(nameByte,0,buffer,0,nameByte.length);
-                    nameByte = ("第"+roundNo+"次").getBytes("GB2312");
-                    System.arraycopy(nameByte,0,buffer,10,nameByte.length);
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),buffer,0,0,true,true);
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"准备",1,false,true,LEDManager.MIDDLE);
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "", 2, false, true, LEDManager.LEFT, 1);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+            } else {
+                showBeginLed();
             }
         } else {
             toastSpeak("当前考生还未完成测试,拒绝检录");
@@ -469,7 +452,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 state = WAIT_BEGIN;
                 txtDeviceStatus.setText("等待");
                 tvResult.setText(ResultDisplayUtils.getStrResultForDisplay(0));
-                ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
+                ballManager.waitTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
                 break;
             case 3:
                 state = TESTING;
@@ -519,8 +502,8 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         state = TESTING;
         txtDeviceStatus.setText("计时");
         setOperationUI();
-        if (setting.getUseLedType() == 1){
-            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),true,true,true,0,getAccuracy(),false,2);
+        if (setting.getUseLedType() == 1) {
+            ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(), true, true, true, 0, getAccuracy(), false, 2);
         }
     }
 
@@ -617,8 +600,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         tvResult.setText(time);
         if (setting.getUseLedType() == 0) {
             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-        }else {
-            ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),result.getResult(),getAccuracy());
+        } else {
+            ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),
+                    DateUtil.caculateTimeLong(result.getResult(), TestConfigs.sCurrentItem.getDigital(), TestConfigs.sCurrentItem.getCarryMode()), getAccuracy());
         }
 
 
@@ -648,8 +632,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             if (setting.getUseLedType() == 0)
                 ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
         }
-        if (setting.getUseLedType() == 1){
-            ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),timerDate,getAccuracy());
+        if (setting.getUseLedType() == 1) {
+            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+            showBeginLed();
         }
 
     }
@@ -705,7 +690,11 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         super.finish();
         timerUtil.stop();
         facade.finish();
+        if (setting.getUseLedType() == 1) {
+            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+        }
         sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
+
     }
 
 
@@ -812,27 +801,15 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
             case R.id.txt_waiting://等待发令
                 LogUtils.operation("篮球点击了等待发令按钮");
                 if ((state == WAIT_CHECK_IN || state == WAIT_CONFIRM || state == WAIT_STOP) && isExistTestPlace()) {
-                    boolean isDeviceNormal = facade.isDeviceNormal();
-                    if (setting.getUseLedType() == 1){
-                        isDeviceNormal = true;
-                    }
-                    if (isDeviceNormal) {
+
+                    if (facade.isDeviceNormal()) {
                         //拦截器同步时间
                         sportTimerManger.syncTime(1, SettingHelper.getSystemSetting().getHostId(), DateUtil.getTime());
                         if (setting.getUseLedType() == 0) {
                             ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), Paint.Align.LEFT);
-                        }else {
-                            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                            try {
-                                byte[] buffer = new byte[16];
-                                byte[] nameByte = pairs.get(0).getStudent().getLEDStuName().getBytes("GB2312");
-                                System.arraycopy(nameByte,0,buffer,0,nameByte.length);
-                                nameByte = ("第"+roundNo+"次").getBytes("GB2312");
-                                System.arraycopy(nameByte,0,buffer,10,nameByte.length);
-                                ledManager.showString(SettingHelper.getSystemSetting().getHostId(),buffer,0,0,true,true);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
+                        } else {
+                            ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                            showBeginLed();
 
                         }
                         timerUtil.stop();
@@ -861,8 +838,8 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                     result.setMinsencond(time[3]);
                     if (setting.getUseLedType() == 0) {
                         ballManager.setRadioLedStartTime(SettingHelper.getSystemSetting().getHostId(), result);
-                    }else {
-                        ballManager.setRadioLedStartTimeTo(SettingHelper.getSystemSetting().getHostId(),timerDate,getAccuracy());
+                    } else {
+                        ballManager.setRadioLedStartTimeTo(SettingHelper.getSystemSetting().getHostId(), timerDate, getAccuracy());
                     }
                     state = TESTING;
                     setOperationUI();
@@ -873,6 +850,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 getStatusStop(null);
+                facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                 break;
             case R.id.tv_punish_add: //违例+
                 LogUtils.operation("篮球点击了违例+按钮");
@@ -911,6 +889,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                     return;
                 }
                 timerUtil.stop();
+                facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                 if (state == WAIT_CONFIRM) {
                     sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 }
@@ -930,17 +909,17 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                     toastSpeak("测试中,不允许跳过本次测试");
                 } else {
                     timerUtil.stop();
-
+                    facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                     resultAdapter.setSelectPosition(-1);
                     prepareForCheckIn();
                     txtDeviceStatus.setText("空闲");
                     if (setting.getUseLedType() == 0) {
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, "", Paint.Align.RIGHT);
                         ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.RIGHT);
-                    }else {
+                    } else {
                         String title = TestConfigs.machineNameMap.get(machineCode)
                                 + " " + SettingHelper.getSystemSetting().getHostId();
-                        ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
+                        ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
                         ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, title, 0, true, true, LEDManager.MIDDLE);
                         ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, "请检录", 1, false, true, LEDManager.MIDDLE);
                         ledManager.showSubsetString(SettingHelper.getSystemSetting().getHostId(), 1, "菲普莱体育", 3, 3, false, true);
@@ -971,6 +950,7 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 return 2;
         }
     }
+
     private void showResurvey() {
         if (pairs.get(0).getStudent() == null) {
             return;
@@ -1004,9 +984,12 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 roundNo = updateRoundNo;
                 resultAdapter.notifyDataSetChanged();
                 prepareForBegin();
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
-                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
-
+                if (setting.getUseLedType() == 0) {
+                    ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, student.getLEDStuName(), Paint.Align.LEFT);
+                    ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "", Paint.Align.CENTER);
+                } else {
+                    showBeginLed();
+                }
             }
 
             @Override
@@ -1228,7 +1211,21 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
     private void showLedConfirmedResult() {
         //1:正常 2:犯规 3:中退 4:弃权
         BasketBallTestResult testResult = resultList.get(resultAdapter.getSelectPosition());
-        ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), testResult.getPenalizeNum() + "", Paint.Align.LEFT);
+        if (setting.getUseLedType() == 0) {
+            ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 1, pairs.get(0).getStudent().getLEDStuName(), testResult.getPenalizeNum() + "", Paint.Align.LEFT);
+
+        } else {
+            try {
+                byte[] buffer = new byte[16];
+                byte[] nameByte = pairs.get(0).getStudent().getLEDStuName().getBytes("GB2312");
+                System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
+                nameByte = ("第" + (resultAdapter.getSelectPosition() + 1) + "次").getBytes("GB2312");
+                System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
+                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         switch (testResult.getResultState()) {
             case RoundResult.RESULT_STATE_NORMAL:
                 String time = ResultDisplayUtils.getStrResultForDisplay(testResult.getResult());
@@ -1240,37 +1237,28 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, time, Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
-                    try{
-                        byte[] buffer = new byte[16];
-                        byte[] nameByte = pairs.get(0).getStudent().getLEDStuName().getBytes("GB2312");
-                        System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
-                        nameByte = ("第" + roundNo + "次").getBytes("GB2312");
-                        System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
-                        ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
-                    }catch( Exception e){
-                        e.printStackTrace();
-                    }
-                    ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),testResult.getResult(),getAccuracy());
+                } else {
+
+                    ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(),
+                            DateUtil.caculateTimeLong(testResult.getResult(), TestConfigs.sCurrentItem.getDigital(), TestConfigs.sCurrentItem.getCarryMode()), getAccuracy());
                 }
                 break;
             case RoundResult.RESULT_STATE_FOUL:
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "犯规", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"犯规",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "犯规", 2, false, true, LEDManager.MIDDLE);
                 }
                 break;
             case RoundResult.RESULT_STATE_BACK:
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "中退", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"中退",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "中退", 2, false, true, LEDManager.MIDDLE);
 
                 }
                 break;
@@ -1278,9 +1266,9 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
 //                ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", testResult.getPenalizeNum() + "", Paint.Align.CENTER);
                 if (setting.getUseLedType() == 0) {
                     ballManager.sendDisLed(SettingHelper.getSystemSetting().getHostId(), 2, "弃权", Paint.Align.RIGHT);
-                }else {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(),"弃权",2,false,true,LEDManager.RIGHT);
+                } else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "弃权", 2, false, true, LEDManager.MIDDLE);
 
                 }
                 break;
@@ -1349,6 +1337,21 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
         if (bestResult != null)
             scoreResultList.add(bestResult);
         InteractUtils.showStuInfo(llStuDetail, student, scoreResultList);
+    }
+
+    private void showBeginLed() {
+        try {
+            byte[] buffer = new byte[16];
+            byte[] nameByte = pairs.get(0).getStudent().getLEDStuName().getBytes("GB2312");
+            System.arraycopy(nameByte, 0, buffer, 0, nameByte.length);
+            nameByte = ("第" + roundNo + "次").getBytes("GB2312");
+            System.arraycopy(nameByte, 0, buffer, 10, nameByte.length);
+            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), buffer, 0, 0, true, true);
+            ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "准备", 2, false, true, LEDManager.MIDDLE);
+//                ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "", 2, false, true, LEDManager.LEFT, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1462,10 +1465,8 @@ public class BasketBallMotionTestActivity extends BaseTitleActivity implements I
                 //设置空闲重新等待
 
                 if (setting.getUseLedType() == 1) {
-                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(),getAccuracy());
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), "第"+roundNo+"次", 0, true, true, LEDManager.RIGHT, 1);
-                    ledManager.showString(SettingHelper.getSystemSetting().getHostId(), pairs.get(0).getStudent().getLEDStuName(), 0, false, true, LEDManager.LEFT, 1);
-                }else {
+                    ballManager.hiddenTime(SettingHelper.getSystemSetting().getHostId(), getAccuracy());
+                } else {
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                 }
                 sleep();

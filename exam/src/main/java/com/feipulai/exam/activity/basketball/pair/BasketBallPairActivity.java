@@ -35,7 +35,8 @@ public class BasketBallPairActivity
 
     private List<StuDevicePair> pairs;
     @BindView(R.id.sw_currency_state)
-    Switch swCurrencyState;
+    public Switch swCurrencyState;
+
     @Override
     public void initView(boolean isAutoPair, List pairs) {
         super.initView(isAutoPair, pairs);
@@ -49,11 +50,18 @@ public class BasketBallPairActivity
 
         hostId = SettingHelper.getSystemSetting().getHostId();
         mLEDManager = new LEDManager(LEDManager.LED_VERSION_4_8);
+
+        initSetting();
+    }
+
+    public void initSetting() {
         SitPullUpPairPresenter presenter = getPresenter();
         if (presenter instanceof BasketBallPairPresenter) {
             setting = ((BasketBallPairPresenter) presenter).getSetting();
         }
-        swCurrencyState.setChecked(setting.getUseLedType() == 1);
+        if (setting != null) {
+            swCurrencyState.setChecked(setting.getUseLedType() == 1);
+        }
     }
 
     @Override
@@ -102,8 +110,9 @@ public class BasketBallPairActivity
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         setting.setUseLedType(isChecked ? 1 : 0);
     }
+
     @OnClick(R.id.tv_currency_connect)
-    public void onClick(View view){
+    public void onClick(View view) {
         String title = TestConfigs.machineNameMap.get(machineCode)
                 + " " + SettingHelper.getSystemSetting().getHostId();
         mLEDManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), hostId, 1);

@@ -142,12 +142,10 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
     @Override
     public void checkDevice(int deviceId) {
         isDisconnect = false;
-        if (mHandler != null) {
-            Message msg = new Message();
-            msg.obj = new BaseDeviceState(BaseDeviceState.STATE_NOT_BEGAIN, 1);
-            msg.what = UPDATE_DEVICE;
-            mHandler.sendMessage(msg);
-        }
+        Message msg = mHandler.obtainMessage();
+        msg.obj = new BaseDeviceState(BaseDeviceState.STATE_FREE, 1);
+        msg.what = UPDATE_DEVICE;
+        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -155,8 +153,8 @@ public class SitReachTestActivity extends BasePersonTestActivity implements SitR
         LogUtils.operation(TAG + ":getDeviceState--->" + deviceState.toString());
         BaseDeviceState state = new BaseDeviceState();
         state.setState(deviceState.getState());
-        if (mHandler != null) {
-            Message msg = new Message();
+        if (mHandler != null && mHandler.obtainMessage() != null) {
+            Message msg = mHandler.obtainMessage();
             msg.obj = state;
             msg.what = UPDATE_DEVICE;
             mHandler.sendMessage(msg);

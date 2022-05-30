@@ -3,6 +3,8 @@ package com.feipulai.exam.activity.basketball.reentry;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.feipulai.common.utils.IntentUtil;
 import com.feipulai.common.utils.ToastUtils;
@@ -13,14 +15,46 @@ import com.feipulai.exam.activity.basketball.BasketBallSettingActivity;
 import com.feipulai.exam.activity.setting.SettingHelper;
 import com.feipulai.exam.config.TestConfigs;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 public class BallReentrySettingActivity extends BasketBallSettingActivity {
     private SportTimerManger sportTimerManger;
+    @BindView(R.id.et_light_time)
+    EditText etLightTime;
+
+    @Override
+    protected int setLayoutResID() {
+        return R.layout.activity_basketball_reentry_setting;
+    }
 
     @Override
     protected void initData() {
         super.initData();
         sportTimerManger = new SportTimerManger();
         tvPair.setVisibility(View.VISIBLE);
+        etLightTime.setText(setting.getLightTime() + "");
+    }
+
+    @OnClick(R.id.tv_light_time_use)
+    public void onLightTimeClick() {
+        if (TextUtils.isEmpty(etLightTime.getText().toString())) {
+            ToastUtils.showShort("请输入灯亮时长");
+            return;
+        }
+        sportTimerManger.setLightTime(SettingHelper.getSystemSetting().getHostId(), Integer.valueOf(this.etLightTime.getText().toString()) * 1000);
+
+        try {
+            //两个指令相间隔100MS
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sportTimerManger.getLightTime(SettingHelper.getSystemSetting().getHostId());
+
+        isDisconnect = true;
+        isClickConnect = false;
+        mHandler.sendEmptyMessageDelayed(MSG_DISCONNECT, 2000);
     }
 
     @Override
@@ -93,14 +127,17 @@ public class BallReentrySettingActivity extends BasketBallSettingActivity {
     @Override
     public void onRadioArrived(Message msg) {
         super.onRadioArrived(msg);
+
         if (msg.what == SerialConfigs.SPORT_TIMER_GET_SENSITIVE) {
             toastSpeak("设置成功");
             this.setting.setSensitivity((Integer) msg.obj);
         } else if (msg.what == SerialConfigs.SPORT_TIMER_GET_MIN_TIME) {
             toastSpeak("设置成功");
             this.setting.setInterceptSecond((Integer) msg.obj);
+        } else if (msg.what == SerialConfigs.SPORT_TIMER_GET_LIGHT_TIME) {
+            toastSpeak("设置成功");
+            this.setting.setLightTime(Integer.valueOf(this.etLightTime.getText().toString()));
         }
-
 
     }
 }

@@ -403,4 +403,43 @@ public class SportTimerManger {
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
         LogUtils.serial("运动计时强启： " + StringUtility.bytesToHexString(data));
     }
+
+
+    public void setLightTime(int hostId, int lightTime) {
+        byte data[] = new byte[13];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 13;
+        data[2] = (byte) 0x0E;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) (0xff);
+        data[7] = (byte) 07;
+        data[8] = (byte) (lightTime >> 8 & 0xff);
+        data[9] = (byte) (lightTime & 0xff);
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[11] += data[i];
+        }
+        data[12] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("运动计时设置灯亮时间： " + StringUtility.bytesToHexString(data));
+    }
+
+    public void getLightTime(int hostId) {
+        byte data[] = new byte[13];
+        data[0] = (byte) 0xAA;
+        data[1] = (byte) 13;
+        data[2] = (byte) 0x0E;
+        data[3] = (byte) 0x03;
+        data[4] = (byte) 0X01;
+        data[5] = (byte) hostId;
+        data[6] = (byte) 0X01;
+        data[7] = (byte) 8;
+        for (int i = 1; i <= data.length - 3; i++) {
+            data[11] += data[i];
+        }
+        data[12] = (byte) 0x0d;
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, data));
+        LogUtils.serial("运动计时获取灯亮时间： " + StringUtility.bytesToHexString(data));
+    }
 }

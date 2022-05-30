@@ -188,7 +188,10 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
 //        rvTestResult.setAdapter(testResultAdapter);
 
         getTestStudent(group);
-        setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
+//        setStuShowLed(stuAdapter.getTestPosition() != -1 ? stuPairsList.get(stuAdapter.getTestPosition()) : null);
+        if (stuAdapter.getTestPosition() != -1) {
+            setShowLed(stuPairsList.get(stuAdapter.getTestPosition()));
+        }
 
 //        tv_penalizeFoul.setVisibility(isShowPenalizeFoul());
         editResultDialog = new EditResultDialog(this);
@@ -981,8 +984,8 @@ public abstract class BaseGroupTestActivity extends BaseCheckActivity {
      */
     public void updateDevice(@NonNull BaseDeviceState deviceState) {
 //        LogUtils.operation("更新设备状态:" + deviceState);
-        if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
-            return;
+//        if (stuAdapter == null || stuAdapter.getTestPosition() == -1)
+//            return;
 
         if (deviceState.getState() != BaseDeviceState.STATE_ERROR) {
             cbDeviceState.setChecked(true);

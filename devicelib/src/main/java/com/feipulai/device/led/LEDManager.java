@@ -355,6 +355,9 @@ public class LEDManager {
         if (machineCodesForLed.get(machineCode) == null) {
             return;
         }
+        if (clearScreen) {
+            clearTimeControl(hostId);
+        }
 //		byte[] data = null;
 //		try{
 //			data = str.getBytes("GB2312");
@@ -593,13 +596,28 @@ public class LEDManager {
      * @param lineSum     行号
      */
     public void ballTimeControl(int hostId, boolean timeShow, boolean startTime, boolean openTime, long currTime, int showFormat, boolean isSmallText, int lineSum) {
+        ballTimeControl(hostId, timeShow, startTime, openTime, currTime, showFormat, isSmallText, lineSum, 1);
+    }
+
+    public void ledStartTime(int hostId, int digital) {
+        ballTimeControl(hostId, true, true, true, 0, digital, false, 2);
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ballTimeControl(hostId, true, true, true, 150, digital, false, 2);
+
+    }
+
+    public void ballTimeControl(int hostId, boolean timeShow, boolean startTime, boolean openTime, long currTime, int showFormat, boolean isSmallText, int lineSum, int color) {
         byte[] command = new byte[]{(byte) 0xAA, 0x00, (byte) 0xA1, 0x00, 0x1, (byte) 0xC0, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         command[3] = (byte) hostId;
 //        command[6] = (byte) (timeShow ? 0 : 03);
         command[7] = (byte) (timeShow ? 1 : 0);
         command[8] = (byte) (startTime ? 1 : 0);
         command[9] = (byte) (openTime ? 1 : 0);
-        command[10] = 1;
+        command[10] = (byte) color;
         command[11] = (byte) showFormat;
         command[12] = (byte) (isSmallText ? 1 : 2);
         command[13] = (byte) lineSum;
@@ -608,6 +626,20 @@ public class LEDManager {
             command[15] = (byte) (currTime >> 8 & 0xff);
             command[16] = (byte) (currTime & 0xff);
         }
+        RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
+    }
+
+    public void clearTimeControl(int hostId) {
+        byte[] command = new byte[]{(byte) 0xAA, 0x00, (byte) 0xA1, 0x00, 0x1, (byte) 0xC0, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        command[3] = (byte) hostId;
+        command[6] = (byte) 01;
+        command[7] = (byte) 00;
+        command[8] = (byte) 00;
+        command[9] = (byte) 00;
+        command[10] = 1;
+        command[11] = (byte) 00;
+        command[12] = (byte) 00;
+        command[13] = (byte) 00;
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, command));
     }
 

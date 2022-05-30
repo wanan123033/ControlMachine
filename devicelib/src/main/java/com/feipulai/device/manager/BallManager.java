@@ -77,9 +77,14 @@ public class BallManager {
         }
     }
 
-    public void sendSetStopStatusTo(int hostId, long timerDate, int timeFormat){
-        ledManager.ballTimeControl(hostId,true,false,true,timerDate,timeFormat,false,2);
+    public void sendSetStopStatusTo(int hostId, long timerDate, int timeFormat) {
+        ledManager.ballTimeControl(hostId, true, false, true, timerDate, timeFormat, false, 2);
     }
+
+    public void sendSetStopStatusTo(int hostId, long timerDate, int timeFormat, int color) {
+        ledManager.ballTimeControl(hostId, true, false, true, timerDate, timeFormat, false, 2, color);
+    }
+
     /**
      * 显示屏
      *
@@ -145,7 +150,7 @@ public class BallManager {
      *               STATUS_PAUSE 		5		//Display stop time,But Timer is Running
      * @return
      */
-    public void sendSetStatus(int hostId, int status,int showFormat) {
+    public void sendSetStatus(int hostId, int status, int showFormat) {
 
         if (patternType == 0) {
             byte[] buf = UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(status);
@@ -159,7 +164,7 @@ public class BallManager {
                 case 2:
                     if (useLedType == 0) {
                         setLedShowData(hostId, "", 2, Paint.Align.CENTER);
-                    }else {
+                    } else {
                         // waitTime(hostId,showFormat);
                     }
                     setRadioFreeStates(hostId);
@@ -176,6 +181,7 @@ public class BallManager {
             }
         }
     }
+
     public void sendSetStatus(int hostId, int status) {
 
         if (patternType == 0) {
@@ -190,7 +196,7 @@ public class BallManager {
                 case 2:
                     if (useLedType == 0) {
                         setLedShowData(hostId, "", 2, Paint.Align.CENTER);
-                    }else {
+                    } else {
                         //waitTime(hostId,2);
                     }
                     setRadioFreeStates(hostId);
@@ -207,9 +213,11 @@ public class BallManager {
             }
         }
     }
-    public void waitTime(int hostId,int showFormat) {
-        ledManager.ballTimeControl(hostId,true,false,true,0,showFormat,false,2);
+
+    public void waitTime(int hostId, int showFormat) {
+        ledManager.ballTimeControl(hostId, true, false, true, 0, showFormat, false, 2);
     }
+
     public void sendGetStatus(int hostId, int deviceId) {
         if (patternType == 0) {
             UdpClient.getInstance().setHostIpPost(hostIp, post);
@@ -418,9 +426,11 @@ public class BallManager {
         LogUtils.serial("篮足球LED开始计时指令:" + StringUtility.bytesToHexString(cmd));
         RadioManager.getInstance().sendCommand(new ConvertCommand(ConvertCommand.CmdTarget.RADIO_868, cmd));
     }
+
     public void setRadioLedStartTimeTo(int hostId, long timerDate, int accuracy) {
-        ledManager.ballTimeControl(hostId,true,true,true,timerDate,accuracy,false,2);
+        ledManager.ballTimeControl(hostId, true, true, true, timerDate, accuracy, false, 2);
     }
+
     /**
      * 设置停止
      */
@@ -530,7 +540,7 @@ public class BallManager {
     }
 
     public void hiddenTime(int hostId, int timeFormat) {
-        ledManager.ballTimeControl(hostId,false,false,false,0,timeFormat,false,2);
+        ledManager.ballTimeControl(hostId, false, false, false, 0, timeFormat, false, 2);
     }
 
 

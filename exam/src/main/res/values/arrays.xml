@@ -40,6 +40,7 @@
         <item>备份视频</item>
         <item>软件更新</item>
         <item>日志清空</item>
+<!--        <item>数据校验</item>-->
     </array>
 
     <array name="check_tool">

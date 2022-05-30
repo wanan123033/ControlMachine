@@ -21,7 +21,7 @@ public class RadioManager {
     private volatile OnRadioR232Listener mOnRadio232;
     private volatile OnKwhListener mOnKwhListener;
     private static volatile RadioManager instance;
-    public static final int RADIO_INTERVAL = 100;
+    public static final int RADIO_INTERVAL = 120;
     private long mlastSendTime;
 
 
@@ -101,8 +101,20 @@ public class RadioManager {
         if (mSerialPorter == null)
             return;
         mSerialPorter.sendCommand(convertCommand);
-    }
 
+    }
+//    public synchronized void sendSerialCommand(ConvertCommand convertCommand) {
+////        if (null != mSendingHandler) {
+////            Message message = Message.obtain();
+////            message.obj = convertCommand;
+////            mSendingHandler.sendMessage(message);
+////        }
+//        ensureInterval();
+//        if (mSerialPorter == null)
+//            return;
+//        mSerialPorter.sendCommand(convertCommand);
+//
+//    }
     private void ensureInterval() {
         try {
             //Thread.sleep(RADIO_INTERVAL);
