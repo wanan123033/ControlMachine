@@ -784,7 +784,7 @@ public class NewRadioGroupActivity extends BaseTitleActivity implements SportCon
             for (int i = 0; i < mList.size(); i++) {
                 RunStudent runStudent = mList.get(i);
                 if (null != runStudent && independent[i] > 0) {
-                    runStudent.setIndependentTime(runStudent.getIndependentTime() + 100);
+                    runStudent.setIndependentTime(sportPresent.getTime()-runStudent.getIndependentTime());
                     mAdapter.notifyItemChanged(i);
                 }
             }
