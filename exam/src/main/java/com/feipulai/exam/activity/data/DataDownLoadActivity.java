@@ -162,6 +162,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
                 gotoLogin();
                 break;
             case R.id.tv_down_whole:
+                SharedPrefsUtil.putValue(DataDownLoadActivity.this, SharedPrefsConfigs.DEFAULT_PREFS, SharedPrefsConfigs.LAST_DOWNLOAD_TIME, null);
                 if (downType == 0) {
                     OperateProgressBar.showLoadingUi(DataDownLoadActivity.this, "正在下载数据...");
                     ServerMessage.downloadData(DataDownLoadActivity.this, examType, "");
@@ -283,7 +284,7 @@ public class DataDownLoadActivity extends BaseTitleActivity implements RadioGrou
             scheduleNo = currentSchedule.getScheduleNo();
         }
         final List<Item> items = new ArrayList<>();
-        if (currentItem.getItemCode().equals("-99")) {
+        if (currentItem.getItemCode() != null && currentItem.getItemCode().equals("-99")) {
             items.addAll(DBManager.getInstance().dumpAllItems());
         } else {
             items.add(currentItem);

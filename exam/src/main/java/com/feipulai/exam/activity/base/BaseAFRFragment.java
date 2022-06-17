@@ -650,9 +650,7 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
                         if (isLodingServer) {
                             compareListener.compareStu(null);
                         } else {
-                            isStartFace = true;
-                            //去除拉取考生信息
-//                            showAddHint();
+                            showAddHint();
                             return;
                         }
                     }
@@ -716,7 +714,6 @@ public class BaseAFRFragment extends BaseFragment implements PreviewCallback {
 //        bs.recycle();
 //        bs = null;
     }
-
     @Override
     public void onEventMainThread(BaseEvent event) {
         super.onEventMainThread(event);

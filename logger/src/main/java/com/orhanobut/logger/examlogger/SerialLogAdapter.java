@@ -22,7 +22,7 @@ public class SerialLogAdapter implements LogAdapter, FormatStrategy {
     }
 
     @Override
-    public void log(int priority, String tag, String message) {
+    public synchronized void log(int priority, String tag, String message) {
         if (!TextUtils.isEmpty(tag) && tag.equals(LogUtils.SERIAL_TAG))
             formatStrategy.log(priority, tag, message);
     }

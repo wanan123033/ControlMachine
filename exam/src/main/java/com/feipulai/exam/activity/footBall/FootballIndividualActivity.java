@@ -1547,10 +1547,12 @@ public class FootballIndividualActivity extends BaseTitleActivity implements Ind
         Student student = pairs.get(0).getStudent();
         if (setting.isFullSkip() && resultState == RoundResult.RESULT_STATE_NORMAL) {
 //            int result = testResult.getSelectMachineResult() + (testResult.getPenalizeNum() * setting.getPenaltySecond() * 1000);
-            if (student.getSex() == Student.MALE) {
-                return result <= setting.getMaleFullScore() * 1000;
-            } else {
-                return result <= setting.getFemaleFullScore() * 1000;
+            if (student != null) {
+                if (student.getSex() == Student.MALE) {
+                    return result <= setting.getMaleFullScore() * 1000;
+                } else {
+                    return result <= setting.getFemaleFullScore() * 1000;
+                }
             }
         }
         return false;

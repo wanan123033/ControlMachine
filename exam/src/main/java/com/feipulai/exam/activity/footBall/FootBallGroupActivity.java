@@ -446,7 +446,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     doTriggerStart();
                 } else {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2,2);
                 }
                 break;
             case 2://2:终点1:起点
@@ -455,7 +455,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     doTriggerStart();
                 } else {
 //                    UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STATUS(2));
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2,2);
                 }
                 break;
 
@@ -714,7 +714,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                                 ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                             }
                             sleep();
-                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2,2);
                             testDate = System.currentTimeMillis() + "";
                             if (setting.getTestType() == 1) {
                                 facade.awaitState();
@@ -736,7 +736,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
             case R.id.txt_continue_run://继续运行
                 LogUtils.operation("足球点击了继续运行");
                 if (setting.getTestType() == 0) {
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 3);
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 3,2);
                 } else {
                     Basketball868Result result = new Basketball868Result();
                     int[] time = TimeUtil.getTestTime(timerDate);
@@ -798,7 +798,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                 timerUtil.stop();
                 if (state == WAIT_CONFIRM || state == WAIT_BEGIN) {
                     ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
-                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                    ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1,2);
                     startTest = false;
                 }
                 if (state != TESTING) {
@@ -835,7 +835,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
 //                        UdpClient.getInstance().send(UDPBasketBallConfig.BASKETBALL_CMD_SET_STOP_STATUS());
                             ballManager.sendSetStopStatus(SettingHelper.getSystemSetting().getHostId());
                         } else {
-                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1);
+                            ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 1,2);
                         }
                         prepareForFinish();
                     }
@@ -1650,7 +1650,7 @@ public class FootBallGroupActivity extends BaseTitleActivity implements TimerUti
                     ballManager.sendSetStopStatusTo(SettingHelper.getSystemSetting().getHostId(), 0, setting.getAccuracy());
                 }
                 sleep();
-                ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2);
+                ballManager.sendSetStatus(SettingHelper.getSystemSetting().getHostId(), 2,2);
                 if (setting.getTestType() == 1) {
                     facade.awaitState();
                 }

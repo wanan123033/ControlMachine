@@ -182,7 +182,7 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void net(String message) {
+    public static synchronized void net(String message) {
         Logger.t(NORMAL_TAG).i(message);
     }
     /**
@@ -190,7 +190,7 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void normal(String message) {
+    public static synchronized void normal(String message) {
         Logger.t(NORMAL_TAG).i(message);
     }
     /**
@@ -206,7 +206,7 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void serial(String message) {
+    public static synchronized void serial(String message) {
         Logger.t(SERIAL_TAG).i(message);
     }
 
@@ -215,7 +215,7 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void operation(String message) {
+    public static synchronized void operation(String message) {
         Logger.t(OPERATION_TAG).i(message);
     }
 
@@ -224,7 +224,7 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void life(String message) {
+    public static synchronized void life(String message) {
         Logger.t(ALL_TAG).i(message);
     }
 
@@ -233,11 +233,11 @@ public class LogUtils {
      *
      * @param message
      */
-    public static void all(String message) {
+    public static synchronized void all(String message) {
         Logger.t(ALL_TAG).i(message);
     }
 
-    public static void crash(String message) {
+    public static synchronized void crash(String message) {
         Logger.t(CRASH_TAG).i(message);
     }
 }

@@ -20,7 +20,7 @@ public class AllLogAdapter implements LogAdapter, FormatStrategy {
     }
 
     @Override
-    public void log(int priority, String tag, String message) {
+    public synchronized void log(int priority, String tag, String message) {
         if (!TextUtils.isEmpty(tag) && tag.equals(LogUtils.ALL_TAG))
             formatStrategy.log(priority, tag, message);
     }

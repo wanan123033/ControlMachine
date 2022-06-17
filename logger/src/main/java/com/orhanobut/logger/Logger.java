@@ -23,7 +23,7 @@ public final class Logger {
         Logger.printer = printer;
     }
 
-    public static void addLogAdapter(LogAdapter adapter) {
+    public static synchronized void addLogAdapter(LogAdapter adapter) {
         printer.addAdapter(adapter);
     }
 
@@ -31,7 +31,7 @@ public final class Logger {
         printer.clearLogAdapters();
     }
 
-    public static Printer t(String tag) {
+    public static synchronized Printer t(String tag) {
         return printer.t(tag);
     }
 

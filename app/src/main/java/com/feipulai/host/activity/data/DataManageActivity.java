@@ -45,7 +45,6 @@ import com.feipulai.common.utils.archiver.IArchiverListener;
 import com.feipulai.common.utils.archiver.ZipArchiver;
 import com.feipulai.common.view.baseToolbar.BaseToolbar;
 import com.feipulai.common.view.dialog.EditDialog;
-import com.feipulai.host.BuildConfig;
 import com.feipulai.host.MyApplication;
 import com.feipulai.host.R;
 import com.feipulai.host.activity.base.BaseTitleActivity;
@@ -1288,7 +1287,7 @@ public class DataManageActivity extends BaseTitleActivity implements ExlListener
                     @Override
                     public void OnClickListener(Dialog dialog, String content) {
                         FileUtil.delete(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + MyApplication.LOG_PATH_NAME);
-                        LogUtils.initLogger(true, BuildConfig.DEBUG, MyApplication.LOG_PATH_NAME);
+                        LogUtils.initLogger(true, true, MyApplication.LOG_PATH_NAME);
                         toastSpeak("日志文件删除成功");
                     }
                 })

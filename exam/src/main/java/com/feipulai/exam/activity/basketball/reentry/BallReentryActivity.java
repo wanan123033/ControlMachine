@@ -991,7 +991,6 @@ public class BallReentryActivity extends BaseTitleActivity implements Individual
                     return;
                 }
                 timerUtil.stop();
-                facade.setTestState(BasketBallReentryFacade.TEST_STATE_FREE);
                 if (state == WAIT_CONFIRM) {
                     sportTimerManger.setDeviceState(SettingHelper.getSystemSetting().getHostId(), 0);
                 }

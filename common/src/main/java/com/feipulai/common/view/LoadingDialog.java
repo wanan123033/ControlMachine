@@ -1,5 +1,6 @@
 package com.feipulai.common.view;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -86,7 +87,11 @@ public class LoadingDialog {
 
         //        dismissDialog();
         if (progressDialog != null && !progressDialog.isShowing()) {
-            progressDialog.show();
+            Context context = progressDialog.getContext();
+            if (context instanceof Activity){
+                if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed())
+                    progressDialog.show();
+            }
         }
     }
 
@@ -102,7 +107,11 @@ public class LoadingDialog {
      */
     public void dismissDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+            Context context = progressDialog.getContext();
+            if (context instanceof Activity) {
+                if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed())
+                    progressDialog.dismiss();
+            }
         }
     }
 

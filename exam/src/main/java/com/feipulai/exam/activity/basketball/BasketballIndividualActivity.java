@@ -1267,18 +1267,19 @@ public class BasketballIndividualActivity extends BaseTitleActivity implements I
         if (dbRoundResult != null) {
             TestCache.getInstance().getResults().put(pair.getStudent(), dbRoundResult);
         }
+        if (pair.getDeviceResult() != null) {
+            int result = pair.getDeviceResult().getResult();
+            uploadResult(pair.getStudent());
 
-        int result = pair.getDeviceResult().getResult();
-        uploadResult(pair.getStudent());
-
-        showStuInfoResult();
+            showStuInfoResult();
 
 
-        // 是否需要进行下一次测试
-        if (shouldContinue(result)) {
-            prepareForBegin();
-        } else {
-            prepareForFinish();
+            // 是否需要进行下一次测试
+            if (shouldContinue(result)) {
+                prepareForBegin();
+            } else {
+                prepareForFinish();
+            }
         }
 
 

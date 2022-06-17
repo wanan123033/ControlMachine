@@ -1,6 +1,8 @@
 package com.feipulai.host.activity.jump_rope.base.check;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 
 import com.feipulai.common.jump_rope.facade.GetStateLedFacade;
 import com.feipulai.common.jump_rope.task.OnGetStateWithLedListener;
@@ -21,6 +23,7 @@ import com.feipulai.host.entity.RoundResult;
 import com.feipulai.host.entity.Student;
 import com.orhanobut.logger.Logger;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,17 @@ public abstract class AbstractRadioCheckPresenter<Setting>
         TestCache.getInstance().clear();
         setting = getSetting();
         mLEDManager = new LEDManager();
-        pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        if (context instanceof Activity){
+            Bundle bundle = ((Activity) context).getIntent().getExtras();
+            ArrayList<StuDevicePair> stuList = (ArrayList<StuDevicePair>) bundle.getSerializable("stuList");
+            if (stuList != null){
+                pairs = stuList;
+            }else {
+                pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+            }
+        }else {
+            pairs = CheckUtils.newPairs(getDeviceSumFromSetting());
+        }
         mCurrentConnect = new int[pairs.size() + 1];
         view.initView(setting, pairs);
         // 分组模式检录

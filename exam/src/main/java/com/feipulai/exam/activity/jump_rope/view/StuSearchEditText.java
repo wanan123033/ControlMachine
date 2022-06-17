@@ -190,7 +190,8 @@ public class StuSearchEditText extends RelativeLayout implements AdapterView.OnI
 
     public void setResultView(ListView listView) {
         mLvResults = listView;
-        mLvResults.setOnItemClickListener(this);
+        if (mLvResults != null)
+            mLvResults.setOnItemClickListener(this);
     }
 
     public void setOnCheckedInListener(OnCheckedInListener listener) {

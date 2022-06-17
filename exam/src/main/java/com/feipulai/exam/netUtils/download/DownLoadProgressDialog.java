@@ -1,5 +1,6 @@
 package com.feipulai.exam.netUtils.download;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -67,7 +68,11 @@ public class DownLoadProgressDialog {
      */
     public void showDialog() {
         if (dialog != null && !dialog.isShowing()) {
-            dialog.show();
+            Context context = dialog.getContext();
+            if (context instanceof Activity){
+                if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed())
+                    dialog.show();
+            }
         }
     }
 

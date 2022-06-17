@@ -18,7 +18,7 @@ public class DiskLogAdapter implements LogAdapter {
 	}
 
 	@Override
-	public void log(int priority, String tag, String message) {
+	public synchronized void log(int priority, String tag, String message) {
 		formatStrategy.log(priority, tag, message);
 	}
 

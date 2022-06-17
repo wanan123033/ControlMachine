@@ -319,7 +319,7 @@ public class MainActivity extends BaseActivity/* implements DialogInterface.OnCl
                 ledManager.showSubsetString(systemSetting.getHostId(), 1, "菲普莱体育", 3, 3, false, true);
             } else {
                 ledManager.link(SettingHelper.getSystemSetting().getUseChannel(), TestConfigs.sCurrentItem.getMachineCode(), systemSetting.getHostId());
-
+                ledManager.ballTimeControl(SettingHelper.getSystemSetting().getHostId(),false,false,false,0,2,false,2);
                 ledManager.showString(systemSetting.getHostId(), title, 0, true, false, LEDManager.MIDDLE);
                 ledManager.showString(systemSetting.getHostId(), "菲普莱体育", 3, 3, false, true);
             }

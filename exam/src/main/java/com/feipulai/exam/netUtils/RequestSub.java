@@ -1,5 +1,6 @@
 package com.feipulai.exam.netUtils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -72,15 +73,30 @@ public class RequestSub<T> extends DisposableObserver<HttpResult<T>>
 
     private void showProgressDialog() {
         if (showProgress && null != alertDialog) {
-            alertDialog.show();
+            Context context = alertDialog.getContext();
+            if (context != null && context instanceof Activity) {
+                if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed())
+                    alertDialog.show();
+            }
         }
     }
 
 
     private void dismissProgressDialog() {
-        if (showProgress && null != alertDialog) {
-            alertDialog.dismiss();
+        try {
+            if (showProgress && null != alertDialog) {
+                Context context = alertDialog.getContext();
+                if (context != null && context instanceof Activity){
+                    if (!((Activity) context).isFinishing() && !((Activity) context).isDestroyed())
+                        alertDialog.dismiss();
+                }
+            }else {
+                alertDialog = null;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
 

@@ -370,6 +370,7 @@
             android:configChanges="keyboardHidden|keyboard"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.main.MainCheckActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

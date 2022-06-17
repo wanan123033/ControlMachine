@@ -1,5 +1,6 @@
 package com.feipulai.host.activity.data;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -57,7 +58,12 @@ public class DownLoadProgressDialog {
 
     public void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
+            Context context = dialog.getContext();
+            if (context instanceof Activity){
+                if (((Activity) context).isDestroyed() && !((Activity) context).isFinishing())
+                    dialog.dismiss();
+            }
+
         }
     }
 
@@ -66,7 +72,11 @@ public class DownLoadProgressDialog {
      */
     public void showDialog() {
         if (dialog != null && !dialog.isShowing()) {
-            dialog.show();
+            Context context = dialog.getContext();
+            if (context instanceof Activity){
+                if (((Activity) context).isDestroyed() && !((Activity) context).isFinishing())
+                    dialog.show();
+            }
         }
     }
 

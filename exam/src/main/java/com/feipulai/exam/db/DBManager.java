@@ -1106,7 +1106,7 @@ public class DBManager {
                 .where(StudentItemDao.Properties.StudentCode.eq(studentCode))
                 .where(StudentItemDao.Properties.ItemCode.eq(TestConfigs.getCurrentItemCode()))
                 .where(StudentItemDao.Properties.MachineCode.eq(TestConfigs.sCurrentItem.getMachineCode()))
-                .unique();
+                .limit(1).unique();
     }
 
     public StudentItem queryStuItemByStuCode2(String studentCode, String code) {

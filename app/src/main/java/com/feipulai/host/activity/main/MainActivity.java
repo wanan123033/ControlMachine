@@ -221,7 +221,8 @@ public class MainActivity extends BaseActivity {
                     if (SettingHelper.getSystemSetting().isFreedomTest()) {
                         IntentUtil.gotoActivity(MainActivity.this, TestConfigs.freedomActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
                     } else {
-                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+//                        IntentUtil.gotoActivity(MainActivity.this, TestConfigs.proActivity.get(TestConfigs.sCurrentItem.getMachineCode()));
+                        IntentUtil.gotoActivity(MainActivity.this,MainCheckActivity.class);
                     }
                 }
                 break;

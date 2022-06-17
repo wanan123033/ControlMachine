@@ -529,6 +529,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 List<Student> studentList = (List<Student>) respon.getObject();
                 if (mPageNum == 0) {
                     mList.clear();
+                    mAdapter.notifyDataSetChanged();
                     Map<String, Object> countMap = DBManager.getInstance().getItemStudenCount(
                             scheduleList.get(spSelectSchedule.getSelectedItemPosition()).getScheduleNo(), getItemCode());
                     setStuCount(countMap.get("count"), countMap.get("women_count"), countMap.get("man_count"));
@@ -620,6 +621,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                         return;
                     }
                     mList.clear();
+                    mAdapter.notifyDataSetChanged();
                 } else {
                     if (students == null || students.size() == 0) {
                         ToastUtils.showShort("没有更多数据了");
@@ -780,6 +782,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
 
         mPageNum = 0;
         mList.clear();
+        mAdapter.notifyDataSetChanged();
         //刷选条件必须至少有一个
         if (cbUploaded.isChecked() || cbUnUpload.isChecked() || cbTested.isChecked() || cbUnTested.isChecked()) {
             Logger.i("cbUploaded===>" + cbUploaded.isChecked());
@@ -819,6 +822,7 @@ public class DataRetrieveActivity extends BaseTitleActivity
                 Logger.i("zzs===>onExecuteSuccess===>" + studentList.size());
                 if (mPageNum == 0) {
                     mList.clear();
+                    mAdapter.notifyDataSetChanged();
                     if (cbTested.isChecked() || cbUnTested.isChecked() ||
                             cbUploaded.isChecked() || cbUnUpload.isChecked()) {
                         Map<String, Object> countMap = DBManager.getInstance().getChooseStudentCount(

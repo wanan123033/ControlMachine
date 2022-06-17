@@ -19,7 +19,7 @@ public class CrashLogAdapter implements LogAdapter, FormatStrategy {
     }
 
     @Override
-    public void log(int priority, String tag, String message) {
+    public synchronized void log(int priority, String tag, String message) {
         if (!TextUtils.isEmpty(tag) && tag.equals(LogUtils.CRASH_TAG))
             formatStrategy.log(priority, tag, message);
     }

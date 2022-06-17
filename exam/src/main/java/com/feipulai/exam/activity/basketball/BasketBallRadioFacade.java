@@ -314,6 +314,9 @@ public class BasketBallRadioFacade implements RadioManager.OnRadioArrivedListene
     };
 
     private int getBallDeviceCount() {
+        if (TestConfigs.sCurrentItem == null){
+            return 0;
+        }
         if (TestConfigs.sCurrentItem.getMachineCode() == ItemDefault.CODE_LQYQ) {
             return 2;
         }
